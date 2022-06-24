@@ -8,6 +8,7 @@ def jumpGame(nums):
         b = max(b, nums[i])
         if not a:
             jumps += 1
+            if not b:   return -1
             a = b
             if i == len(nums) - 1:	return jumps
     return jumps + 1
