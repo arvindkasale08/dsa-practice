@@ -1,49 +1,38 @@
 import java.util.*;
 
 public class ThreeSumClosest {
-    public int threeSumClosestBruteForce(int arr[], int target){
-        int closestSum = Integer.MAX_VALUE;
-        for(int i = 0; i < arr.length ; i++) {
-            for(int j = i + 1; j < arr.length; j++){
-                for(int k = j + 1; k < arr.length; k++){
-                    if (Math.abs(target - closestSum) > Math.abs(target - (arr[i] + arr[j] + arr[k]))){
-                        closestSum = (arr[i] + arr[j] + arr[k]);
-                    }
-                } 
-            }
-        }
-        return closestSum;
-    }
+    int threeSumClosest(int nums[], int target){
+        int res = 9999;
+        Arrays.sort(nums);
 
-    int threeSumClosest(int arr[], int target){
-        Arrays.sort(arr);
-        long closestSum = Integer.MAX_VALUE;
- 
-        for (int i = 0; i < arr.length - 2; i++){
-            int ptr1 = i + 1, ptr2 = arr.length - 1;
-            while (ptr1 < ptr2){
-                int sum = arr[i] + arr[ptr1] + arr[ptr2];
-                if (Math.abs(target - sum) < Math.abs(target - closestSum)){
-                    closestSum = sum;
+        for (int i = 0; i<nums.length;i++){
+            int l = i+1;
+            int r  =nums.length-1;
+            
+            while (l<r){
+                int threeSum = nums[i]+nums[l]+nums[r];
+                if (Math.abs(target-threeSum) < Math.abs(res)){
+                    res = target-threeSum;
                 }
-                if (sum > target){
-                    ptr2--;
+                if (threeSum<target){
+                    l+=1;
                 }else{
-                    ptr1++;
+                    r-=1;
+                }
+                if (res == 0){
+                    break;
                 }
             }
         }
-        return (int)closestSum;
+        return target-res;
     }
 
     public static void main(String[] args){
         ThreeSumClosest ts = new ThreeSumClosest();
-        int arr[] = {1,5,3,4,2};
-        int target = 13;
-        int ans = ts.threeSumClosestBruteForce(arr, target);
-        System.out.println("Three sum closest: "+ans);
-
-        ans = ts.threeSumClosest(arr, target);
+        int arr[] = {-1,2,1,-4};
+        int target = 1;
+        
+        int ans = ts.threeSumClosest(arr, target);
         System.out.println("Three sum closest: "+ans);
 
     }
