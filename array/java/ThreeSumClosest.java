@@ -5,26 +5,26 @@ public class ThreeSumClosest {
         int res = 9999;
         Arrays.sort(nums);
 
-        for (int i = 0; i<nums.length;i++){
-            int l = i+1;
-            int r  =nums.length-1;
+        for (int i = 0; i < nums.length - 2;i++){
+            int l = i + 1;
+            int r = nums.length - 1;
             
-            while (l<r){
-                int threeSum = nums[i]+nums[l]+nums[r];
-                if (Math.abs(target-threeSum) < Math.abs(res)){
-                    res = target-threeSum;
+            while (l < r) {
+                int threeSum = nums[i] + nums[l] + nums[r];
+                if (Math.abs(target - threeSum) < Math.abs(res)) {
+                    res = target - threeSum;
                 }
-                if (threeSum<target){
-                    l+=1;
-                }else{
-                    r-=1;
+                if (threeSum < target) {
+                    l += 1;
+                } else {
+                    r -= 1;
                 }
                 if (res == 0){
                     break;
                 }
             }
         }
-        return target-res;
+        return target - res;
     }
 
     public static void main(String[] args){
