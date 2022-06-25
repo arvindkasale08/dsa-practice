@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int searchElementInRotatedSortedArray(int arr[], int start, int end, int target)
-{
+int searchElementInRotatedSortedArray(int arr[], int start, int end, int target){
 	if (start > end){
 		return -1;
     }
