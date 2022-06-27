@@ -45,8 +45,8 @@ public class ElementWithLeftSideSmallerRightSideGreater {
 
     public static void main(String[] args){
         ElementWithLeftSideSmallerRightSideGreater e = new ElementWithLeftSideSmallerRightSideGreater();
-        int nums[] = new int[]{4,2,5,7};
-        int target = 4;
+        int nums[] = new int[]{4, 3, 2, 1, 5, 9, 8, 7};
+        int target = 8;
         int num = e.findElement(nums, target);
         System.out.println("Num: "+num);
     }
