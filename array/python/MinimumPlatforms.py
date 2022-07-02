@@ -1,18 +1,17 @@
-def minimumPlatform(arr, dep):
+def minimumPlatform(arr, dept):
     arr.sort()
-    dep.sort()
-    cur_plat = max_plat = 1
-    i = 1
-    j = 0
-    while  i < len(arr):
-        if arr[i] > dep[j]:
-            j += 1
+    dept.sort()
+    i = j = plat = 0
+    max_plat = 1
+    m, n = len(arr), len(dept)
+    while i < m and j < n:
+        if arr[i] <= dept[j]:
+            plat += 1
             i += 1
         else:
-            cur_plat += 1
-            if cur_plat > max_plat:
-                max_plat = cur_plat
-            i += 1
+            plat -= 1
+            j += 1
+        max_plat = max(max_plat, plat)
     return max_plat
 
 if __name__=='__main__':

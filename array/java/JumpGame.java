@@ -1,6 +1,6 @@
 public class JumpGame {
     int jumpGame(int []nums){
-        if (nums.length <= 1){
+        if (nums.length <= 1) {
             return 0;
         }
         int a = nums[0];
@@ -8,17 +8,17 @@ public class JumpGame {
 
         int jumps = 0;
 
-        for (int i = 1; i<nums.length; i++){
-            a-=1;
-            b-=1;
-            b = Math.max(b,nums[i]);
-            if (a == 0){
-                jumps+=1;
-                if (b == 0){
+        for (int i = 1; i < nums.length; i++) {
+            a -= 1;
+            b -= 1;
+            b = Math.max(b, nums[i]);
+            if (a == 0) {
+                jumps += 1;
+                if (b == 0) {
                     return -1;
                 }
                 a = b;
-                if (i == nums.length-1){
+                if (i == nums.length - 1) {
                     return jumps;
                 }
             }
