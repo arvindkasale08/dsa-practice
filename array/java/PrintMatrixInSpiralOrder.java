@@ -4,7 +4,7 @@ public class PrintMatrixInSpiralOrder {
         int n = matrix[0].length;
         int k = 0;
         int l = 0;
-        while (k<m && l<n){
+        while (k<m && l<n) {
             for (int i = l; i<n; i++){
                 System.out.println(matrix[k][i]);
             }

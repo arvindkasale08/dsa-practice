@@ -5,7 +5,7 @@ public class SearchElementInMatrix {
         int i = 0;
         int j = n-1;
         while(i<m){
-            if (matrix[i][j] == val){
+            if (matrix[i][j] == val) {
                 return true;
             }
             if (matrix[i][j]<val){

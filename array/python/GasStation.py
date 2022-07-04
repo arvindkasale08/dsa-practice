@@ -1,13 +1,13 @@
 def canCompleteCircuit(gas, cost):
     if sum(gas) < sum(cost):    return -1
     n = len(gas)
-    start = curr_gas = 0
+    start = tank = 0
     for i in range(n):
-        curr_gas += gas[i]
-        if curr_gas < cost[i]:
+        tank += gas[i]
+        if tank < cost[i]:
             start = i + 1
-            curr_gas = 0
-        else:   curr_gas -= cost[i]
+            tank = 0
+        else:   tank -= cost[i]
     return start
 
 if __name__=='__main__':
