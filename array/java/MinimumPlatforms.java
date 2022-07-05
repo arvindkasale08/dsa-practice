@@ -28,9 +28,12 @@ public class MinimumPlatforms {
 
     public static void main(String[] args){
         MinimumPlatforms mp = new MinimumPlatforms();
-        int arr[] = new int[]{900, 940, 950, 1100, 1500, 1800};
-        int dep[] = new int[]{910, 1200, 1120, 1130, 1900, 2000};
-        
+        //int arr[] = new int[]{900, 940, 950, 1100, 1500, 1800};
+        //int dep[] = new int[]{910, 1200, 1120, 1130, 1900, 2000};
+
+        int arr[] = new int[]{800, 1100};
+        int dep[] = new int[]{1200, 1500};
+
         System.out.println(mp.minimumPlatforms(arr, dep));
     }
 }
