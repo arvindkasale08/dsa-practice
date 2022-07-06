@@ -1,5 +1,7 @@
 package arvind;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 
 public class FractionalKnapsack {
@@ -38,9 +40,20 @@ public class FractionalKnapsack {
 
         Arrays.sort(items, (o1, o2) -> (o2.getValue()/ o2.getWeight()) - (o1.getValue()/ o1.getWeight()));
 
-        float maxValue = 0f;
-        int i = 0;
+        float maxValue = 0.00f;
 
+        for (int i=0; i<noOfItems; i++) {
+            if (items[i].getWeight() <= weightOfKnapsack) {
+                maxValue += items[i].getValue();
+                weightOfKnapsack -= items[i].getWeight();
+            } else {
+                maxValue += (items[i].getValue() * ((float) weightOfKnapsack / (float) items[i].getWeight()));
+                break;
+            }
+        }
+
+        /*
+        int i=0;
         while (weightOfKnapsack - items[i].getWeight() > 0) {
             maxValue += items[i].getValue();
             weightOfKnapsack -= items[i].getWeight();
@@ -49,7 +62,11 @@ public class FractionalKnapsack {
 
         // add fractional part
         maxValue += items[i].getValue() * ((float)weightOfKnapsack / (float)items[i].getWeight());
-        weightOfKnapsack = 0;
+        weightOfKnapsack = 0;*/
+
+        NumberFormat formatter = new DecimalFormat("0.00");
+
+        System.out.println(formatter.format(maxValue));
 
         return maxValue;
     }
