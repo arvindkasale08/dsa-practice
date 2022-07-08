@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/array/array.iml" filepath="$PROJECT_DIR$/array/array.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/live-sessions-batch-I.iml" filepath="$PROJECT_DIR$/.idea/live-sessions-batch-I.iml" />
+      <module fileurl="file://$PROJECT_DIR$/neetcode/neetcode.iml" filepath="$PROJECT_DIR$/neetcode/neetcode.iml" />
       <module fileurl="file://$PROJECT_DIR$/recursion/recursion.iml" filepath="$PROJECT_DIR$/recursion/recursion.iml" />
     </modules>
   </component>
