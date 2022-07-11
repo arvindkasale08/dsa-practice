@@ -38,7 +38,7 @@ public class TwoSumProblem {
 
                 ans[0] = i;
                 ans[1] = mp.get(target - arr[i]);               // Using the key value property of the map we will find the given index of the another pair  
-                break;                                       // break out of the immediate loop running 
+                break;                                          // break out of the immediate loop running as we get the pair
             }
             mp.put(arr[i] , i );
 

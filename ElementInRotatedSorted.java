@@ -68,6 +68,6 @@ public class ElementInRotatedSorted {
 
         System.out.println("Using Iteraive binary search index is : "+IterativeBinarySearch(input , target ));
 
-        System.out.println("Using Iteraive binary search index is : "+RecursiveBinarySearch(input , target , 0 , input.length - 1 ));
+        System.out.println("Using Recursive binary search index is : "+RecursiveBinarySearch(input , target , 0 , input.length - 1 ));
     }
 }

@@ -6,7 +6,6 @@ public class TrappingRainWater {
             
             int left[] = new int[ height.size() ];
             int right[] = new int[ height.size() ];
-            int result[] = new int[ height.size() ];
             
             int sum = 0;
             left[0] = height.get( 0);
