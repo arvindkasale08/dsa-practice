@@ -3,7 +3,7 @@ public class SetMatrixZeroes {
         int m = matrix.length;
         int n = matrix[0].length;
         boolean col = false;
-        for (int i = 0; i < m; i++){
+        for (int i = 0; i < m; i++) {
             if (matrix[i][0] == 0)
                 col = true;
             for (int j = 1; j < n; j++){

@@ -8,7 +8,7 @@ public class BuySellStock {
                 buy = nums[i];
             }
         }
-        return profit+nums[nums.length-1]-buy;
+        return profit + nums[nums.length - 1] - buy;
     }
 
     public static void main(String[] args){

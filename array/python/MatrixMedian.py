@@ -1,4 +1,4 @@
-# Time: O(log(2^32) * m * log(n)) ~ O(32mlog(n))
+# Time: O(log(2^32) * m * log(n)) ~ O(32mlog(n)) ~ O(mlog(n))
 # Space: O(1)
 
 def matrix_median(matrix):
@@ -12,6 +12,7 @@ def matrix_median(matrix):
                 else:    h = mid - 1
             lesser += l
         return lesser
+    
     m, n = len(matrix), len(matrix[0])
     low, high = 1, 10 ** 9
     median_idx = (m * n) // 2
