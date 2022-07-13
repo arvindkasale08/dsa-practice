@@ -1,5 +1,3 @@
-package arvind;
-
 public class SumOfNumbers {
 
     public int sum(int a, int b) {

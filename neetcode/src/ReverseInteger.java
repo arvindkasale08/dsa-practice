@@ -1,5 +1,3 @@
-package arvind;
-
 public class ReverseInteger {
 
     public int reverse(int num) {

@@ -1,5 +1,3 @@
-package arvind;
-
 public class ReverseBits {
 
     public int reverse(int n) {
