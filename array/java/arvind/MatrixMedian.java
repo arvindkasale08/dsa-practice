@@ -5,13 +5,25 @@ public class MatrixMedian {
     public int findMedian(int[][] arr) {
         int m = arr.length;
         int n = arr[0].length;
-        int medianIndex = m * n;
+        int medianIndex = m * n / 2;
 
-        int target = 9;
-        // find number of elements lower or equal to 9
-        int noLess = findNoElementsLowerThanX(target, arr);
+        int min = 0;
+        int max = 100000000;
 
-        return -1;
+        while (min <= max) {
+            int mid = (min + max) / 2;
+            // find number of elements lower or equal to 9
+            int noLess = findNoElementsLowerThanX(mid, arr);
+            if (noLess <= medianIndex) {
+                min = mid + 1;
+            } else {
+                max = mid - 1;
+            }
+        }
+
+
+
+        return min;
     }
 
     private int findNoElementsLowerThanX(int target, int[][] arr) {
@@ -21,11 +33,15 @@ public class MatrixMedian {
             int low = 0;
             int high = a.length - 1;
 
-            while (high > low) {
+            while (high >= low) {
                 int mid = (low + high) / 2;
 
-                if (a[mid] == target && a[mid+1])
+                if (a[mid] <= target)
+                    low = mid + 1;
+                else
+                    high = mid - 1;
             }
+            no += low;
         }
 
         return no;
