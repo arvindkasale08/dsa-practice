@@ -8,7 +8,7 @@ def find_two_unique_elements(arr):
     most_right_bit = unique & (~(unique - 1))
     a = b = 0
     for i in range(len(arr)):
-        if arr[i] & most_right_bit:
+        if (arr[i] & most_right_bit > 0):
             a ^= arr[i]
         else:
             b ^= arr[i]
