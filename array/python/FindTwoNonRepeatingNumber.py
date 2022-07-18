@@ -5,6 +5,7 @@ def find_two_unique_elements(arr):
     unique = arr[0]
     for i in range(1, len(arr)):
         unique ^= arr[i]
+    // find the most right bit
     most_right_bit = unique & (~(unique - 1))
     a = b = 0
     for i in range(len(arr)):
