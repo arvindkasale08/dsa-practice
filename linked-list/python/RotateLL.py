@@ -19,6 +19,7 @@ def rotateRight(head, k):
     curr.next = None
     return head
 
+
 if __name__=='__main__':
     head = Node(10)
     head.next = Node(20)

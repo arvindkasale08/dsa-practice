@@ -6,16 +6,23 @@ class Node:
         self.val = val
         self.next = None
 
-def find_nth_from_last(head, n):
-    ptr = head
-    i = 0
-    pre = head
-    while ptr:
-        if i >= n:
-            pre = pre.next
+def display(head):
+    while head:
+        print(head.val, end = ' -> ')
+        head = head.next
+    print('X')
+
+def removeNthFromEnd(head, n):
+    ptr = post = head
+    while n:
+        post = post.next
+        n -= 1
+    if not post:    return head.next
+    while post.next:
         ptr = ptr.next
-        i += 1
-    return pre.val
+        post = post.next
+    ptr.next = ptr.next.next
+    return head
 
 if __name__=='__main__':
     node1 = Node(2)
@@ -28,5 +35,5 @@ if __name__=='__main__':
     node2.next.next = Node(6)
     node2.next.next.next = Node(7)
     
-    print(find_nth_from_last(node1, 4))
-    print(find_nth_from_last(node2, 1))
+    display(removeNthFromEnd(node1, 4))
+    display(removeNthFromEnd(node2, 2))
