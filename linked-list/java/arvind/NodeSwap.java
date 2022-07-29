@@ -1,6 +1,7 @@
 package arvind;
 
-public class NodeSwap {
+public class
+NodeSwap {
 
 	static class Node {
 		int data;
