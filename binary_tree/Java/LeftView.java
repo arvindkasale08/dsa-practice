@@ -14,25 +14,25 @@ class Node
 class LeftView
 {
     static int first_node_level = 0;
-    public static void leftView(Node root, int level, int last_level)
+    public static void leftView(Node root, int level)
     {
         if (root == null) {
             return;
         }
-        if (first_node_level < level){
+        if (first_node_level < level) {
             System.out.print(root.key + " ");
             first_node_level = level;
         }
 
-        leftView(root.left, level + 1, last_level);
-        leftView(root.right, level + 1, last_level);
+        leftView(root.left, level + 1);
+        leftView(root.right, level + 1);
 
     }
 
     public static void leftView(Node root)
     {
 
-        leftView(root, 1, 0);
+        leftView(root, 1);
     }
 
     public static void main(String[] args)

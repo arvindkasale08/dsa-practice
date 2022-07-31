@@ -6,12 +6,10 @@ class Node:
         self.val = val
         self.left = self.right = None
 
-def maxDepth(root):
-    def height(root):
-        if not root:
-            return 0
-        return 1 + max(height(root.left), height(root.right))
-    return height(root)
+def height(root):
+    if not root:
+        return 0
+    return 1 + max(height(root.left), height(root.right))
 
 if __name__=='__main__':
     root = Node(1)
@@ -22,5 +20,5 @@ if __name__=='__main__':
     root.right.right = Node(6)
     root.right.left.left = Node(7)
     root.right.left.right = Node(8)
-    height = maxDepth(root)
-    print(height)
+    tree_height = height(root)
+    print(tree_height)

@@ -10,9 +10,11 @@ class Node:
 
 def bottom_view(root):
     def dfs(root, level = 0, dist = 0):
-        if not root:    return root
+        if not root:
+            return root
         dfs(root.left, level + 1, dist - 1)
-        if not view[dist] or view[dist][0] <= level:    view[dist] = [level, root.val]
+        if not view[dist] or view[dist][0] <= level:
+            view[dist] = [level, root.val]
         dfs(root.right, level + 1, dist + 1)
     view = defaultdict(list)
     dfs(root)
