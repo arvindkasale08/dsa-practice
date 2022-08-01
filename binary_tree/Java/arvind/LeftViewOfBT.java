@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Queue;
 
 public class LeftViewOfBT {
+
+	public static int first_node_level = 0;
+
 	static class Node {
 		int data;
 		Node left, right;
@@ -13,6 +16,33 @@ public class LeftViewOfBT {
 		public Node(int data) {
 			this.data = data;
 		}
+	}
+
+	public int leftView(Node root, int level, int lastLevel) {
+		if (root == null)
+			return lastLevel;
+		if (lastLevel < level) {
+			System.out.print(root.data + " ");
+			lastLevel = level;
+		}
+		lastLevel = leftView(root.left, level + 1, lastLevel);
+		lastLevel = leftView(root.right, level + 1, lastLevel);
+		return lastLevel;
+	}
+
+	public void leftViewWithStatic(Node root, int level) {
+		if (root == null)
+			return;
+		if (first_node_level < level) {
+			System.out.print(root.data + " ");
+			first_node_level = level;
+		}
+		leftViewWithStatic(root.left, level + 1);
+		leftViewWithStatic(root.right, level + 1);
+	}
+
+	public void leftViewWithStatic(Node root) {
+		leftViewWithStatic(root, 1);
 	}
 
 	public void leftViewLevelOrder(Node root) {
@@ -33,6 +63,7 @@ public class LeftViewOfBT {
 			}
 			result.add(list);
 		}
+
 		for (List<Node> nodeList : result) {
 			for (int i=0; i<nodeList.size(); i++) {
 				if (i == 0) {
@@ -53,6 +84,11 @@ public class LeftViewOfBT {
 		root.right.right.right = new Node(9);
 
 		LeftViewOfBT solution = new LeftViewOfBT();
+		System.out.println("Level order left view is: ");
 		solution.leftViewLevelOrder(root);
+		System.out.println("\nLeft View with Static");
+		solution.leftViewWithStatic(root);
+		System.out.println("\nLeft View no Static");
+		solution.leftView(root, 0, -1);
 	}
 }
