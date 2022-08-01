@@ -26,7 +26,7 @@ public class TopView {
 
 
 
-            if(map.get(hd) == null) map.put(hd, temp.key);
+            if(map.get(hd) == null) map.put(hd, temp.data);
             if(temp.left != null) {
 
                 q.add(new Pair(temp.left, hd - 1));

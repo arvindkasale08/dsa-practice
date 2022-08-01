@@ -1,15 +1,4 @@
-import java.util.HashMap;
-import java.util.Map;
-import java.util.*;
-class Node
-{
-    int key;
-    Node left = null, right = null;
 
-    Node(int key) {
-        this.key = key;
-    }
-}
 
 class LeftView
 {
@@ -20,7 +9,7 @@ class LeftView
             return;
         }
         if (first_node_level < level) {
-            System.out.print(root.key + " ");
+            System.out.print(root.data + " ");
             first_node_level = level;
         }
 

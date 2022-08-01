@@ -6,7 +6,7 @@ class largestElementBST
         if (root == null) {
             return new Node(key);
         }
-        if (key < root.key) {
+        if (key < root.data) {
             root.left = insert(root.left, key);
         }
         else {
@@ -44,7 +44,7 @@ class largestElementBST
         int k = 2;
         Node node = klargest(root, new int[]{k});
         if (node != null) {
-            System.out.println(node.key);
+            System.out.println(node.data);
         }
         else {
             System.out.println("Invalid Input");

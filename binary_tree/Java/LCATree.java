@@ -5,7 +5,7 @@ public class LCATree {
     }
     public static Node lowestCommonAncestor(Node root, int p, int q) {
         //base case
-        if (root == null || root.key == p || root.key == q) {
+        if (root == null || root.data == p || root.data == q) {
             return root;
         }
         Node left = lowestCommonAncestor(root.left, p, q);
@@ -32,7 +32,7 @@ public class LCATree {
         root.right.right = new Node(7);
         Node lca = findLCA(root, 4, 5);
         if (lca != null)
-            System.out.println("LCA(4, 5) = " + lca.key);
+            System.out.println("LCA(4, 5) = " + lca.data);
         else
             System.out.println("Keys are not present");
     }
