@@ -1,12 +1,12 @@
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class StackUsing2Queues {
+public class StackUsing2QueuesBF {
 
     private Queue<Integer> q1; // actual stack
     private Queue<Integer> q2; // for swap
 
-    public StackUsing2Queues() {
+    public StackUsing2QueuesBF() {
         q1 = new LinkedList<>();
         q2 = new LinkedList<>();
     }
@@ -31,7 +31,7 @@ public class StackUsing2Queues {
     }
 
     public static void main(String[] args) {
-        StackUsing2Queues stack = new StackUsing2Queues();
+        StackUsing2QueuesBF stack = new StackUsing2QueuesBF();
         stack.push(1);
         stack.push(2);
         stack.push(3);
