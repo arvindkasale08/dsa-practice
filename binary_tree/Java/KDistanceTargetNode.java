@@ -1,3 +1,13 @@
+class Node {
+   int data;
+   Node left, right;
+
+   public Node(int item)
+   {
+       data = item;
+       left = right = null;
+   }
+}
 public class KDistanceTargetNode {
     public static void percolate(Node root, int k){
         if(root == null || k < 0){
