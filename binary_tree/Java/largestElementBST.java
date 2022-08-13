@@ -21,15 +21,15 @@ class largestElementBST
         if(root==null)
             return null;
 
-        Node right=klargest(root.right,k);
-        if(right!=null)
+        Node right=klargest(root.right, k);
+        if(right != null)
             return right;
         k[0]--;
 
         if(k[0]==0)
             return root;
 
-        return klargest(root.left,k);
+        return klargest(root.left, k);
     }
 
     public static void main(String[] args)

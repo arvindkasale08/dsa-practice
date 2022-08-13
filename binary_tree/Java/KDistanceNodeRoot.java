@@ -6,7 +6,6 @@ public class KDistanceNodeRoot {
         if(k == 0){
             System.out.println(root.data + " ");
             return;
-
         }
         KDistanceNode(root.left, k - 1);
         KDistanceNode(root.right, k - 1);

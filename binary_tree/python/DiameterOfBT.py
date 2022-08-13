@@ -10,7 +10,7 @@ def diameter(root, dia):
     if not root:    return 0, dia
     left, dia = diameter(root.left, dia)
     right, dia = diameter(root.right, dia)
-    dia = max(dia, 1 + left + right)
+    dia = max(dia, left + right)
     return 1 + max(left, right), dia
 
 if __name__=='__main__':
