@@ -1,7 +1,4 @@
-
 import java.util.*;
-
-
 class Node {
    int data;
    Node left, right;
@@ -12,66 +9,73 @@ class Node {
        left = right = null;
    }
 }
-
 public class SerialiseDeserialiseBT {
-    public static String serialize(Node root) {
-        if (root == null) return "";
-        Queue<Node> q = new LinkedList<>();
-        StringBuilder res = new StringBuilder();
-        q.add(root);
-        while (!q.isEmpty()) {
-            Node node = q.poll();
-            if (node == null) {
-                res.append("none ");
-                continue;
-            }
-            res.append(node.data + " ");
-            q.add(node.left);
-            q.add(node.right);
-        }
-        return res.toString();
-    }
-    static void inorder(Node root)
+    static void printPreorder(Node node)
     {
-        if (root != null) {
-            inorder(root.left);
-            System.out.print(root.data + " ");
-            inorder(root.right);
+        if (node == null)
+            return;
+
+        /* first print data of node */
+        System.out.print(node.data + " ");
+
+        /* then recur on left subtree */
+        printPreorder(node.left);
+
+        /* now recur on right subtree */
+        printPreorder(node.right);
+    }
+    public static void preorder(Node root, StringBuilder sb) {
+        if (root == null) {
+            sb.append("n" + "/");
+            return;
         }
+        sb.append(root.data + "/");
+        preorder(root.left, sb);
+        preorder(root.right, sb);
+    }
+
+    public static String serialize(Node root) {
+        StringBuilder sb = new StringBuilder("");
+        preorder(root, sb);
+        return sb.toString();
+    }
+    public static Node constructTree(String preorder[], int index[], int end) {
+        if (index[0] > end) return null;
+        if (preorder[index[0]].equals("n")) {
+            index[0] += 1;
+            return null;
+        }
+        Node root = new Node(Integer.parseInt(preorder[index[0]]));
+        index[0] += 1;
+        root.left = constructTree(preorder, index, end);
+        root.right = constructTree(preorder, index, end);
+        return root;
     }
 
     public static Node deserialize(String data) {
-        if (data == "") return null;
-        Queue<Node> q = new LinkedList<>();
-        String[] values = data.split(" ");
-        Node root = new Node(Integer.parseInt(values[0]));
-        q.add(root);
-        for (int i = 1; i < values.length; i++) {
-            Node parent = q.poll();
-            if (!values[i].equals("none")) {
-                Node left = new Node(Integer.parseInt(values[i]));
-                parent.left = left;
-                q.add(left);
-            }
-            if (!values[++i].equals("none")) {
-                Node right = new Node(Integer.parseInt(values[i]));
-                parent.right = right;
-                q.add(right);
-            }
-        }
+        String preorder[] = data.split("/");
+        Node root = constructTree(preorder, new int[1], preorder.length - 1);
         return root;
     }
     public static void main(String args[])
     {
         // Let us construct a tree shown in the above figure
 
-        Node root = new Node(20);
-        root.left = new Node(8);
-        root.right = new Node(22);
-        root.left.left = new Node(4);
-        root.left.right = new Node(12);
-        root.left.right.left = new Node(10);
-        root.left.right.right = new Node(14);
+        Node root = new Node(4);
+        root.left = new Node(-7);
+        root.right = new Node(-3);
+        root.right.left = new Node(-9);
+        root.right.right = new Node(-3);
+        root.right.left.left = new Node(9);
+        root.right.left.right = new Node(-7);
+        root.right.right = new Node(-4);
+        root.right.left.left.left = new Node(6);
+        root.right.left.left.left.left = new Node(0);
+        root.right.left.left.left.right = new Node(6);
+        root.right.left.right.left = new Node(-6);
+        root.right.left.right.left.left = new Node(-6);
+        root.right.left.right.right = new Node(-6);
+        root.right.left.right.right.left = new Node(-6);
 
         String serialized = serialize(root);
         System.out.println("Serialized view of the tree:");
@@ -81,8 +85,8 @@ public class SerialiseDeserialiseBT {
         // Let us deserialize the stored tree into root1
         Node t = deserialize(serialized);
 
-        System.out.println("Inorder Traversal of the tree constructed from serialized String:");
-        inorder(t);
+        System.out.println("Preorder Traversal of the tree constructed from serialized String:");
+        printPreorder(t);
     }
 
 }
