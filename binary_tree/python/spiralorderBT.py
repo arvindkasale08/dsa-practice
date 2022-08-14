@@ -6,7 +6,6 @@ class Node:
         self.left = self.right = None
 
 def spiral_order(root):
-    front = True
     s1 = [root]
     s2 = []
     traverse = []

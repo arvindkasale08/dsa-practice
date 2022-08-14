@@ -46,7 +46,7 @@ public class KDistanceTargetNode {
                 System.out.println(root.data + " ");
             }
             else{
-                percolate(root.left, k -right -2);
+                percolate(root.left, k -right - 2);
             }
 
             return right + 1;
