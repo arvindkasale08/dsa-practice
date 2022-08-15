@@ -29,8 +29,9 @@ public class ConstructBTPostorder {
             hm.put(inorder[i], i);
         return buildTreePostIn(inorder, 0, inorder.length-1, postorder, 0, postorder.length-1,hm);
     }
+    
     private static Node buildTreePostIn(int[] inorder, int is, int ie, int[] postorder,
-                                     int ps, int pe,HashMap<Integer,Integer> hm){
+                                     int ps, int pe, HashMap<Integer,Integer> hm){
         if (ps>pe || is>ie) return null;
         Node root = new Node(postorder[pe]);
         int ri = hm.get(postorder[pe]);
