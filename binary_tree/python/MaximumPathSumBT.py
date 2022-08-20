@@ -1,19 +1,16 @@
-max_sum = 0
-
 class Node:
     def __init__(self, val):
         self.val = val
         self.left = self.right = None
 
-def max_path_sum(root):
-    global max_sum
-    if not root:    return 0
-    left_sum = max_path_sum(root.left)
-    right_sum = max_path_sum(root.right)
+def max_path_sum(root, max_sum):
+    if not root:    return 0, max_sum
+    left_sum, max_sum = max_path_sum(root.left, max_sum)
+    right_sum, max_sum = max_path_sum(root.right, max_sum)
     max_single_sum = max(root.val, root.val + left_sum, root.val + right_sum)
     max_top = max(max_single_sum, root.val + left_sum + right_sum)
     max_sum = max(max_sum, max_top)
-    return max_single_sum
+    return max_single_sum, max_sum
 
 if __name__=='__main__':
     root = Node(10) 
@@ -26,5 +23,5 @@ if __name__=='__main__':
     root.right.right = Node(-25)
     root.right.right.left = Node(3)
     root.right.right.right = Node(4)
-    max_path_sum(root)
+    _, max_sum = max_path_sum(root, 0)
     print(max_sum)
