@@ -17,8 +17,6 @@ public class Histogram {
                 pstack.push(Math.min(i, last_width));
                 hstack.push(heights[i]);
             }
-
-
         }
         return maxArea;
     }
@@ -27,6 +25,4 @@ public class Histogram {
         int hei [] = {6, 2, 5, 4, 5, 1, 6};
         System.out.println("Res: " + getMaxArea(hei, hei.length));
     }
-
-
 }

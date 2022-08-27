@@ -1,3 +1,6 @@
+# Time: O(n)
+# Space: O(n + n) ~ O(n)
+
 def histogram_problem(heights):
     heights.append(0)
     h = len(heights)
