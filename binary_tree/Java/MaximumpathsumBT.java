@@ -1,13 +1,4 @@
-class Node {
-   int data;
-   Node left, right;
 
-   public Node(int item)
-   {
-       data = item;
-       left = right = null;
-   }
-}
 public class MaximumpathsumBT {
     public static int maxPathSum(Node root) {
         int maxValue[] = new int[1];

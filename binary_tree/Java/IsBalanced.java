@@ -7,8 +7,8 @@ public class IsBalanced {
     public static int maxDepth(Node root, boolean[] result) {
         if (root == null)
             return 0;
-        int l = maxDepth(root.left);
-        int r = maxDepth(root.right);
+        int l = maxDepth(root.left, result);
+        int r = maxDepth(root.right, result);
         if (Math.abs(l - r) > 1)
             result[0] = false;
         return 1 + Math.max(l, r);
@@ -22,8 +22,8 @@ public class IsBalanced {
         root.left.right = new Node(5);
         root.left.left.left = new Node(8);
 
-        boolean result = new boolean[]{true};
-        int _ = maxDepth(root, result);
+        boolean[] result = new boolean[]{true};
+        int x = maxDepth(root, result);
         if (result[0] == true)
         {
             System.out.println("Binary tree is balanced");

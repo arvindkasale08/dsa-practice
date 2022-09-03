@@ -1,14 +1,4 @@
 
-class Node {
-   int data;
-   Node left, right;
-
-   public Node(int item)
-   {
-       data = item;
-       left = right = null;
-   }
-}
 public class ConvertSumTree {
     Node root;
     static int toSumTree(Node node)
