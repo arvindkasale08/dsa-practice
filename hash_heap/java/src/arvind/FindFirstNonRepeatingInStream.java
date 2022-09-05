@@ -15,7 +15,7 @@ public class FindFirstNonRepeatingInStream {
         }
     }
 
-    private Map<Character, Node> map = new HashMap<>();
+    private Map<Character, Node> map;
     Node head, tail;
 
     public FindFirstNonRepeatingInStream() {
