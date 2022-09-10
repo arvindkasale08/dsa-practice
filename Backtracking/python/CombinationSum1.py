@@ -9,5 +9,5 @@ def combinationSum(arr, target):
     res = []
     ans = []
     combination_s(arr, target, res)
-    return (ans)
+    return ans
 print(combinationSum([2,3,6,7], 7))
