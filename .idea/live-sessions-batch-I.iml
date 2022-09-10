@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/binary_tree/Java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/linked-list/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/hash_heap/java/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Backtracking/java" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
