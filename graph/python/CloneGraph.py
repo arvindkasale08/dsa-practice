@@ -19,7 +19,7 @@ def bfs(node):
             graph[node.val].append(neighbor.val)
     return graph
 
-def cloneGraph(root: 'Node') -> 'Node':
+def cloneGraph(root):
     if not root:    return root
     seen = defaultdict(int)
     seen[root] = Node(root.val)
