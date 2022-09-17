@@ -4,8 +4,8 @@ def combinationSum3(k, n):
             res.append(arr[:])
             return
         for i in range(len(nums)):
-            if i and nums[i] == nums[i - 1]:
-                continue
+            # if i and nums[i] == nums[i - 1]:
+            #     continue
             if nums[i] > n or k < 0:
                 break
             comb_sum_III(nums[i + 1:], arr + [nums[i]], k - 1, n - nums[i])
