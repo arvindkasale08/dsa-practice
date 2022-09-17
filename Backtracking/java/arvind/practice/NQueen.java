@@ -49,7 +49,7 @@ public class NQueen {
 
     public static void main(String[] args) {
         NQueen solution = new NQueen();
-        int n = 2;
+        int n = 8;
         char[][] board = new char[n][n];
         List<char[][]> boards = new ArrayList<>();
         initializeBoard(board);
