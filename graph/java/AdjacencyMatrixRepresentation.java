@@ -9,7 +9,7 @@ class GraphAjdacencyMatrix {
 
     public void addEdge(int source, int destination) {
         //add edge
-        matrix[source][destination]=1;
+        matrix[source][destination] = 1;
 
         //add bak edge for undirected graph
         matrix[destination][source] = 1;
