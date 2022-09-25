@@ -9,7 +9,7 @@ public class LargestRegion {
         int m = matrix.length;
         int n = matrix[0].length;
         int[][] visited = new int[m][n];
-        int area = Integer.MIN_VALUE;
+        int area = 0;
 
         for (int i=0; i<m; i++) {
             for (int j=0; j<n; j++) {
