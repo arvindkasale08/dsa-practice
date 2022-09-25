@@ -14,7 +14,7 @@ public class LargestRegion {
         for (int i=0; i<m; i++) {
             for (int j=0; j<n; j++) {
                 if (visited[i][j] == 0 && matrix[i][j] == 1) {
-                    visited[i][j] = 0;
+                    visited[i][j] = 1;
                     area = Math.max(bfs(matrix, i, j, m, n, visited), area);
                 }
             }
@@ -28,7 +28,7 @@ public class LargestRegion {
 
         int[] DIR_I = {-1, -1, -1, 0, 1, 0, 1, 1};
         int[] DIR_J = {-1, 1, 0, -1, -1, 1, 0, 1};
-        int area = 0;
+        int area = 1;
 
         while (!queue.isEmpty()) {
             int[] cell = queue.poll();
@@ -41,7 +41,7 @@ public class LargestRegion {
                 if (new_I > -1 && new_I < m && new_J > -1 && new_J < n && matrix[new_I][new_J] == 1 && visited[new_I][new_J] == 0) {
                     visited[new_I][new_J] = 1;
                     area += 1;
-                    bfs(matrix, i, j, m, n, visited);
+                    queue.offer(new int[] {new_I, new_J});
                 }
             }
         }
