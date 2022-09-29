@@ -6,10 +6,20 @@ public class IsBipartiteBFS {
 
     public boolean check(int[][] graph) {
         int size = graph.length;
-        Queue<int[]> queue = new LinkedList<>();
         int[] visited = new int[size];
+        for (int i=0; i<size; i++) {
+            if (visited[i] == 0) {
+                if (!bfs(graph, i, visited)) return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean bfs(int[][] graph, int node, int[] visited) {
+        Queue<int[]> queue = new LinkedList<>();
         // 1 -> blue -1 -> red 0 -> not seen
-        queue.offer(new int[] {0, 1});
+        queue.offer(new int[] {node, 1});
         visited[0] = 1; // mark first blue;
 
         while (!queue.isEmpty()) {
@@ -33,7 +43,10 @@ public class IsBipartiteBFS {
     }
 
     public static void main(String[] args) {
-        int[][] graph =  new int[][]{ {1,3}, {0,2}, {1,3},{0,2} };
+        //int[][] graph =  new int[][]{ {1,3}, {0,2}, {1,3},{0,2} };
+
+        //int[][] graph = new int[][] {{},{2,4,6},{1,4,8,9},{7,8},{1,2,8,9},{6,9},{1,5,7,8,9},{3,6,9},{2,3,4,6,9},{2,4,5,6,7,8}};
+        int[][] graph = new int[][] {{1,3}, {0,2}, {1,3}, {0, 2}};
         IsBipartiteBFS bfs = new IsBipartiteBFS();
         boolean isBipartite = bfs.check(graph);
         System.out.println(isBipartite);
