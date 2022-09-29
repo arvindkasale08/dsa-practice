@@ -2,12 +2,12 @@ package arvind;
 
 import java.util.*;
 
-public class KahnAlgorithm {
+public class TopoSortBFSKahnAlgorithm {
 
     private int size;
     private Map<Integer, List<Integer>> graph;
 
-    public KahnAlgorithm(int size) {
+    public TopoSortBFSKahnAlgorithm(int size) {
         this.size = size;
         this.graph = new HashMap<>();
         for (int i=0; i<size; i++) {
@@ -52,7 +52,7 @@ public class KahnAlgorithm {
     }
 
     public static void main(String[] args) {
-        KahnAlgorithm solution = new KahnAlgorithm(6);
+        TopoSortBFSKahnAlgorithm solution = new TopoSortBFSKahnAlgorithm(6);
         solution.addEdge(5, 0);
         solution.addEdge(4, 0);
         solution.addEdge(4, 1);
