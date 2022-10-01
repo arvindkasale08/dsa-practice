@@ -16,17 +16,36 @@ public class TrieImplementation {
         curr.isEnd = true;
     }
 
+    public boolean delete(String word) {
+        Node curr = getLast(word);
+        if (curr == null || !curr.isEnd ) {
+            return false; // word not found hence was not deleted;
+        }
+        curr.isEnd = false;
+        return true;
+    }
+
+    public void update(String oldWord, String newWord) {
+        delete(oldWord);
+        insert(newWord);
+    }
+
     public boolean search(String word) {
         Node curr = getLast(word);
         return curr != null && curr.isEnd;
+    }
+
+    public boolean startsWith(String prefix) {
+        Node curr = getLast(prefix);
+        return curr != null;
     }
 
     private Node getLast(String word) {
         Node curr = root;
         for (char c : word.toCharArray()) {
             int index = c - 'a';
-            if (root.children[index] == null) return null;
-            curr = root.children[index];
+            if (curr.children[index] == null) return null;
+            curr = curr.children[index];
         }
         return curr;
     }
@@ -52,7 +71,16 @@ public class TrieImplementation {
         trie.insert("logicmojo");
         trie.insert("logo");
         trie.insert("large");
-        System.out.println(trie);
+
+        System.out.println(trie.search("logic")); // true
+        trie.delete("logic");
+        trie.delete("logics");
+        System.out.println(trie.search("logic"));
+        System.out.println(trie.search("logo"));
+        System.out.println(trie.search("pogo"));
+        trie.update("logo", "pogo");
+        System.out.println(trie.search("logo"));
+        System.out.println(trie.search("pogo"));
     }
 
 }
