@@ -2,6 +2,7 @@ package arvind;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class SCCKosaRaju {
 
@@ -21,14 +22,72 @@ public class SCCKosaRaju {
         this.graph.get(src).add(dest);
     }
 
+    private void topo(List<List<Integer>> graph, int[] visited, int vertex, Stack<Integer> stack) {
+        visited[vertex] = 1;
+        for (Integer neighbor : graph.get(vertex)) {
+            if (visited[neighbor] == 0) {
+                visited[neighbor] = 1;
+                topo(graph, visited, neighbor, stack);
+            }
+        }
+        stack.push(vertex);
+    }
+
     public List<List<Integer>> findScc(int size, List<List<Integer>> graph) {
         // toposort karo dfs se using stack...
+        Stack<Integer> stack = new Stack<>();
+        int[] visited = new int[size];
+        List<List<Integer>> results = new ArrayList<>();
 
+        for (int i=0; i< size; i++) {
+            if (visited[i] == 0) {
+                topo(graph, visited, i, stack);
+            }
+        }
+        System.out.println(stack);
 
         // find transpose
+        List<List<Integer> > transpose = new ArrayList();
+
+        for (int i = 0; i < size; i++)
+            transpose.add(new ArrayList<Integer>());
+
+        for(int i = 0;i<size;i++) {
+            visited[i] = 0;
+            for(Integer it: graph.get(i)) {
+                transpose.get(it).add(i);
+            }
+        }
+
+        System.out.println(transpose);
 
         // do rev dfs using stack elements as input (pop stack)
 
+        while(!stack.isEmpty()) {
+            int vertex = stack.pop();
+            List<Integer> list = new ArrayList<>();
+            if (visited[vertex] == 0) {
+                list.add(vertex);
+                visited[vertex] = 1;
+                dfs(transpose, vertex, list, visited);
+            }
+            if (!list.isEmpty()) {
+                results.add(list);
+            }
+        }
+
+        return results;
+    }
+
+    private void dfs(List<List<Integer>> transpose, int vertex, List<Integer> list, int[] visited) {
+        visited[vertex] = 1;
+        for (Integer neighbor : transpose.get(vertex)) {
+            if (visited[neighbor] == 0) {
+                visited[neighbor] = 1;
+                list.add(neighbor);
+                dfs(transpose, neighbor, list, visited);
+            }
+        }
     }
 
     public static void main(String[] args) {
