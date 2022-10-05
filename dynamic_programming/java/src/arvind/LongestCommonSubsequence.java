@@ -2,6 +2,7 @@ package arvind;
 
 public class LongestCommonSubsequence {
 
+	// Tabulation solution
 	private int findLcs(String s1, String s2) {
 		char[] w1 = s1.toCharArray();
 		char[] w2 = s2.toCharArray();
