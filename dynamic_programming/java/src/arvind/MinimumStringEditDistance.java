@@ -5,6 +5,12 @@ public class MinimumStringEditDistance {
     public int findMinimumDistance(String s1, String s2) {
         char[] ch1 = s1.toCharArray();
         char[] ch2 = s2.toCharArray();
+
+        if (ch1.length == 0)
+            return ch2.length;
+        if (ch2.length == 0)
+            return ch1.length;
+
         int[][] dp = new int[ch2.length + 1][ch1.length + 1];
 
         for (int i=0; i<dp.length; i++) {
@@ -29,8 +35,8 @@ public class MinimumStringEditDistance {
 
     public static void main(String[] args) {
         MinimumStringEditDistance solution = new MinimumStringEditDistance();
-        String s1 = "SUNDAY";
-        String s2 = "SATURDAY";
+        String s1 = "a";
+        String s2 = "b";
 
         int dist = solution.findMinimumDistance(s1, s2);
         System.out.println(dist);
