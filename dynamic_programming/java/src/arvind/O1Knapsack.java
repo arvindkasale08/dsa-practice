@@ -20,10 +20,13 @@ public class O1Knapsack {
 
     public static void main(String[] args) {
         O1Knapsack solution = new O1Knapsack();
-        int[] weights = {1, 2, 3};
+        /* int[] weights = {1, 2, 3};
         int[] values = {6, 10, 12};
         int capacity = 5;
-
+*/
+        int[] weights = {30, 10, 40, 20};
+        int[] values = {10,20,30,40};
+        int capacity = 40;
         int stolenvalue = solution.find(weights, values, capacity);
         System.out.println(stolenvalue);
     }
