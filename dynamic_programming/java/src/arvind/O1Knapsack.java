@@ -24,9 +24,14 @@ public class O1Knapsack {
         int[] values = {6, 10, 12};
         int capacity = 5;
 */
-        int[] weights = {30, 10, 40, 20};
+        /*int[] weights = {30, 10, 40, 20};
         int[] values = {10,20,30,40};
         int capacity = 40;
+        */
+
+        int[] weights = {1, 50};
+        int[] values = {1, 30};
+        int capacity = 100;
         int stolenvalue = solution.find(weights, values, capacity);
         System.out.println(stolenvalue);
     }
