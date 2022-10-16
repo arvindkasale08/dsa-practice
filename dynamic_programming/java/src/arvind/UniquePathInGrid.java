@@ -42,9 +42,9 @@ public class UniquePathInGrid {
 
     public static void main(String[] args) {
         UniquePathInGrid solution = new UniquePathInGrid();
-        int m = 3, n = 7;
-        int result = solution.countWays(3, 7);
-        int result2 = solution.tabCountWays(3, 7);
+        int m = 2, n = 2;
+        int result = solution.countWays(m, n);
+        int result2 = solution.tabCountWays(m, n);
         System.out.println(result);
         System.out.println(result2);
     }
