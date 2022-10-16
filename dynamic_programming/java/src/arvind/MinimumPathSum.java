@@ -25,6 +25,35 @@ public class MinimumPathSum {
         return dp[i][j] = Math.min(left, up);
     }
 
+    public int minPathTab(int[][] maze) {
+        int m = maze.length;
+        int n = maze[0].length;
+        int dp[][] = new int[m][n];
+
+        // add the base cases
+        dp[0][0] = maze[0][0];
+        // populate the first row
+        for (int i=1; i<n; i++) {
+            dp[0][i] = dp[0][i-1] + maze[0][i];
+        }
+
+        // populate the first column
+        for (int i=1; i<m; i++) {
+            dp[i][0] = dp[i-1][0] + maze[i][0];
+        }
+
+        for (int i=1; i< m; i++) {
+            for (int j=1; j<n; j++) {
+                int left = dp[i][j-1] + maze[i][j];
+                int up = dp[i-1][j] + maze[i][j];
+
+                dp[i][j] = Math.min(left, up);
+            }
+        }
+
+        return dp[dp.length-1][dp[0].length - 1];
+    }
+
     public static void main(String[] args) {
         MinimumPathSum solution = new MinimumPathSum();
         int[][] maze = new int[][] {
@@ -33,6 +62,8 @@ public class MinimumPathSum {
                 {4, 2, 1}
         };
         int minSum = solution.minPath(maze);
+        int minSum2 = solution.minPathTab(maze);
         System.out.println(minSum);
+        System.out.println(minSum2);
     }
 }
