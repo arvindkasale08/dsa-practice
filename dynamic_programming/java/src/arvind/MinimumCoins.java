@@ -35,11 +35,42 @@ public class MinimumCoins {
 		return dp[index][target] = Math.min(dontpick, take);
 	}
 
+	public int findMinimumCoinsTab(int[] arr, int t) {
+		int n = arr.length;
+		int[][] dp = new int[n][t+1];
+		int max = 1000000;
+
+		for (int j=0; j<dp[0].length; j++) {
+			if (j % arr[0] == 0) {
+				dp[0][j] = j / arr[0];
+			} else {
+				dp[0][j] = 1000000;
+			}
+		}
+
+		for (int i=1; i<dp.length; i++) {
+			for (int j=0; j<dp[0].length; j++) {
+				int notTake = 0 + dp[i-1][j];
+				int take = Integer.MAX_VALUE;
+				if(arr[i]<=j)
+					take = 1 + dp[i][j - arr[i]];
+
+				dp[i][j] = Math.min(notTake, take);
+			}
+		}
+
+		int ans = dp[n-1][t];
+		if(ans >=1000000) return -1;
+		return ans;
+	}
+
 	public static void main(String[] args) {
 		MinimumCoins solution = new MinimumCoins();
 		int[] arr = {1, 2, 3};
 		int target = 7;
 		int result = solution.findMinimumCoins(arr, target);
+		int result2 = solution.findMinimumCoinsTab(arr, target);
 		System.out.println(result);
+		System.out.println(result2);
 	}
 }
