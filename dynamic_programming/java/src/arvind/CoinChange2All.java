@@ -2,7 +2,7 @@ package arvind;
 
 import java.util.Arrays;
 
-public class CoinChange2Striver {
+public class CoinChange2All {
 
 	public int countWays(int[] arr, int target) {
 		int n = arr.length;
@@ -66,7 +66,7 @@ public class CoinChange2Striver {
 	}
 
 	public static void main(String[] args) {
-		CoinChange2Striver solution = new CoinChange2Striver();
+		CoinChange2All solution = new CoinChange2All();
 		int[] arr = {1, 2, 5};
 		int target = 5;
 		int result = solution.countWays(arr, target);
