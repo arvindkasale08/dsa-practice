@@ -34,7 +34,8 @@ public class LongestCommonSubsequenceAll {
 		int n = s2.length();
 		int[][] dp = new int[m + 1][n + 1];
 
-		// add the base cases
+		// add the base cases - as base case was init to zero nothing was done
+
 		for (int i1=1; i1<dp.length; i1++) {
 			for (int i2=1; i2<dp[0].length; i2++) {
 				if (s1.charAt(i1-1) == s2.charAt(i2-1))
