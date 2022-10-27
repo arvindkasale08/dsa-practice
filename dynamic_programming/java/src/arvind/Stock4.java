@@ -33,11 +33,36 @@ public class Stock4 {
 		}
 	}
 
+	public int findMaxProfitTab(int[] arr, int k) {
+		int n = arr.length;
+		int[][][] dp = new int[n+1][k+1][2];
+
+		for (int index=n-1; index>=0; index--) {
+			for (int cap=1; cap<=k; cap++) {
+				for (int canBuy = 0; canBuy <= 1; canBuy++) {
+					if (canBuy == 1) {
+						int doNothing = 0 + dp[index + 1][cap][1];
+						int buy = - arr[index] + dp[index + 1][cap][0];
+						dp[index][cap][canBuy] = Math.max(doNothing, buy);
+					} else {
+						int doNothing = 0 + dp[index + 1][cap][0];
+						int sell = arr[index] + dp[index + 1][cap - 1][1];
+						dp[index][cap][canBuy] = Math.max(doNothing, sell);
+					}
+				}
+			}
+		}
+
+		return dp[0][k][1];
+	}
+
 	public static void main(String[] args) {
 		Stock4 solution = new Stock4();
 		int[] arr = {3, 2, 6, 5, 0, 3};
 		int k = 2;
 		int maxProfit = solution.findMaxProfit(arr, k);
+		int maxProfit2 = solution.findMaxProfitTab(arr, k);
 		System.out.println(maxProfit);
+		System.out.println(maxProfit2);
 	}
 }
