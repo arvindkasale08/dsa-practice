@@ -3,7 +3,7 @@ package arvind.striver;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DetectCycleInDirectedGraphDFS {
+public class CycleInDirectedGraphDFS {
 
 	public boolean hasCycle(int V, int[][] edges) {
 		List<List<Integer>> graph = new ArrayList<>();
@@ -43,7 +43,7 @@ public class DetectCycleInDirectedGraphDFS {
 	}
 
 	public static void main(String[] args) {
-		DetectCycleInDirectedGraphDFS solution = new DetectCycleInDirectedGraphDFS();
+		CycleInDirectedGraphDFS solution = new CycleInDirectedGraphDFS();
 		int V = 5;
 		int[][] edges = new int[][] {
 			{1, 2},
