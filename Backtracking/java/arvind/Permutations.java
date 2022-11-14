@@ -7,15 +7,16 @@ import java.util.stream.Collectors;
 
 public class Permutations {
 
-    public List<List<Integer>> permute(int[] nums) {
-        List<List<Integer>> results = new ArrayList<>();
+    public ArrayList<ArrayList<Integer>> permute(Integer[] nums) {
+        ArrayList<ArrayList<Integer>> results = new ArrayList<>();
         permute(nums, 0, nums.length, results);
         return results;
     }
 
-    public void permute(int[] nums, int start, int n, List<List<Integer>> results) {
+    public void permute(Integer[] nums, int start, int n, ArrayList<ArrayList<Integer>> results) {
         if (start == n) {
-            results.add(Arrays.stream(nums).boxed().collect(Collectors.toList()));
+            ArrayList<Integer> collect = (ArrayList<Integer>) Arrays.stream(nums).collect(Collectors.toList());
+            results.add(collect);
         }
 
         for (int j=start; j<n; j++) {
@@ -25,7 +26,7 @@ public class Permutations {
         }
     }
 
-    private void swap(int[] nums, int a, int b) {
+    private void swap(Integer[] nums, int a, int b) {
         int temp = nums[a];
         nums[a] = nums[b];
         nums[b] = temp;
@@ -33,8 +34,8 @@ public class Permutations {
 
     public static void main(String[] args) {
         Permutations solution = new Permutations();
-        int[] nums = {1, 2, 3};
-        List<List<Integer>> result = solution.permute(nums);
+        Integer[] nums = {1, 2, 3};
+        ArrayList<ArrayList<Integer>> result = solution.permute(nums);
         System.out.println(result);
     }
 }
