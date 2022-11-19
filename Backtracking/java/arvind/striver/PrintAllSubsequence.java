@@ -24,7 +24,7 @@ public class PrintAllSubsequence {
 
     public static void main(String[] args) {
         PrintAllSubsequence solution = new PrintAllSubsequence();
-        int[] arr = {3, 2, 1};
+        int[] arr = {1, 2, 3};
         List<List<Integer>> result = solution.printAllSubsequence(arr);
         System.out.println(result);
     }
