@@ -27,8 +27,8 @@ public class CombinationSumI {
 
     public static void main(String[] args) {
         CombinationSumI solution = new CombinationSumI();
-        int[] candidates = {2, 3, 5};
-        int target = 8;
+        int[] candidates = {1, 2, 3};
+        int target = 4;
         List<List<Integer>> result = solution.findCombinations(candidates, target);
         System.out.println(result);
     }
