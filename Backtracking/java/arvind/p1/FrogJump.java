@@ -20,7 +20,7 @@ public class FrogJump {
 
     public static void main(String[] args) {
         FrogJump solution = new FrogJump();
-        int h = 7;
+        int h = 10;
         int days = solution.findDays(h);
         System.out.println(days);
     }
