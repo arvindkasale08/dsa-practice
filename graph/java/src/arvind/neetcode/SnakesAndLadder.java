@@ -48,8 +48,8 @@ public class SnakesAndLadder {
 
     private int[] getIJ(int x, int m) {
         boolean flipped = false;
-        int i = 0;
-        int j = 0;
+        int i;
+        int j;
         if (x % m == 0) {
             i = m - (x / m);
         } else {
@@ -63,11 +63,6 @@ public class SnakesAndLadder {
         } else {
             j = flipped ? (m-1) - (x%m-1): (x % m) - 1;
         }
-        /*if (x % m == 0) {
-            return new int[]{m - (x / m), m - 1};
-        } else {
-            return new int[]{m - 1 - (x / m), (x % m) - 1};
-        }*/
         return new int[] {i, j};
     }
 
