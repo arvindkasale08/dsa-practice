@@ -14,6 +14,7 @@ public class EventualSafeStatesTopoSort {
 		for (int i=0; i<V; i++) {
 			graph.add(i, new ArrayList<>());
 		}
+		// reverse edges
 		for (int[] edge : edges) {
 			graph.get(edge[1]).add(edge[0]);
 			indegree[edge[0]]+=1;
