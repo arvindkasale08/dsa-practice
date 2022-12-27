@@ -10,6 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/graph/java/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/dynamic_programming/java/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Tries/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/dailyChallenge/java/src" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
