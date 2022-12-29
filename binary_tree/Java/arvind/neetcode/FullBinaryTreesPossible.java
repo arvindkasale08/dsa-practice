@@ -1,39 +1,41 @@
 package arvind.neetcode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FullBinaryTreesPossible {
 
 	public List<TreeNode> possible(int n) {
-		List<TreeNode> result = new ArrayList<>();
-		if (n == 0 || n % 2 == 0)
-			return result;
-		possibleCombinations(n, result, true);
-		return result;
+		return possibleCombinations(n);
 	}
 
-	private TreeNode possibleCombinations(int n, List<TreeNode> result, boolean first) {
+	private List<TreeNode> possibleCombinations(int n) {
 		if (n == 1)
-			return new TreeNode(0);
+			return Arrays.asList(new TreeNode(0));
 		if (n <= 0)
-			return null;
+			return new ArrayList<>();
 
+		List<TreeNode> result = new ArrayList<>();
 		int i = 1;
 		n = n-1; // use up 1 for root
 		while (i <= n) {
-			TreeNode root = new TreeNode(0);
 			int left = i;
 			int right = n - i;
-			root.left = possibleCombinations(left, result, false);
-			root.right = possibleCombinations(right, result, false);
-			i+=2;
-			if (first)
-				result.add(root);
-			else
-				return root;
+			List<TreeNode> leftTree = possibleCombinations(left);
+			List<TreeNode> rightTree = possibleCombinations(right);
+			i+=1;
+
+			for (TreeNode lt : leftTree) {
+				for (TreeNode rt : rightTree) {
+					TreeNode root = new TreeNode(0);
+					root.left = lt;
+					root.right = rt;
+					result.add(root);
+				}
+			}
 		}
-		return null;
+		return result;
 	}
 
 	public static void main(String[] args) {
