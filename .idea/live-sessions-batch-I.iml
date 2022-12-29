@@ -11,6 +11,7 @@
       <sourceFolder url="file://$MODULE_DIR$/dynamic_programming/java/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Tries/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/dailyChallenge/java/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/greedy/java/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/intervals/java" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
