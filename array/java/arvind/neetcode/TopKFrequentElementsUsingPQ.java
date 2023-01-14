@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-public class TopKFrequentElements {
+public class TopKFrequentElementsUsingPQ {
 
     class Node {
         int val;
@@ -35,7 +35,7 @@ public class TopKFrequentElements {
     }
 
     public static void main(String[] args) {
-        TopKFrequentElements solution = new TopKFrequentElements();
+        TopKFrequentElementsUsingPQ solution = new TopKFrequentElementsUsingPQ();
         int[] nums = {1, 1, 1, 2, 2, 3};
         int k = 2;
         int[] result = solution.topKFrequent(nums, k);
