@@ -32,7 +32,7 @@ public class MedianOf2SortedArrays {
                 }
             }
 
-            String result = isEven ? String. format("%.1f", (float)(low + high) / 2.0) : String.format("%.1f", low/1.0);
+            String result = isEven ? String. format("%.1f", (float)(low + high) / 2.0) : String.format("%.1f", high/1.0);
 
             return result;
     }
