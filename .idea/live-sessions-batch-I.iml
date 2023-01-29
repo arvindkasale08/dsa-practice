@@ -15,6 +15,7 @@
       <sourceFolder url="file://$MODULE_DIR$/intervals/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/binary-search/arvind/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/two-pointers/arvind/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/sliding-window/java" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
