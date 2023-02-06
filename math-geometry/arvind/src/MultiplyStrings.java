@@ -29,6 +29,9 @@ public class MultiplyStrings {
                 }
                 rIdx -= 1;
             }
+            if (carry > 0) {
+                res[rIdx] = carry;
+            }
             offset += 1;
         }
 
@@ -50,8 +53,8 @@ public class MultiplyStrings {
 
     public static void main(String[] args) {
         MultiplyStrings solution = new MultiplyStrings();
-        String num1 = "9";
-        String num2 = "9";
+        String num1 = "999";
+        String num2 = "999";
         String output = solution.multiply(num1, num2);
         System.out.println(output);
     }
