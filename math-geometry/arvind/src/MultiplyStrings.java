@@ -1,6 +1,10 @@
 public class MultiplyStrings {
 
     public String multiply(String num1, String num2) {
+        if (num1.equals("") || num2.equals("")) {
+            return "0";
+        }
+
         int m = num1.length();
         int n = num2.length();
         int[] res = new int[m+n];
@@ -31,6 +35,11 @@ public class MultiplyStrings {
             }
             if (carry > 0) {
                 res[rIdx] = carry;
+                carry = 0;
+            }
+            if (sumCarry > 0) {
+                res[rIdx] += sumCarry;
+                sumCarry = 0;
             }
             offset += 1;
         }
