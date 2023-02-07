@@ -14,6 +14,42 @@ public class MergeTwoSortedLists {
             return list1;
         }
 
+        ListNode ptr = null;
+
+        if (list1.val < list2.val) {
+            head = list1;
+            ptr = list1;
+            list1 = list1.next;
+        } else {
+            head = list2;
+            ptr = list2;
+            list2 = list2.next;
+        }
+
+        while (list1 != null && list2 != null) {
+            if (list1.val < list2.val) {
+                ptr.next = list1;
+                list1 = list1.next;
+                ptr = ptr.next;
+            } else {
+                ptr.next = list2;
+                list2 = list2.next;
+                ptr = ptr.next;
+            }
+        }
+
+        if (list1 == null) {
+            if (list2 != null) {
+                ptr.next = list2;
+            }
+        }
+
+        if (list2 == null) {
+            if (list1 != null) {
+                ptr.next = list1;
+            }
+        }
+
         return head;
     }
 
