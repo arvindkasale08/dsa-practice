@@ -1,4 +1,4 @@
-package leetcode;
+package neetcode;
 
 public class MaximumProductSubArray {
 
