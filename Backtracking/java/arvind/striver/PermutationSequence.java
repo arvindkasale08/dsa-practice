@@ -46,8 +46,8 @@ public class PermutationSequence {
 
     public static void main(String[] args) {
         PermutationSequence solution = new PermutationSequence();
-        int n = 4;
-        int k = 9;
+        int n = 3;
+        int k = 3;
         String result = solution.findKthSequence(n, k);
         System.out.println(result);
     }

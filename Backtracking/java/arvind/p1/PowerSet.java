@@ -26,7 +26,7 @@ public class PowerSet {
 
 	public static void main(String[] args) {
 		PowerSet solution = new PowerSet();
-		int[] arr = {1, 1, 2, 3};
+		int[] arr = {1, 2, 3};
 		List<List<Integer>> result = solution.find(arr);
 		System.out.println(result);
 	}
