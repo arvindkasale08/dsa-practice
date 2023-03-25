@@ -1,3 +1,6 @@
+import java.util.HashSet;
+import java.util.Set;
+
 public class CountDistinctSubstrings {
 
 	Node root = new Node('\0');
@@ -42,10 +45,29 @@ public class CountDistinctSubstrings {
 		return count;
 	}
 
+	public int countDistinctSubstrings2(String s) {
+		Set<String> hashSet = new HashSet<>();
+		int m = s.length();
+		int count = 1;
+		for (int i=0; i<m; i++) {
+			for (int j=i; j<m; j++) {
+				String si = s.substring(i, j+1);
+				if (!hashSet.contains(si)) {
+					count++;
+					hashSet.add(si);
+				}
+			}
+		}
+
+		return count;
+	}
+
 	public static void main(String[] args) {
 		CountDistinctSubstrings solution = new CountDistinctSubstrings();
 		String s = "abcabcabcabcabc";
 		int count = solution.countDistinctSubstrings(s);
+		int count2 = solution.countDistinctSubstrings2(s);
 		System.out.println(count);
+		System.out.println(count2);
 	}
 }
