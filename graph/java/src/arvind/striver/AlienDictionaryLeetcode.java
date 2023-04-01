@@ -15,7 +15,7 @@ public class AlienDictionaryLeetcode {
 
 	public static void main(String[] args) {
 		AlienDictionaryLeetcode solution = new AlienDictionaryLeetcode();
-		String[] str = {"abc","ab"};
+		String[] str = {"wrt","wrf","er","ett","rftt"};
 
 		String order = solution.findOrder(str);
 		System.out.println(order);
