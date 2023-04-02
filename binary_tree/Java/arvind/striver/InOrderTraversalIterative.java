@@ -12,7 +12,7 @@ public class InOrderTraversalIterative {
         Node curr = root;
         while (true) {
             if (curr != null) {
-                stack.push(curr);
+                stack.push(curr); // only put on stack here
                 curr = curr.left;
             } else {
                 if (stack.isEmpty()) break;
