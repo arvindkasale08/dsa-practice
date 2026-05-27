@@ -18,6 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/sliding-window/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/math-geometry/arvind/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/studyPlan/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/revised/warmup" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
