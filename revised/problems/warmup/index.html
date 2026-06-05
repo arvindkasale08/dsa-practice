@@ -116,7 +116,17 @@
       overflow-wrap: anywhere;
     }
 
-    .badge {
+    .head-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      align-items: start;
+    }
+
+    .badge,
+    .difficulty,
+    .leetcode {
       display: inline-flex;
       align-items: center;
       min-height: 26px;
@@ -128,6 +138,31 @@
       font-size: 12px;
       font-weight: 800;
       white-space: nowrap;
+    }
+
+    .difficulty.easy {
+      background: var(--green-soft);
+      border-color: #cfe0d2;
+      color: #28593f;
+    }
+
+    .difficulty.medium {
+      background: var(--gold-soft);
+      border-color: #edd89d;
+      color: #67480b;
+    }
+
+    .difficulty.hard {
+      background: var(--red-soft);
+      border-color: #edc5bd;
+      color: #773229;
+    }
+
+    .leetcode {
+      background: var(--blue-soft);
+      border-color: #cddfeb;
+      color: #2f536c;
+      text-decoration: none;
     }
 
     .body {
@@ -282,193 +317,225 @@
     const cards = [
       {
         name: "CheckIfStringsEquivalent",
-        source: "com/arvind/revision/warmup/CheckIfStringsEquivalent.java",
+        source: "../com/arvind/revision/warmup/CheckIfStringsEquivalent.java",
         label: "Chunked strings",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent/",
         input: 'word1 = ["ab", "c"]\nword2 = ["a", "bc"]',
         output: "true",
-        trigger: "The strings are split into pieces, but the question is really asking whether the final joined strings are the same.",
+        recognize: "When two string arrays are really just two broken-up versions of a final string.",
         visual: [["ab", "c"], ["a", "bc"]],
-        visualText: "Join each row mentally: abc vs abc.",
+        visualText: "Mentally flatten both rows into one line: [ab][c] -> abc and [a][bc] -> abc.",
         core: "Append all pieces of word1 into one StringBuilder, append all pieces of word2 into another, then compare the final text.",
         gotchas: ["Use content comparison, not reference comparison.", "If this becomes huge, compare character streams instead of building both full strings."]
       },
       {
         name: "ClosestToZero",
-        source: "com/arvind/revision/warmup/ClosestToZero.java",
+        source: "../com/arvind/revision/warmup/ClosestToZero.java",
         label: "Best-so-far scan",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/find-closest-number-to-zero/",
         input: "nums = [2, -1, 1]",
         output: "1",
-        trigger: "You only need the single value closest to zero, so keep the best answer while scanning once.",
+        recognize: "When the answer is one best element and each number can be judged independently.",
         visual: [["2", "-1", "1"]],
-        visualText: "-1 and 1 tie by distance; positive wins.",
+        visualText: "Draw a number line around zero. Distance decides first; if distance ties, choose the right-side positive number.",
         core: "Track the current closest number. Replace it when absolute value is smaller, or when absolute value ties and the new value is larger.",
         gotchas: ["Tie rule is the entire trick: prefer +x over -x.", "Initialize from the array if possible; sentinel values can make tie logic feel weird."]
       },
       {
         name: "ContainsDuplicate",
-        source: "com/arvind/revision/warmup/ContainsDuplicate.java",
+        source: "../com/arvind/revision/warmup/ContainsDuplicate.java",
         label: "Seen set",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/contains-duplicate/",
         input: "nums = [1, 2, 3, 4, 4]",
         output: "Result: true",
-        trigger: "The moment you see a value for the second time, the answer is known.",
+        recognize: "When the question asks whether anything repeats and you do not need the repeated positions.",
         visual: [["1", "2", "3", "4", "4"]],
-        visualText: "The second 4 is already in the seen set.",
+        visualText: "Imagine dropping every number into a seen bucket. If it is already in the bucket, stop.",
         core: "Scan left to right. If seen already contains the number, return true; otherwise add it and continue.",
         gotchas: ["Return immediately when a duplicate appears.", "A set keeps this linear; sorting is extra work and mutates order."]
       },
       {
         name: "FindNumbersWithEvenDigits",
-        source: "com/arvind/revision/warmup/FindNumbersWithEvenDigits.java",
+        source: "../com/arvind/revision/warmup/FindNumbersWithEvenDigits.java",
         label: "Digit count",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/find-numbers-with-even-number-of-digits/",
         input: "nums = [12, 345, 2, 6, 7896]",
         output: "2",
-        trigger: "You are not comparing values; you are comparing how many decimal digits each value has.",
+        recognize: "When the value itself does not matter, only the length of its decimal representation.",
         visual: [["12", "345", "2", "6", "7896"]],
-        visualText: "12 and 7896 have even digit counts.",
+        visualText: "Read each number as text blocks: 12 has two blocks, 345 has three, 7896 has four.",
         core: "Turn each number into text and count its length, or divide by 10 repeatedly. Add one when the count is even.",
         gotchas: ["If using math, remember 0 has one digit.", "String conversion is perfectly fine for this warmup problem."]
       },
       {
         name: "FlippingImage",
-        source: "com/arvind/revision/warmup/FlippingImage.java",
+        source: "../com/arvind/revision/warmup/FlippingImage.java",
         label: "Mirror and invert",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/flipping-an-image/",
         input: "image = [[1,1,0,0], [1,0,0,1], [0,1,1,1], [1,0,1,0]]",
         output: "[[1,1,0,0], [0,1,1,0], [0,0,0,1], [1,0,1,0]]",
-        trigger: "Every row needs two actions at once: reverse the row and flip every bit.",
+        recognize: "When each row must be mirrored and each binary value must be toggled.",
         visual: [["1", "1", "0", "0"], ["1", "1", "0", "0"]],
-        visualText: "Swap mirrored cells while writing the inverted values.",
+        visualText: "Treat every row like a mirror. Left receives inverted right; right receives inverted old left.",
         core: "For each row, keep left and right pointers. Put invert(right) on the left and invert(old left) on the right.",
         gotchas: ["When left meets right, still invert the middle cell.", "Use a saved temp before overwriting the left value."]
       },
       {
         name: "GoodPair",
-        source: "com/arvind/revision/warmup/GoodPair.java",
+        source: "../com/arvind/revision/warmup/GoodPair.java",
         label: "Frequency creates pairs",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/number-of-good-pairs/",
         input: "nums = [1, 2, 3, 1, 1, 3]",
         output: "4",
-        trigger: "A new occurrence forms one pair with every previous same value.",
+        recognize: "When every new duplicate can pair with all earlier copies of the same number.",
         visual: [["1", "2", "3", "1", "1", "3"]],
-        visualText: "When another 1 arrives, add count of old 1s.",
+        visualText: "Think handshake count: the new 1 shakes hands with every previous 1.",
         core: "Keep a frequency map. For each number, add its current frequency to the answer, then increment that frequency.",
         gotchas: ["Add before incrementing, because the current item only pairs with previous items.", "This is easier than computing nC2 at the end."]
       },
       {
         name: "IsSubsequence",
-        source: "com/arvind/revision/warmup/IsSubsequence.java",
+        source: "../com/arvind/revision/warmup/IsSubsequence.java",
         label: "Order check",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/is-subsequence/",
         input: 's = "abc"\nt = "ahbgdc"',
         output: "true",
-        trigger: "You need characters of s to appear in order inside t, but they do not need to be adjacent.",
+        recognize: "When one string only needs to appear in order inside another string, not contiguously.",
         visual: [["a", "b", "c"], ["a", "h", "b", "g", "d", "c"]],
-        visualText: "Move the s pointer only when a match is found.",
+        visualText: "Keep a finger on s. Sweep across t and move the s finger only when the current needed char appears.",
         core: "Scan t with one pointer. When t matches the current char of s, advance the s pointer. Success means all of s was consumed.",
         gotchas: ["Empty s should return true.", "Guard `s.charAt(i)` when i reaches s.length(); otherwise empty or fully matched s can crash."]
       },
       {
         name: "MajorityElement",
-        source: "com/arvind/revision/warmup/MajorityElement.java",
+        source: "../com/arvind/revision/warmup/MajorityElement.java",
         label: "Vote cancellation",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/majority-element/",
         input: "nums = [2, 2, 1, 1, 1, 2, 2]",
         output: "2",
-        trigger: "One number appears more than half the time, so it survives pairwise cancellation.",
+        recognize: "When the problem guarantees one value appears more than half the array.",
         visual: [["2", "2", "1", "1", "1", "2", "2"]],
-        visualText: "Same value adds a vote; different value cancels one.",
+        visualText: "Picture values fighting in pairs. Different values cancel; the true majority has extra copies left.",
         core: "Keep a candidate and count. Same value increments count, different value decrements. When count hits zero, choose a new candidate.",
         gotchas: ["This works without verification only when the majority is guaranteed.", "The idea is cancellation, not counting exact frequencies."]
       },
       {
         name: "MergeStringsAlternately",
-        source: "com/arvind/revision/warmup/MergeStringsAlternately.java",
+        source: "../com/arvind/revision/warmup/MergeStringsAlternately.java",
         label: "Alternating append",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/merge-strings-alternately/",
         input: 'word1 = "abcd"\nword2 = "pq"',
         output: "apbqcd",
-        trigger: "Take one character from each string in turn, then append whatever remains.",
+        recognize: "When the output is formed by weaving two strings character by character.",
         visual: [["a", "b", "c", "d"], ["p", "q"], ["a", "p", "b", "q", "c", "d"]],
-        visualText: "Alternate while both exist; then attach the leftover tail.",
+        visualText: "Zip the two rows together: top, bottom, top, bottom; then drag the leftover tail to the end.",
         core: "Use two indexes and a StringBuilder. Append word1[i], word2[j] while both are in range, then append remaining substrings.",
         gotchas: ["Do not forget leftovers from the longer string.", "StringBuilder avoids repeated string concatenation."]
       },
       {
         name: "MoveZeroes",
-        source: "com/arvind/revision/warmup/MoveZeroes.java",
+        source: "../com/arvind/revision/warmup/MoveZeroes.java",
         label: "Stable compaction",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/move-zeroes/",
         input: "nums = [0, 1, 3, 0, 12]",
         output: "[1, 3, 12, 0, 0]",
-        trigger: "Move zeroes away, but keep the non-zero numbers in their original order.",
+        recognize: "When unwanted values move to the end but the wanted values must keep their order.",
         visual: [["0", "1", "3", "0", "12"], ["1", "3", "12", "0", "0"]],
-        visualText: "Write non-zero values forward, then zero-fill the tail.",
+        visualText: "Imagine a write slot moving forward only when a non-zero is copied into it. Everything behind write is compacted.",
         core: "Use a write pointer for the next non-zero slot. Scan all values, copy non-zero values to write, then fill the rest with zero.",
         gotchas: ["This is not a sorting problem.", "The generic template should scan from index 0 so the first element is handled cleanly."]
       },
       {
         name: "Pangram",
-        source: "com/arvind/revision/warmup/Pangram.java",
+        source: "../com/arvind/revision/warmup/Pangram.java",
         label: "Alphabet checklist",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/check-if-the-sentence-is-pangram/",
         input: '"This is not a pangram"\n"TheQuickBrownFoxJumpsOverTheLazyDog"',
         output: "false\ntrue",
-        trigger: "You need to know if every letter a-z appears at least once.",
+        recognize: "When the task is presence of all alphabet letters, not order or frequency.",
         visual: [["a", "b", "c", "...", "z"]],
-        visualText: "Think of 26 boxes; every box must be checked.",
+        visualText: "Picture 26 boxes from a to z. Every seen character checks one box; all boxes must be checked.",
         core: "Normalize each character, map a-z to indexes 0-25, mark/count each letter, then ensure none are missing.",
         gotchas: ["Ignore characters outside a-z if input can contain spaces or punctuation.", "You can early-return once all 26 letters have been seen."]
       },
       {
         name: "ReverseVowels",
-        source: "com/arvind/revision/warmup/ReverseVowels.java",
+        source: "../com/arvind/revision/warmup/ReverseVowels.java",
         label: "Vowel swap",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/reverse-vowels-of-a-string/",
         input: '"hello"\n"DesignGUrus"',
         output: "holle\nDusUgnGires",
-        trigger: "Only vowels move; consonants stay in their original positions.",
+        recognize: "When only one character class moves and all other characters stay anchored.",
         visual: [["h", "e", "l", "l", "o"], ["h", "o", "l", "l", "e"]],
-        visualText: "Find vowel from left and vowel from right, then swap.",
+        visualText: "Two magnets search inward for vowels. When both magnets catch vowels, swap them.",
         core: "Use two pointers. Skip non-vowels on each side. When both sides are vowels, swap and move inward.",
         gotchas: ["Include uppercase vowels by normalizing before lookup.", "After a swap, move both pointers or you can keep revisiting the same vowels."]
       },
       {
         name: "ShortestWordDistance",
-        source: "com/arvind/revision/warmup/ShortestWordDistance.java",
+        source: "../com/arvind/revision/warmup/ShortestWordDistance.java",
         label: "Last seen positions",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/shortest-word-distance/",
         input: 'words = ["the","quick","brown","fox","jumps","over","the","lazy","dog"]\nword1 = "fox", word2 = "dog"',
         output: "5",
-        trigger: "You need the closest positions of two target words in one list.",
+        recognize: "When distance depends only on the latest seen positions of two target words.",
         visual: [["the", "quick", "brown", "fox", "...", "dog"]],
-        visualText: "Keep latest index of each target and update min distance.",
+        visualText: "Drop pins on the latest word1 and word2 positions. Every new pin gives a fresh distance candidate.",
         core: "During one scan, update idx1 or idx2 when you see either word. Once both exist, update the minimum absolute difference.",
         gotchas: ["Single pass is simpler than storing every index.", "If word1 and word2 can be the same word, that is a different variant."]
       },
       {
         name: "Sqrt",
-        source: "com/arvind/revision/warmup/Sqrt.java",
+        source: "../com/arvind/revision/warmup/Sqrt.java",
         label: "Binary answer search",
+        difficulty: "Medium",
+        leetcode: "https://leetcode.com/problems/sqrtx/",
         input: "x = 2147395600",
         output: "46340",
-        trigger: "You need the floor of the square root, not a floating point answer.",
+        recognize: "When the answer is a number in a range and you can test whether a guess is too small or too large.",
         visual: [["0", "...", "mid", "...", "x/2"]],
-        visualText: "mid^2 too small moves left up; too large moves right down.",
+        visualText: "Put mid on the number line. mid squared tells which half of possible roots can be discarded.",
         core: "Binary search candidate roots. If mid*mid is less than x, move left up. If greater, move right down. Return right after crossing.",
         gotchas: ["Use long for mid * mid to avoid overflow.", "Return right at the end because left has moved to the first too-large value."]
       },
       {
         name: "ValidAnagram",
-        source: "com/arvind/revision/warmup/ValidAnagram.java",
+        source: "../com/arvind/revision/warmup/ValidAnagram.java",
         label: "Frequency balance",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/valid-anagram/",
         input: 's = "listen"\nt = "silent"',
         output: "true",
-        trigger: "Both strings must contain the same characters with the same counts.",
+        recognize: "When order does not matter, but exact character counts do.",
         visual: [["l:+1", "i:+1", "s:+1"], ["s:-1", "i:-1", "l:-1"]],
-        visualText: "Counts should return to zero after adding one string and subtracting the other.",
+        visualText: "Use a balance scale per letter: first string adds weight, second string removes it. All scales must end at zero.",
         core: "Check lengths first. Increment counts for s, decrement counts for t, then verify every count is zero.",
         gotchas: ["Array size 26 assumes lowercase English letters.", "For Unicode or mixed characters, use a map instead."]
       },
       {
         name: "ValidPalindrome",
-        source: "com/arvind/revision/warmup/ValidPalindrome.java",
+        source: "../com/arvind/revision/warmup/ValidPalindrome.java",
         label: "Clean two-pointer compare",
+        difficulty: "Easy",
+        leetcode: "https://leetcode.com/problems/valid-palindrome/",
         input: '"A man, a plan, a canal, Panama!"\n"Was it a car or a cat I saw?"\n"123321"',
         output: "true\ntrue\ntrue",
-        trigger: "Compare mirrored characters, but ignore punctuation, spaces, and case.",
+        recognize: "When you compare a string from both ends while ignoring non-essential characters.",
         visual: [["A", ",", "m", "...", "a"]],
-        visualText: "Skip noise first, then compare lowercase valid chars.",
+        visualText: "Two pointers walk inward. Each pointer skips noise until both point at real comparable characters.",
         core: "Move left and right inward. If a side is not alphanumeric, skip it. Once both are valid, compare lowercase characters.",
         gotchas: ["Do the skip before compare.", "Only move both pointers after you have compared two valid characters."]
       }
@@ -501,10 +568,12 @@
         const haystack = [
           card.name,
           card.label,
+          card.difficulty,
+          card.leetcode,
           card.source,
           card.input,
           card.output,
-          card.trigger,
+          card.recognize,
           card.visualText,
           card.core,
           card.gotchas.join(" ")
@@ -519,7 +588,11 @@
               <h2>${escapeHtml(card.name)}</h2>
               <a class="source" href="${escapeHtml(card.source)}">${escapeHtml(card.source)}</a>
             </div>
-            <span class="badge">${escapeHtml(card.label)}</span>
+            <div class="head-actions">
+              <span class="badge">${escapeHtml(card.label)}</span>
+              <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
+              ${card.leetcode ? `<a class="leetcode" href="${escapeHtml(card.leetcode)}" target="_blank" rel="noreferrer">LeetCode</a>` : ""}
+            </div>
           </div>
           <div class="body">
             <div class="sample">
@@ -534,8 +607,8 @@
             </div>
             <div class="section-grid">
               <div class="section">
-                <b>Trigger</b>
-                ${escapeHtml(card.trigger)}
+                <b>When to recognize it</b>
+                ${escapeHtml(card.recognize)}
               </div>
               <div class="section">
                 <b>Visual hook</b>
