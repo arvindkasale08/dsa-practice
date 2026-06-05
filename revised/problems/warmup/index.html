@@ -80,6 +80,14 @@
       line-height: 1.45;
     }
 
+    .tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
     .search {
       width: min(380px, 100%);
       height: 42px;
@@ -89,6 +97,24 @@
       color: var(--ink);
       font: inherit;
       padding: 0 12px;
+    }
+
+    .mode-button {
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--green);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mode-button.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
     }
 
     .cards {
@@ -123,12 +149,18 @@
       letter-spacing: 0;
     }
 
-    .source {
-      display: block;
+    .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      align-items: center;
       margin-top: 6px;
       color: var(--muted);
       font-size: 12px;
-      overflow-wrap: anywhere;
+    }
+
+    .meta-line a {
+      font-weight: 700;
     }
 
     .head-actions {
@@ -184,6 +216,17 @@
       padding: 15px 16px 16px;
       display: grid;
       gap: 12px;
+    }
+
+    .recall-prompt {
+      border: 1px solid #cfe0d2;
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: #28593f;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
     }
 
     .sample {
@@ -243,6 +286,34 @@
       margin-top: 2px;
     }
 
+    .steps {
+      display: grid;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .step {
+      display: flex;
+      gap: 7px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.32;
+    }
+
+    .step-num {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--blue-soft);
+      color: #2f536c;
+      font-weight: 900;
+      font-size: 11px;
+    }
+
     .array {
       display: flex;
       flex-wrap: wrap;
@@ -297,10 +368,49 @@
       background: white;
     }
 
+    .quick-review {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-row {
+      display: grid;
+      grid-template-columns: minmax(160px, .9fr) minmax(130px, .7fr) minmax(220px, 1.4fr) minmax(220px, 1.4fr);
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 11px;
+    }
+
+    .quick-row strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .quick-label {
+      color: #3c4d43;
+      display: block;
+      margin-bottom: 3px;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .quick-text {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
     @media (max-width: 980px) {
       header { grid-template-columns: 1fr; }
       .cards { grid-template-columns: 1fr; }
       .search { width: 100%; }
+      .tools { justify-content: flex-start; }
+      .quick-row { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 620px) {
@@ -311,6 +421,7 @@
 
       .section.full { grid-column: auto; }
       .card-head { grid-template-columns: 1fr; }
+      .tools { display: grid; }
     }
   </style>
 </head>
@@ -322,7 +433,10 @@
         <h1>Warmup Revision</h1>
         <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and gotchas before opening the Java file.</p>
       </div>
-      <input id="search" class="search" type="search" placeholder="Search warmup cards">
+      <div class="tools">
+        <input id="search" class="search" type="search" placeholder="Search warmup cards">
+        <button id="quickMode" class="mode-button" type="button">Quick Review</button>
+      </div>
     </header>
 
     <section id="cards" class="cards"></section>
@@ -557,9 +671,96 @@
       }
     ];
 
+    const recallDetails = {
+      CheckIfStringsEquivalent: {
+        prompt: "Before reading: what final string does each array form?",
+        steps: ["Flatten word1 chunks in order.", "Flatten word2 chunks in order.", "Compare the final strings."],
+        skeleton: "StringBuilder a, b\nfor part in word1: a.append(part)\nfor part in word2: b.append(part)\nreturn a.toString().equals(b.toString())"
+      },
+      ClosestToZero: {
+        prompt: "Before reading: what value is closest on the number line, and what happens on a tie?",
+        steps: ["Track one best number.", "Compare absolute distance to zero.", "If tied, keep the larger value."],
+        skeleton: "best = nums[0]\nfor n in nums:\n  if abs(n) < abs(best): best = n\n  else if abs(n) == abs(best): best = max(best, n)"
+      },
+      ContainsDuplicate: {
+        prompt: "Before reading: what data structure tells you a value was already seen?",
+        steps: ["Start with an empty seen set.", "For each number, check before adding.", "If already seen, return true immediately."],
+        skeleton: "seen = new HashSet()\nfor n in nums:\n  if seen.contains(n): return true\n  seen.add(n)\nreturn false"
+      },
+      FindNumbersWithEvenDigits: {
+        prompt: "Before reading: are you solving with number value or digit length?",
+        steps: ["Convert each number to a digit count.", "Check count parity.", "Increment answer for even counts."],
+        skeleton: "ans = 0\nfor num in nums:\n  digits = String.valueOf(num).length()\n  if digits % 2 == 0: ans++"
+      },
+      FlippingImage: {
+        prompt: "Before reading: how can one left/right pass both reverse and invert a row?",
+        steps: ["For each row, put pointers at both ends.", "Swap mirrored cells while writing inverted values.", "When pointers meet, invert the middle too."],
+        skeleton: "for row in image:\n  l = 0; r = row.length - 1\n  while l <= r:\n    temp = row[l]\n    row[l] = invert(row[r])\n    row[r] = invert(temp)\n    l++; r--"
+      },
+      GoodPair: {
+        prompt: "Before reading: when a duplicate arrives, how many new pairs does it create?",
+        steps: ["Keep frequency of values already seen.", "A new value forms frequency[value] pairs.", "Then increment its frequency."],
+        skeleton: "pairs = 0\nfreq = new HashMap()\nfor n in nums:\n  pairs += freq.getOrDefault(n, 0)\n  freq[n]++"
+      },
+      IsSubsequence: {
+        prompt: "Before reading: which pointer only moves on a successful match?",
+        steps: ["Keep one pointer on s.", "Sweep t from left to right.", "Advance s only when current needed char appears."],
+        skeleton: "i = 0\nfor ch in t:\n  if i < s.length && s.charAt(i) == ch:\n    i++\nreturn i == s.length"
+      },
+      MajorityElement: {
+        prompt: "Before reading: how does the majority survive cancellation?",
+        steps: ["Hold a candidate and vote count.", "Same value adds a vote.", "Different value cancels a vote; reset when count hits zero."],
+        skeleton: "candidate = nums[0]; count = 0\nfor n in nums:\n  if count == 0: candidate = n\n  count += (n == candidate) ? 1 : -1\nreturn candidate"
+      },
+      MergeStringsAlternately: {
+        prompt: "Before reading: what happens after one string runs out?",
+        steps: ["Append one char from word1.", "Append one char from word2.", "Append the leftover suffix from the longer string."],
+        skeleton: "while i < word1.length && j < word2.length:\n  sb.append(word1[i++])\n  sb.append(word2[j++])\nsb.append(word1.substring(i))\nsb.append(word2.substring(j))"
+      },
+      MoveZeroes: {
+        prompt: "Before reading: where is the next non-zero allowed to be written?",
+        steps: ["write points to next non-zero slot.", "Scan all numbers and copy non-zero values forward.", "Fill everything from write to end with zero."],
+        skeleton: "write = 0\nfor n in nums:\n  if n != 0: nums[write++] = n\nwhile write < nums.length:\n  nums[write++] = 0"
+      },
+      Pangram: {
+        prompt: "Before reading: how do you know all 26 letters appeared?",
+        steps: ["Map each letter to a box 0..25.", "Mark the box when seen.", "All boxes must be marked."],
+        skeleton: "seen = boolean[26]\nfor c in sentence:\n  if 'a' <= lower(c) <= 'z': seen[c-'a'] = true\nreturn all seen values are true"
+      },
+      ReverseVowels: {
+        prompt: "Before reading: which characters are allowed to move?",
+        steps: ["Move left until it finds a vowel.", "Move right until it finds a vowel.", "Swap vowels and move both inward."],
+        skeleton: "l = 0; r = n - 1\nwhile l < r:\n  while l < r && !isVowel(chars[l]): l++\n  while l < r && !isVowel(chars[r]): r--\n  swap(chars, l++, r--)"
+      },
+      ShortestWordDistance: {
+        prompt: "Before reading: what are the latest two pins you need to remember?",
+        steps: ["Scan words once.", "Update latest index for word1 or word2.", "When both are known, update minimum gap."],
+        skeleton: "idx1 = idx2 = -1; best = INF\nfor i in range(words):\n  if words[i] == word1: idx1 = i\n  if words[i] == word2: idx2 = i\n  if idx1 != -1 && idx2 != -1: best = min(best, abs(idx1-idx2))"
+      },
+      Sqrt: {
+        prompt: "Before reading: what does mid squared tell you to discard?",
+        steps: ["Search possible roots, not array indexes.", "mid^2 too small means answer is to the right.", "mid^2 too large means answer is to the left; return right after crossing."],
+        skeleton: "left = 0; right = x / 2\nwhile left <= right:\n  mid = left + (right-left)/2\n  square = (long) mid * mid\n  if square < x: left = mid + 1\n  else if square > x: right = mid - 1\n  else return mid\nreturn right"
+      },
+      ValidAnagram: {
+        prompt: "Before reading: why does order not matter here?",
+        steps: ["Reject if lengths differ.", "Add counts from first string.", "Subtract counts from second string; all counts must end zero."],
+        skeleton: "if s.length != t.length: return false\ncount = int[26]\nfor c in s: count[c-'a']++\nfor c in t: count[c-'a']--\nreturn every count == 0"
+      },
+      ValidPalindrome: {
+        prompt: "Before reading: what must each pointer skip before comparing?",
+        steps: ["Move left/right inward.", "Skip non-alphanumeric chars first.", "Compare lowercase real chars, then move both."],
+        skeleton: "l = 0; r = s.length - 1\nwhile l < r:\n  if !isAlphaNum(s[l]): l++; continue\n  if !isAlphaNum(s[r]): r--; continue\n  if lower(s[l]) != lower(s[r]): return false\n  l++; r--\nreturn true"
+      }
+    };
+
+    cards.forEach(card => Object.assign(card, recallDetails[card.name]));
+
     const cardsEl = document.getElementById("cards");
     const searchEl = document.getElementById("search");
     const emptyEl = document.getElementById("empty");
+    const quickModeEl = document.getElementById("quickMode");
+    let quickMode = false;
 
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, char => ({
@@ -578,6 +779,35 @@
       }).join("");
     }
 
+    function renderSteps(steps) {
+      return `<div class="steps">${steps.map((step, index) => `
+        <div class="step"><span class="step-num">${index + 1}</span><span>${escapeHtml(step)}</span></div>
+      `).join("")}</div>`;
+    }
+
+    function renderQuickReview(cardsToRender) {
+      return `<div class="quick-review">${cardsToRender.map(card => `
+        <article class="quick-row">
+          <div>
+            <strong>${escapeHtml(card.name)}</strong>
+            <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
+          </div>
+          <div>
+            <span class="quick-label">Recall prompt</span>
+            <span class="quick-text">${escapeHtml(card.prompt)}</span>
+          </div>
+          <div>
+            <span class="quick-label">Code shape</span>
+            <code>${escapeHtml(card.skeleton.split("\n")[0])}</code>
+          </div>
+          <div>
+            <span class="quick-label">Bug magnet</span>
+            <span class="quick-text">${escapeHtml(card.gotchas[0])}</span>
+          </div>
+        </article>
+      `).join("")}</div>`;
+    }
+
     function render() {
       const query = searchEl.value.trim().toLowerCase();
       const visible = cards.filter(card => {
@@ -592,25 +822,38 @@
           card.recognize,
           card.visualText,
           card.core,
+          card.prompt,
+          card.skeleton,
+          card.steps.join(" "),
           card.gotchas.join(" ")
         ].join(" ").toLowerCase();
         return !query || haystack.includes(query);
       });
 
+      if (quickMode) {
+        cardsEl.className = "quick-review";
+        cardsEl.innerHTML = renderQuickReview(visible);
+        emptyEl.style.display = visible.length ? "none" : "block";
+        return;
+      }
+
+      cardsEl.className = "cards";
       cardsEl.innerHTML = visible.map(card => `
         <article class="card">
           <div class="card-head">
             <div>
               <h2>${escapeHtml(card.name)}</h2>
-              <a class="source" href="${escapeHtml(card.source)}">${escapeHtml(card.source)}</a>
+              <div class="meta-line">
+                <span>${escapeHtml(card.label)}</span>
+                <span>${escapeHtml(card.difficulty)}</span>
+                <a href="${escapeHtml(card.source)}">Source</a>
+                ${card.leetcode ? `<a href="${escapeHtml(card.leetcode)}" target="_blank" rel="noreferrer">LeetCode</a>` : ""}
+              </div>
             </div>
-            <div class="head-actions">
-              <span class="badge">${escapeHtml(card.label)}</span>
-              <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
-              ${card.leetcode ? `<a class="leetcode" href="${escapeHtml(card.leetcode)}" target="_blank" rel="noreferrer">LeetCode</a>` : ""}
-            </div>
+            <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
           </div>
           <div class="body">
+            <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
             <div class="sample">
               <div class="sample-box">
                 <b>Input</b>
@@ -629,6 +872,7 @@
               <div class="section">
                 <b>Visual hook</b>
                 <div class="visual">${renderVisual(card.visual)}</div>
+                ${renderSteps(card.steps)}
                 <span class="hint">${escapeHtml(card.visualText)}</span>
               </div>
               <div class="section">
@@ -636,7 +880,11 @@
                 ${escapeHtml(card.core)}
               </div>
               <div class="section">
-                <b>Gotchas</b>
+                <b>Code skeleton</b>
+                <code>${escapeHtml(card.skeleton)}</code>
+              </div>
+              <div class="section full">
+                <b>Bug magnets</b>
                 <ul class="gotchas">${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
               </div>
             </div>
@@ -648,6 +896,12 @@
     }
 
     searchEl.addEventListener("input", render);
+    quickModeEl.addEventListener("click", () => {
+      quickMode = !quickMode;
+      quickModeEl.classList.toggle("active", quickMode);
+      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
+      render();
+    });
     render();
   </script>
 </body>
