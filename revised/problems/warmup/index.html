@@ -175,6 +175,55 @@
       font-weight: 900;
     }
 
+    .problem-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 7px;
+    }
+
+    .revision-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--muted);
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .revision-button {
+      min-height: 26px;
+      border: 1px solid #cfe0d2;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: #28593f;
+      padding: 3px 9px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .revision-button.reset {
+      border-color: var(--line);
+      background: #fbfcf8;
+      color: var(--muted);
+    }
+
     .meta-line {
       display: flex;
       flex-wrap: wrap;
@@ -934,11 +983,57 @@
       `).join("")}</div>`;
     }
 
+    function storageKey(cardName) {
+      return `dsa-revision:warmup:${cardName}`;
+    }
+
+    function readRevision(cardName) {
+      try {
+        const raw = localStorage.getItem(storageKey(cardName));
+        if (!raw) return { count: 0, last: "" };
+        const parsed = JSON.parse(raw);
+        return {
+          count: Number(parsed.count) || 0,
+          last: typeof parsed.last === "string" ? parsed.last : ""
+        };
+      } catch {
+        return { count: 0, last: "" };
+      }
+    }
+
+    function writeRevision(cardName, revision) {
+      try {
+        localStorage.setItem(storageKey(cardName), JSON.stringify(revision));
+      } catch {
+        // Keep the page usable even if browser storage is unavailable.
+      }
+    }
+
+    function formatLastRevised(value) {
+      if (!value) return "Last revised: never";
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return `Last revised: ${value}`;
+      return `Last revised: ${date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+    }
+
+    function renderRevisionControls(card) {
+      const revision = readRevision(card.name);
+      return `
+        <div class="revision-controls">
+          <span class="revision-pill">Revised ${revision.count}x</span>
+          <span class="revision-pill">${escapeHtml(formatLastRevised(revision.last))}</span>
+          <button class="revision-button" type="button" data-action="increment" data-card="${escapeHtml(card.name)}">+1</button>
+          <button class="revision-button reset" type="button" data-action="reset" data-card="${escapeHtml(card.name)}">Reset</button>
+        </div>
+      `;
+    }
+
     function renderQuickReview(cardsToRender) {
       return `<div class="quick-review">${cardsToRender.map(card => `
         <article class="quick-row">
           <div>
             <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
+            ${renderRevisionControls(card)}
             <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
             <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
             <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
@@ -998,7 +1093,8 @@
         <article class="card">
           <div class="card-head">
             <div>
-              <h2><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</h2>
+              <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+              ${renderRevisionControls(card)}
               <div class="meta-line">
                 <span>${escapeHtml(card.label)}</span>
                 <span>${escapeHtml(card.difficulty)}</span>
@@ -1070,6 +1166,22 @@
     }
 
     searchEl.addEventListener("input", render);
+    cardsEl.addEventListener("click", event => {
+      const button = event.target.closest("[data-action][data-card]");
+      if (!button) return;
+      const cardName = button.dataset.card;
+      if (button.dataset.action === "increment") {
+        const current = readRevision(cardName);
+        writeRevision(cardName, {
+          count: current.count + 1,
+          last: new Date().toISOString().slice(0, 10)
+        });
+      }
+      if (button.dataset.action === "reset") {
+        writeRevision(cardName, { count: 0, last: "" });
+      }
+      render();
+    });
     quickModeEl.addEventListener("click", () => {
       quickMode = !quickMode;
       quickModeEl.classList.toggle("active", quickMode);
