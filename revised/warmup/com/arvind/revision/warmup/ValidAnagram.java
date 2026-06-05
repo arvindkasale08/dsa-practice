@@ -1,6 +1,4 @@
-package com.arvind.revision;
-
-import java.util.Arrays;
+package com.arvind.revision.warmup;
 
 public class ValidAnagram {
 

@@ -1,4 +1,4 @@
-package com.arvind.revision;
+package com.arvind.revision.twopointers;
 
 public class DutchNationalFlagProblem {
 

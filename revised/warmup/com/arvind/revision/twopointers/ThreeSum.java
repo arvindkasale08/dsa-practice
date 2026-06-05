@@ -1,4 +1,4 @@
-package com.arvind.revision;
+package com.arvind.revision.twopointers;
 
 import java.util.ArrayList;
 import java.util.Arrays;

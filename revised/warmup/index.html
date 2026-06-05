@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Warmup Revision</title>
+  <style>
+    :root {
+      --ink: #17211c;
+      --muted: #627067;
+      --line: #d7dfd6;
+      --paper: #f5f7f1;
+      --panel: #ffffff;
+      --green: #2f6f4e;
+      --green-soft: #e8f2eb;
+      --blue: #3f6f93;
+      --blue-soft: #e8f1f6;
+      --gold: #ad7924;
+      --gold-soft: #fbf0d8;
+      --red: #a9483d;
+      --red-soft: #f8e7e4;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    a {
+      color: var(--green);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .page {
+      width: min(1380px, 100%);
+      margin: 0 auto;
+      padding: 28px 18px 48px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      max-width: 840px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .search {
+      width: min(380px, 100%);
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      padding: 0 12px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 14px 32px rgba(26, 37, 31, .08);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .card-head {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      background: #fbfcf8;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .source {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: var(--green-soft);
+      color: #28593f;
+      border: 1px solid #cfe0d2;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .body {
+      padding: 15px 16px 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .sample {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .sample-box {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcf8;
+      padding: 10px;
+    }
+
+    .sample-box b,
+    .section b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #3c4d43;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #26372e;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      padding: 10px;
+      min-height: 92px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .section.full { grid-column: 1 / -1; }
+
+    .visual {
+      display: grid;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .array {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .cell {
+      min-width: 30px;
+      height: 30px;
+      padding: 0 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      display: inline-grid;
+      place-items: center;
+      background: #fff;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .cell.green { background: var(--green-soft); }
+    .cell.blue { background: var(--blue-soft); }
+    .cell.gold { background: var(--gold-soft); }
+    .cell.red { background: var(--red-soft); }
+
+    .hint {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .gotchas {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .gotchas li {
+      margin-bottom: 5px;
+    }
+
+    .gotchas li:last-child { margin-bottom: 0; }
+
+    .empty {
+      display: none;
+      border: 1px dashed #b9c4bb;
+      border-radius: 8px;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      background: white;
+    }
+
+    @media (max-width: 980px) {
+      header { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .search { width: 100%; }
+    }
+
+    @media (max-width: 620px) {
+      .sample,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section.full { grid-column: auto; }
+      .card-head { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <div>
+        <h1>Warmup Revision</h1>
+        <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and gotchas before opening the Java file.</p>
+      </div>
+      <input id="search" class="search" type="search" placeholder="Search warmup cards">
+    </header>
+
+    <section id="cards" class="cards"></section>
+    <div id="empty" class="empty">No matching warmup cards.</div>
+  </main>
+
+  <script>
+    const cards = [
+      {
+        name: "CheckIfStringsEquivalent",
+        source: "com/arvind/revision/warmup/CheckIfStringsEquivalent.java",
+        label: "Chunked strings",
+        input: 'word1 = ["ab", "c"]\nword2 = ["a", "bc"]',
+        output: "true",
+        trigger: "The strings are split into pieces, but the question is really asking whether the final joined strings are the same.",
+        visual: [["ab", "c"], ["a", "bc"]],
+        visualText: "Join each row mentally: abc vs abc.",
+        core: "Append all pieces of word1 into one StringBuilder, append all pieces of word2 into another, then compare the final text.",
+        gotchas: ["Use content comparison, not reference comparison.", "If this becomes huge, compare character streams instead of building both full strings."]
+      },
+      {
+        name: "ClosestToZero",
+        source: "com/arvind/revision/warmup/ClosestToZero.java",
+        label: "Best-so-far scan",
+        input: "nums = [2, -1, 1]",
+        output: "1",
+        trigger: "You only need the single value closest to zero, so keep the best answer while scanning once.",
+        visual: [["2", "-1", "1"]],
+        visualText: "-1 and 1 tie by distance; positive wins.",
+        core: "Track the current closest number. Replace it when absolute value is smaller, or when absolute value ties and the new value is larger.",
+        gotchas: ["Tie rule is the entire trick: prefer +x over -x.", "Initialize from the array if possible; sentinel values can make tie logic feel weird."]
+      },
+      {
+        name: "ContainsDuplicate",
+        source: "com/arvind/revision/warmup/ContainsDuplicate.java",
+        label: "Seen set",
+        input: "nums = [1, 2, 3, 4, 4]",
+        output: "Result: true",
+        trigger: "The moment you see a value for the second time, the answer is known.",
+        visual: [["1", "2", "3", "4", "4"]],
+        visualText: "The second 4 is already in the seen set.",
+        core: "Scan left to right. If seen already contains the number, return true; otherwise add it and continue.",
+        gotchas: ["Return immediately when a duplicate appears.", "A set keeps this linear; sorting is extra work and mutates order."]
+      },
+      {
+        name: "FindNumbersWithEvenDigits",
+        source: "com/arvind/revision/warmup/FindNumbersWithEvenDigits.java",
+        label: "Digit count",
+        input: "nums = [12, 345, 2, 6, 7896]",
+        output: "2",
+        trigger: "You are not comparing values; you are comparing how many decimal digits each value has.",
+        visual: [["12", "345", "2", "6", "7896"]],
+        visualText: "12 and 7896 have even digit counts.",
+        core: "Turn each number into text and count its length, or divide by 10 repeatedly. Add one when the count is even.",
+        gotchas: ["If using math, remember 0 has one digit.", "String conversion is perfectly fine for this warmup problem."]
+      },
+      {
+        name: "FlippingImage",
+        source: "com/arvind/revision/warmup/FlippingImage.java",
+        label: "Mirror and invert",
+        input: "image = [[1,1,0,0], [1,0,0,1], [0,1,1,1], [1,0,1,0]]",
+        output: "[[1,1,0,0], [0,1,1,0], [0,0,0,1], [1,0,1,0]]",
+        trigger: "Every row needs two actions at once: reverse the row and flip every bit.",
+        visual: [["1", "1", "0", "0"], ["1", "1", "0", "0"]],
+        visualText: "Swap mirrored cells while writing the inverted values.",
+        core: "For each row, keep left and right pointers. Put invert(right) on the left and invert(old left) on the right.",
+        gotchas: ["When left meets right, still invert the middle cell.", "Use a saved temp before overwriting the left value."]
+      },
+      {
+        name: "GoodPair",
+        source: "com/arvind/revision/warmup/GoodPair.java",
+        label: "Frequency creates pairs",
+        input: "nums = [1, 2, 3, 1, 1, 3]",
+        output: "4",
+        trigger: "A new occurrence forms one pair with every previous same value.",
+        visual: [["1", "2", "3", "1", "1", "3"]],
+        visualText: "When another 1 arrives, add count of old 1s.",
+        core: "Keep a frequency map. For each number, add its current frequency to the answer, then increment that frequency.",
+        gotchas: ["Add before incrementing, because the current item only pairs with previous items.", "This is easier than computing nC2 at the end."]
+      },
+      {
+        name: "IsSubsequence",
+        source: "com/arvind/revision/warmup/IsSubsequence.java",
+        label: "Order check",
+        input: 's = "abc"\nt = "ahbgdc"',
+        output: "true",
+        trigger: "You need characters of s to appear in order inside t, but they do not need to be adjacent.",
+        visual: [["a", "b", "c"], ["a", "h", "b", "g", "d", "c"]],
+        visualText: "Move the s pointer only when a match is found.",
+        core: "Scan t with one pointer. When t matches the current char of s, advance the s pointer. Success means all of s was consumed.",
+        gotchas: ["Empty s should return true.", "Guard `s.charAt(i)` when i reaches s.length(); otherwise empty or fully matched s can crash."]
+      },
+      {
+        name: "MajorityElement",
+        source: "com/arvind/revision/warmup/MajorityElement.java",
+        label: "Vote cancellation",
+        input: "nums = [2, 2, 1, 1, 1, 2, 2]",
+        output: "2",
+        trigger: "One number appears more than half the time, so it survives pairwise cancellation.",
+        visual: [["2", "2", "1", "1", "1", "2", "2"]],
+        visualText: "Same value adds a vote; different value cancels one.",
+        core: "Keep a candidate and count. Same value increments count, different value decrements. When count hits zero, choose a new candidate.",
+        gotchas: ["This works without verification only when the majority is guaranteed.", "The idea is cancellation, not counting exact frequencies."]
+      },
+      {
+        name: "MergeStringsAlternately",
+        source: "com/arvind/revision/warmup/MergeStringsAlternately.java",
+        label: "Alternating append",
+        input: 'word1 = "abcd"\nword2 = "pq"',
+        output: "apbqcd",
+        trigger: "Take one character from each string in turn, then append whatever remains.",
+        visual: [["a", "b", "c", "d"], ["p", "q"], ["a", "p", "b", "q", "c", "d"]],
+        visualText: "Alternate while both exist; then attach the leftover tail.",
+        core: "Use two indexes and a StringBuilder. Append word1[i], word2[j] while both are in range, then append remaining substrings.",
+        gotchas: ["Do not forget leftovers from the longer string.", "StringBuilder avoids repeated string concatenation."]
+      },
+      {
+        name: "MoveZeroes",
+        source: "com/arvind/revision/warmup/MoveZeroes.java",
+        label: "Stable compaction",
+        input: "nums = [0, 1, 3, 0, 12]",
+        output: "[1, 3, 12, 0, 0]",
+        trigger: "Move zeroes away, but keep the non-zero numbers in their original order.",
+        visual: [["0", "1", "3", "0", "12"], ["1", "3", "12", "0", "0"]],
+        visualText: "Write non-zero values forward, then zero-fill the tail.",
+        core: "Use a write pointer for the next non-zero slot. Scan all values, copy non-zero values to write, then fill the rest with zero.",
+        gotchas: ["This is not a sorting problem.", "The generic template should scan from index 0 so the first element is handled cleanly."]
+      },
+      {
+        name: "Pangram",
+        source: "com/arvind/revision/warmup/Pangram.java",
+        label: "Alphabet checklist",
+        input: '"This is not a pangram"\n"TheQuickBrownFoxJumpsOverTheLazyDog"',
+        output: "false\ntrue",
+        trigger: "You need to know if every letter a-z appears at least once.",
+        visual: [["a", "b", "c", "...", "z"]],
+        visualText: "Think of 26 boxes; every box must be checked.",
+        core: "Normalize each character, map a-z to indexes 0-25, mark/count each letter, then ensure none are missing.",
+        gotchas: ["Ignore characters outside a-z if input can contain spaces or punctuation.", "You can early-return once all 26 letters have been seen."]
+      },
+      {
+        name: "ReverseVowels",
+        source: "com/arvind/revision/warmup/ReverseVowels.java",
+        label: "Vowel swap",
+        input: '"hello"\n"DesignGUrus"',
+        output: "holle\nDusUgnGires",
+        trigger: "Only vowels move; consonants stay in their original positions.",
+        visual: [["h", "e", "l", "l", "o"], ["h", "o", "l", "l", "e"]],
+        visualText: "Find vowel from left and vowel from right, then swap.",
+        core: "Use two pointers. Skip non-vowels on each side. When both sides are vowels, swap and move inward.",
+        gotchas: ["Include uppercase vowels by normalizing before lookup.", "After a swap, move both pointers or you can keep revisiting the same vowels."]
+      },
+      {
+        name: "ShortestWordDistance",
+        source: "com/arvind/revision/warmup/ShortestWordDistance.java",
+        label: "Last seen positions",
+        input: 'words = ["the","quick","brown","fox","jumps","over","the","lazy","dog"]\nword1 = "fox", word2 = "dog"',
+        output: "5",
+        trigger: "You need the closest positions of two target words in one list.",
+        visual: [["the", "quick", "brown", "fox", "...", "dog"]],
+        visualText: "Keep latest index of each target and update min distance.",
+        core: "During one scan, update idx1 or idx2 when you see either word. Once both exist, update the minimum absolute difference.",
+        gotchas: ["Single pass is simpler than storing every index.", "If word1 and word2 can be the same word, that is a different variant."]
+      },
+      {
+        name: "Sqrt",
+        source: "com/arvind/revision/warmup/Sqrt.java",
+        label: "Binary answer search",
+        input: "x = 2147395600",
+        output: "46340",
+        trigger: "You need the floor of the square root, not a floating point answer.",
+        visual: [["0", "...", "mid", "...", "x/2"]],
+        visualText: "mid^2 too small moves left up; too large moves right down.",
+        core: "Binary search candidate roots. If mid*mid is less than x, move left up. If greater, move right down. Return right after crossing.",
+        gotchas: ["Use long for mid * mid to avoid overflow.", "Return right at the end because left has moved to the first too-large value."]
+      },
+      {
+        name: "ValidAnagram",
+        source: "com/arvind/revision/warmup/ValidAnagram.java",
+        label: "Frequency balance",
+        input: 's = "listen"\nt = "silent"',
+        output: "true",
+        trigger: "Both strings must contain the same characters with the same counts.",
+        visual: [["l:+1", "i:+1", "s:+1"], ["s:-1", "i:-1", "l:-1"]],
+        visualText: "Counts should return to zero after adding one string and subtracting the other.",
+        core: "Check lengths first. Increment counts for s, decrement counts for t, then verify every count is zero.",
+        gotchas: ["Array size 26 assumes lowercase English letters.", "For Unicode or mixed characters, use a map instead."]
+      },
+      {
+        name: "ValidPalindrome",
+        source: "com/arvind/revision/warmup/ValidPalindrome.java",
+        label: "Clean two-pointer compare",
+        input: '"A man, a plan, a canal, Panama!"\n"Was it a car or a cat I saw?"\n"123321"',
+        output: "true\ntrue\ntrue",
+        trigger: "Compare mirrored characters, but ignore punctuation, spaces, and case.",
+        visual: [["A", ",", "m", "...", "a"]],
+        visualText: "Skip noise first, then compare lowercase valid chars.",
+        core: "Move left and right inward. If a side is not alphanumeric, skip it. Once both are valid, compare lowercase characters.",
+        gotchas: ["Do the skip before compare.", "Only move both pointers after you have compared two valid characters."]
+      }
+    ];
+
+    const cardsEl = document.getElementById("cards");
+    const searchEl = document.getElementById("search");
+    const emptyEl = document.getElementById("empty");
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function renderVisual(groups) {
+      return groups.map((group, index) => {
+        const color = index === 0 ? "green" : index === 1 ? "gold" : "blue";
+        return `<div class="array">${group.map(item => `<span class="cell ${color}">${escapeHtml(item)}</span>`).join("")}</div>`;
+      }).join("");
+    }
+
+    function render() {
+      const query = searchEl.value.trim().toLowerCase();
+      const visible = cards.filter(card => {
+        const haystack = [
+          card.name,
+          card.label,
+          card.source,
+          card.input,
+          card.output,
+          card.trigger,
+          card.visualText,
+          card.core,
+          card.gotchas.join(" ")
+        ].join(" ").toLowerCase();
+        return !query || haystack.includes(query);
+      });
+
+      cardsEl.innerHTML = visible.map(card => `
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2>${escapeHtml(card.name)}</h2>
+              <a class="source" href="${escapeHtml(card.source)}">${escapeHtml(card.source)}</a>
+            </div>
+            <span class="badge">${escapeHtml(card.label)}</span>
+          </div>
+          <div class="body">
+            <div class="sample">
+              <div class="sample-box">
+                <b>Input</b>
+                <code>${escapeHtml(card.input)}</code>
+              </div>
+              <div class="sample-box">
+                <b>Output</b>
+                <code>${escapeHtml(card.output)}</code>
+              </div>
+            </div>
+            <div class="section-grid">
+              <div class="section">
+                <b>Trigger</b>
+                ${escapeHtml(card.trigger)}
+              </div>
+              <div class="section">
+                <b>Visual hook</b>
+                <div class="visual">${renderVisual(card.visual)}</div>
+                <span class="hint">${escapeHtml(card.visualText)}</span>
+              </div>
+              <div class="section">
+                <b>Core move</b>
+                ${escapeHtml(card.core)}
+              </div>
+              <div class="section">
+                <b>Gotchas</b>
+                <ul class="gotchas">${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join("");
+
+      emptyEl.style.display = visible.length ? "none" : "block";
+    }
+
+    searchEl.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>

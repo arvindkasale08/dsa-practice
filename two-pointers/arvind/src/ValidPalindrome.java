@@ -13,7 +13,7 @@ public class ValidPalindrome {
     }
 
     public static void main(String[] args) {
-        com.arvind.revision.ValidPalindrome solution = new com.arvind.revision.ValidPalindrome();
+        com.arvind.revision.warmup.ValidPalindrome solution = new com.arvind.revision.warmup.ValidPalindrome();
         String s = "A man, a plan, a canal: Panama";
         boolean result = solution.isPalindrome(s);
         System.out.println(result);

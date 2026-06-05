@@ -1,4 +1,4 @@
-package com.arvind.revision;
+package com.arvind.revision.warmup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
