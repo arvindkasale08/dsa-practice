@@ -72,6 +72,27 @@
       letter-spacing: 0;
     }
 
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .count-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      border: 1px solid #cfe0d2;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: #28593f;
+      padding: 4px 12px;
+      font-size: 14px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
     .subtitle {
       margin: 10px 0 0;
       max-width: 840px;
@@ -147,6 +168,11 @@
       font-size: 23px;
       line-height: 1.12;
       letter-spacing: 0;
+    }
+
+    .problem-no {
+      color: var(--green);
+      font-weight: 900;
     }
 
     .meta-line {
@@ -449,7 +475,10 @@
     <a class="back-link" href="../../../">Back to index</a>
     <header>
       <div>
-        <h1>Warmup Revision</h1>
+        <div class="title-row">
+          <h1>Warmup Revision</h1>
+          <span id="totalCount" class="count-pill"></span>
+        </div>
         <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and gotchas before opening the Java file.</p>
       </div>
       <div class="tools">
@@ -790,11 +819,16 @@
     };
 
     cards.forEach(card => Object.assign(card, recallDetails[card.name]));
+    cards.forEach((card, index) => {
+      card.problemNo = index + 1;
+      card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
+    });
 
     const cardsEl = document.getElementById("cards");
     const searchEl = document.getElementById("search");
     const emptyEl = document.getElementById("empty");
     const quickModeEl = document.getElementById("quickMode");
+    const totalCountEl = document.getElementById("totalCount");
     let quickMode = false;
 
     function escapeHtml(value) {
@@ -824,7 +858,7 @@
       return `<div class="quick-review">${cardsToRender.map(card => `
         <article class="quick-row">
           <div>
-            <strong>${escapeHtml(card.name)}</strong>
+            <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
             <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
           </div>
           <div>
@@ -848,6 +882,7 @@
       const visible = cards.filter(card => {
         const haystack = [
           card.name,
+          card.problemLabel,
           card.label,
           card.difficulty,
           card.leetcode,
@@ -878,7 +913,7 @@
         <article class="card">
           <div class="card-head">
             <div>
-              <h2>${escapeHtml(card.name)}</h2>
+              <h2><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</h2>
               <div class="meta-line">
                 <span>${escapeHtml(card.label)}</span>
                 <span>${escapeHtml(card.difficulty)}</span>
@@ -942,6 +977,7 @@
       quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
       render();
     });
+    totalCountEl.textContent = `${cards.length} problems`;
     render();
   </script>
 </body>
