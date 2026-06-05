@@ -274,6 +274,36 @@
       color: #2f536c;
     }
 
+    .cost-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .cost-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcf8;
+      padding: 9px 10px;
+      min-width: 0;
+    }
+
+    .cost-label {
+      display: block;
+      margin-bottom: 3px;
+      color: #3c4d43;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .cost-value {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
     .sample {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -445,6 +475,7 @@
     }
 
     .quick-text {
+      display: block;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.35;
@@ -460,6 +491,7 @@
 
     @media (max-width: 620px) {
       .sample,
+      .cost-strip,
       .section-grid {
         grid-template-columns: 1fr;
       }
@@ -500,6 +532,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent/",
         description: "Given two arrays of string chunks, decide whether joining all chunks in each array creates the same final string.",
+        time: "O(total chars)",
+        space: "O(total chars)",
+        structures: "StringBuilder x 2",
         input: 'word1 = ["ab", "c"]\nword2 = ["a", "bc"]',
         output: "true",
         recognize: "When two string arrays are really just two broken-up versions of a final string.",
@@ -515,6 +550,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/find-closest-number-to-zero/",
         description: "Given an integer array, return the number closest to zero. If negative and positive values are equally close, return the positive one.",
+        time: "O(n)",
+        space: "O(1)",
+        structures: "Best-so-far variable",
         input: "nums = [2, -1, 1]",
         output: "1",
         recognize: "When the answer is one best element and each number can be judged independently.",
@@ -530,6 +568,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/contains-duplicate/",
         description: "Given an integer array, return true if any value appears at least twice. Return false only when every value is unique.",
+        time: "O(n)",
+        space: "O(n)",
+        structures: "HashSet",
         input: "nums = [1, 2, 3, 4, 4]",
         output: "Result: true",
         recognize: "When the question asks whether anything repeats and you do not need the repeated positions.",
@@ -545,6 +586,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/find-numbers-with-even-number-of-digits/",
         description: "Given an array of integers, count how many numbers have an even number of decimal digits.",
+        time: "O(total digits)",
+        space: "O(1)",
+        structures: "Digit counter",
         input: "nums = [12, 345, 2, 6, 7896]",
         output: "2",
         recognize: "When the value itself does not matter, only the length of its decimal representation.",
@@ -560,6 +604,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/flipping-an-image/",
         description: "Given a binary matrix, flip each row horizontally, then invert every bit so 0 becomes 1 and 1 becomes 0.",
+        time: "O(rows * cols)",
+        space: "O(1)",
+        structures: "In-place matrix, two pointers",
         input: "image = [[1,1,0,0], [1,0,0,1], [0,1,1,1], [1,0,1,0]]",
         output: "[[1,1,0,0], [0,1,1,0], [0,0,0,1], [1,0,1,0]]",
         recognize: "When each row must be mirrored and each binary value must be toggled.",
@@ -575,6 +622,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/number-of-good-pairs/",
         description: "Given an integer array, count pairs of indices i and j where i is before j and both positions contain the same value.",
+        time: "O(n)",
+        space: "O(k)",
+        structures: "Frequency HashMap",
         input: "nums = [1, 2, 3, 1, 1, 3]",
         output: "4",
         recognize: "When every new duplicate can pair with all earlier copies of the same number.",
@@ -590,6 +640,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/is-subsequence/",
         description: "Given strings s and t, check whether s can be formed by deleting characters from t without changing the order of the remaining characters.",
+        time: "O(|t|)",
+        space: "O(1)",
+        structures: "Two pointers",
         input: 's = "abc"\nt = "ahbgdc"',
         output: "true",
         recognize: "When one string only needs to appear in order inside another string, not contiguously.",
@@ -605,6 +658,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/majority-element/",
         description: "Given an array where one value appears more than half the time, return that majority value.",
+        time: "O(n)",
+        space: "O(1)",
+        structures: "Candidate + vote count",
         input: "nums = [2, 2, 1, 1, 1, 2, 2]",
         output: "2",
         recognize: "When the problem guarantees one value appears more than half the array.",
@@ -620,6 +676,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/merge-strings-alternately/",
         description: "Given two strings, create a new string by alternating characters from each one, then append any leftover tail from the longer string.",
+        time: "O(n + m)",
+        space: "O(n + m)",
+        structures: "StringBuilder, two indexes",
         input: 'word1 = "abcd"\nword2 = "pq"',
         output: "apbqcd",
         recognize: "When the output is formed by weaving two strings character by character.",
@@ -635,6 +694,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/move-zeroes/",
         description: "Given an integer array, move all zeroes to the end while keeping the non-zero values in their original relative order.",
+        time: "O(n)",
+        space: "O(1)",
+        structures: "Write pointer",
         input: "nums = [0, 1, 3, 0, 12]",
         output: "[1, 3, 12, 0, 0]",
         recognize: "When unwanted values move to the end but the wanted values must keep their order.",
@@ -650,6 +712,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/check-if-the-sentence-is-pangram/",
         description: "Given a sentence, check whether it contains every English alphabet letter at least once.",
+        time: "O(n)",
+        space: "O(1)",
+        structures: "Boolean[26] checklist",
         input: '"This is not a pangram"\n"TheQuickBrownFoxJumpsOverTheLazyDog"',
         output: "false\ntrue",
         recognize: "When the task is presence of all alphabet letters, not order or frequency.",
@@ -665,6 +730,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/reverse-vowels-of-a-string/",
         description: "Given a string, reverse only its vowels. Every consonant, digit, symbol, and space stays in its original position.",
+        time: "O(n)",
+        space: "O(n)",
+        structures: "char array, two pointers, vowel lookup",
         input: '"hello"\n"DesignGUrus"',
         output: "holle\nDusUgnGires",
         recognize: "When only one character class moves and all other characters stay anchored.",
@@ -680,6 +748,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/shortest-word-distance/",
         description: "Given a list of words and two target words, return the smallest distance between any occurrence of the two targets.",
+        time: "O(n)",
+        space: "O(1)",
+        structures: "Last seen indexes",
         input: 'words = ["the","quick","brown","fox","jumps","over","the","lazy","dog"]\nword1 = "fox", word2 = "dog"',
         output: "5",
         recognize: "When distance depends only on the latest seen positions of two target words.",
@@ -695,6 +766,9 @@
         difficulty: "Medium",
         leetcode: "https://leetcode.com/problems/sqrtx/",
         description: "Given a non-negative integer x, return the floor of its square root without using a built-in square-root operation.",
+        time: "O(log x)",
+        space: "O(1)",
+        structures: "Binary search bounds",
         input: "x = 2147395600",
         output: "46340",
         recognize: "When the answer is a number in a range and you can test whether a guess is too small or too large.",
@@ -710,6 +784,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/valid-anagram/",
         description: "Given two strings, check whether they contain exactly the same characters with exactly the same counts.",
+        time: "O(n)",
+        space: "O(1)",
+        structures: "int[26] frequency array",
         input: 's = "listen"\nt = "silent"',
         output: "true",
         recognize: "When order does not matter, but exact character counts do.",
@@ -725,6 +802,9 @@
         difficulty: "Easy",
         leetcode: "https://leetcode.com/problems/valid-palindrome/",
         description: "Given a string, check whether it reads the same forward and backward after ignoring non-alphanumeric characters and case.",
+        time: "O(n)",
+        space: "O(1)",
+        structures: "Two pointers",
         input: '"A man, a plan, a canal, Panama!"\n"Was it a car or a cat I saw?"\n"123321"',
         output: "true\ntrue\ntrue",
         recognize: "When you compare a string from both ends while ignoring non-essential characters.",
@@ -860,6 +940,8 @@
           <div>
             <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
             <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
+            <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
+            <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
           </div>
           <div>
             <span class="quick-label">Recall prompt</span>
@@ -885,6 +967,9 @@
           card.problemLabel,
           card.label,
           card.difficulty,
+          card.time,
+          card.space,
+          card.structures,
           card.leetcode,
           card.source,
           card.description,
@@ -928,6 +1013,20 @@
             <div class="description">
               <b>Problem description</b>
               ${escapeHtml(card.description)}
+            </div>
+            <div class="cost-strip">
+              <div class="cost-item">
+                <span class="cost-label">Time</span>
+                <span class="cost-value">${escapeHtml(card.time)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Space</span>
+                <span class="cost-value">${escapeHtml(card.space)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Data structures</span>
+                <span class="cost-value">${escapeHtml(card.structures)}</span>
+              </div>
             </div>
             <div class="sample">
               <div class="sample-box">
