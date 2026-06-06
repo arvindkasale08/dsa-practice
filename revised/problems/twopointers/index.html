@@ -1,0 +1,1367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Two Pointers Revision</title>
+  <style>
+    :root {
+      --ink: #18221e;
+      --muted: #5e6d66;
+      --line: #d4ddd7;
+      --line-strong: #b9c9bf;
+      --paper: #edf2ee;
+      --panel: #fffefa;
+      --green: #176b51;
+      --green-dark: #0f4f3c;
+      --green-soft: #e1f2e9;
+      --blue: #326c94;
+      --blue-soft: #e4f0f7;
+      --gold: #a96b16;
+      --gold-soft: #fbefd5;
+      --red: #a4473e;
+      --red-soft: #f8e7e4;
+      --shadow: 0 12px 30px rgba(31, 53, 42, .08);
+      --shadow-hover: 0 18px 38px rgba(31, 53, 42, .14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      border-top: 4px solid var(--green);
+    }
+
+    a {
+      color: var(--green);
+      font-weight: 700;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    a:hover { color: var(--green-dark); }
+
+    button,
+    input {
+      transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(50, 108, 148, .22);
+      outline-offset: 2px;
+    }
+
+    .page {
+      width: min(1380px, 100%);
+      margin: 0 auto;
+      padding: 20px 18px 48px;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 10px;
+      padding: 12px;
+      border: 1px solid rgba(185, 201, 191, .8);
+      border-radius: 8px;
+      background: rgba(255, 254, 250, .96);
+      box-shadow: 0 8px 24px rgba(31, 53, 42, .08);
+      backdrop-filter: blur(12px);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--green);
+      padding: 5px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1;
+      letter-spacing: 0;
+      color: #13241d;
+    }
+
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .count-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      border: 1px solid #bad9ca;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 4px 12px;
+      font-size: 14px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .page-revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      max-width: 840px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .search {
+      width: min(380px, 100%);
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      font: inherit;
+      padding: 0 12px;
+    }
+
+    .search:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(50, 108, 148, .12);
+    }
+
+    .mode-button {
+      height: 42px;
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--green);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mode-button:hover {
+      background: var(--green-soft);
+      transform: translateY(-1px);
+    }
+
+    .mode-button.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--green);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-width: 0;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    .cards > .card:nth-child(4n + 2) { border-top-color: var(--blue); }
+    .cards > .card:nth-child(4n + 3) { border-top-color: var(--gold); }
+    .cards > .card:nth-child(4n + 4) { border-top-color: var(--red); }
+
+    .card:hover {
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-head {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      background: #f8faf7;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .problem-no {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .problem-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 7px;
+    }
+
+    .revision-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .revision-button {
+      min-height: 26px;
+      border: 1px solid #bad9ca;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 3px 9px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .revision-button:hover {
+      border-color: var(--green);
+      background: var(--green);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .revision-button.reset {
+      border-color: var(--line);
+      background: #f6f8f5;
+      color: var(--muted);
+    }
+
+    .revision-button.reset:hover {
+      border-color: #dfb7b2;
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      align-items: center;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .meta-line a {
+      font-weight: 700;
+    }
+
+    .head-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      align-items: start;
+    }
+
+    .badge,
+    .difficulty,
+    .leetcode {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: var(--green-soft);
+      color: #28593f;
+      border: 1px solid #cfe0d2;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .difficulty.easy {
+      background: var(--green-soft);
+      border-color: #bad9ca;
+      color: var(--green-dark);
+    }
+
+    .difficulty.medium {
+      background: var(--gold-soft);
+      border-color: #edd89d;
+      color: #67480b;
+    }
+
+    .difficulty.hard {
+      background: var(--red-soft);
+      border-color: #edc5bd;
+      color: #773229;
+    }
+
+    .leetcode {
+      background: var(--blue-soft);
+      border-color: #cddfeb;
+      color: #2f536c;
+      text-decoration: none;
+    }
+
+    .body {
+      padding: 15px 16px 16px;
+      display: grid;
+      gap: 12px;
+      background: var(--panel);
+    }
+
+    .recall-prompt {
+      border: 1px solid #bad9ca;
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .description {
+      border: 1px solid #cddfeb;
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: var(--blue-soft);
+      color: #2f536c;
+      padding: 10px;
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .description b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #2f536c;
+    }
+
+    .cost-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .cost-item {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--green);
+      border-radius: 8px;
+      background: #f8faf7;
+      padding: 9px 10px;
+      min-width: 0;
+    }
+
+    .cost-item:nth-child(2) { border-top-color: var(--blue); }
+    .cost-item:nth-child(3) { border-top-color: var(--gold); }
+
+    .cost-label {
+      display: block;
+      margin-bottom: 3px;
+      color: #3c4d43;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .cost-value {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .sample {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .sample-box {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f6f9f7;
+      padding: 10px;
+    }
+
+    .sample-box b,
+    .section b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #3c4d43;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #213c30;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffefa;
+      padding: 10px;
+      min-height: 92px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .section.full {
+      grid-column: 1 / -1;
+      border-color: #e5c9c5;
+      background: #fffaf8;
+    }
+
+    .visual {
+      display: grid;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .step {
+      display: flex;
+      gap: 7px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.32;
+    }
+
+    .step-num {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--blue-soft);
+      color: #2f536c;
+      font-weight: 900;
+      font-size: 11px;
+    }
+
+    .array {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .cell {
+      min-width: 30px;
+      height: 30px;
+      padding: 0 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .cell.green { background: var(--green-soft); }
+    .cell.blue { background: var(--blue-soft); }
+    .cell.gold { background: var(--gold-soft); }
+    .cell.red { background: var(--red-soft); }
+
+    .hint {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .gotchas {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .gotchas li {
+      margin-bottom: 5px;
+    }
+
+    .gotchas li:last-child { margin-bottom: 0; }
+
+    .empty {
+      display: none;
+      border: 1px dashed #b9c4bb;
+      border-radius: 8px;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      background: white;
+    }
+
+    .quick-review {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-item {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(160px, .9fr) minmax(130px, .7fr) minmax(220px, 1.4fr) minmax(220px, 1.4fr);
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 11px 40px 11px 11px;
+      cursor: pointer;
+      box-shadow: 0 5px 14px rgba(31, 53, 42, .05);
+    }
+
+    .quick-item:nth-child(4n + 2) .quick-row { border-left-color: var(--blue); }
+    .quick-item:nth-child(4n + 3) .quick-row { border-left-color: var(--gold); }
+    .quick-item:nth-child(4n + 4) .quick-row { border-left-color: var(--red); }
+
+    .quick-row:hover,
+    .quick-row:focus-visible,
+    .quick-row.expanded {
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .expand-cue {
+      position: absolute;
+      top: 12px;
+      right: 13px;
+      color: var(--green);
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1;
+      transition: transform .15s ease;
+    }
+
+    .quick-row.expanded .expand-cue {
+      transform: rotate(180deg);
+    }
+
+    .quick-expanded-card {
+      box-shadow: 0 12px 28px rgba(26, 37, 31, .08);
+    }
+
+    .quick-row strong {
+      display: block;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .quick-label {
+      color: #3c4d43;
+      display: block;
+      margin-bottom: 3px;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .quick-text {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 980px) {
+      header { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .search { width: 100%; }
+      .tools { justify-content: flex-start; }
+      .quick-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .sample,
+      .cost-strip,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section.full { grid-column: auto; }
+      .card-head { grid-template-columns: 1fr; }
+      .tools { display: grid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back-link" href="../../../">Back to index</a>
+    <header>
+      <div>
+        <div class="title-row">
+          <h1>Two Pointers Revision</h1>
+          <span id="totalCount" class="count-pill"></span>
+          <div class="page-revision-controls">
+            <button id="incrementAll" class="revision-button" type="button">+1 All</button>
+            <button id="resetAll" class="revision-button reset" type="button">Reset All</button>
+          </div>
+        </div>
+      </div>
+      <div class="tools">
+        <input id="search" class="search" type="search" placeholder="Search two pointers cards">
+        <button id="quickMode" class="mode-button" type="button">Quick Review</button>
+      </div>
+    </header>
+    <p class="subtitle">Fast recall cards for the current two pointers package. Read the problem name, picture the hook, then check the sample and bug magnets before opening the Java file.</p>
+
+    <section id="cards" class="cards"></section>
+    <div id="empty" class="empty">No matching two pointers cards.</div>
+  </main>
+
+  <script>
+    const cards = [
+      {
+        "name": "CellsWithOddValues",
+        "source": "../com/arvind/revision/twopointers/CellsWithOddValues.java",
+        "label": "Row/column parity",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/cells-with-odd-values-in-a-matrix/",
+        "description": "Start with a zero matrix. For every index pair, increment its whole row and whole column, then count cells whose final value is odd.",
+        "time": "O(k + m * n)",
+        "space": "O(m + n)",
+        "structures": "Row parity array, column parity array",
+        "input": "m = 2, n = 3\nindices = [[0,1], [1,1]]",
+        "output": "6",
+        "recognize": "When full rows and columns receive repeated updates, but you only care whether each final value is odd or even.",
+        "visual": [
+          [
+            "r0:+1",
+            "r1:+1"
+          ],
+          [
+            "c0:0",
+            "c1:+2",
+            "c2:0"
+          ]
+        ],
+        "visualText": "Track row and column parity instead of touching the whole matrix after every operation. A cell is odd when its row parity and column parity differ.",
+        "core": "Toggle or count the affected row and column for every operation. At the end, combine each row state with each column state and count odd cells.",
+        "gotchas": [
+          "The current Java method is incomplete and always returns 0.",
+          "You do not need to build and repeatedly update the full matrix."
+        ]
+      },
+      {
+        "name": "PairWithTargetSum",
+        "source": "../com/arvind/revision/twopointers/PairWithTargetSum.java",
+        "label": "Opposite-end sum",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
+        "description": "Given a sorted array and a target, return the indices of two numbers whose sum equals the target.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Left and right pointers",
+        "input": "arr = [1, 2, 3, 4, 6]\ntarget = 6",
+        "output": "[1, 3]",
+        "recognize": "When a sorted array asks for a pair with an exact sum and moving one endpoint changes the sum predictably.",
+        "visual": [
+          [
+            "1",
+            "2",
+            "3",
+            "4",
+            "6"
+          ],
+          [
+            "L ->",
+            "",
+            "",
+            "<- R"
+          ]
+        ],
+        "visualText": "The smallest and largest values face each other. Too large means shrink from the right; too small means grow from the left.",
+        "core": "Start at both ends. Compare arr[left] + arr[right] with the target, then move exactly the pointer that can correct the sum.",
+        "gotchas": [
+          "This two-pointer direction relies on the array being sorted.",
+          "Return the index format expected by the caller; LeetCode Two Sum II expects one-based indexes."
+        ]
+      },
+      {
+        "name": "RemoveDuplicates",
+        "source": "../com/arvind/revision/twopointers/RemoveDuplicates.java",
+        "label": "Unique write slot",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+        "description": "Remove duplicates from a sorted array in place and return how many unique values remain at the front.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Read pointer, last-unique pointer",
+        "input": "arr = [2, 3, 3, 3, 6, 9, 9]",
+        "output": "4\nfront = [2, 3, 6, 9]",
+        "recognize": "When a sorted array must be compacted in place while preserving one copy of every distinct value.",
+        "visual": [
+          [
+            "2",
+            "3",
+            "3",
+            "3",
+            "6",
+            "9",
+            "9"
+          ],
+          [
+            "2",
+            "3",
+            "6",
+            "9",
+            "_",
+            "_",
+            "_"
+          ]
+        ],
+        "visualText": "The read pointer explores; the write boundary advances only when a genuinely new value appears.",
+        "core": "Keep the last unique value at the write boundary. Scan forward and copy a value only when it differs from the last unique value.",
+        "gotchas": [
+          "The current implementation returns 1 for an empty array; guard empty input first.",
+          "The values after the returned unique length do not matter."
+        ]
+      },
+      {
+        "name": "SquaringSortedArray",
+        "source": "../com/arvind/revision/twopointers/SquaringSortedArray.java",
+        "label": "Largest square first",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/squares-of-a-sorted-array/",
+        "description": "Square every value in a sorted array and return the squares in sorted order.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Two pointers, output array",
+        "input": "arr = [-2, -1, 0, 2, 3]",
+        "output": "[0, 1, 4, 4, 9]",
+        "recognize": "When negatives break the original sorted order after a transform based on absolute value.",
+        "visual": [
+          [
+            "-2",
+            "-1",
+            "0",
+            "2",
+            "3"
+          ],
+          [
+            "4",
+            "1",
+            "0",
+            "4",
+            "9"
+          ]
+        ],
+        "visualText": "The largest square must come from one of the two ends. Fill the output from right to left.",
+        "core": "Compare absolute values at both ends. Square the larger one into the last open output slot, then move that endpoint inward.",
+        "gotchas": [
+          "Fill the result from the end, because you discover largest squares first.",
+          "Compare absolute values before squaring."
+        ]
+      },
+      {
+        "name": "ThreeSum",
+        "source": "../com/arvind/revision/twopointers/ThreeSum.java",
+        "label": "Anchor plus pair",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/3sum/",
+        "description": "Return all unique triplets whose values add up to zero.",
+        "time": "O(n^2)",
+        "space": "O(log n) + output",
+        "structures": "Sorted array, two pointers, result list",
+        "input": "arr = [-3, 0, 1, 2, -1, 1, -2]",
+        "output": "[[-3,1,2], [-2,0,2], [-2,1,1], [-1,0,1]]",
+        "recognize": "When you need unique triples and sorting lets each fixed first value become a two-sum search.",
+        "visual": [
+          [
+            "anchor",
+            "L ->",
+            "...",
+            "<- R"
+          ],
+          [
+            "a",
+            "+",
+            "b",
+            "+",
+            "c",
+            "=",
+            "0"
+          ]
+        ],
+        "visualText": "Freeze one anchor. The remaining two pointers squeeze toward the pair that balances it to zero.",
+        "core": "Sort first. For each non-duplicate anchor, run a left/right two-sum search and skip duplicates after recording a match.",
+        "gotchas": [
+          "Skip duplicate anchors before starting the inner search.",
+          "After recording a triplet, skip duplicate left/right values and still move both pointers once."
+        ]
+      },
+      {
+        "name": "ThreeSumClosest",
+        "source": "../com/arvind/revision/twopointers/ThreeSumClosest.java",
+        "label": "Closest anchored sum",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/3sum-closest/",
+        "description": "Return the sum of three integers whose total is closest to the target.",
+        "time": "O(n^2)",
+        "space": "O(log n)",
+        "structures": "Sorted array, two pointers, best-so-far sum",
+        "input": "arr = [-3, -1, 1, 2]\ntarget = 1",
+        "output": "0",
+        "recognize": "When exact equality is optional and every candidate triplet must update one closest-so-far answer.",
+        "visual": [
+          [
+            "anchor",
+            "L ->",
+            "...",
+            "<- R"
+          ],
+          [
+            "target",
+            "<-- gap -->",
+            "current sum"
+          ]
+        ],
+        "visualText": "Every pointer position creates a candidate gap to the target. Keep the smallest gap, then move toward the target.",
+        "core": "Sort, fix an anchor, and scan with two pointers. Update the closest sum before moving right for a high sum or left for a low sum.",
+        "gotchas": [
+          "Update the best answer in both pointer-movement branches.",
+          "When two sums are equally close, this implementation keeps the smaller sum."
+        ]
+      },
+      {
+        "name": "ThreeSumSmaller",
+        "source": "../com/arvind/revision/twopointers/ThreeSumSmaller.java",
+        "label": "Count a valid range",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/3sum-smaller/",
+        "description": "Count how many index triplets have a sum strictly smaller than the target.",
+        "time": "O(n^2)",
+        "space": "O(log n)",
+        "structures": "Sorted array, two pointers, counter",
+        "input": "arr = [-2, 0, 1, 3]\ntarget = 2",
+        "output": "2",
+        "recognize": "When sorted order lets one valid endpoint prove that an entire range of smaller endpoints is also valid.",
+        "visual": [
+          [
+            "anchor",
+            "L",
+            "...",
+            "R"
+          ],
+          [
+            "valid pairs",
+            "=",
+            "R - L"
+          ]
+        ],
+        "visualText": "If anchor + left + right is already below target, every value between left and right also works with that same anchor and left.",
+        "core": "Sort and fix an anchor. If the largest current pair still gives a small sum, add right-left at once and move left; otherwise move right.",
+        "gotchas": [
+          "Count right-left, not just one valid triplet.",
+          "The condition is strictly smaller, so a sum equal to target must move right."
+        ]
+      },
+      {
+        "name": "DutchNationalFlagProblem",
+        "source": "../com/arvind/revision/twopointers/DutchNationalFlagProblem.java",
+        "label": "Three-way partition",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/sort-colors/",
+        "description": "Sort an array containing only 0, 1, and 2 in one pass and in place.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Low, scan, and high pointers",
+        "input": "arr = [2, 2, 0, 1, 2, 0]",
+        "output": "[0, 0, 1, 2, 2, 2]",
+        "recognize": "When values belong to exactly three groups and the array should be partitioned in one pass.",
+        "visual": [
+          [
+            "0 zone",
+            "unknown zone",
+            "2 zone"
+          ],
+          [
+            "L",
+            "i ->",
+            "<- R"
+          ]
+        ],
+        "visualText": "Maintain three zones: confirmed zeroes, unknown values, and confirmed twos. Ones naturally remain in the middle.",
+        "core": "Swap zeroes toward low, twos toward high, and advance over ones. Re-examine the value swapped in from the high side.",
+        "gotchas": [
+          "After moving a 2 right, do not skip the unknown value swapped into the scan position.",
+          "The clean invariant stops when scan passes high, not when they merely meet."
+        ]
+      }
+    ];
+
+    const recallDetails = {
+      "CellsWithOddValues": {
+        "prompt": "Before reading: can row and column parity replace repeated full-matrix updates?",
+        "steps": [
+          "Toggle the chosen row state.",
+          "Toggle the chosen column state.",
+          "A cell is odd when row and column parity differ."
+        ],
+        "skeleton": "rows = int[m]; cols = int[n]\nfor [r,c] in indices: rows[r]++; cols[c]++\nodd = 0\nfor r, c:\n  if (rows[r] + cols[c]) % 2 == 1: odd++"
+      },
+      "PairWithTargetSum": {
+        "prompt": "Before reading: which pointer move makes the current sum closer to target?",
+        "steps": [
+          "Start at the smallest and largest values.",
+          "Too small: move left rightward.",
+          "Too large: move right leftward."
+        ],
+        "skeleton": "left = 0; right = n - 1\nwhile left < right:\n  sum = arr[left] + arr[right]\n  if sum == target: return [left, right]\n  if sum < target: left++\n  else: right--"
+      },
+      "RemoveDuplicates": {
+        "prompt": "Before reading: where should the next distinct value be written?",
+        "steps": [
+          "Keep the latest unique value at the write boundary.",
+          "Scan each sorted value.",
+          "Copy only when the value changes."
+        ],
+        "skeleton": "if arr.length == 0: return 0\nwrite = 1\nfor read from 1:\n  if arr[read] != arr[write-1]:\n    arr[write++] = arr[read]\nreturn write"
+      },
+      "SquaringSortedArray": {
+        "prompt": "Before reading: why must the next largest square come from an endpoint?",
+        "steps": [
+          "Compare absolute values at both ends.",
+          "Write the larger square into the last open slot.",
+          "Move that endpoint inward."
+        ],
+        "skeleton": "left = 0; right = n - 1; write = n - 1\nwhile left <= right:\n  if abs(arr[left]) >= abs(arr[right]): use left++\n  else: use right--\n  squares[write--] = chosen * chosen"
+      },
+      "ThreeSum": {
+        "prompt": "Before reading: how do you prevent the same triplet from being emitted twice?",
+        "steps": [
+          "Sort and choose one anchor.",
+          "Use left/right to find the balancing pair.",
+          "Skip duplicate anchors and duplicate pair values."
+        ],
+        "skeleton": "sort(arr)\nfor i:\n  if i > 0 && arr[i] == arr[i-1]: continue\n  left = i+1; right = n-1\n  while left < right:\n    move by sum; record zero and skip duplicates"
+      },
+      "ThreeSumClosest": {
+        "prompt": "Before reading: when must the closest-so-far answer be updated?",
+        "steps": [
+          "Sort and fix an anchor.",
+          "Measure every current triplet's distance to target.",
+          "Update best before moving toward target."
+        ],
+        "skeleton": "sort(arr); best = first triplet sum\nfor i:\n  left = i+1; right = n-1\n  while left < right:\n    sum = arr[i]+arr[left]+arr[right]\n    update best by abs(target-sum)\n    if sum < target: left++ else: right--"
+      },
+      "ThreeSumSmaller": {
+        "prompt": "Before reading: why does one valid sum prove right-left triplets are valid?",
+        "steps": [
+          "Sort and fix an anchor.",
+          "Test the largest pair at left/right.",
+          "If valid, count the entire right-left range."
+        ],
+        "skeleton": "sort(arr); count = 0\nfor i:\n  left = i+1; right = n-1\n  while left < right:\n    if sum < target: count += right-left; left++\n    else: right--"
+      },
+      "DutchNationalFlagProblem": {
+        "prompt": "Before reading: which swapped-in value must be examined again?",
+        "steps": [
+          "Zero goes to the low boundary.",
+          "One stays and scan advances.",
+          "Two goes to high; re-check the new scan value."
+        ],
+        "skeleton": "low = 0; scan = 0; high = n - 1\nwhile scan <= high:\n  if arr[scan] == 0: swap(low++, scan++)\n  else if arr[scan] == 1: scan++\n  else: swap(scan, high--)"
+      }
+    };
+
+    cards.forEach(card => Object.assign(card, recallDetails[card.name]));
+    cards.forEach((card, index) => {
+      card.problemNo = index + 1;
+      card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
+    });
+
+    const cardsEl = document.getElementById("cards");
+    const searchEl = document.getElementById("search");
+    const emptyEl = document.getElementById("empty");
+    const quickModeEl = document.getElementById("quickMode");
+    const totalCountEl = document.getElementById("totalCount");
+    const incrementAllEl = document.getElementById("incrementAll");
+    const resetAllEl = document.getElementById("resetAll");
+    let quickMode = false;
+    const expandedQuickCards = new Set();
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function renderVisual(groups) {
+      return groups.map((group, index) => {
+        const color = index === 0 ? "green" : index === 1 ? "gold" : "blue";
+        return `<div class="array">${group.map(item => `<span class="cell ${color}">${escapeHtml(item)}</span>`).join("")}</div>`;
+      }).join("");
+    }
+
+    function renderSteps(steps) {
+      return `<div class="steps">${steps.map((step, index) => `
+        <div class="step"><span class="step-num">${index + 1}</span><span>${escapeHtml(step)}</span></div>
+      `).join("")}</div>`;
+    }
+
+    function storageKey(cardName) {
+      return `dsa-revision:twopointers:${cardName}`;
+    }
+
+    function readRevision(cardName) {
+      try {
+        const raw = localStorage.getItem(storageKey(cardName));
+        if (!raw) return { count: 0, last: "" };
+        const parsed = JSON.parse(raw);
+        return {
+          count: Number(parsed.count) || 0,
+          last: typeof parsed.last === "string" ? parsed.last : ""
+        };
+      } catch {
+        return { count: 0, last: "" };
+      }
+    }
+
+    function writeRevision(cardName, revision) {
+      try {
+        localStorage.setItem(storageKey(cardName), JSON.stringify(revision));
+      } catch {
+        // Keep the page usable even if browser storage is unavailable.
+      }
+    }
+
+    function formatLastRevised(value) {
+      if (!value) return "Last revised: never";
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return `Last revised: ${value}`;
+      return `Last revised: ${date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+    }
+
+    function todayLocalDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function renderRevisionControls(card) {
+      const revision = readRevision(card.name);
+      return `
+        <div class="revision-controls">
+          <span class="revision-pill">Revised ${revision.count}x</span>
+          <span class="revision-pill">${escapeHtml(formatLastRevised(revision.last))}</span>
+          <button class="revision-button" type="button" data-action="increment" data-card="${escapeHtml(card.name)}">+1</button>
+          <button class="revision-button reset" type="button" data-action="reset" data-card="${escapeHtml(card.name)}">Reset</button>
+        </div>
+      `;
+    }
+
+    function renderFullCard(card, extraClass = "") {
+      return `
+        <article class="card ${extraClass}">
+          <div class="card-head">
+            <div>
+              <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+              ${renderRevisionControls(card)}
+              <div class="meta-line">
+                <span>${escapeHtml(card.label)}</span>
+                <span>${escapeHtml(card.difficulty)}</span>
+                <a href="${escapeHtml(card.source)}">Source</a>
+                ${card.leetcode ? `<a href="${escapeHtml(card.leetcode)}" target="_blank" rel="noreferrer">LeetCode</a>` : ""}
+              </div>
+            </div>
+            <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
+          </div>
+          <div class="body">
+            <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
+            <div class="description">
+              <b>Problem description</b>
+              ${escapeHtml(card.description)}
+            </div>
+            <div class="cost-strip">
+              <div class="cost-item">
+                <span class="cost-label">Time</span>
+                <span class="cost-value">${escapeHtml(card.time)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Space</span>
+                <span class="cost-value">${escapeHtml(card.space)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Data structures</span>
+                <span class="cost-value">${escapeHtml(card.structures)}</span>
+              </div>
+            </div>
+            <div class="sample">
+              <div class="sample-box">
+                <b>Input</b>
+                <code>${escapeHtml(card.input)}</code>
+              </div>
+              <div class="sample-box">
+                <b>Output</b>
+                <code>${escapeHtml(card.output)}</code>
+              </div>
+            </div>
+            <div class="section-grid">
+              <div class="section">
+                <b>When to recognize it</b>
+                ${escapeHtml(card.recognize)}
+              </div>
+              <div class="section">
+                <b>Visual hook</b>
+                <div class="visual">${renderVisual(card.visual)}</div>
+                ${renderSteps(card.steps)}
+                <span class="hint">${escapeHtml(card.visualText)}</span>
+              </div>
+              <div class="section">
+                <b>Core move</b>
+                ${escapeHtml(card.core)}
+              </div>
+              <div class="section">
+                <b>Code skeleton</b>
+                <code>${escapeHtml(card.skeleton)}</code>
+              </div>
+              <div class="section full">
+                <b>Bug magnets</b>
+                <ul class="gotchas">${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderQuickReview(cardsToRender) {
+      return `<div class="quick-review">${cardsToRender.map(card => {
+        const expanded = expandedQuickCards.has(card.name);
+        return `
+          <div class="quick-item">
+            <article class="quick-row ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
+              <span class="expand-cue" aria-hidden="true">⌄</span>
+              <div>
+                <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
+                ${renderRevisionControls(card)}
+                <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
+                <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
+                <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
+              </div>
+              <div>
+                <span class="quick-label">Recall prompt</span>
+                <span class="quick-text">${escapeHtml(card.prompt)}</span>
+              </div>
+              <div>
+                <span class="quick-label">Code shape</span>
+                <code>${escapeHtml(card.skeleton.split("\n")[0])}</code>
+              </div>
+              <div>
+                <span class="quick-label">Bug magnet</span>
+                <span class="quick-text">${escapeHtml(card.gotchas[0])}</span>
+              </div>
+            </article>
+            ${expanded ? renderFullCard(card, "quick-expanded-card") : ""}
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function toggleQuickCard(cardName) {
+      if (expandedQuickCards.has(cardName)) {
+        expandedQuickCards.delete(cardName);
+      } else {
+        expandedQuickCards.add(cardName);
+      }
+      render();
+    }
+
+    function render() {
+      const query = searchEl.value.trim().toLowerCase();
+      const visible = cards.filter(card => {
+        const haystack = [
+          card.name,
+          card.problemLabel,
+          card.label,
+          card.difficulty,
+          card.time,
+          card.space,
+          card.structures,
+          card.leetcode,
+          card.source,
+          card.description,
+          card.input,
+          card.output,
+          card.recognize,
+          card.visualText,
+          card.core,
+          card.prompt,
+          card.skeleton,
+          card.steps.join(" "),
+          card.gotchas.join(" ")
+        ].join(" ").toLowerCase();
+        return !query || haystack.includes(query);
+      });
+
+      if (quickMode) {
+        cardsEl.className = "quick-review";
+        cardsEl.innerHTML = renderQuickReview(visible);
+        emptyEl.style.display = visible.length ? "none" : "block";
+        return;
+      }
+
+      cardsEl.className = "cards";
+      cardsEl.innerHTML = visible.map(card => renderFullCard(card)).join("");
+
+      emptyEl.style.display = visible.length ? "none" : "block";
+    }
+
+    searchEl.addEventListener("input", render);
+    cardsEl.addEventListener("click", event => {
+      const button = event.target.closest("[data-action][data-card]");
+      if (button) {
+        const cardName = button.dataset.card;
+        if (button.dataset.action === "increment") {
+          const current = readRevision(cardName);
+          writeRevision(cardName, {
+            count: current.count + 1,
+            last: todayLocalDate()
+          });
+        }
+        if (button.dataset.action === "reset") {
+          writeRevision(cardName, { count: 0, last: "" });
+        }
+        render();
+        return;
+      }
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (quickRow) toggleQuickCard(quickRow.dataset.expandCard);
+    });
+    cardsEl.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (!quickRow || event.target.closest("button, a")) return;
+      event.preventDefault();
+      toggleQuickCard(quickRow.dataset.expandCard);
+    });
+    incrementAllEl.addEventListener("click", () => {
+      const today = todayLocalDate();
+      cards.forEach(card => {
+        const current = readRevision(card.name);
+        writeRevision(card.name, {
+          count: current.count + 1,
+          last: today
+        });
+      });
+      render();
+    });
+    resetAllEl.addEventListener("click", () => {
+      if (!window.confirm("Reset revision counts and dates for all two pointers problems?")) return;
+      cards.forEach(card => writeRevision(card.name, { count: 0, last: "" }));
+      render();
+    });
+    quickModeEl.addEventListener("click", () => {
+      quickMode = !quickMode;
+      quickModeEl.classList.toggle("active", quickMode);
+      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
+      render();
+    });
+    totalCountEl.textContent = `${cards.length} problems`;
+    render();
+  </script>
+</body>
+</html>
