@@ -43,11 +43,18 @@
     }
 
     header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 18px;
       align-items: end;
-      margin-bottom: 18px;
+      margin-bottom: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      background: rgba(245, 247, 241, .96);
+      backdrop-filter: blur(12px);
     }
 
     .back-link {
@@ -101,7 +108,7 @@
     }
 
     .subtitle {
-      margin: 10px 0 0;
+      margin: 0 0 18px;
       max-width: 840px;
       color: var(--muted);
       font-size: 16px;
@@ -504,7 +511,13 @@
       gap: 8px;
     }
 
+    .quick-item {
+      display: grid;
+      gap: 8px;
+    }
+
     .quick-row {
+      position: relative;
       display: grid;
       grid-template-columns: minmax(160px, .9fr) minmax(130px, .7fr) minmax(220px, 1.4fr) minmax(220px, 1.4fr);
       gap: 10px;
@@ -512,7 +525,35 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       background: white;
-      padding: 11px;
+      padding: 11px 40px 11px 11px;
+      cursor: pointer;
+    }
+
+    .quick-row:hover,
+    .quick-row:focus-visible,
+    .quick-row.expanded {
+      border-color: #a9c5b0;
+      box-shadow: 0 8px 20px rgba(26, 37, 31, .08);
+      outline: none;
+    }
+
+    .expand-cue {
+      position: absolute;
+      top: 12px;
+      right: 13px;
+      color: var(--green);
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1;
+      transition: transform .15s ease;
+    }
+
+    .quick-row.expanded .expand-cue {
+      transform: rotate(180deg);
+    }
+
+    .quick-expanded-card {
+      box-shadow: 0 12px 28px rgba(26, 37, 31, .08);
     }
 
     .quick-row strong {
@@ -571,13 +612,13 @@
             <button id="resetAll" class="revision-button reset" type="button">Reset All</button>
           </div>
         </div>
-        <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and gotchas before opening the Java file.</p>
       </div>
       <div class="tools">
         <input id="search" class="search" type="search" placeholder="Search warmup cards">
         <button id="quickMode" class="mode-button" type="button">Quick Review</button>
       </div>
     </header>
+    <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and gotchas before opening the Java file.</p>
 
     <section id="cards" class="cards"></section>
     <div id="empty" class="empty">No matching warmup cards.</div>
@@ -972,6 +1013,7 @@
     const incrementAllEl = document.getElementById("incrementAll");
     const resetAllEl = document.getElementById("resetAll");
     let quickMode = false;
+    const expandedQuickCards = new Set();
 
     function escapeHtml(value) {
       return String(value).replace(/[&<>"']/g, char => ({
@@ -1049,69 +1091,9 @@
       `;
     }
 
-    function renderQuickReview(cardsToRender) {
-      return `<div class="quick-review">${cardsToRender.map(card => `
-        <article class="quick-row">
-          <div>
-            <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
-            ${renderRevisionControls(card)}
-            <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
-            <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
-            <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
-          </div>
-          <div>
-            <span class="quick-label">Recall prompt</span>
-            <span class="quick-text">${escapeHtml(card.prompt)}</span>
-          </div>
-          <div>
-            <span class="quick-label">Code shape</span>
-            <code>${escapeHtml(card.skeleton.split("\n")[0])}</code>
-          </div>
-          <div>
-            <span class="quick-label">Bug magnet</span>
-            <span class="quick-text">${escapeHtml(card.gotchas[0])}</span>
-          </div>
-        </article>
-      `).join("")}</div>`;
-    }
-
-    function render() {
-      const query = searchEl.value.trim().toLowerCase();
-      const visible = cards.filter(card => {
-        const haystack = [
-          card.name,
-          card.problemLabel,
-          card.label,
-          card.difficulty,
-          card.time,
-          card.space,
-          card.structures,
-          card.leetcode,
-          card.source,
-          card.description,
-          card.input,
-          card.output,
-          card.recognize,
-          card.visualText,
-          card.core,
-          card.prompt,
-          card.skeleton,
-          card.steps.join(" "),
-          card.gotchas.join(" ")
-        ].join(" ").toLowerCase();
-        return !query || haystack.includes(query);
-      });
-
-      if (quickMode) {
-        cardsEl.className = "quick-review";
-        cardsEl.innerHTML = renderQuickReview(visible);
-        emptyEl.style.display = visible.length ? "none" : "block";
-        return;
-      }
-
-      cardsEl.className = "cards";
-      cardsEl.innerHTML = visible.map(card => `
-        <article class="card">
+    function renderFullCard(card, extraClass = "") {
+      return `
+        <article class="card ${extraClass}">
           <div class="card-head">
             <div>
               <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
@@ -1181,7 +1163,87 @@
             </div>
           </div>
         </article>
-      `).join("");
+      `;
+    }
+
+    function renderQuickReview(cardsToRender) {
+      return `<div class="quick-review">${cardsToRender.map(card => {
+        const expanded = expandedQuickCards.has(card.name);
+        return `
+          <div class="quick-item">
+            <article class="quick-row ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
+              <span class="expand-cue" aria-hidden="true">⌄</span>
+              <div>
+                <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
+                ${renderRevisionControls(card)}
+                <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
+                <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
+                <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
+              </div>
+              <div>
+                <span class="quick-label">Recall prompt</span>
+                <span class="quick-text">${escapeHtml(card.prompt)}</span>
+              </div>
+              <div>
+                <span class="quick-label">Code shape</span>
+                <code>${escapeHtml(card.skeleton.split("\n")[0])}</code>
+              </div>
+              <div>
+                <span class="quick-label">Bug magnet</span>
+                <span class="quick-text">${escapeHtml(card.gotchas[0])}</span>
+              </div>
+            </article>
+            ${expanded ? renderFullCard(card, "quick-expanded-card") : ""}
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function toggleQuickCard(cardName) {
+      if (expandedQuickCards.has(cardName)) {
+        expandedQuickCards.delete(cardName);
+      } else {
+        expandedQuickCards.add(cardName);
+      }
+      render();
+    }
+
+    function render() {
+      const query = searchEl.value.trim().toLowerCase();
+      const visible = cards.filter(card => {
+        const haystack = [
+          card.name,
+          card.problemLabel,
+          card.label,
+          card.difficulty,
+          card.time,
+          card.space,
+          card.structures,
+          card.leetcode,
+          card.source,
+          card.description,
+          card.input,
+          card.output,
+          card.recognize,
+          card.visualText,
+          card.core,
+          card.prompt,
+          card.skeleton,
+          card.steps.join(" "),
+          card.gotchas.join(" ")
+        ].join(" ").toLowerCase();
+        return !query || haystack.includes(query);
+      });
+
+      if (quickMode) {
+        cardsEl.className = "quick-review";
+        cardsEl.innerHTML = renderQuickReview(visible);
+        emptyEl.style.display = visible.length ? "none" : "block";
+        return;
+      }
+
+      cardsEl.className = "cards";
+      cardsEl.innerHTML = visible.map(card => renderFullCard(card)).join("");
 
       emptyEl.style.display = visible.length ? "none" : "block";
     }
@@ -1189,19 +1251,30 @@
     searchEl.addEventListener("input", render);
     cardsEl.addEventListener("click", event => {
       const button = event.target.closest("[data-action][data-card]");
-      if (!button) return;
-      const cardName = button.dataset.card;
-      if (button.dataset.action === "increment") {
-        const current = readRevision(cardName);
-        writeRevision(cardName, {
-          count: current.count + 1,
-          last: todayLocalDate()
-        });
+      if (button) {
+        const cardName = button.dataset.card;
+        if (button.dataset.action === "increment") {
+          const current = readRevision(cardName);
+          writeRevision(cardName, {
+            count: current.count + 1,
+            last: todayLocalDate()
+          });
+        }
+        if (button.dataset.action === "reset") {
+          writeRevision(cardName, { count: 0, last: "" });
+        }
+        render();
+        return;
       }
-      if (button.dataset.action === "reset") {
-        writeRevision(cardName, { count: 0, last: "" });
-      }
-      render();
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (quickRow) toggleQuickCard(quickRow.dataset.expandCard);
+    });
+    cardsEl.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (!quickRow || event.target.closest("button, a")) return;
+      event.preventDefault();
+      toggleQuickCard(quickRow.dataset.expandCard);
     });
     incrementAllEl.addEventListener("click", () => {
       const today = todayLocalDate();
