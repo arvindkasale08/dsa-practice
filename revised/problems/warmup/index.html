@@ -93,6 +93,13 @@
       white-space: nowrap;
     }
 
+    .page-revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
     .subtitle {
       margin: 10px 0 0;
       max-width: 840px;
@@ -559,6 +566,10 @@
         <div class="title-row">
           <h1>Warmup Revision</h1>
           <span id="totalCount" class="count-pill"></span>
+          <div class="page-revision-controls">
+            <button id="incrementAll" class="revision-button" type="button">+1 All</button>
+            <button id="resetAll" class="revision-button reset" type="button">Reset All</button>
+          </div>
         </div>
         <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and gotchas before opening the Java file.</p>
       </div>
@@ -958,6 +969,8 @@
     const emptyEl = document.getElementById("empty");
     const quickModeEl = document.getElementById("quickMode");
     const totalCountEl = document.getElementById("totalCount");
+    const incrementAllEl = document.getElementById("incrementAll");
+    const resetAllEl = document.getElementById("resetAll");
     let quickMode = false;
 
     function escapeHtml(value) {
@@ -1014,6 +1027,14 @@
       const date = new Date(`${value}T00:00:00`);
       if (Number.isNaN(date.getTime())) return `Last revised: ${value}`;
       return `Last revised: ${date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+    }
+
+    function todayLocalDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
     }
 
     function renderRevisionControls(card) {
@@ -1174,12 +1195,28 @@
         const current = readRevision(cardName);
         writeRevision(cardName, {
           count: current.count + 1,
-          last: new Date().toISOString().slice(0, 10)
+          last: todayLocalDate()
         });
       }
       if (button.dataset.action === "reset") {
         writeRevision(cardName, { count: 0, last: "" });
       }
+      render();
+    });
+    incrementAllEl.addEventListener("click", () => {
+      const today = todayLocalDate();
+      cards.forEach(card => {
+        const current = readRevision(card.name);
+        writeRevision(card.name, {
+          count: current.count + 1,
+          last: today
+        });
+      });
+      render();
+    });
+    resetAllEl.addEventListener("click", () => {
+      if (!window.confirm("Reset revision counts and dates for all warmup problems?")) return;
+      cards.forEach(card => writeRevision(card.name, { count: 0, last: "" }));
       render();
     });
     quickModeEl.addEventListener("click", () => {
