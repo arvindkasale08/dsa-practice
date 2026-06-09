@@ -211,12 +211,11 @@
       transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
     }
 
-    .cards > .card:nth-child(4n + 2) { border-top-color: var(--blue); }
-    .cards > .card:nth-child(4n + 3) { border-top-color: var(--gold); }
-    .cards > .card:nth-child(4n + 4) { border-top-color: var(--red); }
+    .card.easy { border-color: #bad9ca; border-top-color: var(--green); }
+    .card.medium { border-color: #e6cf9b; border-top-color: var(--gold); }
+    .card.hard { border-color: #e5c1bc; border-top-color: var(--red); }
 
     .card:hover {
-      border-color: var(--line-strong);
       box-shadow: var(--shadow-hover);
       transform: translateY(-2px);
     }
@@ -609,14 +608,13 @@
       box-shadow: 0 5px 14px rgba(31, 53, 42, .05);
     }
 
-    .quick-item:nth-child(4n + 2) .quick-row { border-left-color: var(--blue); }
-    .quick-item:nth-child(4n + 3) .quick-row { border-left-color: var(--gold); }
-    .quick-item:nth-child(4n + 4) .quick-row { border-left-color: var(--red); }
+    .quick-row.easy { border-color: #bad9ca; border-left-color: var(--green); }
+    .quick-row.medium { border-color: #e6cf9b; border-left-color: var(--gold); }
+    .quick-row.hard { border-color: #e5c1bc; border-left-color: var(--red); }
 
     .quick-row:hover,
     .quick-row:focus-visible,
     .quick-row.expanded {
-      border-color: var(--line-strong);
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
       outline: none;
@@ -641,10 +639,22 @@
       box-shadow: 0 12px 28px rgba(26, 37, 31, .08);
     }
 
+    .quick-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
     .quick-row strong {
       display: block;
       font-size: 15px;
-      margin-bottom: 4px;
+    }
+
+    .quick-title .difficulty {
+      min-height: 22px;
+      padding: 2px 8px;
     }
 
     .quick-label {
@@ -980,7 +990,7 @@
 
     function renderFullCard(card, extraClass = "") {
       return `
-        <article class="card ${extraClass}">
+        <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${extraClass}">
           <div class="card-head">
             <div>
               <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
@@ -1058,12 +1068,15 @@
         const expanded = expandedQuickCards.has(card.name);
         return `
           <div class="quick-item">
-            <article class="quick-row ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
+            <article class="quick-row ${escapeHtml(card.difficulty.toLowerCase())} ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
               <span class="expand-cue" aria-hidden="true">⌄</span>
               <div>
-                <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
+                <div class="quick-title">
+                  <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
+                  <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
+                </div>
                 ${renderRevisionControls(card)}
-                <span class="quick-text">${escapeHtml(card.difficulty)} · ${escapeHtml(card.label)}</span>
+                <span class="quick-text">${escapeHtml(card.label)}</span>
                 <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
                 <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
               </div>
