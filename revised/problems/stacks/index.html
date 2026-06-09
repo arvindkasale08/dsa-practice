@@ -775,6 +775,40 @@
           "Check for an empty head before peek or pop.",
           "Each node adds pointer overhead, but the stack grows without a fixed array capacity."
         ]
+      },
+      {
+        "name": "StackUsingQueues",
+        "source": "../com/arvind/revision/stacks/StackUsingQueues.java",
+        "label": "Rotate newest to front",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/implement-stack-using-queues/",
+        "description": "Implement stack behavior using a single queue. After each push, rotate older items behind the new value so the queue front always acts as the stack top.",
+        "time": "Push O(n); others O(1)",
+        "space": "O(n)",
+        "structures": "Single queue",
+        "input": "push(10), push(20), push(30)\npeek(), pop(), pop(), pop()",
+        "output": "peek = 30\npops = 30, 20, 10\nisEmpty = true",
+        "recognize": "When you must build LIFO behavior using only FIFO queue operations and can pay extra work during push.",
+        "visual": [
+          [
+            "offer 30",
+            "10",
+            "20"
+          ],
+          [
+            "rotate old items",
+            "30",
+            "20",
+            "10"
+          ]
+        ],
+        "visualText": "Push places the new value at the back, then rotates every older value behind it. The newest value finishes at the queue front.",
+        "core": "Offer the new value, then move exactly the previous queue-size elements from front to back. After rotation, poll and peek behave like stack pop and top.",
+        "gotchas": [
+          "Rotate queue.size() - 1 items, not the full size; one extra rotation restores FIFO order.",
+          "Check empty before poll or peek to avoid null-to-int unboxing errors.",
+          "This design makes push O(n) so pop and peek can stay O(1)."
+        ]
       }
     ];
 
@@ -796,6 +830,15 @@
           "Move head to new; pop reverses that boundary move."
         ],
         "skeleton": "head = null\npush(x):\n  node = new Node(x)\n  node.next = head\n  head = node\npop():\n  if head == null: underflow\n  value = head.val\n  head = head.next\n  return value"
+      },
+      "StackUsingQueues": {
+        "prompt": "Before reading: how many queue elements must rotate after adding the new top?",
+        "steps": [
+          "Offer the new value at the queue back.",
+          "Rotate exactly the older elements from front to back.",
+          "The new value reaches the front, so poll now behaves like pop."
+        ],
+        "skeleton": "push(x):\n  queue.offer(x)\n  repeat queue.size() - 1 times:\n    queue.offer(queue.poll())\npop():\n  if queue empty: underflow\n  return queue.poll()"
       }
     };
 
