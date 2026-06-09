@@ -742,6 +742,39 @@
           "Never read stack[top] when top is -1; check empty before pop and peek.",
           "This implementation is fixed capacity and does not resize."
         ]
+      },
+      {
+        "name": "StackUsingLinkedList",
+        "source": "../com/arvind/revision/stacks/StackUsingLinkedList.java",
+        "label": "Head-as-top LIFO",
+        "difficulty": "Easy",
+        "leetcode": "",
+        "description": "Implement a stack using a singly linked list. The head node acts as the stack top, allowing push, pop, peek, and empty checks without a fixed capacity.",
+        "time": "O(1) per operation",
+        "space": "O(n)",
+        "structures": "Singly linked list, head pointer",
+        "input": "push(10), push(20), push(30)\npeek(), pop(), pop(), pop()",
+        "output": "peek = 30\npops = 30, 20, 10\nisEmpty = true",
+        "recognize": "When you need LIFO behavior without a fixed capacity and can use the linked-list head as the newest-item boundary.",
+        "visual": [
+          [
+            "head/top -> 30",
+            "20",
+            "10",
+            "null"
+          ],
+          [
+            "new.next = head",
+            "head = new"
+          ]
+        ],
+        "visualText": "The newest node always becomes head. Push links the new node before the old head; pop simply moves head to head.next.",
+        "core": "For push, point the new node to the current head and replace head. For pop, save head's value and advance head to the next node.",
+        "gotchas": [
+          "Do not attach the new node after head; it must become the new head/top.",
+          "Check for an empty head before peek or pop.",
+          "Each node adds pointer overhead, but the stack grows without a fixed array capacity."
+        ]
       }
     ];
 
@@ -754,6 +787,15 @@
           "Pop reads top, then decrements it."
         ],
         "skeleton": "top = -1\npush(x):\n  if top >= capacity - 1: overflow\n  stack[++top] = x\npop():\n  if top == -1: underflow\n  return stack[top--]"
+      },
+      "StackUsingLinkedList": {
+        "prompt": "Before reading: why must every new node become the head?",
+        "steps": [
+          "Create a node for the new value.",
+          "Point new.next to the current head.",
+          "Move head to new; pop reverses that boundary move."
+        ],
+        "skeleton": "head = null\npush(x):\n  node = new Node(x)\n  node.next = head\n  head = node\npop():\n  if head == null: underflow\n  value = head.val\n  head = head.next\n  return value"
       }
     };
 
