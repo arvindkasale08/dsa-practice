@@ -700,7 +700,7 @@
       </div>
       <div class="tools">
         <input id="search" class="search" type="search" placeholder="Search stacks cards">
-        <button id="quickMode" class="mode-button" type="button">Quick Review</button>
+        <button id="quickMode" class="mode-button active" type="button">Card Review</button>
       </div>
     </header>
     <p class="subtitle">Fast recall cards for the current stacks package. Read the problem name, picture the hook, then check the sample and bug magnets before opening the Java file.</p>
@@ -899,7 +899,7 @@
     const totalCountEl = document.getElementById("totalCount");
     const incrementAllEl = document.getElementById("incrementAll");
     const resetAllEl = document.getElementById("resetAll");
-    let quickMode = false;
+    let quickMode = true;
     const expandedQuickCards = new Set();
 
     function escapeHtml(value) {
