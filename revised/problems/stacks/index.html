@@ -854,6 +854,42 @@
           "A closing bracket with an empty stack is invalid.",
           "The final stack must be empty; otherwise some opening brackets never closed."
         ]
+      },
+      {
+        "name": "ReverseUsingStacks",
+        "source": "../com/arvind/revision/stacks/ReverseUsingStacks.java",
+        "label": "Pop into reverse order",
+        "difficulty": "Easy",
+        "leetcode": "",
+        "description": "Reverse a string by pushing every character onto a stack, then popping the characters into a new array. The stack's LIFO order naturally produces the reverse.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of characters, char[] output",
+        "input": "s = \"Arvind Kasale\"",
+        "output": "\"elasaK dnivrA\"",
+        "recognize": "When items must come back in exactly the opposite order from how they were read.",
+        "visual": [
+          [
+            "A",
+            "r",
+            "v",
+            "i",
+            "n",
+            "d"
+          ],
+          [
+            "push →",
+            "top: d",
+            "pop → d n i v r A"
+          ]
+        ],
+        "visualText": "Read left to right and stack the characters. Popping removes the last character first, so writing each pop builds the reversed string.",
+        "core": "Push every input character. Then repeatedly pop the stack and write each character into the next output position.",
+        "gotchas": [
+          "The output index must advance once for every pop.",
+          "Keep popping until the stack is empty so no character is skipped.",
+          "The stack and output array both use O(n) extra space."
+        ]
       }
     ];
 
@@ -893,6 +929,15 @@
           "Any mismatch stays unresolved; success requires an empty stack."
         ],
         "skeleton": "stack = empty\nfor c in s:\n  if c closes stack.peek(): stack.pop()\n  else: stack.push(c)\nreturn stack.isEmpty()"
+      },
+      "ReverseUsingStacks": {
+        "prompt": "Before reading: why does popping characters reverse their original order?",
+        "steps": [
+          "Push characters from left to right.",
+          "The final character becomes the stack top.",
+          "Pop into the output from index 0 onward."
+        ],
+        "skeleton": "stack = empty\nfor c in s:\n  stack.push(c)\nout = char[s.length]\ni = 0\nwhile stack not empty:\n  out[i++] = stack.pop()\nreturn String(out)"
       }
     };
 
