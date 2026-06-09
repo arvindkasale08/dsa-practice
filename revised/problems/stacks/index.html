@@ -809,6 +809,41 @@
           "Check empty before poll or peek to avoid null-to-int unboxing errors.",
           "This design makes push O(n) so pop and peek can stay O(1)."
         ]
+      },
+      {
+        "name": "ValidParanthesis",
+        "source": "../com/arvind/revision/stacks/ValidParanthesis.java",
+        "label": "Match the latest opener",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/valid-parentheses/",
+        "description": "Given a string containing only parentheses, brackets, and braces, determine whether every closing bracket matches the most recent unmatched opening bracket.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of characters",
+        "input": "s = \"{[]}\"",
+        "output": "true",
+        "recognize": "When nested symbols must close in reverse order, so the latest unmatched opener must be checked first.",
+        "visual": [
+          [
+            "{",
+            "[",
+            "]",
+            "}"
+          ],
+          [
+            "push {",
+            "push [",
+            "pop [",
+            "pop {"
+          ]
+        ],
+        "visualText": "Openers pile onto the stack. Every closer must match the opener currently on top; a mismatch remains unresolved.",
+        "core": "Scan left to right. Push opening brackets. When a matching closer arrives, pop the top opener. The string is valid only when the stack ends empty.",
+        "gotchas": [
+          "A closer can match only the current stack top, not any earlier opener.",
+          "A closing bracket with an empty stack is invalid.",
+          "The final stack must be empty; otherwise some opening brackets never closed."
+        ]
       }
     ];
 
@@ -839,6 +874,15 @@
           "The new value reaches the front, so poll now behaves like pop."
         ],
         "skeleton": "push(x):\n  queue.offer(x)\n  repeat queue.size() - 1 times:\n    queue.offer(queue.poll())\npop():\n  if queue empty: underflow\n  return queue.poll()"
+      },
+      "ValidParanthesis": {
+        "prompt": "Before reading: why does a closing bracket compare only with the stack top?",
+        "steps": [
+          "Push every opening bracket.",
+          "A matching closer removes the latest opener.",
+          "Any mismatch stays unresolved; success requires an empty stack."
+        ],
+        "skeleton": "stack = empty\nfor c in s:\n  if c closes stack.peek(): stack.pop()\n  else: stack.push(c)\nreturn stack.isEmpty()"
       }
     };
 
