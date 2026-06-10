@@ -737,7 +737,7 @@
         "label": "Fixed-capacity LIFO",
         "difficulty": "Easy",
         "leetcode": "",
-        "description": "Implement a stack using a fixed-size integer array. Support push, pop, peek, and empty checks while rejecting overflow and underflow.",
+        "description": "Build a last-in-first-out collection backed only by a fixed-size integer array. Push adds a new top item, pop removes and returns the top item, peek reads it without removal, and invalid overflow or empty-stack operations must be rejected.",
         "time": "O(1) per operation",
         "space": "O(capacity)",
         "structures": "int[] array, top index",
@@ -774,7 +774,7 @@
         "label": "Head-as-top LIFO",
         "difficulty": "Easy",
         "leetcode": "",
-        "description": "Implement a stack using a singly linked list. The head node acts as the stack top, allowing push, pop, peek, and empty checks without a fixed capacity.",
+        "description": "Build a last-in-first-out collection using a singly linked list instead of an array. The newest value must be returned first, and push, pop, peek, and empty checks should work without a preset capacity.",
         "time": "O(1) per operation",
         "space": "O(n)",
         "structures": "Singly linked list, head pointer",
@@ -812,7 +812,7 @@
         "label": "Rotate newest to front",
         "difficulty": "Easy",
         "leetcode": "https://leetcode.com/problems/implement-stack-using-queues/",
-        "description": "Implement stack behavior using a single queue. After each push, rotate older items behind the new value so the queue front always acts as the stack top.",
+        "description": "Implement a last-in-first-out stack while using only normal queue operations. The most recently pushed value must be returned by top and removed by pop, even though a queue normally exposes the oldest value first.",
         "time": "Push O(n); others O(1)",
         "space": "O(n)",
         "structures": "Single queue",
@@ -851,7 +851,7 @@
         "label": "Match the latest opener",
         "difficulty": "Easy",
         "leetcode": "https://leetcode.com/problems/valid-parentheses/",
-        "description": "Given a string containing only parentheses, brackets, and braces, determine whether every closing bracket matches the most recent unmatched opening bracket.",
+        "description": "Given a string made only of (), [], and {}, return whether it is valid. Every opener must be closed by the same bracket type, and nested brackets must close in the reverse order in which they opened.",
         "time": "O(n)",
         "space": "O(n)",
         "structures": "Stack of characters",
@@ -891,7 +891,7 @@
         "label": "Pop into reverse order",
         "difficulty": "Easy",
         "leetcode": "",
-        "description": "Reverse a string by pushing every character onto a stack, then popping the characters into a new array. The stack's LIFO order naturally produces the reverse.",
+        "description": "Given a string, return another string containing exactly the same characters in reverse order. This exercise specifically asks you to use stack behavior so the last character read becomes the first character returned.",
         "time": "O(n)",
         "space": "O(n)",
         "structures": "Stack of characters, char[] output",
@@ -932,7 +932,7 @@
         "label": "Cancel matching neighbors",
         "difficulty": "Easy",
         "leetcode": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
-        "description": "Repeatedly remove neighboring equal characters until no adjacent duplicate pair remains. Removing one pair can cause characters farther apart to become a new pair.",
+        "description": "Given a lowercase string, repeatedly delete adjacent pairs containing the same letter. Each deletion may bring another equal pair together; return the final string after no duplicate neighbors remain.",
         "time": "O(n)",
         "space": "O(n)",
         "structures": "Stack of characters, StringBuilder",
@@ -965,6 +965,50 @@
           "After a pair disappears, the next character must compare with the newly exposed stack top.",
           "Iterate the final stack from bottom to top; popping it would reverse the surviving characters.",
           "Use Stack<Character> with the generic type on both sides to avoid a raw-type warning."
+        ]
+      },
+      {
+        "name": "MinimumRemoveToMakeValidParanthesis",
+        "source": "../com/arvind/revision/stacks/MinimumRemoveToMakeValidParanthesis.java",
+        "label": "Drop impossible parentheses",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/minimum-remove-to-make-valid-parentheses/",
+        "description": "Given a string containing letters plus '(' and ')', remove the fewest parentheses needed to make the parentheses valid. Return any valid result while preserving every letter and the order of all characters that remain.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "StringBuilder, balance counter",
+        "input": "s = \"((a)b(c)d\"",
+        "output": "\"((a)bc)d\"",
+        "recognize": "When only parenthesis validity matters and unmatched closers can be rejected immediately, while leftover openers can be removed from the right.",
+        "visual": [
+          [
+            "(",
+            "(",
+            "a",
+            ")",
+            "b",
+            "(",
+            "c",
+            ")",
+            "d"
+          ],
+          [
+            "keep matched pairs",
+            "1 '(' remains",
+            "remove from right side"
+          ]
+        ],
+        "visualText": "Left to right, keep a ')' only when an earlier '(' is available. After that pass, any remaining balance represents extra '(' characters; remove those from right to left.",
+        "core": "Build a first-pass string while skipping unmatched closing parentheses. Reverse it, skip exactly the remaining unmatched opening parentheses, then reverse once more to restore the original order.",
+        "bruteForce": "Try removing each parenthesis, test every resulting string for validity, and continue until a valid result appears. This explores many combinations and quickly becomes exponential.",
+        "alternates": [
+          "Use a stack of indexes to mark unmatched parentheses, then build the answer while skipping those indexes.",
+          "Use two forward passes with counts: first remove unmatched ')', then remove the required number of '(' while preserving a valid target count."
+        ],
+        "gotchas": [
+          "A final balance alone is not enough; an unmatched ')' must be skipped at the moment it appears.",
+          "With the balance-count approach, remove surplus '(' while scanning right to left; blindly removing from the left can delete an opener needed by an earlier ')'.",
+          "Letters are never removed, and the relative order of retained characters must stay unchanged."
         ]
       }
     ];
@@ -1023,6 +1067,15 @@
           "The next input character now sees the newly exposed survivor."
         ],
         "skeleton": "stack = empty\nfor c in s:\n  if stack not empty and stack.top == c:\n    stack.pop()\n  else:\n    stack.push(c)\nreturn characters from stack bottom to top"
+      },
+      "MinimumRemoveToMakeValidParanthesis": {
+        "prompt": "Before reading: which invalid parentheses can be identified immediately, and which must wait until the end?",
+        "steps": [
+          "Scan left to right and skip any ')' with no available opener.",
+          "The remaining balance counts extra '(' characters.",
+          "Scan from right to left and skip that many '('."
+        ],
+        "skeleton": "balance = 0\nfirst = empty\nfor c in s:\n  if c == '(':\n    balance++; keep c\n  else if c == ')' and balance > 0:\n    balance--; keep c\n  else if c is letter:\n    keep c\nreverse first\nskip balance opening parentheses\nreverse result"
       }
     };
 
@@ -1140,6 +1193,16 @@
               <b>Problem description</b>
               ${escapeHtml(card.description)}
             </div>
+            <div class="sample">
+              <div class="sample-box">
+                <b>Input</b>
+                <code>${escapeHtml(card.input)}</code>
+              </div>
+              <div class="sample-box">
+                <b>Output</b>
+                <code>${escapeHtml(card.output)}</code>
+              </div>
+            </div>
             <div class="cost-strip">
               <div class="cost-item">
                 <span class="cost-label">Time</span>
@@ -1152,16 +1215,6 @@
               <div class="cost-item">
                 <span class="cost-label">Data structures</span>
                 <span class="cost-value">${escapeHtml(card.structures)}</span>
-              </div>
-            </div>
-            <div class="sample">
-              <div class="sample-box">
-                <b>Input</b>
-                <code>${escapeHtml(card.input)}</code>
-              </div>
-              <div class="sample-box">
-                <b>Output</b>
-                <code>${escapeHtml(card.output)}</code>
               </div>
             </div>
             <div class="section-grid">

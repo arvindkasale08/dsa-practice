@@ -1285,6 +1285,16 @@
               <b>Problem description</b>
               ${escapeHtml(card.description)}
             </div>
+            <div class="sample">
+              <div class="sample-box">
+                <b>Input</b>
+                <code>${escapeHtml(card.input)}</code>
+              </div>
+              <div class="sample-box">
+                <b>Output</b>
+                <code>${escapeHtml(card.output)}</code>
+              </div>
+            </div>
             <div class="cost-strip">
               <div class="cost-item">
                 <span class="cost-label">Time</span>
@@ -1297,16 +1307,6 @@
               <div class="cost-item">
                 <span class="cost-label">Data structures</span>
                 <span class="cost-value">${escapeHtml(card.structures)}</span>
-              </div>
-            </div>
-            <div class="sample">
-              <div class="sample-box">
-                <b>Input</b>
-                <code>${escapeHtml(card.input)}</code>
-              </div>
-              <div class="sample-box">
-                <b>Output</b>
-                <code>${escapeHtml(card.output)}</code>
               </div>
             </div>
             <div class="section-grid">
