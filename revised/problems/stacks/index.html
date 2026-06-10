@@ -495,6 +495,16 @@
       background: #fffaf8;
     }
 
+    .section.brute-force {
+      border-color: #e6cf9b;
+      background: #fffdf6;
+    }
+
+    .section.alternates {
+      border-color: #bfd3e1;
+      background: #f7fbff;
+    }
+
     .visual {
       display: grid;
       gap: 7px;
@@ -747,6 +757,11 @@
         ],
         "visualText": "Treat top as the index of the newest item. Push moves top upward before writing; pop reads the newest item and moves top downward.",
         "core": "Keep top at -1 for an empty stack. Push writes at ++top after checking space. Pop returns stack[top--] after checking that an item exists.",
+        "bruteForce": "Keep the newest item at array index 0. Push shifts every existing item right; pop removes index 0 and shifts the rest left. It works, but each push and pop becomes O(n).",
+        "alternates": [
+          "Use a resizable array so capacity grows automatically while push and pop remain amortized O(1).",
+          "Use a linked list with its head as the top when a fixed capacity is undesirable."
+        ],
         "gotchas": [
           "A full stack has top == capacity - 1, so check overflow before incrementing top.",
           "Never read stack[top] when top is -1; check empty before pop and peek.",
@@ -780,6 +795,11 @@
         ],
         "visualText": "The newest node always becomes head. Push links the new node before the old head; pop simply moves head to head.next.",
         "core": "For push, point the new node to the current head and replace head. For pop, save head's value and advance head to the next node.",
+        "bruteForce": "Treat the linked-list tail as the stack top. Push can append there, but pop must walk from the head to find the node before the tail, making pop O(n) in a singly linked list.",
+        "alternates": [
+          "Use a doubly linked list with a tail pointer so both push and pop at the tail are O(1).",
+          "Use an array-backed stack when compact memory and cache-friendly access matter more than flexible growth."
+        ],
         "gotchas": [
           "Do not attach the new node after head; it must become the new head/top.",
           "Check for an empty head before peek or pop.",
@@ -814,6 +834,11 @@
         ],
         "visualText": "Push places the new value at the back, then rotates every older value behind it. The newest value finishes at the queue front.",
         "core": "Offer the new value, then move exactly the previous queue-size elements from front to back. After rotation, poll and peek behave like stack pop and top.",
+        "bruteForce": "Keep normal queue order during push. For every pop, move the first n - 1 elements into a second queue, remove the final element, then swap the queues. Push is O(1), but pop is O(n).",
+        "alternates": [
+          "Use two queues and choose whether push or pop should carry the O(n) work.",
+          "Use one queue as shown and rotate after push so both peek and pop stay O(1)."
+        ],
         "gotchas": [
           "Rotate queue.size() - 1 items, not the full size; one extra rotation restores FIFO order.",
           "Check empty before poll or peek to avoid null-to-int unboxing errors.",
@@ -849,6 +874,11 @@
         ],
         "visualText": "Openers pile onto the stack. Every closer must match the opener currently on top; a mismatch remains unresolved.",
         "core": "Scan left to right. Push opening brackets. When a matching closer arrives, pop the top opener. The string is valid only when the stack ends empty.",
+        "bruteForce": "Repeatedly remove every (), [], and {} pair from the string until nothing changes. If the final string is empty it is valid, but repeated rebuilding can take O(n²).",
+        "alternates": [
+          "Use a Deque instead of the legacy Stack class; push expected closing brackets so each closer needs only one comparison.",
+          "Store closer-to-opener pairs in a map to make the matching logic shorter and easier to extend."
+        ],
         "gotchas": [
           "A closer can match only the current stack top, not any earlier opener.",
           "A closing bracket with an empty stack is invalid.",
@@ -885,10 +915,56 @@
         ],
         "visualText": "Read left to right and stack the characters. Popping removes the last character first, so writing each pop builds the reversed string.",
         "core": "Push every input character. Then repeatedly pop the stack and write each character into the next output position.",
+        "bruteForce": "Build a new string by prepending each character. The result is simple, but immutable string rebuilding makes it O(n²).",
+        "alternates": [
+          "Swap characters from both ends of a char array with two pointers for O(n) time and no stack.",
+          "Use StringBuilder.reverse() when the task allows library helpers."
+        ],
         "gotchas": [
           "The output index must advance once for every pop.",
           "Keep popping until the stack is empty so no character is skipped.",
           "The stack and output array both use O(n) extra space."
+        ]
+      },
+      {
+        "name": "RemoveAllAdjacentDuplicates",
+        "source": "../com/arvind/revision/stacks/RemoveAllAdjacentDuplicates.java",
+        "label": "Cancel matching neighbors",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/",
+        "description": "Repeatedly remove neighboring equal characters until no adjacent duplicate pair remains. Removing one pair can cause characters farther apart to become a new pair.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of characters, StringBuilder",
+        "input": "s = \"azxxzy\"",
+        "output": "\"ay\"",
+        "recognize": "When equal neighbors cancel and each cancellation can expose a new matching pair behind them.",
+        "visual": [
+          [
+            "a",
+            "z",
+            "x",
+            "x",
+            "z",
+            "y"
+          ],
+          [
+            "xx cancel",
+            "zz meet + cancel",
+            "a y remain"
+          ]
+        ],
+        "visualText": "The stack top is the surviving character immediately before the current one. Equal means cancel the top; different means keep the new character.",
+        "core": "Scan once. If the current character equals the stack top, pop the top pair away. Otherwise push the character. The remaining stack is the answer in original order.",
+        "bruteForce": "Scan the string, delete one adjacent duplicate pair, then restart scanning because the deletion may create a new pair. Repeated string rebuilding can take O(n²).",
+        "alternates": [
+          "Use a StringBuilder as the stack: compare with its last character, delete on a match, and append otherwise.",
+          "Use a char array plus a write index as an in-place stack for O(n) time with lower overhead."
+        ],
+        "gotchas": [
+          "After a pair disappears, the next character must compare with the newly exposed stack top.",
+          "Iterate the final stack from bottom to top; popping it would reverse the surviving characters.",
+          "Use Stack<Character> with the generic type on both sides to avoid a raw-type warning."
         ]
       }
     ];
@@ -938,6 +1014,15 @@
           "Pop into the output from index 0 onward."
         ],
         "skeleton": "stack = empty\nfor c in s:\n  stack.push(c)\nout = char[s.length]\ni = 0\nwhile stack not empty:\n  out[i++] = stack.pop()\nreturn String(out)"
+      },
+      "RemoveAllAdjacentDuplicates": {
+        "prompt": "Before reading: why must the current character compare only with the latest survivor?",
+        "steps": [
+          "Push a character when it differs from the stack top.",
+          "Pop when it matches the top; the adjacent pair disappears.",
+          "The next input character now sees the newly exposed survivor."
+        ],
+        "skeleton": "stack = empty\nfor c in s:\n  if stack not empty and stack.top == c:\n    stack.pop()\n  else:\n    stack.push(c)\nreturn characters from stack bottom to top"
       }
     };
 
@@ -1097,6 +1182,14 @@
               <div class="section">
                 <b>Code skeleton</b>
                 <code>${escapeHtml(card.skeleton)}</code>
+              </div>
+              <div class="section brute-force">
+                <b>Brute force / baseline</b>
+                ${escapeHtml(card.bruteForce)}
+              </div>
+              <div class="section alternates">
+                <b>Alternate approaches</b>
+                <ul class="gotchas">${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
               </div>
               <div class="section full">
                 <b>Bug magnets</b>
