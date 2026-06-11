@@ -606,7 +606,7 @@
     .quick-row {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(160px, .9fr) minmax(130px, .7fr) minmax(220px, 1.4fr) minmax(220px, 1.4fr);
+      grid-template-columns: minmax(240px, 1.15fr) minmax(180px, .85fr) minmax(220px, 1.2fr) minmax(220px, 1.2fr);
       gap: 10px;
       align-items: start;
       border: 1px solid var(--line);
@@ -665,6 +665,57 @@
     .quick-title .difficulty {
       min-height: 22px;
       padding: 2px 8px;
+    }
+
+    .quick-summary {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .quick-approach {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      border-left: 3px solid var(--blue);
+      background: #eef6fa;
+      padding: 3px 7px;
+      color: #294a5e;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .quick-facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .quick-fact {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f7faf8;
+      padding: 2px 7px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .quick-fact b,
+    .quick-uses b {
+      color: #3c4d43;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .quick-uses {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
     }
 
     .quick-label {
@@ -1104,6 +1155,25 @@
       }
     };
 
+    const definingMoves = {
+      "CheckIfStringsEquivalent": "join(word1) == join(word2)",
+      "ClosestToZero": "replace best when |n| is smaller\non tie, keep the larger value",
+      "ContainsDuplicate": "if !seen.add(n): return true",
+      "FindNumbersWithEvenDigits": "if digitCount(num) % 2 == 0: answer++",
+      "FlippingImage": "swap + invert mirrored cells",
+      "GoodPair": "pairs += frequency[n]\nfrequency[n]++",
+      "IsSubsequence": "if s[i] == current: i++",
+      "MajorityElement": "count += n == candidate ? 1 : -1\nif count == 0: choose new candidate",
+      "MergeStringsAlternately": "append word1[i], then word2[i]\nappend whichever tail remains",
+      "MoveZeroes": "write each non-zero at nums[write++]\nfill remaining slots with 0",
+      "Pangram": "mark seen[c - 'a']\nall 26 boxes must be marked",
+      "ReverseVowels": "skip non-vowels at both ends\nswap the two vowels",
+      "ShortestWordDistance": "update latest positions\nbest = min(best, |idx1 - idx2|)",
+      "Sqrt": "binary-search the largest mid where mid² <= x",
+      "ValidAnagram": "increment counts for s\ndecrement counts for t",
+      "ValidPalindrome": "skip non-alphanumeric ends\ncompare lowercase characters"
+    };
+
     const comparisonDetails = {
       "CheckIfStringsEquivalent": {
         "bruteForce": "Join every piece in each array into two complete strings, then compare them. This is straightforward but stores O(total characters) extra data.",
@@ -1171,7 +1241,29 @@
       }
     };
 
-    cards.forEach(card => Object.assign(card, recallDetails[card.name], comparisonDetails[card.name]));
+    const solvedOrder = [
+      "ContainsDuplicate",
+      "Pangram",
+      "ReverseVowels",
+      "ValidPalindrome",
+      "ValidAnagram",
+      "ShortestWordDistance",
+      "GoodPair",
+      "Sqrt",
+      "ClosestToZero",
+      "MergeStringsAlternately",
+      "CheckIfStringsEquivalent",
+      "IsSubsequence",
+      "MoveZeroes",
+      "FlippingImage",
+      "MajorityElement",
+      "FindNumbersWithEvenDigits"
+    ];
+
+    cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
+    cards.forEach(card => Object.assign(card, recallDetails[card.name], comparisonDetails[card.name], {
+      definingMove: definingMoves[card.name]
+    }));
     cards.forEach((card, index) => {
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
@@ -1359,17 +1451,22 @@
                   <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
                 </div>
                 ${renderRevisionControls(card)}
-                <span class="quick-text">${escapeHtml(card.label)}</span>
-                <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
-                <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
+                <div class="quick-summary">
+                  <span class="quick-approach">${escapeHtml(card.label)}</span>
+                  <div class="quick-facts">
+                    <span class="quick-fact"><b>Time</b> ${escapeHtml(card.time)}</span>
+                    <span class="quick-fact"><b>Space</b> ${escapeHtml(card.space)}</span>
+                  </div>
+                  <span class="quick-uses"><b>Uses</b> ${escapeHtml(card.structures)}</span>
+                </div>
               </div>
               <div>
                 <span class="quick-label">Recall prompt</span>
                 <span class="quick-text">${escapeHtml(card.prompt)}</span>
               </div>
               <div>
-                <span class="quick-label">Code shape</span>
-                <code>${escapeHtml(card.skeleton.split("\n")[0])}</code>
+                <span class="quick-label">Defining move</span>
+                <code>${escapeHtml(card.definingMove)}</code>
               </div>
               <div>
                 <span class="quick-label">Bug magnet</span>

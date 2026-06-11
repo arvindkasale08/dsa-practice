@@ -606,7 +606,7 @@
     .quick-row {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(160px, .9fr) minmax(130px, .7fr) minmax(220px, 1.4fr) minmax(220px, 1.4fr);
+      grid-template-columns: minmax(240px, 1.15fr) minmax(180px, .85fr) minmax(220px, 1.2fr) minmax(220px, 1.2fr);
       gap: 10px;
       align-items: start;
       border: 1px solid var(--line);
@@ -665,6 +665,57 @@
     .quick-title .difficulty {
       min-height: 22px;
       padding: 2px 8px;
+    }
+
+    .quick-summary {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .quick-approach {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      border-left: 3px solid var(--blue);
+      background: #eef6fa;
+      padding: 3px 7px;
+      color: #294a5e;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .quick-facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .quick-fact {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f7faf8;
+      padding: 2px 7px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .quick-fact b,
+    .quick-uses b {
+      color: #3c4d43;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .quick-uses {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
     }
 
     .quick-label {
@@ -1010,6 +1061,92 @@
           "With the balance-count approach, remove surplus '(' while scanning right to left; blindly removing from the left can delete an opener needed by an earlier ')'.",
           "Letters are never removed, and the relative order of retained characters must stay unchanged."
         ]
+      },
+      {
+        "name": "DecodeString",
+        "source": "../com/arvind/revision/stacks/DecodeString.java",
+        "label": "Expand innermost brackets",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/decode-string/",
+        "description": "Given an encoded string containing patterns like k[text], return the fully decoded string by repeating text exactly k times. Encoded groups may be nested, and repeat counts may contain multiple digits.",
+        "time": "O(input + decoded output)",
+        "space": "O(input + decoded output)",
+        "structures": "Stack of string tokens, StringBuilder",
+        "input": "s = \"3[a2[c]]\"",
+        "output": "\"accaccacc\"",
+        "recognize": "When closing a nested group requires finishing the most recently opened bracket before the outer group can continue.",
+        "visual": [
+          [
+            "3",
+            "[",
+            "a",
+            "2",
+            "[",
+            "c",
+            "]",
+            "]"
+          ],
+          [
+            "2[c] → cc",
+            "a + cc → acc",
+            "3[acc] → accaccacc"
+          ]
+        ],
+        "visualText": "Every ']' completes the nearest unmatched '['. Collapse that innermost group into one expanded token, push it back, and let any outer group consume it later.",
+        "core": "Push characters as tokens. On ']', pop and rebuild the bracket contents, remove '[', pop the repeat-count digits, expand the contents, and push the expanded group back onto the stack.",
+        "bruteForce": "Repeatedly search the whole string for an innermost bracket group and replace it with its expansion. It is understandable, but repeated scanning and immutable string rebuilding can become expensive.",
+        "alternates": [
+          "Use one stack for repeat counts and another for the partially decoded outer strings.",
+          "Use recursive descent: parse characters until ']', recursively decode nested groups, then repeat the returned text."
+        ],
+        "gotchas": [
+          "Repeat counts can have multiple digits, so collect every adjacent digit before converting the number.",
+          "Characters popped from the stack arrive in reverse order and must be restored before expansion.",
+          "An expanded inner group must be pushed back as one token so an outer group can repeat it."
+        ]
+      },
+      {
+        "name": "ValidParenthesisString",
+        "source": "../com/arvind/revision/stacks/ValidParenthesisString.java",
+        "label": "Use stars as flexible closers",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/valid-parenthesis-string/",
+        "description": "Given a string containing '(', ')', and '*', return whether it can become valid. Each '*' may act as an opening parenthesis, a closing parenthesis, or an empty character.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of '(' indexes, stack of '*' indexes",
+        "input": "s = \"((((*)))\"",
+        "output": "true",
+        "recognize": "When wildcard characters can repair unmatched parentheses, but their positions determine whether they can legally close an earlier opener.",
+        "visual": [
+          [
+            "(",
+            "(",
+            "(",
+            "(",
+            "*",
+            ")",
+            ")",
+            ")"
+          ],
+          [
+            "normal ')' closes '(' first",
+            "* becomes final ')'",
+            "star index must be after opener"
+          ]
+        ],
+        "visualText": "Use real closing parentheses first. After the scan, each leftover '(' needs a '*' located to its right so that star can act as its closing parenthesis.",
+        "core": "Store indexes of '(' and '*' separately. A ')' consumes an opener first, otherwise a star. Finally pair each leftover opener with a later star; fail when no such star exists.",
+        "bruteForce": "Try all three meanings for every '*', then validate each resulting parenthesis string. This is correct but grows exponentially with the number of stars.",
+        "alternates": [
+          "Track the minimum and maximum possible open-parenthesis balance; this greedy range solves the problem in O(n) time and O(1) space.",
+          "Use dynamic programming over string position and possible open counts when you want an explicit state-based formulation."
+        ],
+        "gotchas": [
+          "A star before an unmatched '(' cannot close that opener; compare their indexes.",
+          "When reading ')', consume a real '(' before using a star.",
+          "Any character other than '(' or ')' is treated as '*' by the current implementation."
+        ]
       }
     ];
 
@@ -1076,10 +1213,55 @@
           "Scan from right to left and skip that many '('."
         ],
         "skeleton": "balance = 0\nfirst = empty\nfor c in s:\n  if c == '(':\n    balance++; keep c\n  else if c == ')' and balance > 0:\n    balance--; keep c\n  else if c is letter:\n    keep c\nreverse first\nskip balance opening parentheses\nreverse result"
+      },
+      "DecodeString": {
+        "prompt": "Before reading: what complete unit becomes available when a closing bracket appears?",
+        "steps": [
+          "Pop tokens until the nearest '[' to rebuild the inner text.",
+          "Pop every repeat-count digit immediately before that bracket.",
+          "Expand the text and push it back as one token."
+        ],
+        "skeleton": "stack = empty\nfor token in encoded string:\n  if token != ']':\n    stack.push(token)\n  else:\n    text = pop until '['\n    pop '['\n    count = pop adjacent digits\n    stack.push(text repeated count times)\nreturn stack joined from bottom to top"
+      },
+      "ValidParenthesisString": {
+        "prompt": "Before reading: why must the star used as a closing parenthesis appear after the unmatched opener?",
+        "steps": [
+          "Store indexes of '(' and '*' in separate stacks.",
+          "A ')' consumes '(' first, then '*' only if needed.",
+          "Pair leftover '(' with later '*' indexes."
+        ],
+        "skeleton": "opens = stack of indexes\nstars = stack of indexes\nfor each index i:\n  if '(': opens.push(i)\n  else if '*': stars.push(i)\n  else if opens not empty: opens.pop()\n  else if stars not empty: stars.pop()\n  else: return false\nwhile opens not empty:\n  require stars.pop() > opens.pop()\nreturn true"
       }
     };
 
-    cards.forEach(card => Object.assign(card, recallDetails[card.name]));
+    const definingMoves = {
+      "StackUsingAnArray": "push: stack[++top] = x\npop: return stack[top--]",
+      "StackUsingLinkedList": "node.next = head\nhead = node",
+      "StackUsingQueues": "after offer(x), rotate size - 1 items",
+      "ValidParanthesis": "closer must match stack.top\nthen pop",
+      "ReverseUsingStacks": "push every character\npop into output order",
+      "RemoveAllAdjacentDuplicates": "current == stack.top ? pop : push",
+      "MinimumRemoveToMakeValidParanthesis": "skip unmatched ')' now\nremove leftover '(' from the right",
+      "DecodeString": "on ']': pop text + count\npush repeated text",
+      "ValidParenthesisString": "pair leftover '(' only with a later '*'"
+    };
+
+    const solvedOrder = [
+      "StackUsingAnArray",
+      "StackUsingLinkedList",
+      "StackUsingQueues",
+      "ValidParanthesis",
+      "ReverseUsingStacks",
+      "RemoveAllAdjacentDuplicates",
+      "MinimumRemoveToMakeValidParanthesis",
+      "DecodeString",
+      "ValidParenthesisString"
+    ];
+
+    cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
+    cards.forEach(card => Object.assign(card, recallDetails[card.name], {
+      definingMove: definingMoves[card.name]
+    }));
     cards.forEach((card, index) => {
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
@@ -1267,17 +1449,22 @@
                   <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
                 </div>
                 ${renderRevisionControls(card)}
-                <span class="quick-text">${escapeHtml(card.label)}</span>
-                <span class="quick-text">${escapeHtml(card.time)} time · ${escapeHtml(card.space)} space</span>
-                <span class="quick-text">Uses: ${escapeHtml(card.structures)}</span>
+                <div class="quick-summary">
+                  <span class="quick-approach">${escapeHtml(card.label)}</span>
+                  <div class="quick-facts">
+                    <span class="quick-fact"><b>Time</b> ${escapeHtml(card.time)}</span>
+                    <span class="quick-fact"><b>Space</b> ${escapeHtml(card.space)}</span>
+                  </div>
+                  <span class="quick-uses"><b>Uses</b> ${escapeHtml(card.structures)}</span>
+                </div>
               </div>
               <div>
                 <span class="quick-label">Recall prompt</span>
                 <span class="quick-text">${escapeHtml(card.prompt)}</span>
               </div>
               <div>
-                <span class="quick-label">Code shape</span>
-                <code>${escapeHtml(card.skeleton.split("\n")[0])}</code>
+                <span class="quick-label">Defining move</span>
+                <code>${escapeHtml(card.definingMove)}</code>
               </div>
               <div>
                 <span class="quick-label">Bug magnet</span>
