@@ -14,6 +14,7 @@ public class MinimumRemoveToMakeValidParanthesis {
                 if (unbalOpenCount > 0) {
                     unbalOpenCount -=1;
                     sb.append(c);
+
                 }
             } else {
                 sb.append(c);
