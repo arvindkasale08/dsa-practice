@@ -1147,6 +1147,85 @@
           "When reading ')', consume a real '(' before using a star.",
           "Any character other than '(' or ')' is treated as '*' by the current implementation."
         ]
+      },
+      {
+        "name": "EvaluateReversePolishNotation",
+        "source": "../com/arvind/revision/stacks/EvaluateReversePolishNotation.java",
+        "label": "Reduce operands on operators",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/evaluate-reverse-polish-notation/",
+        "description": "Given arithmetic tokens written in Reverse Polish Notation, evaluate the expression and return its integer result. Numbers appear before their operator, every operator combines the two most recent available values, and integer division truncates toward zero.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of operands, operator set",
+        "input": "tokens = [\"2\", \"1\", \"+\", \"3\", \"*\"]",
+        "output": "9",
+        "recognize": "When operators appear after their operands, so each operator can immediately reduce the two latest unresolved values.",
+        "visual": [
+          [
+            "2",
+            "1",
+            "+",
+            "3",
+            "*"
+          ],
+          [
+            "2 1 + → 3",
+            "3 3 * → 9"
+          ]
+        ],
+        "visualText": "Numbers wait on the stack. An operator removes the latest two values, computes one result, and pushes that result back as the next available operand.",
+        "core": "Push number tokens. On an operator, pop the right operand first and the left operand second, calculate left operator right, then push the result.",
+        "bruteForce": "Repeatedly find an operator with two number tokens immediately before it, replace those three tokens with their result, and restart scanning. It works but repeated list rewriting can take O(n²).",
+        "alternates": [
+          "Use an integer stack instead of storing and reparsing numeric strings.",
+          "Map each operator to a function so the reduction logic avoids a long conditional chain."
+        ],
+        "gotchas": [
+          "Operand order matters for subtraction and division: the first pop is the right operand.",
+          "The tokens are operators, not operands; name the operator set accordingly.",
+          "Prefer Set.of(\"+\", \"-\", \"*\", \"/\") over double-brace HashSet initialization."
+        ]
+      },
+      {
+        "name": "SimplifyPath",
+        "source": "../com/arvind/revision/stacks/SimplifyPath.java",
+        "label": "Resolve directory segments",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/simplify-path/",
+        "description": "Given an absolute Unix-style path, return its canonical path. Collapse repeated slashes, ignore '.' segments, let '..' move to the parent directory when possible, and keep ordinary directory names unchanged.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of directory names, StringBuilder",
+        "input": "path = \"/home/user///Documents/../Pictures\"",
+        "output": "\"/home/user/Pictures\"",
+        "recognize": "When path segments must be processed in order and '..' cancels the most recently retained directory.",
+        "visual": [
+          [
+            "home",
+            "user",
+            "Documents",
+            "..",
+            "Pictures"
+          ],
+          [
+            "push Documents",
+            ".. → pop Documents",
+            "push Pictures"
+          ]
+        ],
+        "visualText": "The stack represents the current path from root to the active directory. A normal segment enters a directory; '..' backs out of the latest one.",
+        "core": "Split on '/'. Ignore empty segments and '.', pop one directory for '..' when possible, and push every normal directory name. Join retained names beneath a single root slash.",
+        "bruteForce": "Repeatedly replace //, /./, and directory/../ patterns inside the string until nothing changes. This is fragile and can require repeated O(n) rebuilding.",
+        "alternates": [
+          "Use a deque of directory names and join it at the end.",
+          "Parse path segments manually with indexes to avoid creating the full split array."
+        ],
+        "gotchas": [
+          "At the root, '..' does nothing; never pop an empty stack.",
+          "A name containing dots, such as '...', is an ordinary directory name.",
+          "Use && rather than & when combining boolean conditions so later checks short-circuit."
+        ]
       }
     ];
 
@@ -1231,6 +1310,24 @@
           "Pair leftover '(' with later '*' indexes."
         ],
         "skeleton": "opens = stack of indexes\nstars = stack of indexes\nfor each index i:\n  if '(': opens.push(i)\n  else if '*': stars.push(i)\n  else if opens not empty: opens.pop()\n  else if stars not empty: stars.pop()\n  else: return false\nwhile opens not empty:\n  require stars.pop() > opens.pop()\nreturn true"
+      },
+      "EvaluateReversePolishNotation": {
+        "prompt": "Before reading: which popped value belongs on the right side of subtraction or division?",
+        "steps": [
+          "Push every number token.",
+          "On an operator, pop right operand first and left operand second.",
+          "Compute left operator right and push the result."
+        ],
+        "skeleton": "values = stack\nfor token in tokens:\n  if token is number:\n    values.push(token)\n  else:\n    right = values.pop()\n    left = values.pop()\n    values.push(apply(token, left, right))\nreturn values.pop()"
+      },
+      "SimplifyPath": {
+        "prompt": "Before reading: which path segments change the directory stack, and which disappear?",
+        "steps": [
+          "Ignore empty segments and '.'.",
+          "'..' pops the latest retained directory when one exists.",
+          "Push normal names and join them beneath '/'."
+        ],
+        "skeleton": "directories = stack\nfor segment in path.split('/'):\n  if segment empty or segment == '.': continue\n  if segment == '..':\n    if stack not empty: stack.pop()\n  else:\n    stack.push(segment)\nreturn '/' + join(stack, '/')"
       }
     };
 
@@ -1243,7 +1340,9 @@
       "RemoveAllAdjacentDuplicates": "current == stack.top ? pop : push",
       "MinimumRemoveToMakeValidParanthesis": "skip unmatched ')' now\nremove leftover '(' from the right",
       "DecodeString": "on ']': pop text + count\npush repeated text",
-      "ValidParenthesisString": "pair leftover '(' only with a later '*'"
+      "ValidParenthesisString": "pair leftover '(' only with a later '*'",
+      "EvaluateReversePolishNotation": "right = pop(); left = pop()\npush(left operator right)",
+      "SimplifyPath": "'..' → pop latest directory\nnormal name → push"
     };
 
     const solvedOrder = [
@@ -1254,8 +1353,10 @@
       "ReverseUsingStacks",
       "RemoveAllAdjacentDuplicates",
       "MinimumRemoveToMakeValidParanthesis",
+      "ValidParenthesisString",
       "DecodeString",
-      "ValidParenthesisString"
+      "EvaluateReversePolishNotation",
+      "SimplifyPath"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
