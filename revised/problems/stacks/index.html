@@ -1226,6 +1226,44 @@
           "A name containing dots, such as '...', is an ordinary directory name.",
           "Use && rather than & when combining boolean conditions so later checks short-circuit."
         ]
+      },
+      {
+        "name": "ExclusiveTimeOfFunctions",
+        "source": "../com/arvind/revision/stacks/ExclusiveTimeOfFunctions.java",
+        "label": "Pause and resume call frames",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/exclusive-time-of-functions/",
+        "description": "Given start and end logs from a single-threaded program, return how much time each function spends running by itself. Nested calls pause their caller, repeated calls with the same function ID still count toward that ID, and every end timestamp is inclusive.",
+        "time": "O(logs)",
+        "space": "O(call depth + n)",
+        "structures": "Stack of active call frames, result array",
+        "input": "n = 2\nlogs = [\"0:start:0\", \"0:start:2\", \"0:end:5\", \"1:start:7\", \"1:end:7\", \"0:end:8\"]",
+        "output": "[8, 1]",
+        "recognize": "When nested start/end events describe a single active call at any moment, and each caller must resume exactly where its child finished.",
+        "visual": [
+          [
+            "t0–1: outer 0",
+            "t2–5: nested 0",
+            "t6: outer 0"
+          ],
+          [
+            "t7: function 1",
+            "t8: outer 0",
+            "result [8, 1]"
+          ]
+        ],
+        "visualText": "The stack top owns the current time interval. A start event pays the previous top up to that timestamp, while an end event pays the top through the end timestamp and resumes its caller at end + 1.",
+        "core": "Keep active start frames on a stack. On child start, add the elapsed time since the current frame's resume point, then push the child. On end, add end - resume + 1, pop the child, and set the caller's next resume point to end + 1.",
+        "bruteForce": "Expand every timestamp into a timeline, determine which function is active at each unit, and increment that function's count. It is intuitive but can be impossibly slow when timestamps are large.",
+        "alternates": [
+          "Keep only function IDs on the stack plus one global previous timestamp; charge every interval to the current top.",
+          "Store parsed log fields in lightweight records before processing when parsing clarity matters more than avoiding an extra pass."
+        ],
+        "gotchas": [
+          "End timestamps are inclusive, so an ending call receives end - start + 1 time units.",
+          "After a child ends, its caller resumes at end + 1, not at end.",
+          "Nested calls may share the same function ID; stack frames, not IDs alone, represent active invocations."
+        ]
       }
     ];
 
@@ -1328,6 +1366,15 @@
           "Push normal names and join them beneath '/'."
         ],
         "skeleton": "directories = stack\nfor segment in path.split('/'):\n  if segment empty or segment == '.': continue\n  if segment == '..':\n    if stack not empty: stack.pop()\n  else:\n    stack.push(segment)\nreturn '/' + join(stack, '/')"
+      },
+      "ExclusiveTimeOfFunctions": {
+        "prompt": "Before reading: what timestamp should a paused caller resume from after an inclusive end event?",
+        "steps": [
+          "At a start event, pay the current top only up to the child's start.",
+          "At an end event, pay the ending frame through that timestamp.",
+          "Resume the caller from end + 1."
+        ],
+        "skeleton": "active = stack of frames\nfor log in logs:\n  event = parse(log)\n  if event is start:\n    if active not empty:\n      answer[top.id] += event.time - top.resume\n    active.push(event)\n  else:\n    frame = active.pop()\n    answer[frame.id] += event.time - frame.resume + 1\n    if active not empty:\n      top.resume = event.time + 1"
       }
     };
 
@@ -1342,7 +1389,8 @@
       "DecodeString": "on ']': pop text + count\npush repeated text",
       "ValidParenthesisString": "pair leftover '(' only with a later '*'",
       "EvaluateReversePolishNotation": "right = pop(); left = pop()\npush(left operator right)",
-      "SimplifyPath": "'..' → pop latest directory\nnormal name → push"
+      "SimplifyPath": "'..' → pop latest directory\nnormal name → push",
+      "ExclusiveTimeOfFunctions": "end pays +1 inclusive\ncaller resumes at end + 1"
     };
 
     const solvedOrder = [
@@ -1356,7 +1404,8 @@
       "ValidParenthesisString",
       "DecodeString",
       "EvaluateReversePolishNotation",
-      "SimplifyPath"
+      "SimplifyPath",
+      "ExclusiveTimeOfFunctions"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
