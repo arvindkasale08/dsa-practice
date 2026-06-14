@@ -1264,6 +1264,42 @@
           "After a child ends, its caller resumes at end + 1, not at end.",
           "Nested calls may share the same function ID; stack frames, not IDs alone, represent active invocations."
         ]
+      },
+      {
+        "name": "ScoreOfParanthesis",
+        "source": "../com/arvind/revision/stacks/ScoreOfParanthesis.java",
+        "label": "Score each nested frame",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/score-of-parentheses/",
+        "description": "Given a balanced parentheses string, return its score. A primitive pair () scores 1, adjacent balanced groups add their scores, and wrapping a balanced group in parentheses doubles its score.",
+        "time": "O(n)",
+        "space": "O(depth)",
+        "structures": "Stack of subtotal scores",
+        "input": "s = \"()(()())\"",
+        "output": "5",
+        "recognize": "When nested groups need their own subtotal because closing parentheses either create a primitive score or double only the score inside that group.",
+        "visual": [
+          [
+            "() → 1",
+            "()() → 1 + 1 = 2"
+          ],
+          [
+            "(()()) → 2 × 2 = 4",
+            "()(()()) → 1 + 4 = 5"
+          ]
+        ],
+        "visualText": "Every '(' starts a fresh score frame at zero. A ')' completes that frame: zero means the primitive (), otherwise double the inner subtotal, then add it to the parent frame.",
+        "core": "Push zero for every opening parenthesis. On closing, pop the inner subtotal, turn it into 1 when empty or 2 × inner otherwise, then add that group score to the parent subtotal.",
+        "bruteForce": "Repeatedly replace every primitive () with 1, then evaluate additions and doubled wrapped groups as an expression. This mirrors the rules but requires awkward repeated parsing and rebuilding.",
+        "alternates": [
+          "Track nesting depth and add 2^depth whenever a primitive () closes, using O(1) extra space.",
+          "Parse recursively: each call returns the score until its matching closing parenthesis."
+        ],
+        "gotchas": [
+          "Do not keep one global score and double it; wrapping must double only the current group's inner subtotal.",
+          "An inner subtotal of zero means the closed group was exactly (), so its score is 1.",
+          "After calculating a group, add it to the parent frame because adjacent groups sum."
+        ]
       }
     ];
 
@@ -1375,6 +1411,15 @@
           "Resume the caller from end + 1."
         ],
         "skeleton": "active = stack of frames\nfor log in logs:\n  event = parse(log)\n  if event is start:\n    if active not empty:\n      answer[top.id] += event.time - top.resume\n    active.push(event)\n  else:\n    frame = active.pop()\n    answer[frame.id] += event.time - frame.resume + 1\n    if active not empty:\n      top.resume = event.time + 1"
+      },
+      "ScoreOfParanthesis": {
+        "prompt": "Before reading: why must every open parenthesis receive its own subtotal frame?",
+        "steps": [
+          "Push zero when a new group opens.",
+          "On close, zero becomes 1; a non-zero subtotal becomes twice itself.",
+          "Add the completed group score to its parent frame."
+        ],
+        "skeleton": "scores = stack containing 0\nfor c in s:\n  if c == '(':\n    scores.push(0)\n  else:\n    inner = scores.pop()\n    group = inner == 0 ? 1 : 2 * inner\n    parent = scores.pop()\n    scores.push(parent + group)\nreturn scores.pop()"
       }
     };
 
@@ -1390,7 +1435,8 @@
       "ValidParenthesisString": "pair leftover '(' only with a later '*'",
       "EvaluateReversePolishNotation": "right = pop(); left = pop()\npush(left operator right)",
       "SimplifyPath": "'..' → pop latest directory\nnormal name → push",
-      "ExclusiveTimeOfFunctions": "end pays +1 inclusive\ncaller resumes at end + 1"
+      "ExclusiveTimeOfFunctions": "end pays +1 inclusive\ncaller resumes at end + 1",
+      "ScoreOfParanthesis": "group = inner == 0 ? 1 : 2 × inner\nparent += group"
     };
 
     const solvedOrder = [
@@ -1405,7 +1451,8 @@
       "DecodeString",
       "EvaluateReversePolishNotation",
       "SimplifyPath",
-      "ExclusiveTimeOfFunctions"
+      "ExclusiveTimeOfFunctions",
+      "ScoreOfParanthesis"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
