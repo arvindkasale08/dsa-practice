@@ -1300,6 +1300,42 @@
           "An inner subtotal of zero means the closed group was exactly (), so its score is 1.",
           "After calculating a group, add it to the parent frame because adjacent groups sum."
         ]
+      },
+      {
+        "name": "MakeStringGreat",
+        "source": "../com/arvind/revision/stacks/MakeStringGreat.java",
+        "label": "Cancel opposite-case neighbors",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/make-the-string-great/",
+        "description": "Given a string of uppercase and lowercase English letters, repeatedly remove adjacent characters that are the same letter in opposite cases, such as 'aA' or 'Bb'. Return the final string after no such adjacent pair remains.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of surviving characters, StringBuilder",
+        "input": "s = \"leEeetcode\"",
+        "output": "\"leetcode\"",
+        "recognize": "When removing one adjacent pair can expose a new pair that must also be removed.",
+        "visual": [
+          [
+            "l e E e e t c o d e",
+            "e + E → remove"
+          ],
+          [
+            "l e e e t c o d e",
+            "no more opposite-case neighbors → leetcode"
+          ]
+        ],
+        "visualText": "Treat the stack as the characters that have survived so far. The current character meets only the latest survivor; if they are the same letter with opposite cases, both disappear.",
+        "core": "For each character, compare it with the stack top. Pop when both represent the same letter but have different cases; otherwise push the character. Read the surviving stack from bottom to top.",
+        "bruteForce": "Scan the whole string for a bad adjacent pair, delete one pair, then restart the scan. It is easy to reason about but repeated string rebuilding can take O(n²) time.",
+        "alternates": [
+          "Use a StringBuilder as the stack: compare with its final character and delete the final character on a match.",
+          "Use a character array plus a write index as an in-place stack, which keeps O(n) time with less object overhead."
+        ],
+        "gotchas": [
+          "The letters must be equal ignoring case but different as actual characters; 'aa' and 'AA' stay.",
+          "After a pop, the next character must compare with the newly exposed stack top.",
+          "Build the result from stack bottom to top so the original survivor order is preserved."
+        ]
       }
     ];
 
@@ -1420,6 +1456,15 @@
           "Add the completed group score to its parent frame."
         ],
         "skeleton": "scores = stack containing 0\nfor c in s:\n  if c == '(':\n    scores.push(0)\n  else:\n    inner = scores.pop()\n    group = inner == 0 ? 1 : 2 * inner\n    parent = scores.pop()\n    scores.push(parent + group)\nreturn scores.pop()"
+      },
+      "MakeStringGreat": {
+        "prompt": "Before reading: why is comparing the current character only with the latest survivor enough?",
+        "steps": [
+          "Keep surviving characters in a stack.",
+          "Pop when the current character and stack top are the same letter in opposite cases.",
+          "Otherwise push; the stack preserves the final order."
+        ],
+        "skeleton": "survivors = stack\nfor c in s:\n  if survivors not empty\n     and lower(survivors.top) == lower(c)\n     and survivors.top != c:\n    survivors.pop()\n  else:\n    survivors.push(c)\nreturn survivors from bottom to top"
       }
     };
 
@@ -1436,7 +1481,8 @@
       "EvaluateReversePolishNotation": "right = pop(); left = pop()\npush(left operator right)",
       "SimplifyPath": "'..' → pop latest directory\nnormal name → push",
       "ExclusiveTimeOfFunctions": "end pays +1 inclusive\ncaller resumes at end + 1",
-      "ScoreOfParanthesis": "group = inner == 0 ? 1 : 2 × inner\nparent += group"
+      "ScoreOfParanthesis": "group = inner == 0 ? 1 : 2 × inner\nparent += group",
+      "MakeStringGreat": "same letter + opposite case?\npop : push"
     };
 
     const solvedOrder = [
@@ -1452,7 +1498,8 @@
       "EvaluateReversePolishNotation",
       "SimplifyPath",
       "ExclusiveTimeOfFunctions",
-      "ScoreOfParanthesis"
+      "ScoreOfParanthesis",
+      "MakeStringGreat"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
