@@ -12,7 +12,7 @@ public class MakeStringGreat {
         for (char c: s.toCharArray()) {
             if (!stack.isEmpty()) {
                 char existing = stack.peek();
-                if ((Character.toLowerCase(existing) == Character.toLowerCase(c)) && (int) existing != (int) c) {
+                if ((Character.toLowerCase(existing) == Character.toLowerCase(c)) && existing != c) {
                     stack.pop();
                     continue;
                 }
