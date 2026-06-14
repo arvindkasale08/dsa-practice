@@ -1482,6 +1482,78 @@
           "After popping a smaller survivor, the incoming asteroid must continue fighting the newly exposed top.",
           "On equal magnitude, pop the top and mark the incoming asteroid destroyed so neither is pushed."
         ]
+      },
+      {
+        "name": "NextGreaterElementI",
+        "source": "../com/arvind/revision/stacks/NextGreaterElementI.java",
+        "label": "Precompute answers for subset queries",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/next-greater-element-i/",
+        "description": "Every value in nums1 also appears in nums2. For each nums1 value, return the first greater value appearing to its right in nums2, or -1 when none exists.",
+        "time": "O(n + m)",
+        "space": "O(n)",
+        "structures": "Monotonic decreasing stack of values, HashMap lookup",
+        "input": "nums1 = [4, 1, 2]\nnums2 = [1, 3, 4, 2]",
+        "output": "[-1, 3, -1]",
+        "recognize": "When next-greater answers belong to one reference array, but the requested output contains only a subset of its distinct values.",
+        "visual": [
+          [
+            "scan nums2 right → left",
+            "stack keeps greater candidates"
+          ],
+          [
+            "1 sees 3 → bank[1] = 3",
+            "query nums1 through bank"
+          ]
+        ],
+        "visualText": "Scanning from the right means the stack already represents possible answers to the right. Remove smaller values because the current value blocks them, then the surviving top is the nearest greater value.",
+        "core": "Build each nums2 value's next-greater answer with a right-to-left monotonic stack, store it in a map, then answer every nums1 query with one map lookup.",
+        "bruteForce": "For every nums1 value, find it in nums2 and scan right until a greater value appears. This is simple but can take O(m × n) time.",
+        "alternates": [
+          "Scan nums2 left to right and map answers when the current value pops smaller unresolved values.",
+          "When queries are indexes rather than distinct values, store indexes in the stack and write directly into an answer array."
+        ],
+        "gotchas": [
+          "The map works by value only because nums2 values are unique.",
+          "Pop candidates that are not greater than the current value; equality would also be invalid if duplicates were allowed.",
+          "The stack contains candidates from the right side only because the scan moves right to left."
+        ]
+      },
+      {
+        "name": "NextGreaterElementIV2",
+        "source": "../com/arvind/revision/stacks/NextGreaterElementIV2.java",
+        "label": "Write next-greater answer per position",
+        "difficulty": "Medium",
+        "description": "For every element in an array, return the first strictly greater element appearing to its right. Return -1 for positions that have no greater element to their right.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Monotonic decreasing stack of candidate values, result array",
+        "input": "arr = [13, 7, 6, 12]",
+        "output": "[-1, 12, 12, -1]",
+        "recognize": "When every position needs the first greater value on its right and later values can be processed once as reusable candidates.",
+        "visual": [
+          [
+            "scan: 12 ← 6 ← 7 ← 13",
+            "stack top = nearest usable greater"
+          ],
+          [
+            "6 sees 12",
+            "7 pops 6, then sees 12",
+            "13 pops all → -1"
+          ]
+        ],
+        "visualText": "While scanning right to left, smaller or equal stack values can never answer the current element and are discarded. The remaining top is the first greater candidate that survived.",
+        "core": "Scan from right to left. Pop every stack value less than or equal to the current value, write the remaining top or -1 as the answer, then push the current value.",
+        "bruteForce": "For every index, scan all later elements until the first greater value appears. In a decreasing array, this takes O(n²) time.",
+        "alternates": [
+          "Scan left to right with a stack of unresolved indexes and fill their answers when a greater value arrives.",
+          "Store indexes instead of values when later work needs positions or distances rather than only the greater value."
+        ],
+        "gotchas": [
+          "Pop equal values too because the answer must be strictly greater.",
+          "Right-to-left traversal makes the stack top the nearest surviving greater candidate.",
+          "This implementation assumes the input list is non-empty when initializing its last element."
+        ]
       }
     ];
 
@@ -1647,6 +1719,24 @@
           "Push the incoming asteroid only if it survives every possible collision."
         ],
         "skeleton": "survivors = stack\nfor asteroid in asteroids:\n  incomingAlive = true\n  while incomingAlive and asteroid < 0\n        and survivors not empty and survivors.top > 0:\n    if survivors.top < abs(asteroid): survivors.pop()\n    else if survivors.top == abs(asteroid):\n      survivors.pop(); incomingAlive = false\n    else: incomingAlive = false\n  if incomingAlive: survivors.push(asteroid)\nreturn survivors in original order"
+      },
+      "NextGreaterElementI": {
+        "prompt": "Before reading: why compute answers for all of nums2 before answering the smaller nums1 query list?",
+        "steps": [
+          "Scan nums2 right to left with greater candidates on a stack.",
+          "Store each distinct value's next-greater answer in a map.",
+          "Answer nums1 using direct map lookups."
+        ],
+        "skeleton": "bank = map\ncandidates = stack\nfor value in nums2 from right to left:\n  while candidates not empty and candidates.top <= value:\n    candidates.pop()\n  bank[value] = candidates empty ? -1 : candidates.top\n  candidates.push(value)\nreturn bank[value] for each value in nums1"
+      },
+      "NextGreaterElementIV2": {
+        "prompt": "Before reading: which right-side values can be discarded forever when processing the current value?",
+        "steps": [
+          "Scan positions from right to left.",
+          "Pop every candidate less than or equal to the current value.",
+          "Write the remaining top or -1, then push the current value."
+        ],
+        "skeleton": "candidates = stack\nanswer = array\nfor i from last to first:\n  while candidates not empty and candidates.top <= arr[i]:\n    candidates.pop()\n  answer[i] = candidates empty ? -1 : candidates.top\n  candidates.push(arr[i])\nreturn answer"
       }
     };
 
@@ -1668,7 +1758,9 @@
       "MinimumStack": "push Node(value, min(value, previousMin))",
       "DailyTemperatures": "while current > temperature[stack.top]:\nanswer[pop] = currentDay - colderDay",
       "SumOfSubarrayMinimums": "contribution = value × leftChoices × rightChoices\none boundary owns equals",
-      "AsteroidCollision": "only stack.top > 0 and incoming < 0 collide\nsmaller top? pop and keep fighting"
+      "AsteroidCollision": "only stack.top > 0 and incoming < 0 collide\nsmaller top? pop and keep fighting",
+      "NextGreaterElementI": "precompute nums2 value → next greater\nthen map each nums1 query",
+      "NextGreaterElementIV2": "pop while stack.top <= current\nanswer = stack.top or -1"
     };
 
     const solvedOrder = [
@@ -1689,7 +1781,9 @@
       "MinimumStack",
       "DailyTemperatures",
       "SumOfSubarrayMinimums",
-      "AsteroidCollision"
+      "AsteroidCollision",
+      "NextGreaterElementI",
+      "NextGreaterElementIV2"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
