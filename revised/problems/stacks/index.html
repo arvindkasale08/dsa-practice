@@ -1445,6 +1445,43 @@
           "Cast the value to long before multiplying; casting after int multiplication cannot repair overflow.",
           "Boundary indexes are outside the valid territory, so choices are index - left and right - index."
         ]
+      },
+      {
+        "name": "AsteroidCollision",
+        "source": "../com/arvind/revision/stacks/AsteroidCollision.java",
+        "label": "Resolve head-on survivor chains",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/asteroid-collision/",
+        "description": "Asteroids appear in a line, where magnitude is size and sign is direction. When two asteroids moving toward each other collide, the smaller one disappears; equal sizes both disappear. Return the surviving asteroids in their original order.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of surviving asteroids",
+        "input": "asteroids = [10, 2, -5]",
+        "output": "[10]",
+        "recognize": "When the current item may repeatedly destroy the latest survivors, but only one specific direction pairing can interact.",
+        "visual": [
+          [
+            "survivors: [10, 2]",
+            "incoming: -5"
+          ],
+          [
+            "2 vs -5 → 2 breaks",
+            "10 vs -5 → -5 breaks",
+            "survivor: [10]"
+          ]
+        ],
+        "visualText": "Only a right-moving survivor on the left and a new left-moving asteroid on the right are heading toward each other. The incoming asteroid keeps colliding with the stack top until one side survives or no collision is possible.",
+        "core": "Push right-movers immediately. For an incoming left-mover, repeatedly compare it with a positive stack top: pop smaller tops, destroy both on equal size, or destroy the incoming asteroid when the top is larger. Push it only if it survives.",
+        "bruteForce": "Repeatedly scan adjacent asteroids, resolve the first head-on collision, rebuild the list, and restart. This is easy to simulate but repeated scans and deletions can take O(n²) time.",
+        "alternates": [
+          "Use an int array plus a write index as the survivor stack to avoid boxed Integer objects.",
+          "Use an ArrayDeque<Integer> as the stack; it offers the same algorithm with a more modern Java stack API."
+        ],
+        "gotchas": [
+          "Two asteroids collide only when the stack top is positive and the incoming asteroid is negative.",
+          "After popping a smaller survivor, the incoming asteroid must continue fighting the newly exposed top.",
+          "On equal magnitude, pop the top and mark the incoming asteroid destroyed so neither is pushed."
+        ]
       }
     ];
 
@@ -1601,6 +1638,15 @@
           "Add value × left choices × right choices using long arithmetic."
         ],
         "skeleton": "left[i] = previous index with value <= arr[i]\nright[i] = next index with value < arr[i]\nscore = 0\nfor i:\n  leftChoices = i - left[i]\n  rightChoices = right[i] - i\n  score += (long) arr[i] * leftChoices * rightChoices\n  score %= MOD\nreturn score"
+      },
+      "AsteroidCollision": {
+        "prompt": "Before reading: which direction pairing can actually collide, and when must the incoming asteroid keep fighting?",
+        "steps": [
+          "Only compare an incoming negative asteroid with a positive stack top.",
+          "Pop smaller positive tops and continue with the same incoming asteroid.",
+          "Push the incoming asteroid only if it survives every possible collision."
+        ],
+        "skeleton": "survivors = stack\nfor asteroid in asteroids:\n  incomingAlive = true\n  while incomingAlive and asteroid < 0\n        and survivors not empty and survivors.top > 0:\n    if survivors.top < abs(asteroid): survivors.pop()\n    else if survivors.top == abs(asteroid):\n      survivors.pop(); incomingAlive = false\n    else: incomingAlive = false\n  if incomingAlive: survivors.push(asteroid)\nreturn survivors in original order"
       }
     };
 
@@ -1621,7 +1667,8 @@
       "MakeStringGreat": "same letter + opposite case?\npop : push",
       "MinimumStack": "push Node(value, min(value, previousMin))",
       "DailyTemperatures": "while current > temperature[stack.top]:\nanswer[pop] = currentDay - colderDay",
-      "SumOfSubarrayMinimums": "contribution = value × leftChoices × rightChoices\none boundary owns equals"
+      "SumOfSubarrayMinimums": "contribution = value × leftChoices × rightChoices\none boundary owns equals",
+      "AsteroidCollision": "only stack.top > 0 and incoming < 0 collide\nsmaller top? pop and keep fighting"
     };
 
     const solvedOrder = [
@@ -1641,7 +1688,8 @@
       "MakeStringGreat",
       "MinimumStack",
       "DailyTemperatures",
-      "SumOfSubarrayMinimums"
+      "SumOfSubarrayMinimums",
+      "AsteroidCollision"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
