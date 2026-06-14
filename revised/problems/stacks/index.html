@@ -1409,6 +1409,42 @@
           "Use a while loop because one warmer day can resolve multiple colder days.",
           "Equal temperatures are not warmer, so pop only when stack-top temperature is strictly less than the current temperature."
         ]
+      },
+      {
+        "name": "SumOfSubarrayMinimums",
+        "source": "../com/arvind/revision/stacks/SumOfSubarrayMinimums.java",
+        "label": "Count each value's minimum territory",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/sum-of-subarray-minimums/",
+        "description": "For every contiguous subarray, take its minimum value, then return the sum of all those minimums modulo 1,000,000,007.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Two monotonic increasing stacks of indexes, left/right boundary arrays",
+        "input": "arr = [3, 1, 2, 4]",
+        "output": "17",
+        "recognize": "When summing a value across many subarrays is easier by counting how many subarrays choose each array element as their representative minimum.",
+        "visual": [
+          [
+            "value 1 at index 1",
+            "left boundary -1 → 2 start choices"
+          ],
+          [
+            "right boundary 4 → 3 end choices",
+            "contribution: 1 × 2 × 3 = 6"
+          ]
+        ],
+        "visualText": "Each element owns a rectangle of subarrays: choose any start after its left boundary and any end before its right boundary. Left choices × right choices counts the subarrays where that occurrence is the chosen minimum.",
+        "core": "Find the previous smaller-or-equal index and next strictly smaller index for every element. Its contribution is value × (index - left boundary) × (right boundary - index). Sum contributions modulo MOD.",
+        "bruteForce": "Generate every subarray, scan it for the minimum, and add that minimum. This directly follows the statement but can require O(n³) time, or O(n²) when maintaining a running minimum per start.",
+        "alternates": [
+          "Use one monotonic stack with a sentinel and calculate an element's complete contribution when it is popped.",
+          "Maintain a monotonic stack of value/count pairs and dynamically track the sum of minimums for all subarrays ending at the current index."
+        ],
+        "gotchas": [
+          "Duplicates need asymmetric boundaries: one side accepts equal values and the other side does not, otherwise subarrays are double-counted or missed.",
+          "Cast the value to long before multiplying; casting after int multiplication cannot repair overflow.",
+          "Boundary indexes are outside the valid territory, so choices are index - left and right - index."
+        ]
       }
     ];
 
@@ -1556,6 +1592,15 @@
           "For each popped day, write current index - popped index."
         ],
         "skeleton": "unresolved = stack of indexes\nanswer = zeros\nfor day from left to right:\n  while unresolved not empty\n        and temperatures[unresolved.top] < temperatures[day]:\n    colderDay = unresolved.pop()\n    answer[colderDay] = day - colderDay\n  unresolved.push(day)\nreturn answer"
+      },
+      "SumOfSubarrayMinimums": {
+        "prompt": "Before reading: how many subarrays choose arr[i] as their minimum, and why must duplicate boundaries be asymmetric?",
+        "steps": [
+          "Find previous smaller-or-equal and next strictly smaller boundaries.",
+          "Multiply the number of valid start choices by valid end choices.",
+          "Add value × left choices × right choices using long arithmetic."
+        ],
+        "skeleton": "left[i] = previous index with value <= arr[i]\nright[i] = next index with value < arr[i]\nscore = 0\nfor i:\n  leftChoices = i - left[i]\n  rightChoices = right[i] - i\n  score += (long) arr[i] * leftChoices * rightChoices\n  score %= MOD\nreturn score"
       }
     };
 
@@ -1575,7 +1620,8 @@
       "ScoreOfParanthesis": "group = inner == 0 ? 1 : 2 × inner\nparent += group",
       "MakeStringGreat": "same letter + opposite case?\npop : push",
       "MinimumStack": "push Node(value, min(value, previousMin))",
-      "DailyTemperatures": "while current > temperature[stack.top]:\nanswer[pop] = currentDay - colderDay"
+      "DailyTemperatures": "while current > temperature[stack.top]:\nanswer[pop] = currentDay - colderDay",
+      "SumOfSubarrayMinimums": "contribution = value × leftChoices × rightChoices\none boundary owns equals"
     };
 
     const solvedOrder = [
@@ -1594,7 +1640,8 @@
       "ScoreOfParanthesis",
       "MakeStringGreat",
       "MinimumStack",
-      "DailyTemperatures"
+      "DailyTemperatures",
+      "SumOfSubarrayMinimums"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
