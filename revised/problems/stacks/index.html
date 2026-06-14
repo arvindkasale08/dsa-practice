@@ -1336,6 +1336,42 @@
           "After a pop, the next character must compare with the newly exposed stack top.",
           "Build the result from stack bottom to top so the original survivor order is preserved."
         ]
+      },
+      {
+        "name": "MinimumStack",
+        "source": "../com/arvind/revision/stacks/MinimumStack.java",
+        "label": "Carry the minimum with every value",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/min-stack/",
+        "description": "Design a stack that supports push, pop, reading the top value, and reading the current minimum value, with every operation taking constant time.",
+        "time": "O(1) per operation",
+        "space": "O(n)",
+        "structures": "Stack of nodes storing value + minimum-so-far",
+        "input": "push(-2), push(0), push(-3), getMin(), pop(), top(), getMin()",
+        "output": "-3, 0, -2",
+        "recognize": "When a stack must answer an aggregate such as the current minimum instantly, even after values are popped.",
+        "visual": [
+          [
+            "push -2 → (-2, min -2)",
+            "push 0 → (0, min -2)"
+          ],
+          [
+            "push -3 → (-3, min -3)",
+            "pop -3 → top remembers min -2"
+          ]
+        ],
+        "visualText": "Every node carries a snapshot of the minimum at the moment it was pushed. The top node therefore always knows the current minimum, and popping reveals the previous snapshot.",
+        "core": "On push, store both the new value and min(new value, previous top's minimum). Then top reads the value field, getMin reads the minimum field, and pop removes both together.",
+        "bruteForce": "Store only values and scan the whole stack whenever getMin is called. Push and pop stay simple, but each minimum query costs O(n).",
+        "alternates": [
+          "Maintain a normal value stack plus a second stack of minimums; push to the minimum stack when a new value is less than or equal to its top.",
+          "Store encoded differences from the minimum in one numeric stack, allowing O(1) operations with less per-entry storage but trickier arithmetic."
+        ],
+        "gotchas": [
+          "Use the previous minimum when creating the new node; recomputing after push can accidentally read the new node itself.",
+          "Duplicate minimum values must survive correctly after one copy is popped.",
+          "The problem guarantees valid calls, but a reusable implementation should decide how empty pop, top, and getMin behave."
+        ]
       }
     ];
 
@@ -1465,6 +1501,15 @@
           "Otherwise push; the stack preserves the final order."
         ],
         "skeleton": "survivors = stack\nfor c in s:\n  if survivors not empty\n     and lower(survivors.top) == lower(c)\n     and survivors.top != c:\n    survivors.pop()\n  else:\n    survivors.push(c)\nreturn survivors from bottom to top"
+      },
+      "MinimumStack": {
+        "prompt": "Before reading: what extra fact must each pushed value remember so getMin never scans the stack?",
+        "steps": [
+          "Read the previous minimum before pushing.",
+          "Push a node containing the value and the new minimum-so-far.",
+          "The top node answers both top and getMin; pop restores the previous snapshot."
+        ],
+        "skeleton": "push(value):\n  previousMin = stack empty ? value : stack.top.min\n  stack.push(Node(value, min(value, previousMin)))\npop(): stack.pop()\ntop(): return stack.top.value\ngetMin(): return stack.top.min"
       }
     };
 
@@ -1482,7 +1527,8 @@
       "SimplifyPath": "'..' → pop latest directory\nnormal name → push",
       "ExclusiveTimeOfFunctions": "end pays +1 inclusive\ncaller resumes at end + 1",
       "ScoreOfParanthesis": "group = inner == 0 ? 1 : 2 × inner\nparent += group",
-      "MakeStringGreat": "same letter + opposite case?\npop : push"
+      "MakeStringGreat": "same letter + opposite case?\npop : push",
+      "MinimumStack": "push Node(value, min(value, previousMin))"
     };
 
     const solvedOrder = [
@@ -1499,7 +1545,8 @@
       "SimplifyPath",
       "ExclusiveTimeOfFunctions",
       "ScoreOfParanthesis",
-      "MakeStringGreat"
+      "MakeStringGreat",
+      "MinimumStack"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
