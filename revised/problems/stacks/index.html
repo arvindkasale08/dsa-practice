@@ -1627,6 +1627,43 @@
           "Add the popped node's full stored span, not just one day.",
           "The O(1) time is amortized: one call may pop many nodes, but each node is pushed and popped once."
         ]
+      },
+      {
+        "name": "MaximumWidthRamp",
+        "source": "../com/arvind/revision/stacks/MaximumWidthRamp.java",
+        "label": "Match record-low starts with farthest ends",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/maximum-width-ramp/",
+        "description": "Find the largest distance j - i such that i is before j and nums[i] is less than or equal to nums[j].",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Strictly decreasing monotonic stack of candidate start indexes",
+        "input": "nums = [6, 0, 8, 2, 1, 5]",
+        "output": "4",
+        "recognize": "When maximizing distance between a left value and an equal-or-larger right value, and most left indexes can never beat an earlier smaller candidate.",
+        "visual": [
+          [
+            "candidate starts: index 0 → 6",
+            "new record low: index 1 → 0"
+          ],
+          [
+            "scan right endpoints from far right",
+            "index 5 value 5 matches index 1 value 0",
+            "width = 5 - 1 = 4"
+          ]
+        ],
+        "visualText": "Only record-low values can be useful left endpoints: any later, larger left value is dominated by an earlier smaller one. Scanning right endpoints backward guarantees the first match for a candidate start is its widest possible match.",
+        "core": "Build a stack of indexes whose values form strict new lows from left to right. Then scan indexes from right to left; while the current value can pair with the stack top, update the width and pop that start permanently.",
+        "bruteForce": "Try every pair i < j and keep the widest pair where nums[i] <= nums[j]. This directly follows the definition but takes O(n²) time.",
+        "alternates": [
+          "Sort indexes by their values, then track the smallest index seen and maximize current index - smallest index in O(n log n).",
+          "Build prefix minimums and suffix maximums, then use two pointers to find the widest valid pair in O(n) time and O(n) space."
+        ],
+        "gotchas": [
+          "The candidate-start stack stores indexes, because width depends on positions.",
+          "Push only strict new lows; an earlier equal value always produces an equal or wider ramp.",
+          "Scan right endpoints from right to left so a popped start has already received its widest possible match."
+        ]
       }
     ];
 
@@ -1828,6 +1865,15 @@
           "Push today's price with the combined span for future calls."
         ],
         "skeleton": "next(price):\n  span = 1\n  while stack not empty and stack.top.price <= price:\n    span += stack.pop().span\n  stack.push(Node(price, span))\n  return span"
+      },
+      "MaximumWidthRamp": {
+        "prompt": "Before reading: why are only strict record-low indexes useful as possible ramp starts?",
+        "steps": [
+          "Keep indexes of strict new lows while scanning left to right.",
+          "Scan possible end indexes from the far right toward the left.",
+          "Pop every start that the current end can satisfy; this is its widest match."
+        ],
+        "skeleton": "starts = stack of strict record-low indexes\nfor i from left to right:\n  if nums[i] < nums[starts.top]: starts.push(i)\nmaxWidth = 0\nfor j from right to left:\n  while starts not empty and nums[starts.top] <= nums[j]:\n    maxWidth = max(maxWidth, j - starts.pop())\nreturn maxWidth"
       }
     };
 
@@ -1853,7 +1899,8 @@
       "NextGreaterElementI": "precompute nums2 value → next greater\nthen map each nums1 query",
       "NextGreaterElementIV2": "pop while stack.top <= current\nanswer = stack.top or -1",
       "NextGreaterElementII": "scan nums twice for one circular lap\nreturn first-copy answers",
-      "StockSpanner": "while top.price <= price:\nspan += pop().span"
+      "StockSpanner": "while top.price <= price:\nspan += pop().span",
+      "MaximumWidthRamp": "stack = strict record-low start indexes\nscan end indexes from far right"
     };
 
     const solvedOrder = [
@@ -1878,7 +1925,8 @@
       "NextGreaterElementI",
       "NextGreaterElementIV2",
       "NextGreaterElementII",
-      "StockSpanner"
+      "StockSpanner",
+      "MaximumWidthRamp"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
