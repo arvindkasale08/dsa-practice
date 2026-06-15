@@ -1554,6 +1554,42 @@
           "Right-to-left traversal makes the stack top the nearest surviving greater candidate.",
           "This implementation assumes the input list is non-empty when initializing its last element."
         ]
+      },
+      {
+        "name": "NextGreaterElementII",
+        "source": "../com/arvind/revision/stacks/NextGreaterElementII.java",
+        "label": "Unroll the circular next-greater scan",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/next-greater-element-ii/",
+        "description": "For every element in a circular array, return the first strictly greater value encountered while moving right and wrapping back to the beginning. Return -1 when no greater value exists.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Doubled input array, monotonic decreasing stack of values, result arrays",
+        "input": "nums = [1, 2, 1]",
+        "output": "[2, -1, 2]",
+        "recognize": "When a normal next-greater search must continue past the array's end and inspect values from the beginning once.",
+        "visual": [
+          [
+            "circle: [1, 2, 1]",
+            "unroll: [1, 2, 1 | 1, 2, 1]"
+          ],
+          [
+            "run next-greater on doubled view",
+            "keep answers for first copy only"
+          ]
+        ],
+        "visualText": "Duplicating the array turns one circular lap into an ordinary linear right-side search. The second copy supplies wrapped candidates; only the first copy represents real output positions.",
+        "core": "Create two copies of nums, scan the doubled array from right to left with a decreasing candidate stack, and copy the first n next-greater answers into the result.",
+        "bruteForce": "For every position, move right for at most n - 1 steps using modulo indexes until a greater value appears. This is easy to understand but takes O(n²) time.",
+        "alternates": [
+          "Avoid duplicated arrays by scanning indexes from 2n - 1 down to 0 and reading nums[i % n]; write answers only when i < n.",
+          "Scan left to right twice with a stack of unresolved indexes, resolving them whenever a greater value appears."
+        ],
+        "gotchas": [
+          "Equal values are not greater, so pop candidates less than or equal to the current value.",
+          "The second copy exists only to provide wrapped candidates; return answers for the first n positions.",
+          "A circular search may inspect each other element only once; it must not loop forever."
+        ]
       }
     ];
 
@@ -1737,6 +1773,15 @@
           "Write the remaining top or -1, then push the current value."
         ],
         "skeleton": "candidates = stack\nanswer = array\nfor i from last to first:\n  while candidates not empty and candidates.top <= arr[i]:\n    candidates.pop()\n  answer[i] = candidates empty ? -1 : candidates.top\n  candidates.push(arr[i])\nreturn answer"
+      },
+      "NextGreaterElementII": {
+        "prompt": "Before reading: how can a circular right-side search become the same linear next-greater scan you already know?",
+        "steps": [
+          "Unroll one circular lap by viewing the array twice.",
+          "Run the normal right-to-left decreasing-stack scan over the doubled view.",
+          "Keep only the first copy's answers."
+        ],
+        "skeleton": "doubled = nums + nums\ncandidates = stack\nnext = array for doubled\nfor i from doubled.length - 1 to 0:\n  while candidates not empty and candidates.top <= doubled[i]:\n    candidates.pop()\n  next[i] = candidates empty ? -1 : candidates.top\n  candidates.push(doubled[i])\nreturn next[0..n-1]"
       }
     };
 
@@ -1760,7 +1805,8 @@
       "SumOfSubarrayMinimums": "contribution = value × leftChoices × rightChoices\none boundary owns equals",
       "AsteroidCollision": "only stack.top > 0 and incoming < 0 collide\nsmaller top? pop and keep fighting",
       "NextGreaterElementI": "precompute nums2 value → next greater\nthen map each nums1 query",
-      "NextGreaterElementIV2": "pop while stack.top <= current\nanswer = stack.top or -1"
+      "NextGreaterElementIV2": "pop while stack.top <= current\nanswer = stack.top or -1",
+      "NextGreaterElementII": "scan nums twice for one circular lap\nreturn first-copy answers"
     };
 
     const solvedOrder = [
@@ -1783,7 +1829,8 @@
       "SumOfSubarrayMinimums",
       "AsteroidCollision",
       "NextGreaterElementI",
-      "NextGreaterElementIV2"
+      "NextGreaterElementIV2",
+      "NextGreaterElementII"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
