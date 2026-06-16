@@ -1664,6 +1664,78 @@
           "Push only strict new lows; an earlier equal value always produces an equal or wider ramp.",
           "Scan right endpoints from right to left so a popped start has already received its widest possible match."
         ]
+      },
+      {
+        "name": "SortingStack",
+        "source": "../com/arvind/revision/stacks/SortingStack.java",
+        "label": "Insert into a sorted helper stack",
+        "difficulty": "Medium",
+        "description": "Sort a stack using only stack operations and one extra stack. The sorted helper stack keeps values in order by temporarily moving larger values back to the input stack while inserting the current value.",
+        "time": "O(n²)",
+        "space": "O(n)",
+        "structures": "Input stack, temporary sorted stack",
+        "input": "stack top sequence includes [23, 92, 98, 31, 3, 34]",
+        "output": "Popping the sorted stack prints 98, 92, 34, 31, 23, 3",
+        "recognize": "When you need stack-only sorting and cannot use random access, so each new value must be inserted into the right place by moving blockers away.",
+        "visual": [
+          [
+            "curr = 23",
+            "tmp top 31 > 23 → move 31 back"
+          ],
+          [
+            "push 23 into tmp",
+            "later 31 returns above it"
+          ]
+        ],
+        "visualText": "Think insertion sort with stacks. The helper stack is kept ordered; if its top is too large for the current value, move that top back to input until the current value fits.",
+        "core": "Pop one value from input. While the helper stack top is greater than that value, move helper values back to input. Push the current value into helper. Repeat until input is empty.",
+        "bruteForce": "Move stack values into an array or list, sort with a library call, then rebuild the stack. It is simpler, but it ignores the stack-operation constraint.",
+        "alternates": [
+          "Use recursion to sort the stack by inserting each popped element into a sorted recursive suffix.",
+          "If extra data structures are allowed, use a priority queue or list sort for simpler O(n log n) behavior."
+        ],
+        "gotchas": [
+          "The helper stack's top order determines what popping prints; be clear whether largest or smallest should come out first.",
+          "Move only while helper top is greater than the current value; using the wrong comparison reverses the sorted direction.",
+          "Values moved back to input are not lost; they will be reprocessed later."
+        ]
+      },
+      {
+        "name": "RemoveDuplicateLetters",
+        "source": "../com/arvind/revision/stacks/RemoveDuplicateLetters.java",
+        "label": "Keep smallest safe unique letters",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/remove-duplicate-letters/",
+        "description": "Remove duplicate letters so every distinct lowercase letter appears exactly once, and among all valid results, return the lexicographically smallest string.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Monotonic stack of letters, last-index array, seen set",
+        "input": "s = \"cbacdcbc\"",
+        "output": "\"acdb\"",
+        "recognize": "When you need one copy of every character, but choosing a smaller earlier character is allowed only if removed larger characters can still appear later.",
+        "visual": [
+          [
+            "c then b",
+            "b < c and c appears later → pop c"
+          ],
+          [
+            "b then a",
+            "a < b and b appears later → pop b",
+            "keep a"
+          ]
+        ],
+        "visualText": "The stack is the answer being built. A smaller current letter may kick out larger letters from the end, but only when those kicked letters still have another copy later in the string.",
+        "core": "Record each letter's last index. Scan left to right; skip letters already in the stack. Before pushing a new letter, pop larger stack-top letters while they appear again later, then push and mark the new letter seen.",
+        "bruteForce": "Generate all subsequences containing each distinct letter exactly once and choose the smallest. It proves the goal but is exponential.",
+        "alternates": [
+          "Use a StringBuilder as the stack and a boolean seen array for easier final output.",
+          "Equivalent problem: Smallest Subsequence of Distinct Characters uses the same monotonic stack rule."
+        ],
+        "gotchas": [
+          "Never pop a larger letter if its last occurrence is already behind you; that would lose the only required copy.",
+          "Skip a character if it is already in the stack, otherwise duplicates enter the result.",
+          "When popping, also clear the seen flag so that letter can be added again later."
+        ]
       }
     ];
 
@@ -1874,6 +1946,24 @@
           "Pop every start that the current end can satisfy; this is its widest match."
         ],
         "skeleton": "starts = stack of strict record-low indexes\nfor i from left to right:\n  if nums[i] < nums[starts.top]: starts.push(i)\nmaxWidth = 0\nfor j from right to left:\n  while starts not empty and nums[starts.top] <= nums[j]:\n    maxWidth = max(maxWidth, j - starts.pop())\nreturn maxWidth"
+      },
+      "SortingStack": {
+        "prompt": "Before reading: how do you insert the current value into the helper stack without random access?",
+        "steps": [
+          "Pop the current value from the input stack.",
+          "Move helper-stack values back to input while they block the current value.",
+          "Push the current value into helper, then let moved values get processed again."
+        ],
+        "skeleton": "helper = empty stack\nwhile input not empty:\n  curr = input.pop()\n  while helper not empty and helper.top > curr:\n    input.push(helper.pop())\n  helper.push(curr)\nreturn helper"
+      },
+      "RemoveDuplicateLetters": {
+        "prompt": "Before reading: when is it safe to remove a larger letter already in the answer stack?",
+        "steps": [
+          "Know the last index where every letter appears.",
+          "Skip letters already used in the answer stack.",
+          "Pop larger stack-top letters only if they appear again later."
+        ],
+        "skeleton": "last = last index for each letter\nseen = false for each letter\nstack = empty\nfor i, c in s:\n  if seen[c]: continue\n  while stack not empty\n        and stack.top > c\n        and i < last[stack.top]:\n    seen[stack.pop()] = false\n  stack.push(c)\n  seen[c] = true\nreturn stack as string"
       }
     };
 
@@ -1900,7 +1990,9 @@
       "NextGreaterElementIV2": "pop while stack.top <= current\nanswer = stack.top or -1",
       "NextGreaterElementII": "scan nums twice for one circular lap\nreturn first-copy answers",
       "StockSpanner": "while top.price <= price:\nspan += pop().span",
-      "MaximumWidthRamp": "stack = strict record-low start indexes\nscan end indexes from far right"
+      "MaximumWidthRamp": "stack = strict record-low start indexes\nscan end indexes from far right",
+      "SortingStack": "move larger helper values back\nthen push current into helper",
+      "RemoveDuplicateLetters": "pop larger top only if it appears later\nthen push current once"
     };
 
     const solvedOrder = [
@@ -1926,7 +2018,9 @@
       "NextGreaterElementIV2",
       "NextGreaterElementII",
       "StockSpanner",
-      "MaximumWidthRamp"
+      "MaximumWidthRamp",
+      "SortingStack",
+      "RemoveDuplicateLetters"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
