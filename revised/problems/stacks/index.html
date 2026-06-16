@@ -1736,6 +1736,43 @@
           "Skip a character if it is already in the stack, otherwise duplicates enter the result.",
           "When popping, also clear the seen flag so that letter can be added again later."
         ]
+      },
+      {
+        "name": "RemoveAllAdjacentDuplicatesII",
+        "source": "../com/arvind/revision/stacks/RemoveAllAdjacentDuplicatesII.java",
+        "label": "Delete runs when count reaches k",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string-ii/",
+        "description": "Given a string and an integer k, repeatedly remove any group of k equal adjacent characters until no such group remains. Return the final string.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Stack of character nodes with running duplicate counts",
+        "input": "s = \"deeedbbcccbdaa\", k = 3",
+        "output": "\"aa\"",
+        "recognize": "When removing a duplicate block can expose a new adjacent block, so the latest survivor must be checked after every deletion.",
+        "visual": [
+          [
+            "d e e e",
+            "third e reaches k = 3"
+          ],
+          [
+            "pop previous two e's",
+            "current e is skipped",
+            "d meets next survivor"
+          ]
+        ],
+        "visualText": "The stack remembers the current run length for every survivor. When the next same character would make the run length equal k, remove the stored run and do not push the current character.",
+        "core": "For each character, compare with the stack top. If it matches and count + 1 reaches k, pop the previous k - 1 nodes; otherwise push the current character with incremented count. Different characters start a new count.",
+        "bruteForce": "Repeatedly scan the string for any k-length adjacent duplicate run, delete it, and restart. This mirrors the rule but can rebuild the string many times.",
+        "alternates": [
+          "Store compressed pairs of character and count, then decrement or remove a pair when count reaches k.",
+          "Use a StringBuilder as the stack plus a parallel count array indexed by builder position."
+        ],
+        "gotchas": [
+          "When count reaches k, the current character also disappears, so pop the previous k - 1 and do not push current.",
+          "After a deletion, newly adjacent characters may form another run, so stack exposure is the whole trick.",
+          "Handle empty input separately if the method is meant to be fully reusable."
+        ]
       }
     ];
 
@@ -1964,6 +2001,15 @@
           "Pop larger stack-top letters only if they appear again later."
         ],
         "skeleton": "last = last index for each letter\nseen = false for each letter\nstack = empty\nfor i, c in s:\n  if seen[c]: continue\n  while stack not empty\n        and stack.top > c\n        and i < last[stack.top]:\n    seen[stack.pop()] = false\n  stack.push(c)\n  seen[c] = true\nreturn stack as string"
+      },
+      "RemoveAllAdjacentDuplicatesII": {
+        "prompt": "Before reading: what should happen when the current character makes the top run length exactly k?",
+        "steps": [
+          "Track each survivor character with the length of its current adjacent run.",
+          "If current matches the top and would reach k, remove the stored run and skip current.",
+          "Otherwise push current with count one or top count plus one."
+        ],
+        "skeleton": "stack = characters with counts\nfor c in s:\n  if stack top has same c:\n    if stack.top.count + 1 == k:\n      pop k - 1 previous copies\n      skip current c\n    else:\n      push Node(c, stack.top.count + 1)\n  else:\n    push Node(c, 1)\nreturn stack characters from bottom to top"
       }
     };
 
@@ -1992,7 +2038,8 @@
       "StockSpanner": "while top.price <= price:\nspan += pop().span",
       "MaximumWidthRamp": "stack = strict record-low start indexes\nscan end indexes from far right",
       "SortingStack": "move larger helper values back\nthen push current into helper",
-      "RemoveDuplicateLetters": "pop larger top only if it appears later\nthen push current once"
+      "RemoveDuplicateLetters": "pop larger top only if it appears later\nthen push current once",
+      "RemoveAllAdjacentDuplicatesII": "same char and count + 1 == k?\npop previous k - 1 and skip current"
     };
 
     const solvedOrder = [
@@ -2020,7 +2067,8 @@
       "StockSpanner",
       "MaximumWidthRamp",
       "SortingStack",
-      "RemoveDuplicateLetters"
+      "RemoveDuplicateLetters",
+      "RemoveAllAdjacentDuplicatesII"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
