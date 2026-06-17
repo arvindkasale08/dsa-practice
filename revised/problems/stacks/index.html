@@ -1890,6 +1890,47 @@
           "All comparisons are strict; equal values do not form a 132 pattern.",
           "Each stored peak must carry the best smaller value from its left side, not just the previous array value."
         ]
+      },
+      {
+        "name": "RemoveKDigits",
+        "source": "../com/arvind/revision/stacks/RemoveKDigits.java",
+        "label": "Pop bigger digits before smaller digits",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/remove-k-digits/",
+        "description": "Given a non-negative integer as a string and an integer k, remove exactly k digits so the remaining number is as small as possible. Return the number as a string, with leading zeros removed unless the answer is zero.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Monotonic increasing stack of kept digits",
+        "input": "num = \"765028321\", k = 5",
+        "output": "\"221\"",
+        "recognize": "When deleting digits should make the earliest possible position smaller, because left-side digits dominate the numeric value.",
+        "visual": [
+          [
+            "7 6 5",
+            "each smaller digit pops the bigger previous digit"
+          ],
+          [
+            "0 arrives",
+            "pop while top > 0",
+            "strip leading zeros later"
+          ],
+          [
+            "k still left?",
+            "remove from the end"
+          ]
+        ],
+        "visualText": "The stack is the number you are keeping so far. A smaller incoming digit can delete larger kept digits immediately before it, which lets the smaller digit move into a more important left-side position.",
+        "core": "Scan digits from left to right. While the kept stack is not empty, the top digit is larger than the current digit, and k remains, pop the top. Push the current digit. If removals remain after the scan, pop from the end, then strip leading zeros from the final kept digits.",
+        "bruteForce": "Try every way to remove k digits, normalize leading zeros, and keep the smallest numeric string. This is useful for tiny examples but combinatorial for real input.",
+        "alternates": [
+          "Use StringBuilder as the same stack: delete the last kept character while it is larger than the current digit.",
+          "For very small k, repeatedly remove the first digit that is larger than its next digit. This matches the idea but becomes O(k * n)."
+        ],
+        "gotchas": [
+          "Keep popping while top > current, not just once; one incoming digit may improve several earlier positions.",
+          "If k is still positive at the end, the kept digits are non-decreasing, so remove from the right side.",
+          "Strip leading zeros only after all removals; if nothing remains, return \"0\"."
+        ]
       }
     ];
 
@@ -2154,6 +2195,15 @@
           "If current sits between the carried left minimum and the remaining peak, return true."
         ],
         "skeleton": "stack = pairs of (peak, minBeforePeak)\nfor current in nums:\n  previous = stack.top pair\n  while stack not empty and stack.top.peak < current:\n    stack.pop()\n  if stack not empty and stack.top.minBefore < current < stack.top.peak:\n    return true\n  stack.push(current, min(previous.minBefore, previous.peak))\nreturn false"
+      },
+      "RemoveKDigits": {
+        "prompt": "Before reading: why does a smaller incoming digit get permission to delete bigger digits immediately before it?",
+        "steps": [
+          "Keep the answer digits in stack order.",
+          "While the top kept digit is bigger than the current digit and removals remain, pop it.",
+          "After the scan, remove leftover k digits from the end and trim leading zeros."
+        ],
+        "skeleton": "kept = stack of digits\nfor digit in num:\n  while kept not empty and kept.top > digit and k > 0:\n    kept.pop()\n    k--\n  kept.push(digit)\nwhile k > 0:\n  kept.pop()\n  k--\nanswer = kept without leading zeros\nreturn answer empty ? \"0\" : answer"
       }
     };
 
@@ -2186,7 +2236,8 @@
       "RemoveAllAdjacentDuplicatesII": "same char and count + 1 == k?\npop previous k - 1 and skip current",
       "RemoveNodesFromLinkedList": "current larger? pop smaller survivors\nthen relink top.next = current",
       "DecimalToBinary": "append num % 2 while dividing by 2\nreverse collected bits",
-      "OneThreeTwoPattern": "store (peak, min before peak)\ncurrent must fit: min < current < peak"
+      "OneThreeTwoPattern": "store (peak, min before peak)\ncurrent must fit: min < current < peak",
+      "RemoveKDigits": "while top > current and k remains:\npop the bigger previous digit"
     };
 
     const solvedOrder = [
@@ -2218,7 +2269,8 @@
       "RemoveAllAdjacentDuplicatesII",
       "RemoveNodesFromLinkedList",
       "DecimalToBinary",
-      "OneThreeTwoPattern"
+      "OneThreeTwoPattern",
+      "RemoveKDigits"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
