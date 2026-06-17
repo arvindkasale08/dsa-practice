@@ -1852,6 +1852,44 @@
           "Handle num = 0 separately if zero is allowed; the current loop returns an empty string for zero.",
           "Integer division by 2 is what moves to the next higher bit."
         ]
+      },
+      {
+        "name": "OneThreeTwoPattern",
+        "source": "../com/arvind/revision/stacks/OneThreeTwoPattern.java",
+        "label": "Middle peak with smaller bookends",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/132-pattern/",
+        "description": "Given an integer array, return true if there are three positions i, j, and k in that order where nums[i] is smaller than nums[k], and nums[k] is smaller than nums[j]. The values do not need to be adjacent.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Monotonic decreasing stack of value/min-before pairs",
+        "input": "nums = [9, 11, 8, 10, 7, 9, 6]",
+        "output": "true\nExample pattern: 8 < 9 < 10",
+        "recognize": "When you need a low-high-middle subsequence: the middle index j must be the largest of the three, while k appears after j but still stays below it.",
+        "visual": [
+          [
+            "i: 8",
+            "j: 10",
+            "k: 9"
+          ],
+          [
+            "stack keeps peaks",
+            "each peak carries left min",
+            "current tests between them"
+          ]
+        ],
+        "visualText": "Picture every possible peak nums[j] carrying the smallest value seen before it. A later current value becomes nums[k] if it fits strictly between that carried minimum and the peak.",
+        "core": "Scan left to right. Keep a decreasing stack of candidate peaks, where each entry stores the peak value and the minimum value before that peak. Pop smaller peaks before checking the current value against the next stronger peak. If minBefore < current < peak, the 132 pattern exists.",
+        "bruteForce": "Try every triple i, j, k and check whether i < j < k and nums[i] < nums[k] < nums[j]. It is direct but O(n³), so it cannot handle long arrays.",
+        "alternates": [
+          "Scan from right to left with a decreasing stack and a candidate nums[k] value; return true when a left value is smaller than that candidate.",
+          "Precompute prefix minimums for every j, then scan possible k values with a stack or ordered structure to find a value between prefixMin[j] and nums[j]."
+        ],
+        "gotchas": [
+          "The index order matters: nums[k] comes after nums[j], even though its value sits between nums[i] and nums[j].",
+          "All comparisons are strict; equal values do not form a 132 pattern.",
+          "Each stored peak must carry the best smaller value from its left side, not just the previous array value."
+        ]
       }
     ];
 
@@ -2107,6 +2145,15 @@
           "Reverse the collected remainders before returning."
         ],
         "skeleton": "bits = empty builder\nwhile num > 0:\n  bits.append(num % 2)\n  num = num / 2\nreturn reverse(bits)"
+      },
+      "OneThreeTwoPattern": {
+        "prompt": "Before reading: which stored peak can prove that the current value is the middle value of a 132 pattern?",
+        "steps": [
+          "For each candidate peak, remember the smallest value seen before it.",
+          "Remove weaker peaks that are smaller than the current value.",
+          "If current sits between the carried left minimum and the remaining peak, return true."
+        ],
+        "skeleton": "stack = pairs of (peak, minBeforePeak)\nfor current in nums:\n  previous = stack.top pair\n  while stack not empty and stack.top.peak < current:\n    stack.pop()\n  if stack not empty and stack.top.minBefore < current < stack.top.peak:\n    return true\n  stack.push(current, min(previous.minBefore, previous.peak))\nreturn false"
       }
     };
 
@@ -2138,7 +2185,8 @@
       "RemoveDuplicateLetters": "pop larger top only if it appears later\nthen push current once",
       "RemoveAllAdjacentDuplicatesII": "same char and count + 1 == k?\npop previous k - 1 and skip current",
       "RemoveNodesFromLinkedList": "current larger? pop smaller survivors\nthen relink top.next = current",
-      "DecimalToBinary": "append num % 2 while dividing by 2\nreverse collected bits"
+      "DecimalToBinary": "append num % 2 while dividing by 2\nreverse collected bits",
+      "OneThreeTwoPattern": "store (peak, min before peak)\ncurrent must fit: min < current < peak"
     };
 
     const solvedOrder = [
@@ -2169,7 +2217,8 @@
       "RemoveDuplicateLetters",
       "RemoveAllAdjacentDuplicatesII",
       "RemoveNodesFromLinkedList",
-      "DecimalToBinary"
+      "DecimalToBinary",
+      "OneThreeTwoPattern"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
