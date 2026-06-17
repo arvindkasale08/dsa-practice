@@ -1815,6 +1815,43 @@
           "When the stack becomes empty, update head to the current node.",
           "After popping, reconnect the surviving stack top directly to current so removed nodes are skipped."
         ]
+      },
+      {
+        "name": "DecimalToBinary",
+        "source": "../com/arvind/revision/stacks/DecimalToBinary.java",
+        "label": "Collect remainders backward",
+        "difficulty": "Easy",
+        "description": "Convert a positive decimal integer into its binary string representation by repeatedly dividing by 2 and collecting remainders.",
+        "time": "O(log n)",
+        "space": "O(log n)",
+        "structures": "StringBuilder used as reversed remainder stack",
+        "input": "num = 18",
+        "output": "\"10010\"",
+        "recognize": "When base conversion produces the least significant digit first, so the collected digits must be read in reverse order.",
+        "visual": [
+          [
+            "18 % 2 = 0",
+            "9 % 2 = 1",
+            "4 % 2 = 0"
+          ],
+          [
+            "2 % 2 = 0",
+            "1 % 2 = 1",
+            "collected: 01001 → reverse"
+          ]
+        ],
+        "visualText": "Every modulo operation gives the next bit from right to left. The first remainder is the final binary character, so the collected sequence must be reversed before returning.",
+        "core": "While the number is positive, append num % 2, then divide num by 2. Reverse the collected remainders to get the binary representation.",
+        "bruteForce": "Repeatedly compare against powers of two from the largest power downward and build each bit. It works, but requires first finding the highest power and is more bookkeeping.",
+        "alternates": [
+          "Use an actual stack of remainders and pop it into the output.",
+          "Use Integer.toBinaryString for production code when the point is not practicing conversion."
+        ],
+        "gotchas": [
+          "Remainders arrive in reverse binary order.",
+          "Handle num = 0 separately if zero is allowed; the current loop returns an empty string for zero.",
+          "Integer division by 2 is what moves to the next higher bit."
+        ]
       }
     ];
 
@@ -2061,6 +2098,15 @@
           "Reconnect the new survivor tail to current, or move head when none remain."
         ],
         "skeleton": "survivors = stack of nodes\npush head\nfor current in remaining nodes:\n  while survivors not empty and survivors.top.val < current.val:\n    survivors.pop()\n  if survivors empty:\n    head = current\n  else:\n    survivors.top.next = current\n  survivors.push(current)\nreturn head"
+      },
+      "DecimalToBinary": {
+        "prompt": "Before reading: why does the first remainder become the last character of the binary answer?",
+        "steps": [
+          "Take num % 2 to get the least significant bit.",
+          "Divide num by 2 to move left through the binary places.",
+          "Reverse the collected remainders before returning."
+        ],
+        "skeleton": "bits = empty builder\nwhile num > 0:\n  bits.append(num % 2)\n  num = num / 2\nreturn reverse(bits)"
       }
     };
 
@@ -2091,7 +2137,8 @@
       "SortingStack": "move larger helper values back\nthen push current into helper",
       "RemoveDuplicateLetters": "pop larger top only if it appears later\nthen push current once",
       "RemoveAllAdjacentDuplicatesII": "same char and count + 1 == k?\npop previous k - 1 and skip current",
-      "RemoveNodesFromLinkedList": "current larger? pop smaller survivors\nthen relink top.next = current"
+      "RemoveNodesFromLinkedList": "current larger? pop smaller survivors\nthen relink top.next = current",
+      "DecimalToBinary": "append num % 2 while dividing by 2\nreverse collected bits"
     };
 
     const solvedOrder = [
@@ -2121,7 +2168,8 @@
       "SortingStack",
       "RemoveDuplicateLetters",
       "RemoveAllAdjacentDuplicatesII",
-      "RemoveNodesFromLinkedList"
+      "RemoveNodesFromLinkedList",
+      "DecimalToBinary"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
