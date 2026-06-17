@@ -1773,6 +1773,48 @@
           "After a deletion, newly adjacent characters may form another run, so stack exposure is the whole trick.",
           "Handle empty input separately if the method is meant to be fully reusable."
         ]
+      },
+      {
+        "name": "RemoveNodesFromLinkedList",
+        "source": "../com/arvind/revision/stacks/RemoveNodesFromLinkedList.java",
+        "label": "Delete smaller left-side nodes",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/remove-nodes-from-linked-list/",
+        "description": "Given a linked list, remove every node that has a node with a strictly greater value somewhere to its right. Return the remaining list in original order.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Monotonic decreasing stack of ListNode references",
+        "input": "head = [5, 2, 13, 3, 8]",
+        "output": "[13, 8]",
+        "recognize": "When a later larger node invalidates earlier smaller nodes, but surviving nodes must stay connected as a linked list.",
+        "visual": [
+          [
+            "stack: 5, 2",
+            "current: 13"
+          ],
+          [
+            "13 pops 2",
+            "13 pops 5",
+            "head becomes 13"
+          ],
+          [
+            "current: 8",
+            "8 pops 3",
+            "13.next = 8"
+          ]
+        ],
+        "visualText": "The stack holds nodes that have not yet seen a greater value on their right. When a larger current node arrives, it removes smaller survivors, then the new stack top is rewired to point to current.",
+        "core": "Scan from left to right with a decreasing stack of node references. Pop nodes with smaller values than current. If the stack is empty, current becomes the new head; otherwise set stack top's next to current. Push current.",
+        "bruteForce": "For every node, scan all nodes to its right looking for a greater value, then rebuild links for only the survivors. This is simple but takes O(n²) time.",
+        "alternates": [
+          "Reverse the list, keep nodes that are at least the maximum seen so far, then reverse back.",
+          "Use recursion from the right: process the suffix first, then keep the current node only if it is at least the processed suffix head."
+        ],
+        "gotchas": [
+          "Pop only strictly smaller values; equal values should remain because the rule needs a greater value.",
+          "When the stack becomes empty, update head to the current node.",
+          "After popping, reconnect the surviving stack top directly to current so removed nodes are skipped."
+        ]
       }
     ];
 
@@ -2010,6 +2052,15 @@
           "Otherwise push current with count one or top count plus one."
         ],
         "skeleton": "stack = characters with counts\nfor c in s:\n  if stack top has same c:\n    if stack.top.count + 1 == k:\n      pop k - 1 previous copies\n      skip current c\n    else:\n      push Node(c, stack.top.count + 1)\n  else:\n    push Node(c, 1)\nreturn stack characters from bottom to top"
+      },
+      "RemoveNodesFromLinkedList": {
+        "prompt": "Before reading: what should happen to earlier stack nodes when a larger current node arrives?",
+        "steps": [
+          "Keep survivor nodes in decreasing value order.",
+          "Pop every smaller survivor when a larger current node appears.",
+          "Reconnect the new survivor tail to current, or move head when none remain."
+        ],
+        "skeleton": "survivors = stack of nodes\npush head\nfor current in remaining nodes:\n  while survivors not empty and survivors.top.val < current.val:\n    survivors.pop()\n  if survivors empty:\n    head = current\n  else:\n    survivors.top.next = current\n  survivors.push(current)\nreturn head"
       }
     };
 
@@ -2039,7 +2090,8 @@
       "MaximumWidthRamp": "stack = strict record-low start indexes\nscan end indexes from far right",
       "SortingStack": "move larger helper values back\nthen push current into helper",
       "RemoveDuplicateLetters": "pop larger top only if it appears later\nthen push current once",
-      "RemoveAllAdjacentDuplicatesII": "same char and count + 1 == k?\npop previous k - 1 and skip current"
+      "RemoveAllAdjacentDuplicatesII": "same char and count + 1 == k?\npop previous k - 1 and skip current",
+      "RemoveNodesFromLinkedList": "current larger? pop smaller survivors\nthen relink top.next = current"
     };
 
     const solvedOrder = [
@@ -2068,7 +2120,8 @@
       "MaximumWidthRamp",
       "SortingStack",
       "RemoveDuplicateLetters",
-      "RemoveAllAdjacentDuplicatesII"
+      "RemoveAllAdjacentDuplicatesII",
+      "RemoveNodesFromLinkedList"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
