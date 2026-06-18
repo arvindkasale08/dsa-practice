@@ -289,27 +289,38 @@
       border-top-color: var(--red);
     }
 
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
     .card-head {
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 12px;
       border-bottom: 1px solid var(--line);
-      padding: 14px 16px;
+      align-items: start;
+      background: #f8faf7;
+      padding: 15px 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.12;
+      letter-spacing: 0;
     }
 
     .problem-title {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px;
+      gap: 8px;
       align-items: center;
-      margin: 0 0 6px;
-      font-size: 22px;
-      line-height: 1.1;
     }
 
     .problem-no {
       color: var(--green);
-      font-weight: 950;
+      font-weight: 900;
     }
 
     .meta,
@@ -319,104 +330,238 @@
       line-height: 1.35;
     }
 
-    .card-body {
-      padding: 14px 16px 16px;
+    .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      align-items: center;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
     }
 
-    .recall {
-      margin-bottom: 12px;
+    .meta-line a {
+      font-weight: 700;
+    }
+
+    .body {
+      padding: 15px 16px 16px;
+      display: grid;
+      gap: 12px;
+      background: var(--panel);
+    }
+
+    .recall-prompt {
       border: 1px solid #bad9ca;
       border-left: 4px solid var(--green);
       border-radius: 8px;
       background: var(--green-soft);
-      padding: 10px 12px;
       color: var(--green-dark);
-      font-weight: 900;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
     }
 
     .description {
-      margin-bottom: 12px;
-      border: 1px solid #bfd8e8;
+      border: 1px solid #cddfeb;
       border-left: 4px solid var(--blue);
       border-radius: 8px;
       background: var(--blue-soft);
-      padding: 10px 12px;
-      color: #264f6b;
+      color: #2f536c;
+      padding: 10px;
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .description b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #2f536c;
+    }
+
+    .cost-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .cost-item {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--green);
+      border-radius: 8px;
+      background: #f8faf7;
+      padding: 9px 10px;
+      min-width: 0;
+    }
+
+    .cost-item:nth-child(2) { border-top-color: var(--blue); }
+    .cost-item:nth-child(3) { border-top-color: var(--gold); }
+
+    .cost-label {
+      display: block;
+      margin-bottom: 3px;
+      color: #3c4d43;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .cost-value {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .sample {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .sample-box {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f6f9f7;
+      padding: 10px;
+    }
+
+    .sample-box b,
+    .section b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #3c4d43;
+    }
+
+    code {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      color: #213c30;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
       line-height: 1.45;
     }
 
-    .sample,
-    .cost-strip,
     .section-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-bottom: 12px;
     }
 
-    .cost-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-    .box,
     .section {
       min-width: 0;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fbfdfb;
-      padding: 10px 11px;
-    }
-
-    .cost-strip .box {
-      border-top: 3px solid var(--gold);
+      background: #fffefa;
+      padding: 10px;
+      min-height: 92px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.42;
     }
 
     .section.full {
       grid-column: 1 / -1;
+      border-color: #e5c9c5;
+      background: #fffaf8;
     }
 
-    .label {
-      display: block;
-      margin-bottom: 6px;
-      color: #3c4f47;
-      font-size: 12px;
-      font-weight: 950;
-      letter-spacing: .04em;
-      text-transform: uppercase;
+    .section.brute-force {
+      border-color: #e6cf9b;
+      background: #fffdf6;
     }
 
-    pre,
-    code {
-      white-space: pre-wrap;
-      color: #25372f;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.45;
+    .section.alternates {
+      border-color: #bfd3e1;
+      background: #f7fbff;
     }
 
-    p,
-    ul {
-      margin: 0;
+    .visual {
+      display: grid;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .step {
+      display: flex;
+      gap: 7px;
+      align-items: start;
       color: var(--muted);
-      line-height: 1.45;
+      font-size: 12px;
+      line-height: 1.32;
     }
 
-    ul { padding-left: 18px; }
+    .step-num {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--blue-soft);
+      color: #2f536c;
+      font-weight: 900;
+      font-size: 11px;
+    }
 
-    .visual-cells {
+    .array {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 8px;
+      gap: 4px;
+      align-items: center;
     }
 
     .cell {
+      min-width: 30px;
+      height: 30px;
       border: 1px solid #bad9ca;
-      border-radius: 7px;
-      background: var(--green-soft);
-      padding: 6px 8px;
-      color: var(--green-dark);
+      border-radius: 6px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 7px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
       font-weight: 900;
     }
+
+    .cell.green { background: var(--green-soft); }
+    .cell.blue { background: var(--blue-soft); }
+    .cell.gold { background: var(--gold-soft); }
+    .cell.red { background: var(--red-soft); }
+
+    .hint {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .gotchas {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .gotchas li {
+      margin-bottom: 5px;
+    }
+
+    .gotchas li:last-child { margin-bottom: 0; }
 
     .quick-row {
       position: relative;
@@ -558,18 +703,20 @@
       text-align: center;
     }
 
-    @media (max-width: 860px) {
-      header,
-      .cards,
-      .quick-row,
+    @media (max-width: 980px) {
+      header { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .tools { justify-content: flex-start; }
+      .search { width: 100%; }
+      .quick-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
       .sample,
       .cost-strip,
       .section-grid {
         grid-template-columns: 1fr;
       }
-
-      .tools { justify-content: flex-start; }
-      .search { width: 100%; }
     }
   </style>
 </head>
@@ -716,11 +863,16 @@
     }
 
     function renderVisual(groups) {
-      return groups.map(group => `
-        <div class="visual-cells">
-          ${group.map(item => `<span class="cell">${escapeHtml(item)}</span>`).join("")}
-        </div>
-      `).join("");
+      return groups.map((group, index) => {
+        const color = index === 0 ? "green" : index === 1 ? "gold" : "blue";
+        return `<div class="array">${group.map(item => `<span class="cell ${color}">${escapeHtml(item)}</span>`).join("")}</div>`;
+      }).join("");
+    }
+
+    function renderSteps(steps) {
+      return `<div class="steps">${steps.map((step, index) => `
+        <div class="step"><span class="step-num">${index + 1}</span><span>${escapeHtml(step)}</span></div>
+      `).join("")}</div>`;
     }
 
     function renderCard(card) {
@@ -729,32 +881,78 @@
         <article class="card ${diff}" data-name="${escapeHtml(card.name)}">
           <div class="card-head">
             <div>
-              <h2 class="problem-title"><span class="problem-no">${card.problemLabel}</span> ${escapeHtml(card.name)} <span class="difficulty ${diff}">${escapeHtml(card.difficulty)}</span></h2>
-              <div class="meta">${escapeHtml(card.label)}${card.leetcode ? ` · <a href="${escapeHtml(card.leetcode)}">LeetCode</a>` : ""}</div>
-              <a class="source" href="${escapeHtml(card.source)}">${escapeHtml(card.source)}</a>
+              <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+              ${renderRevision(card)}
+              <div class="meta-line">
+                <span>${escapeHtml(card.label)}</span>
+                <span>${escapeHtml(card.difficulty)}</span>
+                <a href="${escapeHtml(card.source)}">Source</a>
+                ${card.leetcode ? `<a href="${escapeHtml(card.leetcode)}" target="_blank" rel="noreferrer">LeetCode</a>` : ""}
+              </div>
             </div>
-            ${renderRevision(card)}
+            <span class="difficulty ${diff}">${escapeHtml(card.difficulty)}</span>
           </div>
-          <div class="card-body">
-            <div class="recall">${escapeHtml(card.prompt)}</div>
-            <div class="description"><span class="label">Problem description</span>${escapeHtml(card.description)}</div>
+          <div class="body">
+            <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
+            <div class="description">
+              <b>Problem description</b>
+              ${escapeHtml(card.description)}
+            </div>
             <div class="sample">
-              <div class="box"><span class="label">Input</span><pre>${escapeHtml(card.input)}</pre></div>
-              <div class="box"><span class="label">Output</span><pre>${escapeHtml(card.output)}</pre></div>
+              <div class="sample-box">
+                <b>Input</b>
+                <code>${escapeHtml(card.input)}</code>
+              </div>
+              <div class="sample-box">
+                <b>Output</b>
+                <code>${escapeHtml(card.output)}</code>
+              </div>
             </div>
             <div class="cost-strip">
-              <div class="box"><span class="label">Time</span><strong>${escapeHtml(card.time)}</strong></div>
-              <div class="box"><span class="label">Space</span><strong>${escapeHtml(card.space)}</strong></div>
-              <div class="box"><span class="label">Data structures</span><strong>${escapeHtml(card.structures)}</strong></div>
+              <div class="cost-item">
+                <span class="cost-label">Time</span>
+                <span class="cost-value">${escapeHtml(card.time)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Space</span>
+                <span class="cost-value">${escapeHtml(card.space)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Data structures</span>
+                <span class="cost-value">${escapeHtml(card.structures)}</span>
+              </div>
             </div>
             <div class="section-grid">
-              <div class="section"><span class="label">When to recognize it</span><p>${escapeHtml(card.recognize)}</p></div>
-              <div class="section"><span class="label">Visual hook</span>${renderVisual(card.visual)}<p>${escapeHtml(card.visualText)}</p></div>
-              <div class="section"><span class="label">Core move</span><p>${escapeHtml(card.core)}</p></div>
-              <div class="section"><span class="label">Code skeleton</span><pre>${escapeHtml(card.skeleton)}</pre></div>
-              <div class="section"><span class="label">Brute force / baseline</span><p>${escapeHtml(card.bruteForce)}</p></div>
-              <div class="section"><span class="label">Alternate approaches</span><ul>${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
-              <div class="section full"><span class="label">Bug magnets</span><ul>${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+              <div class="section">
+                <b>When to recognize it</b>
+                ${escapeHtml(card.recognize)}
+              </div>
+              <div class="section">
+                <b>Visual hook</b>
+                <div class="visual">${renderVisual(card.visual)}</div>
+                ${renderSteps(card.steps)}
+                <span class="hint">${escapeHtml(card.visualText)}</span>
+              </div>
+              <div class="section">
+                <b>Core move</b>
+                ${escapeHtml(card.core)}
+              </div>
+              <div class="section">
+                <b>Code skeleton</b>
+                <code>${escapeHtml(card.skeleton)}</code>
+              </div>
+              <div class="section brute-force">
+                <b>Brute force / baseline</b>
+                ${escapeHtml(card.bruteForce)}
+              </div>
+              <div class="section alternates">
+                <b>Alternate approaches</b>
+                <ul class="gotchas">${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
+              <div class="section full">
+                <b>Bug magnets</b>
+                <ul class="gotchas">${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
             </div>
           </div>
         </article>
