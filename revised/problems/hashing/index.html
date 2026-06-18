@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hashing Revision</title>
+  <style>
+    :root {
+      --ink: #17231f;
+      --muted: #5d6c66;
+      --paper: #edf2ee;
+      --panel: #fffefa;
+      --line: #d4ddd7;
+      --green: #176b51;
+      --green-dark: #0f4f3c;
+      --green-soft: #e1f2e9;
+      --blue: #326c94;
+      --blue-soft: #e4f0f7;
+      --gold: #a96b16;
+      --gold-soft: #fbefd5;
+      --red: #a4473e;
+      --red-soft: #f8e7e4;
+      --shadow: 0 12px 30px rgba(31, 53, 42, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      border-top: 4px solid var(--green);
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: var(--green);
+      font-weight: 800;
+      text-underline-offset: 3px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible,
+    .quick-row:focus-visible {
+      outline: 3px solid rgba(50, 108, 148, .22);
+      outline-offset: 2px;
+    }
+
+    .page {
+      width: min(1380px, 100%);
+      margin: 0 auto;
+      padding: 20px 18px 48px;
+    }
+
+    .back-link {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      display: inline-flex;
+      min-height: 34px;
+      align-items: center;
+      margin-bottom: 14px;
+      border: 1px solid #b9c9bf;
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 5px 10px;
+      color: var(--green);
+      font-size: 14px;
+      text-decoration: none;
+      box-shadow: 0 5px 16px rgba(31, 53, 42, .1);
+    }
+
+    header {
+      position: sticky;
+      top: 52px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 10px;
+      border: 1px solid rgba(185, 201, 191, .8);
+      border-radius: 8px;
+      background: rgba(255, 254, 250, .96);
+      padding: 12px;
+      box-shadow: 0 8px 24px rgba(31, 53, 42, .08);
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      margin: 0;
+      color: #13241d;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .title-row,
+    .tools,
+    .page-revision-controls,
+    .revision-controls,
+    .facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tools { justify-content: flex-end; }
+
+    .count-pill,
+    .revision-pill,
+    .difficulty,
+    .fact {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 13px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .count-pill,
+    .revision-pill {
+      border: 1px solid #bad9ca;
+      background: var(--green-soft);
+      color: var(--green-dark);
+    }
+
+    .difficulty.easy { border: 1px solid #bad9ca; background: var(--green-soft); color: var(--green-dark); }
+    .difficulty.medium { border: 1px solid #e6cf9b; background: var(--gold-soft); color: #74480d; }
+    .difficulty.hard { border: 1px solid #e5c1bc; background: var(--red-soft); color: var(--red); }
+
+    .fact {
+      border: 1px solid var(--line);
+      background: #f8faf7;
+      color: var(--muted);
+    }
+
+    .revision-button,
+    .mode-button {
+      min-height: 32px;
+      border: 1px solid #bad9ca;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 4px 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .revision-button.reset {
+      background: #f7faf8;
+      color: var(--muted);
+    }
+
+    .mode-button {
+      height: 42px;
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+    }
+
+    .search {
+      width: min(380px, 100%);
+      height: 42px;
+      border: 1px solid #b9c9bf;
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 12px;
+    }
+
+    .subtitle {
+      max-width: 840px;
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card,
+    .quick-row {
+      overflow: hidden;
+      border: 1px solid #bad9ca;
+      border-top: 4px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .card.medium,
+    .quick-row.medium {
+      border-color: #e6cf9b;
+      border-top-color: var(--gold);
+    }
+
+    .card.hard,
+    .quick-row.hard {
+      border-color: #e5c1bc;
+      border-top-color: var(--red);
+    }
+
+    .card-head,
+    .quick-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      padding: 14px 16px;
+    }
+
+    .problem-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+      margin: 0 0 6px;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .problem-no {
+      color: var(--green);
+      font-weight: 950;
+    }
+
+    .meta,
+    .source {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .card-body,
+    .quick-body {
+      padding: 14px 16px 16px;
+    }
+
+    .recall {
+      margin-bottom: 12px;
+      border: 1px solid #bad9ca;
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      background: var(--green-soft);
+      padding: 10px 12px;
+      color: var(--green-dark);
+      font-weight: 900;
+    }
+
+    .description {
+      margin-bottom: 12px;
+      border: 1px solid #bfd8e8;
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: var(--blue-soft);
+      padding: 10px 12px;
+      color: #264f6b;
+      line-height: 1.45;
+    }
+
+    .sample,
+    .cost-strip,
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .cost-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .box,
+    .section {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfdfb;
+      padding: 10px 11px;
+    }
+
+    .cost-strip .box {
+      border-top: 3px solid var(--gold);
+    }
+
+    .section.full {
+      grid-column: 1 / -1;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 6px;
+      color: #3c4f47;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    pre,
+    code {
+      white-space: pre-wrap;
+      color: #25372f;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    p,
+    ul {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    ul { padding-left: 18px; }
+
+    .visual-cells {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .cell {
+      border: 1px solid #bad9ca;
+      border-radius: 7px;
+      background: var(--green-soft);
+      padding: 6px 8px;
+      color: var(--green-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 900;
+    }
+
+    .quick-row {
+      grid-column: 1 / -1;
+      cursor: pointer;
+      transition: box-shadow .15s ease, transform .15s ease;
+    }
+
+    .quick-row:hover {
+      box-shadow: 0 18px 38px rgba(31, 53, 42, .14);
+      transform: translateY(-1px);
+    }
+
+    .quick-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .empty {
+      display: none;
+      border: 1px dashed #b9c9bf;
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 24px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .cards.quick { grid-template-columns: 1fr; }
+    .cards.quick .card { display: none; }
+    .cards:not(.quick) .quick-row { display: none; }
+
+    @media (max-width: 860px) {
+      header,
+      .cards,
+      .quick-body,
+      .sample,
+      .cost-strip,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tools { justify-content: flex-start; }
+      .search { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back-link" href="../../../">Back to index</a>
+    <header>
+      <div>
+        <div class="title-row">
+          <h1>Hashing Revision</h1>
+          <span id="totalCount" class="count-pill"></span>
+          <div class="page-revision-controls">
+            <button id="incrementAll" class="revision-button" type="button">+1 All</button>
+            <button id="resetAll" class="revision-button reset" type="button">Reset All</button>
+          </div>
+        </div>
+      </div>
+      <div class="tools">
+        <input id="search" class="search" type="search" placeholder="Search hashing cards">
+        <button id="quickMode" class="mode-button" type="button">Card Review</button>
+      </div>
+    </header>
+    <p class="subtitle">Fast recall cards for the current hashing package. Use Quick Review first, then expand a row when you need the full explanation.</p>
+    <section id="cards" class="cards quick"></section>
+    <div id="empty" class="empty">No matching hashing cards.</div>
+  </main>
+
+  <script>
+    const pattern = "hashing";
+    const cards = [
+      {
+        "name": "FirstNonRepeating",
+        "source": "../com/arvind/revision/hashing/FirstNonRepeating.java",
+        "label": "Count first, preserve order second",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/first-unique-character-in-a-string/",
+        "description": "Given a string, return the index of the first character that appears exactly once. If every character repeats, return -1.",
+        "time": "O(n)",
+        "space": "O(k), where k is the number of distinct characters",
+        "structures": "HashMap<Character, Integer> frequency count",
+        "input": "s = \"loveleetcode\"",
+        "output": "2",
+        "recognize": "When the answer depends on both frequency and original order: count all characters first, then scan the string again to find the earliest count-one character.",
+        "visual": [
+          ["l:1", "o:2", "v:1", "e:4"],
+          ["scan left to right", "first count 1 = v", "index 2"]
+        ],
+        "visualText": "Picture the map as a frequency board, not the final answer. The second pass is what preserves the left-to-right order of the original string.",
+        "core": "Build a frequency map in one pass. Scan the string again from left to right and return the first index whose character has count one. If none exists, return -1.",
+        "bruteForce": "For every character, scan the whole string to see whether it appears again. This preserves order but costs O(n²).",
+        "alternates": [
+          "Use an int[26] array instead of a HashMap when the input is guaranteed to be lowercase English letters.",
+          "Use a LinkedHashMap storing counts and first indexes, then inspect entries in insertion order; this still needs the full count information before the answer is reliable."
+        ],
+        "gotchas": [
+          "A single pass cannot know that the current character will stay unique later.",
+          "The map finds counts; the second scan finds the first index.",
+          "If the character set is fixed and small, an array is simpler and faster than a HashMap."
+        ]
+      }
+    ];
+
+    const recallDetails = {
+      "FirstNonRepeating": {
+        "prompt": "Before reading: why is counting alone not enough to know the first unique character?",
+        "steps": [
+          "First pass records how often each character appears.",
+          "Second pass walks the original string order.",
+          "The first character with count one gives the answer index."
+        ],
+        "skeleton": "count = map\nfor c in s:\n  count[c]++\nfor i from 0 to s.length - 1:\n  if count[s[i]] == 1:\n    return i\nreturn -1"
+      }
+    };
+
+    const definingMoves = {
+      "FirstNonRepeating": "map answers frequency\nsecond pass answers first position"
+    };
+
+    const solvedOrder = [
+      "FirstNonRepeating"
+    ];
+
+    cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
+    cards.forEach(card => Object.assign(card, recallDetails[card.name], {
+      definingMove: definingMoves[card.name]
+    }));
+    cards.forEach((card, index) => {
+      card.problemNo = index + 1;
+      card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
+    });
+
+    const cardsEl = document.getElementById("cards");
+    const searchEl = document.getElementById("search");
+    const emptyEl = document.getElementById("empty");
+    const quickModeEl = document.getElementById("quickMode");
+    const totalCountEl = document.getElementById("totalCount");
+    const incrementAllEl = document.getElementById("incrementAll");
+    const resetAllEl = document.getElementById("resetAll");
+    let quickMode = true;
+    const expandedQuickCards = new Set();
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function storageKey(card) {
+      return `dsa-revision:${pattern}:${card.name}`;
+    }
+
+    function readRevision(card) {
+      try {
+        return JSON.parse(localStorage.getItem(storageKey(card))) || { count: 0, last: "" };
+      } catch {
+        return { count: 0, last: "" };
+      }
+    }
+
+    function writeRevision(card, data) {
+      try {
+        localStorage.setItem(storageKey(card), JSON.stringify(data));
+      } catch {}
+    }
+
+    function today() {
+      return new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function renderRevision(card) {
+      const data = readRevision(card);
+      return `
+        <div class="revision-controls" data-revision-controls="${escapeHtml(card.name)}">
+          <span class="revision-pill">Revised ${data.count || 0}x</span>
+          <span class="revision-pill">Last revised: ${data.last ? escapeHtml(data.last) : "never"}</span>
+          <button class="revision-button" type="button" data-action="inc" data-name="${escapeHtml(card.name)}">+1</button>
+          <button class="revision-button reset" type="button" data-action="reset" data-name="${escapeHtml(card.name)}">Reset</button>
+        </div>
+      `;
+    }
+
+    function renderVisual(groups) {
+      return groups.map(group => `
+        <div class="visual-cells">
+          ${group.map(item => `<span class="cell">${escapeHtml(item)}</span>`).join("")}
+        </div>
+      `).join("");
+    }
+
+    function renderCard(card) {
+      const diff = card.difficulty.toLowerCase();
+      return `
+        <article class="card ${diff}" data-name="${escapeHtml(card.name)}">
+          <div class="card-head">
+            <div>
+              <h2 class="problem-title"><span class="problem-no">${card.problemLabel}</span> ${escapeHtml(card.name)} <span class="difficulty ${diff}">${escapeHtml(card.difficulty)}</span></h2>
+              <div class="meta">${escapeHtml(card.label)}${card.leetcode ? ` · <a href="${escapeHtml(card.leetcode)}">LeetCode</a>` : ""}</div>
+              <a class="source" href="${escapeHtml(card.source)}">${escapeHtml(card.source)}</a>
+            </div>
+            ${renderRevision(card)}
+          </div>
+          <div class="card-body">
+            <div class="recall">${escapeHtml(card.prompt)}</div>
+            <div class="description"><span class="label">Problem description</span>${escapeHtml(card.description)}</div>
+            <div class="sample">
+              <div class="box"><span class="label">Input</span><pre>${escapeHtml(card.input)}</pre></div>
+              <div class="box"><span class="label">Output</span><pre>${escapeHtml(card.output)}</pre></div>
+            </div>
+            <div class="cost-strip">
+              <div class="box"><span class="label">Time</span><strong>${escapeHtml(card.time)}</strong></div>
+              <div class="box"><span class="label">Space</span><strong>${escapeHtml(card.space)}</strong></div>
+              <div class="box"><span class="label">Data structures</span><strong>${escapeHtml(card.structures)}</strong></div>
+            </div>
+            <div class="section-grid">
+              <div class="section"><span class="label">When to recognize it</span><p>${escapeHtml(card.recognize)}</p></div>
+              <div class="section"><span class="label">Visual hook</span>${renderVisual(card.visual)}<p>${escapeHtml(card.visualText)}</p></div>
+              <div class="section"><span class="label">Core move</span><p>${escapeHtml(card.core)}</p></div>
+              <div class="section"><span class="label">Code skeleton</span><pre>${escapeHtml(card.skeleton)}</pre></div>
+              <div class="section"><span class="label">Brute force / baseline</span><p>${escapeHtml(card.bruteForce)}</p></div>
+              <div class="section"><span class="label">Alternate approaches</span><ul>${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+              <div class="section full"><span class="label">Bug magnets</span><ul>${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderQuickRow(card) {
+      const diff = card.difficulty.toLowerCase();
+      const expanded = expandedQuickCards.has(card.name);
+      return `
+        <article class="quick-row ${diff}" tabindex="0" role="button" aria-expanded="${expanded}" data-name="${escapeHtml(card.name)}">
+          <div class="quick-head">
+            <div>
+              <h2 class="problem-title"><span class="problem-no">${card.problemLabel}</span> ${escapeHtml(card.name)} <span class="difficulty ${diff}">${escapeHtml(card.difficulty)}</span></h2>
+              <div class="facts">
+                <span class="fact">${escapeHtml(card.label)}</span>
+                <span class="fact">Time ${escapeHtml(card.time)}</span>
+                <span class="fact">Space ${escapeHtml(card.space)}</span>
+              </div>
+              <div class="source">Uses: ${escapeHtml(card.structures)}</div>
+            </div>
+            ${renderRevision(card)}
+          </div>
+          <div class="quick-body">
+            <div class="box"><span class="label">Recall prompt</span><p>${escapeHtml(card.prompt)}</p></div>
+            <div class="box"><span class="label">Defining move</span><pre>${escapeHtml(card.definingMove)}</pre></div>
+            <div class="box"><span class="label">Bug magnet</span><p>${escapeHtml(card.gotchas[0])}</p></div>
+            <div class="box"><span class="label">Source</span><a href="${escapeHtml(card.source)}">${escapeHtml(card.source)}</a></div>
+          </div>
+          ${expanded ? renderCard(card) : ""}
+        </article>
+      `;
+    }
+
+    function visibleCards() {
+      const query = searchEl.value.trim().toLowerCase();
+      return cards.filter(card => JSON.stringify(card).toLowerCase().includes(query));
+    }
+
+    function render() {
+      const visible = visibleCards();
+      totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
+      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
+      cardsEl.classList.toggle("quick", quickMode);
+      cardsEl.innerHTML = visible.map(card => quickMode ? renderQuickRow(card) : renderCard(card)).join("");
+      emptyEl.style.display = visible.length ? "none" : "block";
+    }
+
+    cardsEl.addEventListener("click", event => {
+      const button = event.target.closest("button");
+      if (button && button.dataset.action) {
+        const card = cards.find(item => item.name === button.dataset.name);
+        if (!card) return;
+        if (button.dataset.action === "inc") {
+          const data = readRevision(card);
+          writeRevision(card, { count: (data.count || 0) + 1, last: today() });
+        } else {
+          writeRevision(card, { count: 0, last: "" });
+        }
+        render();
+        return;
+      }
+
+      if (event.target.closest("a")) return;
+      const row = event.target.closest(".quick-row");
+      if (!row) return;
+      if (expandedQuickCards.has(row.dataset.name)) {
+        expandedQuickCards.delete(row.dataset.name);
+      } else {
+        expandedQuickCards.add(row.dataset.name);
+      }
+      render();
+    });
+
+    cardsEl.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const row = event.target.closest(".quick-row");
+      if (!row) return;
+      event.preventDefault();
+      row.click();
+    });
+
+    searchEl.addEventListener("input", render);
+    quickModeEl.addEventListener("click", () => {
+      quickMode = !quickMode;
+      render();
+    });
+
+    incrementAllEl.addEventListener("click", () => {
+      const date = today();
+      cards.forEach(card => {
+        const data = readRevision(card);
+        writeRevision(card, { count: (data.count || 0) + 1, last: date });
+      });
+      render();
+    });
+
+    resetAllEl.addEventListener("click", () => {
+      if (!confirm("Reset revision counts for all hashing problems?")) return;
+      cards.forEach(card => writeRevision(card, { count: 0, last: "" }));
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
