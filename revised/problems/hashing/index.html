@@ -11,6 +11,7 @@
       --paper: #edf2ee;
       --panel: #fffefa;
       --line: #d4ddd7;
+      --line-strong: #b9c9bf;
       --green: #176b51;
       --green-dark: #0f4f3c;
       --green-soft: #e1f2e9;
@@ -21,6 +22,7 @@
       --red: #a4473e;
       --red-soft: #f8e7e4;
       --shadow: 0 12px 30px rgba(31, 53, 42, .08);
+      --shadow-hover: 0 18px 38px rgba(31, 53, 42, .14);
     }
 
     * { box-sizing: border-box; }
@@ -41,7 +43,7 @@
 
     button,
     input {
-      font: inherit;
+      transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease;
     }
 
     button:focus-visible,
@@ -102,37 +104,107 @@
     }
 
     .title-row,
-    .tools,
-    .page-revision-controls,
-    .revision-controls,
-    .facts {
+    .tools {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
       align-items: center;
     }
 
-    .tools { justify-content: flex-end; }
+    .title-row {
+      gap: 10px;
+    }
 
-    .count-pill,
-    .revision-pill,
-    .difficulty,
-    .fact {
+    .tools {
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .count-pill {
       display: inline-flex;
       align-items: center;
-      min-height: 28px;
+      min-height: 32px;
+      border: 1px solid #bad9ca;
       border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 13px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 4px 12px;
+      font-size: 14px;
       font-weight: 900;
       white-space: nowrap;
     }
 
-    .count-pill,
+    .page-revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 7px;
+    }
+
     .revision-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .revision-button {
+      min-height: 26px;
       border: 1px solid #bad9ca;
+      border-radius: 999px;
       background: var(--green-soft);
       color: var(--green-dark);
+      padding: 3px 9px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .revision-button:hover {
+      border-color: var(--green);
+      background: var(--green);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .revision-button.reset {
+      border-color: var(--line);
+      background: #f6f8f5;
+      color: var(--muted);
+    }
+
+    .revision-button.reset:hover {
+      border-color: #dfb7b2;
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .difficulty,
+    .fact {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .difficulty.easy { border: 1px solid #bad9ca; background: var(--green-soft); color: var(--green-dark); }
@@ -145,38 +217,43 @@
       color: var(--muted);
     }
 
-    .revision-button,
     .mode-button {
-      min-height: 32px;
-      border: 1px solid #bad9ca;
-      border-radius: 999px;
-      background: var(--green-soft);
-      color: var(--green-dark);
-      padding: 4px 11px;
-      font-weight: 900;
+      height: 42px;
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--green);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 800;
       cursor: pointer;
     }
 
-    .revision-button.reset {
-      background: #f7faf8;
-      color: var(--muted);
+    .mode-button:hover {
+      background: var(--green-soft);
+      transform: translateY(-1px);
     }
 
-    .mode-button {
-      height: 42px;
-      border-radius: 8px;
+    .mode-button.active {
       background: var(--green);
+      border-color: var(--green);
       color: white;
     }
 
     .search {
       width: min(380px, 100%);
       height: 42px;
-      border: 1px solid #b9c9bf;
+      border: 1px solid var(--line-strong);
       border-radius: 8px;
       background: var(--panel);
       color: var(--ink);
+      font: inherit;
       padding: 0 12px;
+    }
+
+    .search:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(50, 108, 148, .12);
     }
 
     .subtitle {
@@ -516,7 +593,7 @@
       </div>
       <div class="tools">
         <input id="search" class="search" type="search" placeholder="Search hashing cards">
-        <button id="quickMode" class="mode-button" type="button">Card Review</button>
+        <button id="quickMode" class="mode-button active" type="button">Card Review</button>
       </div>
     </header>
     <p class="subtitle">Fast recall cards for the current hashing package. Use Quick Review first, then expand a row when you need the full explanation.</p>
@@ -782,6 +859,7 @@
     searchEl.addEventListener("input", render);
     quickModeEl.addEventListener("click", () => {
       quickMode = !quickMode;
+      quickModeEl.classList.toggle("active", quickMode);
       render();
     });
 
