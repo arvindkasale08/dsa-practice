@@ -841,6 +841,96 @@
           "Return -1 when no count-one value exists.",
           "The second pass can scan the original array or the map entries; both are fine for O(n)."
         ]
+      },
+      {
+        "name": "MaximumNumberOfBalloons",
+        "source": "../com/arvind/revision/hashing/MaximumNumberOfBalloons.java",
+        "label": "Word frequency limit",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/maximum-number-of-balloons/",
+        "description": "Given a text string, return how many times you can form the word \"balloon\" using each character from the text at most once.",
+        "time": "O(n)",
+        "space": "O(1), only lowercase letter counts",
+        "structures": "HashMap<Character, Integer> or int[26] frequency count",
+        "input": "text = \"loonbalxballpoon\"",
+        "output": "2",
+        "recognize": "When a target word has repeated letters and the answer is limited by the scarcest required character.",
+        "visual": [
+          ["b:2", "a:2", "l:4", "o:4", "n:2"],
+          ["b/1=2", "a/1=2", "l/2=2", "o/2=2", "n/1=2"]
+        ],
+        "visualText": "Picture each required letter as a bucket. Because \"balloon\" needs two l's and two o's, divide those counts by two before taking the minimum bucket.",
+        "core": "Count letters in the text. For each character needed by \"balloon\", divide available count by required count. The smallest quotient is the number of full words you can build.",
+        "bruteForce": "Repeatedly try to remove the letters b, a, l, l, o, o, n from the text until one removal fails. It works, but repeated searching/removal is clumsy and can become O(n × answer).",
+        "alternates": [
+          "Use an int[26] array and directly compute min(count[b], count[a], count[l] / 2, count[o] / 2, count[n]). This is the cleanest version for lowercase English letters.",
+          "Build a target frequency map for a generic word; slightly more general, but more code than needed for fixed \"balloon\"."
+        ],
+        "gotchas": [
+          "Remember l and o are required twice.",
+          "The answer is the minimum quotient across required letters, not the total count of matching letters.",
+          "Extra unrelated letters in text do not matter."
+        ]
+      },
+      {
+        "name": "LongestPalindrome",
+        "source": "../com/arvind/revision/hashing/LongestPalindrome.java",
+        "label": "Pair counts plus one center",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/longest-palindrome/",
+        "description": "Given a string, return the length of the longest palindrome that can be built using its letters. Characters are case-sensitive.",
+        "time": "O(n)",
+        "space": "O(k), where k is the number of distinct characters",
+        "structures": "HashMap<Character, Integer> frequency count",
+        "input": "s = \"abccccdd\"",
+        "output": "7",
+        "recognize": "When order does not matter and you only need the longest palindrome length: every pair can be used, and at most one odd leftover can sit in the middle.",
+        "visual": [
+          ["a:1", "b:1", "c:4", "d:2"],
+          ["cc", "dd", "cc", "+ center a"]
+        ],
+        "visualText": "Picture building the palindrome from mirrored pairs first. After all pairs are placed, one leftover single character may become the center.",
+        "core": "Count character frequencies. Add the largest even portion from every count. If any character had an unused odd leftover, add one more for the center.",
+        "bruteForce": "Try building palindromes by choosing letters and checking whether the arrangement can mirror. That wastes effort because only counts matter.",
+        "alternates": [
+          "Track a Set of unmatched characters: add when first seen, remove when a pair is completed, and increase length by two for every completed pair. Add one center if the set is non-empty.",
+          "Use an int array when the character range is known; use a HashMap for general characters."
+        ],
+        "gotchas": [
+          "Only one odd leftover can be used as the center.",
+          "Do not add every odd count fully; add count - 1 as pairs, then maybe one center.",
+          "Uppercase and lowercase are different characters on LeetCode."
+        ]
+      },
+      {
+        "name": "RansomNote",
+        "source": "../com/arvind/revision/hashing/RansomNote.java",
+        "label": "Spend magazine letters",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/ransom-note/",
+        "description": "Given two strings, return true if the ransom note can be built using letters from the magazine, where each magazine character can be used only once.",
+        "time": "O(n + m)",
+        "space": "O(1), 26 lowercase letter counts",
+        "structures": "int[26] character bank",
+        "input": "ransomNote = \"hello\", magazine = \"helloworld\"",
+        "output": "true",
+        "recognize": "When one string is a supply bank and the other string spends from that bank one character at a time.",
+        "visual": [
+          ["h:1", "e:1", "l:3", "o:2"],
+          ["spend h", "spend e", "spend l", "spend l", "spend o"]
+        ],
+        "visualText": "Picture magazine as a bank of letters. The note withdraws letters; if any balance goes negative, construction is impossible.",
+        "core": "Count all magazine letters. For each ransom note letter, decrement its count. If any count becomes negative, return false; otherwise return true.",
+        "bruteForce": "For every note character, search the magazine for an unused matching character and mark it consumed. This is straightforward but can take O(n × m).",
+        "alternates": [
+          "Use a HashMap if the character set is not fixed to lowercase English letters.",
+          "Return false immediately during the note scan when a count drops below zero; the final scan over all counts is then unnecessary."
+        ],
+        "gotchas": [
+          "Each magazine character can be used only once.",
+          "Count magazine first, not ransom note first, because magazine is the supply.",
+          "With lowercase letters, int[26] is simpler than a HashMap."
+        ]
       }
     ];
 
@@ -862,17 +952,50 @@
           "Among the count-one numbers, keep the largest value."
         ],
         "skeleton": "count = map\nfor num in nums:\n  count[num]++\nanswer = -1\nfor num in nums:\n  if count[num] == 1:\n    answer = max(answer, num)\nreturn answer"
+      },
+      "MaximumNumberOfBalloons": {
+        "prompt": "Before reading: which letter in \"balloon\" is the bottleneck?",
+        "steps": [
+          "Count letters in the text.",
+          "Compare only b, a, l, o, and n.",
+          "Divide l and o by two, then take the minimum."
+        ],
+        "skeleton": "count = letter counts from text\nreturn min(\n  count['b'],\n  count['a'],\n  count['l'] / 2,\n  count['o'] / 2,\n  count['n']\n)"
+      },
+      "LongestPalindrome": {
+        "prompt": "Before reading: how many odd-count characters can stand in the middle?",
+        "steps": [
+          "Count every character.",
+          "Use all possible pairs from each count.",
+          "Add one extra center only if some character has an unused odd leftover."
+        ],
+        "skeleton": "count = map\nlength = 0\nhasOddLeftover = false\nfor freq in count values:\n  length += (freq / 2) * 2\n  if freq is odd:\n    hasOddLeftover = true\nif hasOddLeftover:\n  length++\nreturn length"
+      },
+      "RansomNote": {
+        "prompt": "Before reading: which string is the supply and which string spends letters?",
+        "steps": [
+          "Count magazine letters as available supply.",
+          "Spend one count for each ransom note letter.",
+          "If any letter balance goes negative, return false."
+        ],
+        "skeleton": "bank = int[26]\nfor c in magazine:\n  bank[c]++\nfor c in ransomNote:\n  bank[c]--\n  if bank[c] < 0:\n    return false\nreturn true"
       }
     };
 
     const definingMoves = {
       "FirstNonRepeating": "map answers frequency\nsecond pass answers first position",
-      "LargestUniqueNumber": "map removes repeated values\nmax only among count-one values"
+      "LargestUniqueNumber": "map removes repeated values\nmax only among count-one values",
+      "MaximumNumberOfBalloons": "target word creates required ratios\nanswer is the minimum available ratio",
+      "LongestPalindrome": "pairs build both sides\none odd leftover can be the center",
+      "RansomNote": "magazine fills the bank\nransom note spends from it"
     };
 
     const solvedOrder = [
       "FirstNonRepeating",
-      "LargestUniqueNumber"
+      "LargestUniqueNumber",
+      "MaximumNumberOfBalloons",
+      "LongestPalindrome",
+      "RansomNote"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
