@@ -558,10 +558,6 @@
       text-align: center;
     }
 
-    .cards.quick { grid-template-columns: 1fr; }
-    .cards.quick .card { display: none; }
-    .cards:not(.quick) .quick-review { display: none; }
-
     @media (max-width: 860px) {
       header,
       .cards,
@@ -597,7 +593,7 @@
       </div>
     </header>
     <p class="subtitle">Fast recall cards for the current hashing package. Use Quick Review first, then expand a row when you need the full explanation.</p>
-    <section id="cards" class="cards quick"></section>
+    <section id="cards" class="quick-review"></section>
     <div id="empty" class="empty">No matching hashing cards.</div>
   </main>
 
@@ -814,10 +810,13 @@
       const visible = visibleCards();
       totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
       quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
-      cardsEl.classList.toggle("quick", quickMode);
-      cardsEl.innerHTML = quickMode
-        ? `<div class="quick-review">${visible.map(renderQuickRow).join("")}</div>`
-        : visible.map(renderCard).join("");
+      if (quickMode) {
+        cardsEl.className = "quick-review";
+        cardsEl.innerHTML = visible.map(renderQuickRow).join("");
+      } else {
+        cardsEl.className = "cards";
+        cardsEl.innerHTML = visible.map(renderCard).join("");
+      }
       emptyEl.style.display = visible.length ? "none" : "block";
     }
 
@@ -851,7 +850,7 @@
     cardsEl.addEventListener("keydown", event => {
       if (event.key !== "Enter" && event.key !== " ") return;
       const row = event.target.closest(".quick-row");
-      if (!row) return;
+      if (!row || event.target.closest("button, a")) return;
       event.preventDefault();
       row.click();
     });
