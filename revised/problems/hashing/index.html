@@ -811,6 +811,36 @@
           "The map finds counts; the second scan finds the first index.",
           "If the character set is fixed and small, an array is simpler and faster than a HashMap."
         ]
+      },
+      {
+        "name": "LargestUniqueNumber",
+        "source": "../com/arvind/revision/hashing/LargestUniqueNumber.java",
+        "label": "Count first, choose largest count-one value",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/largest-unique-number/",
+        "description": "Given an integer array, return the largest number that appears exactly once. If every number repeats, return -1.",
+        "time": "O(n)",
+        "space": "O(k), where k is the number of distinct values",
+        "structures": "HashMap<Integer, Integer> frequency count",
+        "input": "nums = [5, 7, 3, 9, 4, 9, 8, 3, 1]",
+        "output": "8",
+        "recognize": "When uniqueness is based on frequency, but the answer asks for the largest unique value instead of the first position.",
+        "visual": [
+          ["5:1", "7:1", "3:2", "9:2"],
+          ["4:1", "8:1", "1:1", "max = 8"]
+        ],
+        "visualText": "Picture the map as a scoreboard. Cross out every value whose count is more than one, then pick the biggest value still standing.",
+        "core": "Count every number first. Scan the array values and keep the maximum number whose count is exactly one. If no such value exists, return -1.",
+        "bruteForce": "For each number, scan the whole array to count how often it appears, then keep the largest number with count one. It is correct but costs O(n²).",
+        "alternates": [
+          "Use a TreeMap or sorted keys after counting, then scan from largest to smallest until a count-one value appears; this is cleaner for ordered lookup but costs extra sorting/tree overhead.",
+          "If the value range is small and fixed, use a frequency array instead of a HashMap."
+        ],
+        "gotchas": [
+          "Do not update the answer while counting; a value that looks unique early may repeat later.",
+          "Return -1 when no count-one value exists.",
+          "The second pass can scan the original array or the map entries; both are fine for O(n)."
+        ]
       }
     ];
 
@@ -823,15 +853,26 @@
           "The first character with count one gives the answer index."
         ],
         "skeleton": "count = map\nfor c in s:\n  count[c]++\nfor i from 0 to s.length - 1:\n  if count[s[i]] == 1:\n    return i\nreturn -1"
+      },
+      "LargestUniqueNumber": {
+        "prompt": "Before reading: why must you finish counting before trusting a number as unique?",
+        "steps": [
+          "Count how many times every number appears.",
+          "Ignore every number whose count is not one.",
+          "Among the count-one numbers, keep the largest value."
+        ],
+        "skeleton": "count = map\nfor num in nums:\n  count[num]++\nanswer = -1\nfor num in nums:\n  if count[num] == 1:\n    answer = max(answer, num)\nreturn answer"
       }
     };
 
     const definingMoves = {
-      "FirstNonRepeating": "map answers frequency\nsecond pass answers first position"
+      "FirstNonRepeating": "map answers frequency\nsecond pass answers first position",
+      "LargestUniqueNumber": "map removes repeated values\nmax only among count-one values"
     };
 
     const solvedOrder = [
-      "FirstNonRepeating"
+      "FirstNonRepeating",
+      "LargestUniqueNumber"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
