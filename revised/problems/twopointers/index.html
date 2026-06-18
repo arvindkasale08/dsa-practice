@@ -774,7 +774,7 @@
         <button id="quickMode" class="mode-button active" type="button">Card Review</button>
       </div>
     </header>
-    <p class="subtitle">Fast recall cards for the current two pointers package. Read the problem name, picture the hook, then check the sample and bug magnets before opening the Java file.</p>
+    <p class="subtitle">Fast recall cards for the current two pointers package. Read the problem name, picture the pointer movement, then check the sample and bug magnets before opening the Java file.</p>
 
     <section id="cards" class="cards"></section>
     <div id="empty" class="empty">No matching two pointers cards.</div>
@@ -1147,41 +1147,6 @@
       "DutchNationalFlagProblem": "0 → swap low\n1 → advance\n2 → swap high"
     };
 
-    const comparisonDetails = {
-      "CellsWithOddValues": {
-        "bruteForce": "Build the full matrix and apply every row and column increment directly, then count odd cells. This takes O(k × (m + n) + m × n) time and O(m × n) space.",
-        "alternates": ["Track only row and column parity, then combine them when counting cells.", "Count odd rows and odd columns mathematically to avoid visiting every cell."]
-      },
-      "PairWithTargetSum": {
-        "bruteForce": "Check every pair until one sums to the target. This works for any array but takes O(n²) time.",
-        "alternates": ["Use a HashMap for O(n) expected time when the array is unsorted.", "For sorted input, opposite-end pointers give O(n) time and O(1) space."]
-      },
-      "RemoveDuplicates": {
-        "bruteForce": "For each value, scan the already-kept prefix to decide whether it is new. This can take O(n²) time.",
-        "alternates": ["Use a HashSet when input is unsorted and order requirements allow extra space.", "For sorted input, a read pointer and unique write slot give O(n) time and O(1) space."]
-      },
-      "SquaringSortedArray": {
-        "bruteForce": "Square every number and sort the resulting array. This is easy but costs O(n log n).",
-        "alternates": ["Compare absolute values at both ends and write the larger square from right to left in O(n).", "Merge separately squared negative and non-negative halves as two sorted sequences."]
-      },
-      "ThreeSum": {
-        "bruteForce": "Try every triple and keep unique triples whose sum is zero. This takes O(n³), plus extra work to remove duplicates.",
-        "alternates": ["Sort, fix one anchor, and solve the remaining pair with two pointers in O(n²).", "Use a HashSet for the inner two-sum search; it remains O(n²) but uses more space and needs careful deduplication."]
-      },
-      "ThreeSumClosest": {
-        "bruteForce": "Evaluate every triple and retain the sum with the smallest distance from target. This takes O(n³).",
-        "alternates": ["Sort and use an anchor plus two pointers for O(n²).", "Use meet-in-the-middle only for larger generalized k-sum variants where extra memory is acceptable."]
-      },
-      "ThreeSumSmaller": {
-        "bruteForce": "Try every triple and count those below target. This directly matches the definition but takes O(n³).",
-        "alternates": ["Sort, anchor one value, and when left + right is valid count the entire range right - left at once.", "Use binary search for the last valid third index for each pair; it is simpler conceptually but O(n² log n)."]
-      },
-      "DutchNationalFlagProblem": {
-        "bruteForce": "Count the number of 0s, 1s, and 2s, then overwrite the array in three blocks. It is O(n) but requires two passes.",
-        "alternates": ["Use the one-pass Dutch National Flag partition with low, current, and high pointers.", "Use a general sorting algorithm when values are not restricted to three known categories."]
-      }
-    };
-
     const solvedOrder = [
       "CellsWithOddValues",
       "PairWithTargetSum",
@@ -1194,7 +1159,7 @@
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
-    cards.forEach(card => Object.assign(card, recallDetails[card.name], comparisonDetails[card.name], {
+    cards.forEach(card => Object.assign(card, recallDetails[card.name], {
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
@@ -1289,6 +1254,8 @@
     }
 
     function renderFullCard(card, extraClass = "") {
+      const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
+      const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
       return `
         <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${extraClass}">
           <div class="card-head">
@@ -1355,11 +1322,11 @@
               </div>
               <div class="section brute-force">
                 <b>Brute force / baseline</b>
-                ${escapeHtml(card.bruteForce)}
+                ${escapeHtml(bruteForce)}
               </div>
               <div class="section alternates">
                 <b>Alternate approaches</b>
-                <ul class="gotchas">${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+                <ul class="gotchas">${alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
               </div>
               <div class="section full">
                 <b>Bug magnets</b>
@@ -1511,7 +1478,7 @@
       quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
       render();
     });
-    totalCountEl.textContent = `${cards.length} problems`;
+    totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
     render();
   </script>
 </body>

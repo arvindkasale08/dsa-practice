@@ -774,7 +774,7 @@
         <button id="quickMode" class="mode-button active" type="button">Card Review</button>
       </div>
     </header>
-    <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and gotchas before opening the Java file.</p>
+    <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and bug magnets before opening the Java file.</p>
 
     <section id="cards" class="cards"></section>
     <div id="empty" class="empty">No matching warmup cards.</div>
@@ -1174,73 +1174,6 @@
       "ValidPalindrome": "skip non-alphanumeric ends\ncompare lowercase characters"
     };
 
-    const comparisonDetails = {
-      "CheckIfStringsEquivalent": {
-        "bruteForce": "Join every piece in each array into two complete strings, then compare them. This is straightforward but stores O(total characters) extra data.",
-        "alternates": ["Walk both arrays with a piece index and character index, comparing one character at a time for O(1) extra space."]
-      },
-      "ClosestToZero": {
-        "bruteForce": "Sort the numbers by absolute distance from zero, breaking ties toward the larger value. It works but costs O(n log n).",
-        "alternates": ["Scan once and keep the best value seen so far; this is the optimal O(n) time and O(1) space approach.", "Use a balanced ordered set only when values arrive dynamically and repeated closest queries are required."]
-      },
-      "ContainsDuplicate": {
-        "bruteForce": "Compare every pair of positions and return true when two values match. It uses O(1) space but takes O(n²) time.",
-        "alternates": ["Sort first and compare neighboring values for O(n log n) time and little extra space.", "Use a HashSet for expected O(n) time at the cost of O(n) space."]
-      },
-      "FindNumbersWithEvenDigits": {
-        "bruteForce": "Convert every number to a string and check whether its length is even. It is easy to read but creates temporary strings.",
-        "alternates": ["Count digits with repeated division.", "Use numeric ranges or logarithms when input constraints are well-defined."]
-      },
-      "FlippingImage": {
-        "bruteForce": "Create a new matrix, copy each row in reverse order, and invert every copied bit. It is simple but needs O(rows × cols) extra space.",
-        "alternates": ["Reverse and invert each row in place with two pointers.", "Perform reverse and invert as two separate in-place passes when clarity matters more than combining them."]
-      },
-      "GoodPair": {
-        "bruteForce": "Check every pair i < j and count matches. This directly follows the definition but takes O(n²) time.",
-        "alternates": ["Use a frequency map and add the number of earlier equal values while scanning.", "Sort the array and count combinations inside each equal-value run."]
-      },
-      "IsSubsequence": {
-        "bruteForce": "Generate every subsequence of the larger string and check whether one equals the target. This is exponential and useful only as a definition-level baseline.",
-        "alternates": ["Use two pointers for one query in O(|t|) time.", "For many queries against the same text, store each character's positions and binary-search the next usable index."]
-      },
-      "MajorityElement": {
-        "bruteForce": "For each distinct value, scan the entire array to count it. This can take O(n²) time.",
-        "alternates": ["Use a frequency map for O(n) time and O(n) space.", "Sort and return the middle value, or use Boyer-Moore vote cancellation for O(n) time and O(1) space."]
-      },
-      "MergeStringsAlternately": {
-        "bruteForce": "Repeatedly concatenate one character from each string onto an immutable result string. It works but repeated copying can make it O((n + m)²).",
-        "alternates": ["Use StringBuilder for linear construction.", "Allocate a char array of final length and fill it directly."]
-      },
-      "MoveZeroes": {
-        "bruteForce": "Copy every non-zero value into a new array and leave the remaining cells as zero. It is simple but uses O(n) extra space.",
-        "alternates": ["Use a write pointer, then fill the tail with zeroes.", "Swap each discovered non-zero with the current write slot to finish in one pass."]
-      },
-      "Pangram": {
-        "bruteForce": "For every letter a through z, scan the entire sentence to see whether it appears. This takes O(26 × n) time.",
-        "alternates": ["Use a boolean[26] checklist.", "Use a 26-bit integer mask for compact O(1) storage."]
-      },
-      "ReverseVowels": {
-        "bruteForce": "Collect all vowels, reverse that collection, then rebuild the string while replacing vowel positions. It needs O(n) extra space.",
-        "alternates": ["Use two pointers that skip consonants and swap vowels in a char array.", "Use a stack of vowels when the stack pattern is the learning goal."]
-      },
-      "ShortestWordDistance": {
-        "bruteForce": "Store every position of both words and compare every cross-pair distance. This can take O(a × b) time.",
-        "alternates": ["Track only the latest position of each word in one scan.", "For repeated queries, pre-index positions per word and merge the two sorted position lists."]
-      },
-      "Sqrt": {
-        "bruteForce": "Try integers from 0 upward until the next square exceeds x. This takes O(√x) time.",
-        "alternates": ["Binary-search the answer range for O(log x) time.", "Use Newton's method for very fast convergence, with careful integer rounding."]
-      },
-      "ValidAnagram": {
-        "bruteForce": "For each character in the first string, search for and remove one matching character from the second. Repeated searches and rebuilding can take O(n²).",
-        "alternates": ["Sort both strings and compare them in O(n log n).", "Use a fixed frequency array for a known alphabet or a map for general characters."]
-      },
-      "ValidPalindrome": {
-        "bruteForce": "Build a cleaned lowercase string, reverse it, and compare the two strings. It is clear but needs O(n) extra space.",
-        "alternates": ["Use two pointers that skip non-alphanumeric characters for O(1) extra space.", "Use recursion for educational purposes, though call-stack space becomes O(n)."]
-      }
-    };
-
     const solvedOrder = [
       "ContainsDuplicate",
       "Pangram",
@@ -1261,7 +1194,7 @@
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
-    cards.forEach(card => Object.assign(card, recallDetails[card.name], comparisonDetails[card.name], {
+    cards.forEach(card => Object.assign(card, recallDetails[card.name], {
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
@@ -1356,6 +1289,8 @@
     }
 
     function renderFullCard(card, extraClass = "") {
+      const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
+      const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
       return `
         <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${extraClass}">
           <div class="card-head">
@@ -1422,11 +1357,11 @@
               </div>
               <div class="section brute-force">
                 <b>Brute force / baseline</b>
-                ${escapeHtml(card.bruteForce)}
+                ${escapeHtml(bruteForce)}
               </div>
               <div class="section alternates">
                 <b>Alternate approaches</b>
-                <ul class="gotchas">${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+                <ul class="gotchas">${alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
               </div>
               <div class="section full">
                 <b>Bug magnets</b>
@@ -1578,7 +1513,7 @@
       quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
       render();
     });
-    totalCountEl.textContent = `${cards.length} problems`;
+    totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
     render();
   </script>
 </body>

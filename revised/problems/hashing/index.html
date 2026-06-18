@@ -6,12 +6,12 @@
   <title>Hashing Revision</title>
   <style>
     :root {
-      --ink: #17231f;
-      --muted: #5d6c66;
-      --paper: #edf2ee;
-      --panel: #fffefa;
+      --ink: #18221e;
+      --muted: #5e6d66;
       --line: #d4ddd7;
       --line-strong: #b9c9bf;
+      --paper: #edf2ee;
+      --panel: #fffefa;
       --green: #176b51;
       --green-dark: #0f4f3c;
       --green-soft: #e1f2e9;
@@ -29,17 +29,20 @@
 
     body {
       margin: 0;
-      border-top: 4px solid var(--green);
-      background: var(--paper);
-      color: var(--ink);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      border-top: 4px solid var(--green);
     }
 
     a {
       color: var(--green);
-      font-weight: 800;
+      font-weight: 700;
+      text-decoration-thickness: 1px;
       text-underline-offset: 3px;
     }
+
+    a:hover { color: var(--green-dark); }
 
     button,
     input {
@@ -48,8 +51,7 @@
 
     button:focus-visible,
     input:focus-visible,
-    a:focus-visible,
-    .quick-row:focus-visible {
+    a:focus-visible {
       outline: 3px solid rgba(50, 108, 148, .22);
       outline-offset: 2px;
     }
@@ -58,24 +60,6 @@
       width: min(1380px, 100%);
       margin: 0 auto;
       padding: 20px 18px 48px;
-    }
-
-    .back-link {
-      position: sticky;
-      top: 8px;
-      z-index: 30;
-      display: inline-flex;
-      min-height: 34px;
-      align-items: center;
-      margin-bottom: 14px;
-      border: 1px solid #b9c9bf;
-      border-radius: 8px;
-      background: var(--panel);
-      padding: 5px 10px;
-      color: var(--green);
-      font-size: 14px;
-      text-decoration: none;
-      box-shadow: 0 5px 16px rgba(31, 53, 42, .1);
     }
 
     header {
@@ -87,36 +71,51 @@
       gap: 18px;
       align-items: end;
       margin-bottom: 10px;
+      padding: 12px;
       border: 1px solid rgba(185, 201, 191, .8);
       border-radius: 8px;
       background: rgba(255, 254, 250, .96);
-      padding: 12px;
       box-shadow: 0 8px 24px rgba(31, 53, 42, .08);
       backdrop-filter: blur(12px);
     }
 
+    .back-link {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--green);
+      padding: 5px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 5px 16px rgba(31, 53, 42, .1);
+    }
+
+    .back-link:hover {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+
     h1 {
       margin: 0;
-      color: #13241d;
       font-size: clamp(34px, 5vw, 60px);
       line-height: 1;
       letter-spacing: 0;
-    }
-
-    .title-row,
-    .tools {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
+      color: #13241d;
     }
 
     .title-row {
+      display: flex;
+      flex-wrap: wrap;
       gap: 10px;
-    }
-
-    .tools {
-      gap: 8px;
-      justify-content: flex-end;
+      align-items: center;
     }
 
     .count-pill {
@@ -137,6 +136,116 @@
       display: inline-flex;
       flex-wrap: wrap;
       gap: 6px;
+      align-items: center;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      max-width: 840px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .search {
+      width: min(380px, 100%);
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      font: inherit;
+      padding: 0 12px;
+    }
+
+    .search:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(50, 108, 148, .12);
+    }
+
+    .mode-button {
+      height: 42px;
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--green);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mode-button:hover {
+      background: var(--green-soft);
+      transform: translateY(-1px);
+    }
+
+    .mode-button.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--green);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-width: 0;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    .card.easy { border-color: #bad9ca; border-top-color: var(--green); }
+    .card.medium { border-color: #e6cf9b; border-top-color: var(--gold); }
+    .card.hard { border-color: #e5c1bc; border-top-color: var(--red); }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-head {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      background: #f8faf7;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .problem-no {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .problem-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       align-items: center;
     }
 
@@ -195,141 +304,6 @@
       color: var(--red);
     }
 
-    .difficulty,
-    .fact {
-      display: inline-flex;
-      align-items: center;
-      min-height: 26px;
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .difficulty.easy { border: 1px solid #bad9ca; background: var(--green-soft); color: var(--green-dark); }
-    .difficulty.medium { border: 1px solid #e6cf9b; background: var(--gold-soft); color: #74480d; }
-    .difficulty.hard { border: 1px solid #e5c1bc; background: var(--red-soft); color: var(--red); }
-
-    .fact {
-      border: 1px solid var(--line);
-      background: #f8faf7;
-      color: var(--muted);
-    }
-
-    .mode-button {
-      height: 42px;
-      border: 1px solid var(--green);
-      border-radius: 8px;
-      background: var(--panel);
-      color: var(--green);
-      padding: 0 12px;
-      font: inherit;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .mode-button:hover {
-      background: var(--green-soft);
-      transform: translateY(-1px);
-    }
-
-    .mode-button.active {
-      background: var(--green);
-      border-color: var(--green);
-      color: white;
-    }
-
-    .search {
-      width: min(380px, 100%);
-      height: 42px;
-      border: 1px solid var(--line-strong);
-      border-radius: 8px;
-      background: var(--panel);
-      color: var(--ink);
-      font: inherit;
-      padding: 0 12px;
-    }
-
-    .search:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(50, 108, 148, .12);
-    }
-
-    .subtitle {
-      max-width: 840px;
-      margin: 0 0 18px;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.45;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .card {
-      overflow: hidden;
-      border: 1px solid #bad9ca;
-      border-top: 4px solid var(--green);
-      border-radius: 8px;
-      background: var(--panel);
-      box-shadow: var(--shadow);
-    }
-
-    .card.medium {
-      border-color: #e6cf9b;
-      border-top-color: var(--gold);
-    }
-
-    .card.hard {
-      border-color: #e5c1bc;
-      border-top-color: var(--red);
-    }
-
-    .card:hover {
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-2px);
-    }
-
-    .card-head {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      border-bottom: 1px solid var(--line);
-      align-items: start;
-      background: #f8faf7;
-      padding: 15px 16px;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 23px;
-      line-height: 1.12;
-      letter-spacing: 0;
-    }
-
-    .problem-title {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .problem-no {
-      color: var(--green);
-      font-weight: 900;
-    }
-
-    .meta,
-    .source {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-    }
-
     .meta-line {
       display: flex;
       flex-wrap: wrap;
@@ -342,6 +316,55 @@
 
     .meta-line a {
       font-weight: 700;
+    }
+
+    .head-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      align-items: start;
+    }
+
+    .badge,
+    .difficulty,
+    .leetcode {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: var(--green-soft);
+      color: #28593f;
+      border: 1px solid #cfe0d2;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .difficulty.easy {
+      background: var(--green-soft);
+      border-color: #bad9ca;
+      color: var(--green-dark);
+    }
+
+    .difficulty.medium {
+      background: var(--gold-soft);
+      border-color: #edd89d;
+      color: #67480b;
+    }
+
+    .difficulty.hard {
+      background: var(--red-soft);
+      border-color: #edc5bd;
+      color: #773229;
+    }
+
+    .leetcode {
+      background: var(--blue-soft);
+      border-color: #cddfeb;
+      color: #2f536c;
+      text-decoration: none;
     }
 
     .body {
@@ -442,12 +465,11 @@
     }
 
     code {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      color: #213c30;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
       font-size: 12px;
-      line-height: 1.45;
+      color: #213c30;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
     }
 
     .section-grid {
@@ -457,7 +479,6 @@
     }
 
     .section {
-      min-width: 0;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fffefa;
@@ -528,16 +549,15 @@
     .cell {
       min-width: 30px;
       height: 30px;
-      border: 1px solid #bad9ca;
+      padding: 0 7px;
+      border: 1px solid var(--line);
       border-radius: 6px;
       display: inline-grid;
       place-items: center;
       background: var(--panel);
       color: var(--ink);
-      padding: 0 7px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 800;
     }
 
     .cell.green { background: var(--green-soft); }
@@ -563,6 +583,26 @@
 
     .gotchas li:last-child { margin-bottom: 0; }
 
+    .empty {
+      display: none;
+      border: 1px dashed #b9c4bb;
+      border-radius: 8px;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      background: white;
+    }
+
+    .quick-review {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-item {
+      display: grid;
+      gap: 8px;
+    }
+
     .quick-row {
       position: relative;
       display: grid;
@@ -576,23 +616,18 @@
       padding: 11px 40px 11px 11px;
       cursor: pointer;
       box-shadow: 0 5px 14px rgba(31, 53, 42, .05);
-      transition: box-shadow .15s ease, transform .15s ease;
     }
 
     .quick-row.easy { border-color: #bad9ca; border-left-color: var(--green); }
     .quick-row.medium { border-color: #e6cf9b; border-left-color: var(--gold); }
     .quick-row.hard { border-color: #e5c1bc; border-left-color: var(--red); }
 
-    .quick-row:hover {
-      box-shadow: 0 18px 38px rgba(31, 53, 42, .14);
+    .quick-row:hover,
+    .quick-row:focus-visible,
+    .quick-row.expanded {
+      box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
-    }
-
-    .quick-review,
-    .quick-item,
-    .quick-summary {
-      display: grid;
-      gap: 8px;
+      outline: none;
     }
 
     .expand-cue {
@@ -630,6 +665,12 @@
     .quick-title .difficulty {
       min-height: 22px;
       padding: 2px 8px;
+    }
+
+    .quick-summary {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
     }
 
     .quick-approach {
@@ -678,12 +719,12 @@
     }
 
     .quick-label {
+      color: #3c4d43;
       display: block;
       margin-bottom: 3px;
-      color: #3c4d43;
       font-size: 11px;
-      font-weight: 900;
       text-transform: uppercase;
+      font-weight: 900;
     }
 
     .quick-text {
@@ -693,21 +734,11 @@
       line-height: 1.35;
     }
 
-    .empty {
-      display: none;
-      border: 1px dashed #b9c9bf;
-      border-radius: 8px;
-      background: var(--panel);
-      padding: 24px;
-      color: var(--muted);
-      text-align: center;
-    }
-
     @media (max-width: 980px) {
       header { grid-template-columns: 1fr; }
       .cards { grid-template-columns: 1fr; }
-      .tools { justify-content: flex-start; }
       .search { width: 100%; }
+      .tools { justify-content: flex-start; }
       .quick-row { grid-template-columns: 1fr; }
     }
 
@@ -717,6 +748,10 @@
       .section-grid {
         grid-template-columns: 1fr;
       }
+
+      .section.full { grid-column: auto; }
+      .card-head { grid-template-columns: 1fr; }
+      .tools { display: grid; }
     }
   </style>
 </head>
@@ -740,12 +775,12 @@
       </div>
     </header>
     <p class="subtitle">Fast recall cards for the current hashing package. Use Quick Review first, then expand a row when you need the full explanation.</p>
-    <section id="cards" class="quick-review"></section>
+
+    <section id="cards" class="cards"></section>
     <div id="empty" class="empty">No matching hashing cards.</div>
   </main>
 
   <script>
-    const pattern = "hashing";
     const cards = [
       {
         "name": "FirstNonRepeating",
@@ -828,40 +863,6 @@
       }[char]));
     }
 
-    function storageKey(card) {
-      return `dsa-revision:${pattern}:${card.name}`;
-    }
-
-    function readRevision(card) {
-      try {
-        return JSON.parse(localStorage.getItem(storageKey(card))) || { count: 0, last: "" };
-      } catch {
-        return { count: 0, last: "" };
-      }
-    }
-
-    function writeRevision(card, data) {
-      try {
-        localStorage.setItem(storageKey(card), JSON.stringify(data));
-      } catch {}
-    }
-
-    function today() {
-      return new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-    }
-
-    function renderRevision(card) {
-      const data = readRevision(card);
-      return `
-        <div class="revision-controls" data-revision-controls="${escapeHtml(card.name)}">
-          <span class="revision-pill">Revised ${data.count || 0}x</span>
-          <span class="revision-pill">Last revised: ${data.last ? escapeHtml(data.last) : "never"}</span>
-          <button class="revision-button" type="button" data-action="inc" data-name="${escapeHtml(card.name)}">+1</button>
-          <button class="revision-button reset" type="button" data-action="reset" data-name="${escapeHtml(card.name)}">Reset</button>
-        </div>
-      `;
-    }
-
     function renderVisual(groups) {
       return groups.map((group, index) => {
         const color = index === 0 ? "green" : index === 1 ? "gold" : "blue";
@@ -875,14 +876,68 @@
       `).join("")}</div>`;
     }
 
-    function renderCard(card) {
-      const diff = card.difficulty.toLowerCase();
+    function storageKey(cardName) {
+      return `dsa-revision:hashing:${cardName}`;
+    }
+
+    function readRevision(cardName) {
+      try {
+        const raw = localStorage.getItem(storageKey(cardName));
+        if (!raw) return { count: 0, last: "" };
+        const parsed = JSON.parse(raw);
+        return {
+          count: Number(parsed.count) || 0,
+          last: typeof parsed.last === "string" ? parsed.last : ""
+        };
+      } catch {
+        return { count: 0, last: "" };
+      }
+    }
+
+    function writeRevision(cardName, revision) {
+      try {
+        localStorage.setItem(storageKey(cardName), JSON.stringify(revision));
+      } catch {
+        // Keep the page usable even if browser storage is unavailable.
+      }
+    }
+
+    function formatLastRevised(value) {
+      if (!value) return "Last revised: never";
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return `Last revised: ${value}`;
+      return `Last revised: ${date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+    }
+
+    function todayLocalDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function renderRevisionControls(card) {
+      const revision = readRevision(card.name);
       return `
-        <article class="card ${diff}" data-name="${escapeHtml(card.name)}">
+        <div class="revision-controls">
+          <span class="revision-pill">Revised ${revision.count}x</span>
+          <span class="revision-pill">${escapeHtml(formatLastRevised(revision.last))}</span>
+          <button class="revision-button" type="button" data-action="increment" data-card="${escapeHtml(card.name)}">+1</button>
+          <button class="revision-button reset" type="button" data-action="reset" data-card="${escapeHtml(card.name)}">Reset</button>
+        </div>
+      `;
+    }
+
+    function renderFullCard(card, extraClass = "") {
+      const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
+      const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
+      return `
+        <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${extraClass}">
           <div class="card-head">
             <div>
               <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
-              ${renderRevision(card)}
+              ${renderRevisionControls(card)}
               <div class="meta-line">
                 <span>${escapeHtml(card.label)}</span>
                 <span>${escapeHtml(card.difficulty)}</span>
@@ -890,7 +945,7 @@
                 ${card.leetcode ? `<a href="${escapeHtml(card.leetcode)}" target="_blank" rel="noreferrer">LeetCode</a>` : ""}
               </div>
             </div>
-            <span class="difficulty ${diff}">${escapeHtml(card.difficulty)}</span>
+            <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
           </div>
           <div class="body">
             <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
@@ -943,11 +998,11 @@
               </div>
               <div class="section brute-force">
                 <b>Brute force / baseline</b>
-                ${escapeHtml(card.bruteForce)}
+                ${escapeHtml(bruteForce)}
               </div>
               <div class="section alternates">
                 <b>Alternate approaches</b>
-                <ul class="gotchas">${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+                <ul class="gotchas">${alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
               </div>
               <div class="section full">
                 <b>Bug magnets</b>
@@ -959,122 +1014,147 @@
       `;
     }
 
-    function renderQuickRow(card) {
-      const diff = card.difficulty.toLowerCase();
-      const expanded = expandedQuickCards.has(card.name);
-      return `
-        <div class="quick-item">
-          <article class="quick-row ${diff} ${expanded ? "expanded" : ""}" tabindex="0" role="button" aria-expanded="${expanded}" data-expand-card="${escapeHtml(card.name)}">
-            <span class="expand-cue" aria-hidden="true">⌄</span>
-            <div>
-              <div class="quick-title">
-                <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
-                <span class="difficulty ${diff}">${escapeHtml(card.difficulty)}</span>
-              </div>
-              ${renderRevision(card)}
-              <div class="quick-summary">
-                <span class="quick-approach">${escapeHtml(card.label)}</span>
-                <div class="quick-facts">
-                  <span class="quick-fact"><b>Time</b> ${escapeHtml(card.time)}</span>
-                  <span class="quick-fact"><b>Space</b> ${escapeHtml(card.space)}</span>
+    function renderQuickReview(cardsToRender) {
+      return `<div class="quick-review">${cardsToRender.map(card => {
+        const expanded = expandedQuickCards.has(card.name);
+        return `
+          <div class="quick-item">
+            <article class="quick-row ${escapeHtml(card.difficulty.toLowerCase())} ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
+              <span class="expand-cue" aria-hidden="true">⌄</span>
+              <div>
+                <div class="quick-title">
+                  <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
+                  <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
                 </div>
-                <span class="quick-uses"><b>Uses</b> ${escapeHtml(card.structures)}</span>
+                ${renderRevisionControls(card)}
+                <div class="quick-summary">
+                  <span class="quick-approach">${escapeHtml(card.label)}</span>
+                  <div class="quick-facts">
+                    <span class="quick-fact"><b>Time</b> ${escapeHtml(card.time)}</span>
+                    <span class="quick-fact"><b>Space</b> ${escapeHtml(card.space)}</span>
+                  </div>
+                  <span class="quick-uses"><b>Uses</b> ${escapeHtml(card.structures)}</span>
+                </div>
               </div>
-            </div>
-            <div>
-              <span class="quick-label">Recall prompt</span>
-              <span class="quick-text">${escapeHtml(card.prompt)}</span>
-            </div>
-            <div>
-              <span class="quick-label">Defining move</span>
-              <code>${escapeHtml(card.definingMove)}</code>
-            </div>
-            <div>
-              <span class="quick-label">Bug magnet</span>
-              <span class="quick-text">${escapeHtml(card.gotchas[0])}</span>
-            </div>
-          </article>
-          ${expanded ? renderCard(card).replace('class="card ', 'class="card quick-expanded-card ') : ""}
-        </div>
-      `;
+              <div>
+                <span class="quick-label">Recall prompt</span>
+                <span class="quick-text">${escapeHtml(card.prompt)}</span>
+              </div>
+              <div>
+                <span class="quick-label">Defining move</span>
+                <code>${escapeHtml(card.definingMove)}</code>
+              </div>
+              <div>
+                <span class="quick-label">Bug magnet</span>
+                <span class="quick-text">${escapeHtml(card.gotchas[0])}</span>
+              </div>
+            </article>
+            ${expanded ? renderFullCard(card, "quick-expanded-card") : ""}
+          </div>
+        `;
+      }).join("")}</div>`;
     }
 
-    function visibleCards() {
-      const query = searchEl.value.trim().toLowerCase();
-      return cards.filter(card => JSON.stringify(card).toLowerCase().includes(query));
-    }
-
-    function render() {
-      const visible = visibleCards();
-      totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
-      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
-      if (quickMode) {
-        cardsEl.className = "quick-review";
-        cardsEl.innerHTML = visible.map(renderQuickRow).join("");
-      } else {
-        cardsEl.className = "cards";
-        cardsEl.innerHTML = visible.map(renderCard).join("");
-      }
-      emptyEl.style.display = visible.length ? "none" : "block";
-    }
-
-    cardsEl.addEventListener("click", event => {
-      const button = event.target.closest("button");
-      if (button && button.dataset.action) {
-        const card = cards.find(item => item.name === button.dataset.name);
-        if (!card) return;
-        if (button.dataset.action === "inc") {
-          const data = readRevision(card);
-          writeRevision(card, { count: (data.count || 0) + 1, last: today() });
-        } else {
-          writeRevision(card, { count: 0, last: "" });
-        }
-        render();
-        return;
-      }
-
-      if (event.target.closest("a")) return;
-      const row = event.target.closest(".quick-row");
-      if (!row) return;
-      const cardName = row.dataset.expandCard;
+    function toggleQuickCard(cardName) {
       if (expandedQuickCards.has(cardName)) {
         expandedQuickCards.delete(cardName);
       } else {
         expandedQuickCards.add(cardName);
       }
       render();
-    });
+    }
 
-    cardsEl.addEventListener("keydown", event => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      const row = event.target.closest(".quick-row");
-      if (!row || event.target.closest("button, a")) return;
-      event.preventDefault();
-      row.click();
-    });
+    function render() {
+      const query = searchEl.value.trim().toLowerCase();
+      const visible = cards.filter(card => {
+        const haystack = [
+          card.name,
+          card.problemLabel,
+          card.label,
+          card.difficulty,
+          card.time,
+          card.space,
+          card.structures,
+          card.leetcode,
+          card.source,
+          card.description,
+          card.input,
+          card.output,
+          card.recognize,
+          card.visualText,
+          card.core,
+          card.prompt,
+          card.skeleton,
+          card.steps.join(" "),
+          card.gotchas.join(" ")
+        ].join(" ").toLowerCase();
+        return !query || haystack.includes(query);
+      });
+
+      if (quickMode) {
+        cardsEl.className = "quick-review";
+        cardsEl.innerHTML = renderQuickReview(visible);
+        emptyEl.style.display = visible.length ? "none" : "block";
+        return;
+      }
+
+      cardsEl.className = "cards";
+      cardsEl.innerHTML = visible.map(card => renderFullCard(card)).join("");
+
+      emptyEl.style.display = visible.length ? "none" : "block";
+    }
 
     searchEl.addEventListener("input", render);
-    quickModeEl.addEventListener("click", () => {
-      quickMode = !quickMode;
-      quickModeEl.classList.toggle("active", quickMode);
-      render();
+    cardsEl.addEventListener("click", event => {
+      const button = event.target.closest("[data-action][data-card]");
+      if (button) {
+        const cardName = button.dataset.card;
+        if (button.dataset.action === "increment") {
+          const current = readRevision(cardName);
+          writeRevision(cardName, {
+            count: current.count + 1,
+            last: todayLocalDate()
+          });
+        }
+        if (button.dataset.action === "reset") {
+          writeRevision(cardName, { count: 0, last: "" });
+        }
+        render();
+        return;
+      }
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (quickRow) toggleQuickCard(quickRow.dataset.expandCard);
     });
-
+    cardsEl.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (!quickRow || event.target.closest("button, a")) return;
+      event.preventDefault();
+      toggleQuickCard(quickRow.dataset.expandCard);
+    });
     incrementAllEl.addEventListener("click", () => {
-      const date = today();
+      const today = todayLocalDate();
       cards.forEach(card => {
-        const data = readRevision(card);
-        writeRevision(card, { count: (data.count || 0) + 1, last: date });
+        const current = readRevision(card.name);
+        writeRevision(card.name, {
+          count: current.count + 1,
+          last: today
+        });
       });
       render();
     });
-
     resetAllEl.addEventListener("click", () => {
-      if (!confirm("Reset revision counts for all hashing problems?")) return;
-      cards.forEach(card => writeRevision(card, { count: 0, last: "" }));
+      if (!window.confirm("Reset revision counts and dates for all hashing problems?")) return;
+      cards.forEach(card => writeRevision(card.name, { count: 0, last: "" }));
       render();
     });
-
+    quickModeEl.addEventListener("click", () => {
+      quickMode = !quickMode;
+      quickModeEl.classList.toggle("active", quickMode);
+      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
+      render();
+    });
+    totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
     render();
   </script>
 </body>

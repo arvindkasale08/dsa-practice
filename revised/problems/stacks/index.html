@@ -2369,6 +2369,8 @@
     }
 
     function renderFullCard(card, extraClass = "") {
+      const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
+      const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
       return `
         <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${extraClass}">
           <div class="card-head">
@@ -2435,11 +2437,11 @@
               </div>
               <div class="section brute-force">
                 <b>Brute force / baseline</b>
-                ${escapeHtml(card.bruteForce)}
+                ${escapeHtml(bruteForce)}
               </div>
               <div class="section alternates">
                 <b>Alternate approaches</b>
-                <ul class="gotchas">${card.alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+                <ul class="gotchas">${alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
               </div>
               <div class="section full">
                 <b>Bug magnets</b>
@@ -2591,7 +2593,7 @@
       quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
       render();
     });
-    totalCountEl.textContent = `${cards.length} problems`;
+    totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
     render();
   </script>
 </body>
