@@ -991,6 +991,36 @@
           "The signature must be unambiguous; raw count concatenation can collide without delimiters or fixed reconstruction.",
           "Empty string is a valid key and should form its own group."
         ]
+      },
+      {
+        "name": "IsomorphicStrings",
+        "source": "../com/arvind/revision/hashing/IsomorphicStrings.java",
+        "label": "Two-way character mapping",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/isomorphic-strings/",
+        "description": "Given two strings of the same length, return true if characters in the first string can be consistently replaced to form the second string. Each source character maps to one target character, and no two source characters may map to the same target character.",
+        "time": "O(n)",
+        "space": "O(k), where k is the number of distinct characters",
+        "structures": "Two HashMaps<Character, Character> or two int arrays",
+        "input": "s = \"badc\", t = \"baba\"",
+        "output": "false",
+        "recognize": "When the strings must keep the same position pattern: repeated characters in one string must line up with repeated characters in the other.",
+        "visual": [
+          ["b->b", "a->a", "d->b breaks"],
+          ["target b already taken", "need one-to-one", "false"]
+        ],
+        "visualText": "Picture every character wearing a reserved partner tag. The forward map checks consistency from s to t; the reverse map prevents two different s characters from sharing one t character.",
+        "core": "Scan both strings together. For each pair, verify the old mapping in both directions if it exists. If either direction conflicts, return false; otherwise store both mappings.",
+        "bruteForce": "For every pair of positions i and j, check whether s[i] == s[j] has the same truth value as t[i] == t[j]. This checks the pattern directly but costs O(n²).",
+        "alternates": [
+          "Use two int[256] arrays storing last seen positions. If the last seen positions differ at any index, the pattern differs.",
+          "Encode each string into a first-seen pattern such as 1,2,2 and compare the encoded patterns."
+        ],
+        "gotchas": [
+          "Checking only s -> t is not enough; two source characters could map to the same target.",
+          "A character may map to itself, but still only one source character can own that target character.",
+          "The order of characters means positions stay fixed; replacements do not rearrange the string."
+        ]
       }
     ];
 
@@ -1057,6 +1087,15 @@
           "Append the original word to that bucket."
         ],
         "skeleton": "groups = map key -> list\nfor word in strs:\n  key = letter-count signature(word)\n  groups[key].add(word)\nreturn all group lists"
+      },
+      "IsomorphicStrings": {
+        "prompt": "Before reading: why is one map not enough for badc -> baba?",
+        "steps": [
+          "Read both strings at the same index.",
+          "Check s-to-t mapping for consistency.",
+          "Check t-to-s mapping so no target character is reused by a different source."
+        ],
+        "skeleton": "forward = map\nreverse = map\nfor i from 0 to n - 1:\n  a = s[i]\n  b = t[i]\n  if forward[a] exists and forward[a] != b: return false\n  if reverse[b] exists and reverse[b] != a: return false\n  forward[a] = b\n  reverse[b] = a\nreturn true"
       }
     };
 
@@ -1067,7 +1106,8 @@
       "LongestPalindrome": "pairs build both sides\none odd leftover can be the center",
       "RansomNote": "magazine fills the bank\nransom note spends from it",
       "TwoSum": "store the missing partner\ncurrent number completes an earlier wish",
-      "GroupAnagrams": "canonical key collapses rearrangements\nmap key owns the group"
+      "GroupAnagrams": "canonical key collapses rearrangements\nmap key owns the group",
+      "IsomorphicStrings": "forward map checks consistency\nreverse map blocks shared targets"
     };
 
     const solvedOrder = [
@@ -1077,7 +1117,8 @@
       "LongestPalindrome",
       "RansomNote",
       "TwoSum",
-      "GroupAnagrams"
+      "GroupAnagrams",
+      "IsomorphicStrings"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
