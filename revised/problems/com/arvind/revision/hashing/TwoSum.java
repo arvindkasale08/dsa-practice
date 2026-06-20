@@ -1,5 +1,7 @@
 package com.arvind.revision.hashing;
 
+import com.arvind.revision.common.CommonUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,15 +25,8 @@ public class TwoSum {
         int[] res = solution.twoSum(nums, 9);
         int[] res2 = solution.twoSum(nums2, 6);
         int[] res3 = solution.twoSum(nums3, 6);
-        print(res);
-        print(res2);
-        print(res3);
-    }
-
-    public static void print(int[] num) {
-        for (int n : num) {
-            System.out.print(n + ", ");
-        }
-        System.out.println("\n #########################");
+        CommonUtils.print(res);
+        CommonUtils.print(res2);
+        CommonUtils.print(res3);
     }
 }

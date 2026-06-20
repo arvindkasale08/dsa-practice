@@ -961,6 +961,36 @@
           "Duplicate values are valid if they are at different indexes.",
           "Returning indexes in either order is accepted."
         ]
+      },
+      {
+        "name": "GroupAnagrams",
+        "source": "../com/arvind/revision/hashing/GroupAnagrams.java",
+        "label": "Same signature means same group",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/group-anagrams/",
+        "description": "Given an array of strings, group together the words that are anagrams of each other. The groups and words can be returned in any order.",
+        "time": "O(n * k)",
+        "space": "O(n * k)",
+        "structures": "HashMap<String, List<String>>, int[26] frequency signature",
+        "input": "strs = [\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"]",
+        "output": "[[\"eat\", \"tea\", \"ate\"], [\"tan\", \"nat\"], [\"bat\"]]",
+        "recognize": "When words are equivalent after rearranging letters: convert each word into a stable signature, then use that signature as the group key.",
+        "visual": [
+          ["eat -> aet", "tea -> aet", "ate -> aet"],
+          ["tan -> ant", "nat -> ant", "bat -> abt"]
+        ],
+        "visualText": "Picture every word wearing a sorted-letter name tag. Words with the same name tag walk into the same bucket.",
+        "core": "For each string, build a canonical key from its letter counts. Put the original string into the list stored at that key. Return all map values.",
+        "bruteForce": "Compare every pair of strings with an anagram check and build groups manually. It works but can take O(n² * k).",
+        "alternates": [
+          "Sort each string and use the sorted string as the key; simpler to write, but costs O(n * k log k).",
+          "Use a delimiter-based count key such as #1#0#0... to avoid ambiguity when counts have multiple digits."
+        ],
+        "gotchas": [
+          "Use the original string in the group, not the sorted/signature string.",
+          "The signature must be unambiguous; raw count concatenation can collide without delimiters or fixed reconstruction.",
+          "Empty string is a valid key and should form its own group."
+        ]
       }
     ];
 
@@ -1018,6 +1048,15 @@
           "Otherwise store the value needed to pair with this number."
         ],
         "skeleton": "needToIndex = map\nfor i from 0 to nums.length - 1:\n  if nums[i] in needToIndex:\n    return [i, needToIndex[nums[i]]]\n  needToIndex[target - nums[i]] = i"
+      },
+      "GroupAnagrams": {
+        "prompt": "Before reading: what key makes two rearranged words look identical?",
+        "steps": [
+          "Build the same canonical key for all anagrams.",
+          "Use that key as the HashMap bucket.",
+          "Append the original word to that bucket."
+        ],
+        "skeleton": "groups = map key -> list\nfor word in strs:\n  key = letter-count signature(word)\n  groups[key].add(word)\nreturn all group lists"
       }
     };
 
@@ -1027,7 +1066,8 @@
       "MaximumNumberOfBalloons": "target word creates required ratios\nanswer is the minimum available ratio",
       "LongestPalindrome": "pairs build both sides\none odd leftover can be the center",
       "RansomNote": "magazine fills the bank\nransom note spends from it",
-      "TwoSum": "store the missing partner\ncurrent number completes an earlier wish"
+      "TwoSum": "store the missing partner\ncurrent number completes an earlier wish",
+      "GroupAnagrams": "canonical key collapses rearrangements\nmap key owns the group"
     };
 
     const solvedOrder = [
@@ -1036,7 +1076,8 @@
       "MaximumNumberOfBalloons",
       "LongestPalindrome",
       "RansomNote",
-      "TwoSum"
+      "TwoSum",
+      "GroupAnagrams"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
