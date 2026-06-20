@@ -931,6 +931,36 @@
           "Count magazine first, not ransom note first, because magazine is the supply.",
           "With lowercase letters, int[26] is simpler than a HashMap."
         ]
+      },
+      {
+        "name": "TwoSum",
+        "source": "../com/arvind/revision/hashing/TwoSum.java",
+        "label": "Store complement while scanning",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/two-sum/",
+        "description": "Given an integer array and a target, return the indexes of two different numbers whose values add up to the target. Exactly one valid answer is guaranteed.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "HashMap<Integer, Integer> complement to index",
+        "input": "nums = [3, 2, 4], target = 6",
+        "output": "[2, 1]",
+        "recognize": "When each number needs a partner value: target - current. A map lets you ask whether this current number was needed by something earlier.",
+        "visual": [
+          ["3 needs 3", "2 needs 4", "4 found"],
+          ["bank: 3->0", "bank: 4->1", "answer: 2,1"]
+        ],
+        "visualText": "Picture the map as a wish list. Each earlier number stores the value it is waiting for; when the current number appears in the wish list, the pair is complete.",
+        "core": "Scan left to right. If the current number already exists in the complement map, return current index plus the stored index. Otherwise store target - current as a needed future value.",
+        "bruteForce": "Try every pair i, j and check whether nums[i] + nums[j] equals the target. This is simple but costs O(n²).",
+        "alternates": [
+          "Store value to index instead of complement to index; then check whether target - current already exists before adding current.",
+          "Sorting plus two pointers works for values, but it loses original indexes unless you carry pairs, so the hash map is cleaner."
+        ],
+        "gotchas": [
+          "Check the map before inserting the current number so the same element is not reused.",
+          "Duplicate values are valid if they are at different indexes.",
+          "Returning indexes in either order is accepted."
+        ]
       }
     ];
 
@@ -979,6 +1009,15 @@
           "If any letter balance goes negative, return false."
         ],
         "skeleton": "bank = int[26]\nfor c in magazine:\n  bank[c]++\nfor c in ransomNote:\n  bank[c]--\n  if bank[c] < 0:\n    return false\nreturn true"
+      },
+      "TwoSum": {
+        "prompt": "Before reading: what partner value is the current number looking for?",
+        "steps": [
+          "Scan one number at a time.",
+          "If the current number is already in the complement bank, return both indexes.",
+          "Otherwise store the value needed to pair with this number."
+        ],
+        "skeleton": "needToIndex = map\nfor i from 0 to nums.length - 1:\n  if nums[i] in needToIndex:\n    return [i, needToIndex[nums[i]]]\n  needToIndex[target - nums[i]] = i"
       }
     };
 
@@ -987,7 +1026,8 @@
       "LargestUniqueNumber": "map removes repeated values\nmax only among count-one values",
       "MaximumNumberOfBalloons": "target word creates required ratios\nanswer is the minimum available ratio",
       "LongestPalindrome": "pairs build both sides\none odd leftover can be the center",
-      "RansomNote": "magazine fills the bank\nransom note spends from it"
+      "RansomNote": "magazine fills the bank\nransom note spends from it",
+      "TwoSum": "store the missing partner\ncurrent number completes an earlier wish"
     };
 
     const solvedOrder = [
@@ -995,7 +1035,8 @@
       "LargestUniqueNumber",
       "MaximumNumberOfBalloons",
       "LongestPalindrome",
-      "RansomNote"
+      "RansomNote",
+      "TwoSum"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
