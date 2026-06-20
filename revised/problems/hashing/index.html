@@ -1021,6 +1021,36 @@
           "A character may map to itself, but still only one source character can own that target character.",
           "The order of characters means positions stay fixed; replacements do not rearrange the string."
         ]
+      },
+      {
+        "name": "WordPattern",
+        "source": "../com/arvind/revision/hashing/WordPattern.java",
+        "label": "Pattern char to word bijection",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/word-pattern/",
+        "description": "Given a pattern string and a sentence, return true if each pattern character maps consistently to exactly one word, and no two pattern characters map to the same word.",
+        "time": "O(n)",
+        "space": "O(k), where k is the number of distinct pattern characters and words",
+        "structures": "Two HashMaps<String, String> for pattern-to-word and word-to-pattern",
+        "input": "pattern = \"abba\", s = \"dog cat cat dog\"",
+        "output": "true",
+        "recognize": "When positions in a short pattern must match whole words in a sentence one-to-one.",
+        "visual": [
+          ["a->dog", "b->cat", "b->cat", "a->dog"],
+          ["same pattern", "same word", "two-way lock"]
+        ],
+        "visualText": "Picture each pattern letter reserving a word, and each word reserving a pattern letter. Both reservations must agree at every position.",
+        "core": "Split the sentence into words. If the number of words differs from the pattern length, return false. Walk both arrays together and verify both maps before storing the current pair.",
+        "bruteForce": "For every pair of positions, compare whether pattern[i] == pattern[j] matches words[i].equals(words[j]). This directly checks the pattern but costs O(n²).",
+        "alternates": [
+          "Use a single map plus a HashSet of already-used words to block two pattern letters from sharing one word.",
+          "Encode pattern and words into first-seen IDs, then compare the two ID sequences."
+        ],
+        "gotchas": [
+          "Check word count against pattern length before mapping.",
+          "One-way mapping is not enough; two pattern letters cannot share one word.",
+          "Split on spaces carefully; the LeetCode input uses single spaces between words."
+        ]
       }
     ];
 
@@ -1096,6 +1126,15 @@
           "Check t-to-s mapping so no target character is reused by a different source."
         ],
         "skeleton": "forward = map\nreverse = map\nfor i from 0 to n - 1:\n  a = s[i]\n  b = t[i]\n  if forward[a] exists and forward[a] != b: return false\n  if reverse[b] exists and reverse[b] != a: return false\n  forward[a] = b\n  reverse[b] = a\nreturn true"
+      },
+      "WordPattern": {
+        "prompt": "Before reading: why must dog be owned by only one pattern letter?",
+        "steps": [
+          "Split the sentence into words.",
+          "Check pattern-to-word consistency.",
+          "Check word-to-pattern consistency so two letters cannot share a word."
+        ],
+        "skeleton": "words = s.split spaces\nif pattern.length != words.length: return false\nforward = map\nreverse = map\nfor i from 0 to words.length - 1:\n  p = pattern[i]\n  w = words[i]\n  if forward[p] exists and forward[p] != w: return false\n  if reverse[w] exists and reverse[w] != p: return false\n  forward[p] = w\n  reverse[w] = p\nreturn true"
       }
     };
 
@@ -1107,7 +1146,8 @@
       "RansomNote": "magazine fills the bank\nransom note spends from it",
       "TwoSum": "store the missing partner\ncurrent number completes an earlier wish",
       "GroupAnagrams": "canonical key collapses rearrangements\nmap key owns the group",
-      "IsomorphicStrings": "forward map checks consistency\nreverse map blocks shared targets"
+      "IsomorphicStrings": "forward map checks consistency\nreverse map blocks shared targets",
+      "WordPattern": "pattern letter reserves word\nword reserves pattern letter"
     };
 
     const solvedOrder = [
@@ -1118,7 +1158,8 @@
       "RansomNote",
       "TwoSum",
       "GroupAnagrams",
-      "IsomorphicStrings"
+      "IsomorphicStrings",
+      "WordPattern"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
