@@ -1081,6 +1081,36 @@
           "Removing the head of a chain must update the bucket array cell.",
           "Collision tests need keys with the same key % bucketCount, such as 1, 1001, and 2001."
         ]
+      },
+      {
+        "name": "LongestConsecutiveSequence",
+        "source": "../com/arvind/revision/hashing/LongestConsecutiveSequence.java",
+        "label": "Start only at chain heads",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/longest-consecutive-sequence/",
+        "description": "Given an unsorted integer array, return the length of the longest run of consecutive values. The algorithm must run in O(n) time.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "HashSet<Integer> for membership, optional visited set",
+        "input": "nums = [100, 4, 200, 1, 3, 2]",
+        "output": "4",
+        "recognize": "When order in the array does not matter, but consecutive numeric neighbors matter. Use the set for O(1) membership and only expand from true starts.",
+        "visual": [
+          ["100", "4", "200", "1", "3", "2"],
+          ["1 has no 0", "walk 1->2->3->4", "length 4"]
+        ],
+        "visualText": "Picture each number as a dot on a number line. Only start walking from a dot that has no left neighbor; that avoids recounting the same chain from the middle.",
+        "core": "Put every number in a set. For each number, if num - 1 is not in the set, treat it as the left edge of a sequence and walk upward while num + offset exists.",
+        "bruteForce": "Sort the array, then scan and count consecutive runs. It is easy and handles duplicates, but sorting costs O(n log n), which misses the required O(n).",
+        "alternates": [
+          "Use a HashMap boundary-length merge approach that updates sequence lengths at the ends; it is O(n), but harder to remember.",
+          "A visited set can avoid repeated duplicate work, but the key optimization is still starting only where num - 1 is absent."
+        ],
+        "gotchas": [
+          "Do not start counting from every number; that can become O(n²).",
+          "Duplicates should not reset or inflate a sequence.",
+          "An empty input should return 0."
+        ]
       }
     ];
 
@@ -1174,6 +1204,15 @@
           "When removing, reconnect prev and next and fix the bucket head if needed."
         ],
         "skeleton": "bucket = key % bucketCount\nput:\n  find key in bucket chain\n  update if found, else insert node\nget:\n  find key in bucket chain\n  return value or -1\nremove:\n  find key in bucket chain\n  unlink node; if head, move bucket head"
+      },
+      "LongestConsecutiveSequence": {
+        "prompt": "Before reading: why should counting start only when num - 1 is missing?",
+        "steps": [
+          "Put every number into a HashSet.",
+          "Skip any number that has a left neighbor.",
+          "From a true start, walk right while the next number exists."
+        ],
+        "skeleton": "set = all nums\nbest = 0\nfor num in nums:\n  if set does not contain num - 1:\n    length = 1\n    while set contains num + length:\n      length++\n    best = max(best, length)\nreturn best"
       }
     };
 
@@ -1187,7 +1226,8 @@
       "GroupAnagrams": "canonical key collapses rearrangements\nmap key owns the group",
       "IsomorphicStrings": "forward map checks consistency\nreverse map blocks shared targets",
       "WordPattern": "pattern letter reserves word\nword reserves pattern letter",
-      "MyHashMap": "bucket narrows the search\nchain handles same-bucket keys"
+      "MyHashMap": "bucket narrows the search\nchain handles same-bucket keys",
+      "LongestConsecutiveSequence": "only chain heads start walks\nset answers next-number existence"
     };
 
     const solvedOrder = [
@@ -1200,7 +1240,8 @@
       "GroupAnagrams",
       "IsomorphicStrings",
       "WordPattern",
-      "MyHashMap"
+      "MyHashMap",
+      "LongestConsecutiveSequence"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
