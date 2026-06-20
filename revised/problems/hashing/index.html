@@ -1111,6 +1111,36 @@
           "Duplicates should not reset or inflate a sequence.",
           "An empty input should return 0."
         ]
+      },
+      {
+        "name": "TopKFrequentElements",
+        "source": "../com/arvind/revision/hashing/TopKFrequentElements.java",
+        "label": "Frequency buckets from high to low",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/top-k-frequent-elements/",
+        "description": "Given an integer array and an integer k, return the k values that appear most frequently. The answer can be returned in any order.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "HashMap<Integer, Integer> counts, frequency-to-values buckets",
+        "input": "nums = [1, 2, 1, 2, 1, 2, 3, 1, 3, 2], k = 2",
+        "output": "[1, 2]",
+        "recognize": "When the answer asks for most frequent values and k can be smaller than the number of distinct values.",
+        "visual": [
+          ["1:4", "2:4", "3:2"],
+          ["freq 4 -> [1,2]", "freq 2 -> [3]", "take first k"]
+        ],
+        "visualText": "Picture numbers first going into count boxes, then those counts becoming shelves. Walk shelves from highest frequency downward until k values are collected.",
+        "core": "Count each value. Group values by their frequency. Iterate frequencies from nums.length down to 1 and collect values until k slots are filled.",
+        "bruteForce": "Count frequencies, then repeatedly scan all distinct values to find the current largest remaining count. This works but can take O(k * distinct).",
+        "alternates": [
+          "Use a min-heap of size k over the frequency map; this is O(n log k) and useful when bucket memory is not preferred.",
+          "Sort distinct values by frequency; simpler to reason about, but O(d log d) where d is distinct count."
+        ],
+        "gotchas": [
+          "Bucket index is frequency, not the value itself.",
+          "Multiple values can share the same frequency.",
+          "Stop after k values; do not keep adding an entire bucket if it would exceed k."
+        ]
       }
     ];
 
@@ -1213,6 +1243,15 @@
           "From a true start, walk right while the next number exists."
         ],
         "skeleton": "set = all nums\nbest = 0\nfor num in nums:\n  if set does not contain num - 1:\n    length = 1\n    while set contains num + length:\n      length++\n    best = max(best, length)\nreturn best"
+      },
+      "TopKFrequentElements": {
+        "prompt": "Before reading: after counting values, what should be sorted by frequency without sorting?",
+        "steps": [
+          "Count each number's frequency.",
+          "Put each number on the bucket for its count.",
+          "Walk buckets from highest frequency down until k values are collected."
+        ],
+        "skeleton": "freq = map value -> count\nbuckets = map count -> values\nfor value,count in freq:\n  buckets[count].add(value)\nanswer = []\nfor count from nums.length down to 1:\n  for value in buckets[count]:\n    add value until answer size == k\nreturn answer"
       }
     };
 
@@ -1227,7 +1266,8 @@
       "IsomorphicStrings": "forward map checks consistency\nreverse map blocks shared targets",
       "WordPattern": "pattern letter reserves word\nword reserves pattern letter",
       "MyHashMap": "bucket narrows the search\nchain handles same-bucket keys",
-      "LongestConsecutiveSequence": "only chain heads start walks\nset answers next-number existence"
+      "LongestConsecutiveSequence": "only chain heads start walks\nset answers next-number existence",
+      "TopKFrequentElements": "count values first\nfrequency buckets avoid sorting"
     };
 
     const solvedOrder = [
@@ -1241,7 +1281,8 @@
       "IsomorphicStrings",
       "WordPattern",
       "MyHashMap",
-      "LongestConsecutiveSequence"
+      "LongestConsecutiveSequence",
+      "TopKFrequentElements"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
