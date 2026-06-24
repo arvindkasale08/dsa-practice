@@ -1058,6 +1058,42 @@
           "After moving a 2 right, do not skip the unknown value swapped into the scan position.",
           "The clean invariant stops when scan passes high, not when they merely meet."
         ]
+      },
+      {
+        "name": "BackspaceStringCompare",
+        "source": "../com/arvind/revision/twopointers/BackspaceStringCompare.java",
+        "label": "Reverse scan with skip counts",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/backspace-string-compare/",
+        "description": "Given two strings containing lowercase letters and '#', compare whether they are equal after each '#' deletes the previous available character. Do it without building the final strings.",
+        "time": "O(n + m)",
+        "space": "O(1)",
+        "structures": "Two reverse pointers, skip counters",
+        "input": "s = \"bxj##tw\"\nt = \"bxo#j##tw\"",
+        "output": "true",
+        "recognize": "When backspaces only affect earlier characters and equality can be decided by comparing the next live character from the end.",
+        "visual": [
+          [
+            "s: b x j # # t w",
+            "live: b t w"
+          ],
+          [
+            "t: b x o # j # # t w",
+            "live: b t w"
+          ]
+        ],
+        "visualText": "Scan from the right as if each # creates a skip ticket. Spend skip tickets on letters until the next live character is visible.",
+        "core": "Start both pointers at the end. For each string, move left past backspaces and skipped letters until a live character or -1 appears. Compare live characters, then move both pointers left.",
+        "bruteForce": "Build both final strings with a stack or StringBuilder, then compare them. It is straightforward, but it spends O(n + m) extra space.",
+        "alternates": [
+          "Use a stack for each string when clarity matters more than constant extra space.",
+          "Use a helper that returns the next valid index for each string; this keeps the comparison loop small."
+        ],
+        "gotchas": [
+          "Compare only after both pointers are moved to live characters.",
+          "If one pointer runs out before the other, the strings differ.",
+          "Multiple consecutive backspaces accumulate skip count."
+        ]
       }
     ];
 
@@ -1133,6 +1169,15 @@
           "Two goes to high; re-check the new scan value."
         ],
         "skeleton": "low = 0; scan = 0; high = n - 1\nwhile scan <= high:\n  if arr[scan] == 0: swap(low++, scan++)\n  else if arr[scan] == 1: scan++\n  else: swap(scan, high--)"
+      },
+      "BackspaceStringCompare": {
+        "prompt": "Before reading: what does a # mean when scanning from right to left?",
+        "steps": [
+          "Move each pointer left until it lands on a live character.",
+          "A # increases skip count; a normal character is skipped if skip count is positive.",
+          "Compare the two live characters, then continue left."
+        ],
+        "skeleton": "i = s.length - 1; j = t.length - 1\nwhile i >= 0 or j >= 0:\n  i = nextLiveIndex(s, i)\n  j = nextLiveIndex(t, j)\n  if i < 0 or j < 0: return i == j\n  if s[i] != t[j]: return false\n  i--; j--\nreturn true"
       }
     };
 
@@ -1144,7 +1189,8 @@
       "ThreeSum": "fix anchor, then two-sum with left/right",
       "ThreeSumClosest": "update best by |target - sum|\nmove pointer by sum direction",
       "ThreeSumSmaller": "if sum < target:\n  count += right - left",
-      "DutchNationalFlagProblem": "0 → swap low\n1 → advance\n2 → swap high"
+      "DutchNationalFlagProblem": "0 → swap low\n1 → advance\n2 → swap high",
+      "BackspaceStringCompare": "# creates skip tickets\nreverse pointers reveal next live character"
     };
 
     const solvedOrder = [
@@ -1155,7 +1201,8 @@
       "ThreeSum",
       "ThreeSumClosest",
       "ThreeSumSmaller",
-      "DutchNationalFlagProblem"
+      "DutchNationalFlagProblem",
+      "BackspaceStringCompare"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
