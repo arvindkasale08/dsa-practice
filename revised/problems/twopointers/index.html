@@ -1094,6 +1094,45 @@
           "If one pointer runs out before the other, the strings differ.",
           "Multiple consecutive backspaces accumulate skip count."
         ]
+      },
+      {
+        "name": "ValidPalindromeII",
+        "source": "../com/arvind/revision/twopointers/ValidPalindromeII.java",
+        "label": "Spend one deletion",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/valid-palindrome-ii/",
+        "description": "Given a string, return true if it is already a palindrome or can become one after deleting at most one character.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Two pointers, bounded palindrome check",
+        "input": "s = \"abca\"",
+        "output": "true",
+        "recognize": "When the string must be almost symmetric and exactly one bad character is allowed to disappear.",
+        "visual": [
+          [
+            "a",
+            "b",
+            "c",
+            "a"
+          ],
+          [
+            "match",
+            "mismatch",
+            "try skip b or c"
+          ]
+        ],
+        "visualText": "Walk inward normally. At the first broken mirror pair, spend the one deletion token on either the left character or the right character.",
+        "core": "Use two pointers from both ends. If characters match, keep moving inward. On the first mismatch, check whether skipping left or skipping right leaves a normal palindrome.",
+        "bruteForce": "Try deleting every character once and test whether the result is a palindrome. It is easy to reason about but costs O(n^2) time if each deletion builds or checks a string.",
+        "alternates": [
+          "Recursive validation with a remaining-delete count works, but it is more general than this problem needs.",
+          "Build two candidate substrings after the mismatch and compare them; simpler to see, but it uses extra string space."
+        ],
+        "gotchas": [
+          "Branch only at the first mismatch; after spending the deletion, the rest must be a perfect palindrome.",
+          "Try both skip-left and skip-right because either side may be the extra character.",
+          "At most one deletion means already-palindromic strings are also valid."
+        ]
       }
     ];
 
@@ -1178,6 +1217,15 @@
           "Compare the two live characters, then continue left."
         ],
         "skeleton": "i = s.length - 1; j = t.length - 1\nwhile i >= 0 or j >= 0:\n  i = nextLiveIndex(s, i)\n  j = nextLiveIndex(t, j)\n  if i < 0 or j < 0: return i == j\n  if s[i] != t[j]: return false\n  i--; j--\nreturn true"
+      },
+      "ValidPalindromeII": {
+        "prompt": "Before reading: where do you spend the only deletion token?",
+        "steps": [
+          "Move left and right inward while characters match.",
+          "At the first mismatch, try skipping the left character.",
+          "Also try skipping the right character; either successful inner check is enough."
+        ],
+        "skeleton": "left = 0; right = n - 1\nwhile left < right:\n  if s[left] == s[right]: left++; right--\n  else:\n    return isPalindrome(left + 1, right)\n        || isPalindrome(left, right - 1)\nreturn true"
       }
     };
 
@@ -1190,7 +1238,8 @@
       "ThreeSumClosest": "update best by |target - sum|\nmove pointer by sum direction",
       "ThreeSumSmaller": "if sum < target:\n  count += right - left",
       "DutchNationalFlagProblem": "0 → swap low\n1 → advance\n2 → swap high",
-      "BackspaceStringCompare": "# creates skip tickets\nreverse pointers reveal next live character"
+      "BackspaceStringCompare": "# creates skip tickets\nreverse pointers reveal next live character",
+      "ValidPalindromeII": "first mismatch spends the only deletion:\nskip left OR skip right"
     };
 
     const solvedOrder = [
@@ -1202,7 +1251,8 @@
       "ThreeSumClosest",
       "ThreeSumSmaller",
       "DutchNationalFlagProblem",
-      "BackspaceStringCompare"
+      "BackspaceStringCompare",
+      "ValidPalindromeII"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
