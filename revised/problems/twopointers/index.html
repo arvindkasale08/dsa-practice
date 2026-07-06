@@ -1515,6 +1515,51 @@
           "When a new max1 appears, move the old max1 into max2 first.",
           "Apply the -1 after choosing the two largest numbers."
         ]
+      },
+      {
+        "name": "RearrangeBySign",
+        "source": "../com/arvind/revision/twopointers/RearrangeBySign.java",
+        "label": "Alternate signs",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/rearrange-array-elements-by-sign/",
+        "description": "Given an array with equal counts of positive and negative numbers, rearrange it so positives and negatives alternate, starting with a positive, while preserving relative order within each sign group.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Output array, positive scan pointer, negative scan pointer",
+        "input": "nums = [3, 1, -2, -5, 2, -4]",
+        "output": "[3, -2, 1, -5, 2, -4]",
+        "recognize": "When the target positions are fixed by sign: even indexes need positives and odd indexes need negatives.",
+        "visual": [
+          [
+            "0:+",
+            "1:-",
+            "2:+",
+            "3:-",
+            "4:+",
+            "5:-"
+          ],
+          [
+            "pos scan",
+            "neg scan"
+          ],
+          [
+            "write positive",
+            "write negative",
+            "jump +2"
+          ]
+        ],
+        "visualText": "Think of the result as alternating slots. Fill each even slot with the next positive and the following odd slot with the next negative.",
+        "core": "Keep one pointer searching for the next positive and one pointer searching for the next negative. Write them into result positions i and i+1, then move i by two.",
+        "bruteForce": "Build two separate lists, one for positives and one for negatives, then merge them alternately. It is clear but still uses O(n) extra space.",
+        "alternates": [
+          "Use direct write indexes: positiveIndex = 0 and negativeIndex = 1, then place each scanned value in the matching slot.",
+          "If relative order did not matter, in-place partitioning could be considered, but this problem expects stable sign order."
+        ],
+        "gotchas": [
+          "The output starts with a positive at index 0.",
+          "Preserve relative order within positives and within negatives.",
+          "Advance the result index by two after writing one positive-negative pair."
+        ]
       }
     ];
 
@@ -1680,6 +1725,15 @@
           "When current becomes max1, demote old max1 into max2 before replacing it."
         ],
         "skeleton": "max1 = -inf; max2 = -inf\nfor value in nums:\n  if value >= max1:\n    max2 = max1\n    max1 = value\n  else if value >= max2:\n    max2 = value\nreturn (max1 - 1) * (max2 - 1)"
+      },
+      "RearrangeBySign": {
+        "prompt": "Before reading: which slots are reserved for positives and negatives?",
+        "steps": [
+          "Even output positions get the next positive number.",
+          "Odd output positions get the next negative number.",
+          "Move both source scanners forward only after their next matching value is used."
+        ],
+        "skeleton": "result = int[n]\npos = 0; neg = 0\nfor i = 0; i < n; i += 2:\n  move pos to next positive\n  move neg to next negative\n  result[i] = nums[pos]\n  result[i + 1] = nums[neg]\n  pos++; neg++\nreturn result"
       }
     };
 
@@ -1701,7 +1755,8 @@
       "RemoveDuplicatesFromSortedArray": "r finds next unique\nwrite it at l + 1",
       "TwoSumSorted": "sum too small -> left++\nsum too large -> right--",
       "FindDuplicateNumber": "values are next-index arrows\nduplicate is cycle entry",
-      "MaximumProductOfTwoElementsInArray": "new max1 demotes old max1\ninto max2"
+      "MaximumProductOfTwoElementsInArray": "new max1 demotes old max1\ninto max2",
+      "RearrangeBySign": "even slots take positives\nodd slots take negatives"
     };
 
     const solvedOrder = [
@@ -1722,7 +1777,8 @@
       "RemoveDuplicatesFromSortedArray",
       "TwoSumSorted",
       "FindDuplicateNumber",
-      "MaximumProductOfTwoElementsInArray"
+      "MaximumProductOfTwoElementsInArray",
+      "RearrangeBySign"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
