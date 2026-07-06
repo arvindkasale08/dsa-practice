@@ -1287,6 +1287,50 @@
           "Only move the light pointer when the lightest person actually pairs with the heaviest.",
           "The loop must allow left == right because one remaining person still needs a boat."
         ]
+      },
+      {
+        "name": "SortArrayByParity",
+        "source": "../com/arvind/revision/twopointers/SortArrayByParity.java",
+        "label": "Parity partition",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/sort-array-by-parity/",
+        "description": "Given an integer array, move all even numbers before all odd numbers. Any valid order inside the even and odd groups is allowed.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Left/right pointers, in-place swaps",
+        "input": "nums = [3, 1, 2, 4]",
+        "output": "[4, 2, 1, 3]",
+        "recognize": "When the array only needs to be partitioned into two groups, and internal order does not matter.",
+        "visual": [
+          [
+            "3",
+            "1",
+            "2",
+            "4"
+          ],
+          [
+            "odd on left",
+            "",
+            "",
+            "even on right"
+          ],
+          [
+            "swap",
+            "then shrink both sides"
+          ]
+        ],
+        "visualText": "Treat the left side as the even zone and the right side as the odd zone. Swap only when both ends are on the wrong side.",
+        "core": "Move left past evens and right past odds. When left is odd and right is even, swap them and move both pointers inward.",
+        "bruteForce": "Create a new array, first copy all evens, then copy all odds. It is simple but uses O(n) extra space.",
+        "alternates": [
+          "Use a write pointer to place evens at the front in one pass; this is also O(n) but may perform more swaps.",
+          "If stable order were required, use an auxiliary array because this in-place partition does not preserve order."
+        ],
+        "gotchas": [
+          "Any even-before-odd ordering is valid; do not preserve original order unless the problem asks.",
+          "Move pointers over already-correct values before swapping.",
+          "After a successful swap, both ends are fixed and both pointers can move."
+        ]
       }
     ];
 
@@ -1407,6 +1451,15 @@
           "Count one boat every loop, and move the heavy pointer every loop."
         ],
         "skeleton": "sort(people)\nleft = 0; right = n - 1; boats = 0\nwhile left <= right:\n  if people[left] + people[right] <= limit:\n    left++\n  right--\n  boats++\nreturn boats"
+      },
+      "SortArrayByParity": {
+        "prompt": "Before reading: what exact pair deserves a swap?",
+        "steps": [
+          "Left pointer wants an even value.",
+          "Right pointer wants an odd value.",
+          "Swap only when left is odd and right is even; otherwise move the already-correct side."
+        ],
+        "skeleton": "left = 0; right = n - 1\nwhile left < right:\n  if nums[left] is odd and nums[right] is even:\n    swap(left, right); left++; right--\n  else:\n    if nums[left] is even: left++\n    if nums[right] is odd: right--\nreturn nums"
       }
     };
 
@@ -1423,7 +1476,8 @@
       "ValidPalindromeII": "first mismatch spends the only deletion:\nskip left OR skip right",
       "ShortestUnsortedContinuousSubarray": "left scan moves right boundary\nright scan moves left boundary",
       "ContainerWithMostWater": "area is capped by shorter wall\nmove the shorter pointer",
-      "BoatsToSavePeople": "heaviest boards every loop\nlightest joins only if it fits"
+      "BoatsToSavePeople": "heaviest boards every loop\nlightest joins only if it fits",
+      "SortArrayByParity": "swap only wrong-left odd\nwith wrong-right even"
     };
 
     const solvedOrder = [
@@ -1439,7 +1493,8 @@
       "ValidPalindromeII",
       "ShortestUnsortedContinuousSubarray",
       "ContainerWithMostWater",
-      "BoatsToSavePeople"
+      "BoatsToSavePeople",
+      "SortArrayByParity"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
