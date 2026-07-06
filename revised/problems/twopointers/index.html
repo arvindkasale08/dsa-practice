@@ -1331,6 +1331,58 @@
           "Move pointers over already-correct values before swapping.",
           "After a successful swap, both ends are fixed and both pointers can move."
         ]
+      },
+      {
+        "name": "RemoveDuplicatesFromSortedArray",
+        "source": "../com/arvind/revision/twopointers/RemoveDuplicatesFromSortedArray.java",
+        "label": "Write unique values",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+        "description": "Given a sorted array, remove duplicates in place so each value appears once at the front, and return the number of unique values.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Write boundary, scan pointer, sorted array",
+        "input": "nums = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4]",
+        "output": "5",
+        "recognize": "When the array is already sorted and duplicates appear in contiguous blocks.",
+        "visual": [
+          [
+            "0",
+            "0",
+            "1",
+            "1",
+            "1",
+            "2",
+            "2",
+            "3",
+            "3",
+            "4"
+          ],
+          [
+            "last kept",
+            "skip",
+            "next unique",
+            "",
+            "",
+            "next unique"
+          ],
+          [
+            "write at l+1",
+            "then advance"
+          ]
+        ],
+        "visualText": "Because equal values are adjacent, the scan pointer can jump over a duplicate block and copy the next new value right after the last kept value.",
+        "core": "Keep l at the last unique value written. Move r across duplicates. When r finds a new value, write it to l+1 and advance both sides.",
+        "bruteForce": "Use a set or new list to collect unique values, then copy them back. It is easier but uses extra space and ignores the sorted in-place advantage.",
+        "alternates": [
+          "Use a write pointer starting at 1 and copy nums[read] whenever it differs from nums[write-1].",
+          "For the variant allowing at most two duplicates, compare against nums[write-2] instead."
+        ],
+        "gotchas": [
+          "Return the count of unique values, not the full array.",
+          "Only the first returned-length positions need to be correct.",
+          "The sorted property is what makes adjacent duplicate skipping valid."
+        ]
       }
     ];
 
@@ -1460,6 +1512,15 @@
           "Swap only when left is odd and right is even; otherwise move the already-correct side."
         ],
         "skeleton": "left = 0; right = n - 1\nwhile left < right:\n  if nums[left] is odd and nums[right] is even:\n    swap(left, right); left++; right--\n  else:\n    if nums[left] is even: left++\n    if nums[right] is odd: right--\nreturn nums"
+      },
+      "RemoveDuplicatesFromSortedArray": {
+        "prompt": "Before reading: where does the next new value get written?",
+        "steps": [
+          "Keep l on the last unique value already placed.",
+          "Move r until it finds a value different from nums[l].",
+          "Copy nums[r] to l+1, then advance the unique boundary."
+        ],
+        "skeleton": "l = 0; r = 1\nwhile r < n:\n  while r < n and nums[r] == nums[l]: r++\n  if r == n: break\n  nums[l + 1] = nums[r]\n  l++; r++\nreturn l + 1"
       }
     };
 
@@ -1477,7 +1538,8 @@
       "ShortestUnsortedContinuousSubarray": "left scan moves right boundary\nright scan moves left boundary",
       "ContainerWithMostWater": "area is capped by shorter wall\nmove the shorter pointer",
       "BoatsToSavePeople": "heaviest boards every loop\nlightest joins only if it fits",
-      "SortArrayByParity": "swap only wrong-left odd\nwith wrong-right even"
+      "SortArrayByParity": "swap only wrong-left odd\nwith wrong-right even",
+      "RemoveDuplicatesFromSortedArray": "r finds next unique\nwrite it at l + 1"
     };
 
     const solvedOrder = [
@@ -1494,7 +1556,8 @@
       "ShortestUnsortedContinuousSubarray",
       "ContainerWithMostWater",
       "BoatsToSavePeople",
-      "SortArrayByParity"
+      "SortArrayByParity",
+      "RemoveDuplicatesFromSortedArray"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
