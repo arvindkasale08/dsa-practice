@@ -1188,6 +1188,60 @@
           "The backward scan finds the left boundary, not the right one.",
           "If no violation is found, return 0 for an already sorted array."
         ]
+      },
+      {
+        "name": "ContainerWithMostWater",
+        "source": "../com/arvind/revision/twopointers/ContainerWithMostWater.java",
+        "label": "Move the shorter wall",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/container-with-most-water/",
+        "description": "Given vertical line heights, choose two lines that form a container with the x-axis and return the maximum water area they can hold.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Two boundary pointers, max area",
+        "input": "height = [1, 8, 6, 2, 5, 4, 8, 3, 7]",
+        "output": "49",
+        "recognize": "When the score depends on two endpoints, and width shrinks every time you move inward.",
+        "visual": [
+          [
+            "1",
+            "8",
+            "6",
+            "2",
+            "5",
+            "4",
+            "8",
+            "3",
+            "7"
+          ],
+          [
+            "L",
+            "tall",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "R"
+          ],
+          [
+            "area = min(left,right) * width",
+            "move shorter side"
+          ]
+        ],
+        "visualText": "The water height is capped by the shorter wall. Moving the taller wall inward only loses width while keeping the same short cap.",
+        "core": "Start at both ends, compute area, update the best answer, then move the pointer at the shorter height inward.",
+        "bruteForce": "Check every pair of lines and compute its area. This is obviously correct but takes O(n^2) time.",
+        "alternates": [
+          "There is no need to sort because positions define width; sorting would destroy the distance information.",
+          "A monotonic structure is unnecessary here because each step safely discards the shorter boundary."
+        ],
+        "gotchas": [
+          "Area uses the smaller height, not the larger one.",
+          "Width is right-left, not the number of bars between them.",
+          "Move the shorter wall; moving the taller wall cannot improve the current height limit."
+        ]
       }
     ];
 
@@ -1290,6 +1344,15 @@
           "The answer is right-left+1, or 0 if no boundary moved."
         ],
         "skeleton": "right = 0; maxSoFar = nums[0]\nfor i from 1 to n-1:\n  if nums[i] < maxSoFar: right = i\n  maxSoFar = max(maxSoFar, nums[i])\nleft = 0; minSoFar = nums[n-1]\nfor i from n-2 down to 0:\n  if nums[i] > minSoFar: left = i\n  minSoFar = min(minSoFar, nums[i])\nreturn no violation ? 0 : right - left + 1"
+      },
+      "ContainerWithMostWater": {
+        "prompt": "Before reading: why is the shorter wall the only pointer worth moving?",
+        "steps": [
+          "Compute area from the current left and right walls.",
+          "The shorter wall limits the water height.",
+          "Move the shorter wall inward to search for a taller cap before width shrinks too much."
+        ],
+        "skeleton": "left = 0; right = n - 1; best = 0\nwhile left < right:\n  area = min(height[left], height[right]) * (right - left)\n  best = max(best, area)\n  if height[left] <= height[right]: left++\n  else: right--\nreturn best"
       }
     };
 
@@ -1304,7 +1367,8 @@
       "DutchNationalFlagProblem": "0 → swap low\n1 → advance\n2 → swap high",
       "BackspaceStringCompare": "# creates skip tickets\nreverse pointers reveal next live character",
       "ValidPalindromeII": "first mismatch spends the only deletion:\nskip left OR skip right",
-      "ShortestUnsortedContinuousSubarray": "left scan moves right boundary\nright scan moves left boundary"
+      "ShortestUnsortedContinuousSubarray": "left scan moves right boundary\nright scan moves left boundary",
+      "ContainerWithMostWater": "area is capped by shorter wall\nmove the shorter pointer"
     };
 
     const solvedOrder = [
@@ -1318,7 +1382,8 @@
       "DutchNationalFlagProblem",
       "BackspaceStringCompare",
       "ValidPalindromeII",
-      "ShortestUnsortedContinuousSubarray"
+      "ShortestUnsortedContinuousSubarray",
+      "ContainerWithMostWater"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
