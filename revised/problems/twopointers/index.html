@@ -1133,6 +1133,61 @@
           "Try both skip-left and skip-right because either side may be the extra character.",
           "At most one deletion means already-palindromic strings are also valid."
         ]
+      },
+      {
+        "name": "ShortestUnsortedContinuousSubarray",
+        "source": "../com/arvind/revision/twopointers/ShortestUnsortedContinuousSubarray.java",
+        "label": "Boundary violation scan",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/shortest-unsorted-continuous-subarray/",
+        "description": "Given an integer array, return the length of the shortest continuous subarray that must be sorted so the whole array becomes non-decreasing.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Forward max scan, backward min scan, left/right boundaries",
+        "input": "nums = [2, 6, 4, 8, 10, 9, 15]",
+        "output": "5",
+        "recognize": "When only one continuous middle window is broken, and values outside it should already fit sorted order.",
+        "visual": [
+          [
+            "2",
+            "6",
+            "4",
+            "8",
+            "10",
+            "9",
+            "15"
+          ],
+          [
+            "ok",
+            "max=6",
+            "bad R",
+            "ok",
+            "max=10",
+            "bad R",
+            "ok"
+          ],
+          [
+            "ok",
+            "bad L",
+            "min=4",
+            "ok",
+            "bad L",
+            "min=9",
+            "ok"
+          ]
+        ],
+        "visualText": "A value smaller than the best max seen from the left must be inside the window. A value larger than the best min seen from the right must also be inside it.",
+        "core": "Scan left to right and push the right boundary whenever nums[i] is less than maxSoFar. Scan right to left and push the left boundary whenever nums[i] is greater than minSoFar.",
+        "bruteForce": "Copy and sort the array, then compare positions with the original. The first and last differences give the window, but sorting costs O(n log n).",
+        "alternates": [
+          "Use a monotonic stack to find the same left and right boundaries; it is useful practice but uses O(n) space.",
+          "Find the initially decreasing window, then expand it by the min and max inside that window. This is also O(n), but has more boundary cases."
+        ],
+        "gotchas": [
+          "The forward scan finds the right boundary, not the left one.",
+          "The backward scan finds the left boundary, not the right one.",
+          "If no violation is found, return 0 for an already sorted array."
+        ]
       }
     ];
 
@@ -1226,6 +1281,15 @@
           "Also try skipping the right character; either successful inner check is enough."
         ],
         "skeleton": "left = 0; right = n - 1\nwhile left < right:\n  if s[left] == s[right]: left++; right--\n  else:\n    return isPalindrome(left + 1, right)\n        || isPalindrome(left, right - 1)\nreturn true"
+      },
+      "ShortestUnsortedContinuousSubarray": {
+        "prompt": "Before reading: which scan gives the right boundary, and which scan gives the left boundary?",
+        "steps": [
+          "From the left, track maxSoFar; smaller values prove the right edge must extend there.",
+          "From the right, track minSoFar; larger values prove the left edge must extend there.",
+          "The answer is right-left+1, or 0 if no boundary moved."
+        ],
+        "skeleton": "right = 0; maxSoFar = nums[0]\nfor i from 1 to n-1:\n  if nums[i] < maxSoFar: right = i\n  maxSoFar = max(maxSoFar, nums[i])\nleft = 0; minSoFar = nums[n-1]\nfor i from n-2 down to 0:\n  if nums[i] > minSoFar: left = i\n  minSoFar = min(minSoFar, nums[i])\nreturn no violation ? 0 : right - left + 1"
       }
     };
 
@@ -1239,7 +1303,8 @@
       "ThreeSumSmaller": "if sum < target:\n  count += right - left",
       "DutchNationalFlagProblem": "0 → swap low\n1 → advance\n2 → swap high",
       "BackspaceStringCompare": "# creates skip tickets\nreverse pointers reveal next live character",
-      "ValidPalindromeII": "first mismatch spends the only deletion:\nskip left OR skip right"
+      "ValidPalindromeII": "first mismatch spends the only deletion:\nskip left OR skip right",
+      "ShortestUnsortedContinuousSubarray": "left scan moves right boundary\nright scan moves left boundary"
     };
 
     const solvedOrder = [
@@ -1252,7 +1317,8 @@
       "ThreeSumSmaller",
       "DutchNationalFlagProblem",
       "BackspaceStringCompare",
-      "ValidPalindromeII"
+      "ValidPalindromeII",
+      "ShortestUnsortedContinuousSubarray"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
