@@ -24,6 +24,6 @@ public class ContainerWithMostWater {
         int[] nums = new int[] {1,8,6,2,5,4,8,3,7};
         int[] nums2 = new int[] {1, 1};
         ContainerWithMostWater solution = new ContainerWithMostWater();
-        System.out.println(solution.maxArea(nums2));
+        System.out.println(solution.maxArea(nums));
     }
 }
