@@ -1383,6 +1383,50 @@
           "Only the first returned-length positions need to be correct.",
           "The sorted property is what makes adjacent duplicate skipping valid."
         ]
+      },
+      {
+        "name": "TwoSumSorted",
+        "source": "../com/arvind/revision/twopointers/TwoSumSorted.java",
+        "label": "Sorted sum squeeze",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/",
+        "description": "Given a 1-indexed sorted array, return the two positions whose values add up to the target. Exactly one valid answer is expected.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Left/right pointers, sorted array",
+        "input": "numbers = [2, 7, 11, 15]\ntarget = 9",
+        "output": "[1, 2]",
+        "recognize": "When the array is sorted and the question asks for two values that sum to a target.",
+        "visual": [
+          [
+            "2",
+            "7",
+            "11",
+            "15"
+          ],
+          [
+            "L",
+            "",
+            "",
+            "R"
+          ],
+          [
+            "sum too big -> R--",
+            "sum too small -> L++"
+          ]
+        ],
+        "visualText": "The sorted order gives direction. A sum that is too large can only improve by dropping the right pointer; a sum that is too small can only improve by raising the left pointer.",
+        "core": "Start at both ends. Compare current sum to target. Move left up when the sum is too small, move right down when the sum is too large, and return 1-based indexes on match.",
+        "bruteForce": "Check every pair until the target sum appears. It is simple but takes O(n^2) time.",
+        "alternates": [
+          "Use a HashMap like classic Two Sum, but that ignores the sorted property and uses O(n) space.",
+          "For each value, binary search for target-value; this is O(n log n), slower than two pointers."
+        ],
+        "gotchas": [
+          "Return 1-based indexes, not Java's 0-based positions.",
+          "Move only one pointer after comparing the sum.",
+          "The two-pointer direction works because the input is sorted."
+        ]
       }
     ];
 
@@ -1521,6 +1565,15 @@
           "Copy nums[r] to l+1, then advance the unique boundary."
         ],
         "skeleton": "l = 0; r = 1\nwhile r < n:\n  while r < n and nums[r] == nums[l]: r++\n  if r == n: break\n  nums[l + 1] = nums[r]\n  l++; r++\nreturn l + 1"
+      },
+      "TwoSumSorted": {
+        "prompt": "Before reading: which pointer move makes the current sum move toward target?",
+        "steps": [
+          "Left and right start at the smallest and largest remaining values.",
+          "If the sum is too small, increase it by moving left rightward.",
+          "If the sum is too large, decrease it by moving right leftward."
+        ],
+        "skeleton": "left = 0; right = n - 1\nwhile left < right:\n  sum = numbers[left] + numbers[right]\n  if sum == target: return [left + 1, right + 1]\n  if sum < target: left++\n  else: right--"
       }
     };
 
@@ -1539,7 +1592,8 @@
       "ContainerWithMostWater": "area is capped by shorter wall\nmove the shorter pointer",
       "BoatsToSavePeople": "heaviest boards every loop\nlightest joins only if it fits",
       "SortArrayByParity": "swap only wrong-left odd\nwith wrong-right even",
-      "RemoveDuplicatesFromSortedArray": "r finds next unique\nwrite it at l + 1"
+      "RemoveDuplicatesFromSortedArray": "r finds next unique\nwrite it at l + 1",
+      "TwoSumSorted": "sum too small -> left++\nsum too large -> right--"
     };
 
     const solvedOrder = [
@@ -1557,7 +1611,8 @@
       "ContainerWithMostWater",
       "BoatsToSavePeople",
       "SortArrayByParity",
-      "RemoveDuplicatesFromSortedArray"
+      "RemoveDuplicatesFromSortedArray",
+      "TwoSumSorted"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
