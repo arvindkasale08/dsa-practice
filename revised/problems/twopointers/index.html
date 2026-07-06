@@ -1427,6 +1427,51 @@
           "Move only one pointer after comparing the sum.",
           "The two-pointer direction works because the input is sorted."
         ]
+      },
+      {
+        "name": "FindDuplicateNumber",
+        "source": "../com/arvind/revision/twopointers/FindDuplicateNumber.java",
+        "label": "Cycle entry in value graph",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/find-the-duplicate-number/",
+        "description": "Given n+1 numbers where every value is in the range 1..n, return the one repeated number without modifying the array and using only constant extra space.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Slow pointer, fast pointer, value-as-next-index graph",
+        "input": "nums = [1, 3, 4, 2, 2]",
+        "output": "2",
+        "recognize": "When values are valid indexes and the constraints forbid sorting, marking, or extra storage.",
+        "visual": [
+          [
+            "0",
+            "1",
+            "3",
+            "2",
+            "4",
+            "2"
+          ],
+          [
+            "jump by nums[i]",
+            "2 -> 4 -> 2"
+          ],
+          [
+            "cycle entry",
+            "=",
+            "duplicate value"
+          ]
+        ],
+        "visualText": "Read each value as the next index to jump to. The repeated value has two incoming jumps, so the path enters a loop at the duplicate.",
+        "core": "Use Floyd's cycle detection. First let slow and fast meet inside the cycle. Then reset slow to 0 and move both one step at a time; their meeting point is the duplicate value.",
+        "bruteForce": "Compare each number against every other number or sort the array first. Both are simpler, but brute force is O(n^2) and sorting modifies or copies the array.",
+        "alternates": [
+          "Use a HashSet to remember seen values, but that violates the constant-space constraint.",
+          "Binary search on value counts can keep O(1) space without modifying the array, but it is O(n log n) and less visual."
+        ],
+        "gotchas": [
+          "Move by value: next index is nums[current], not current+1.",
+          "After the first meeting, reset one pointer to 0, not to nums[0] in this implementation shape.",
+          "The duplicate is the cycle entry value, not merely the first slow/fast meeting point."
+        ]
       }
     ];
 
@@ -1574,6 +1619,15 @@
           "If the sum is too large, decrease it by moving right leftward."
         ],
         "skeleton": "left = 0; right = n - 1\nwhile left < right:\n  sum = numbers[left] + numbers[right]\n  if sum == target: return [left + 1, right + 1]\n  if sum < target: left++\n  else: right--"
+      },
+      "FindDuplicateNumber": {
+        "prompt": "Before reading: why can an array of values behave like a linked-list cycle?",
+        "steps": [
+          "Treat nums[i] as the next index to jump to.",
+          "Use slow and fast jumps until they meet inside the loop.",
+          "Reset one pointer to 0; the second meeting is the loop entry and duplicate."
+        ],
+        "skeleton": "slow = 0; fast = 0\nrepeat:\n  slow = nums[slow]\n  fast = nums[nums[fast]]\nuntil slow == fast\nslow = 0\nwhile slow != fast:\n  slow = nums[slow]\n  fast = nums[fast]\nreturn slow"
       }
     };
 
@@ -1593,7 +1647,8 @@
       "BoatsToSavePeople": "heaviest boards every loop\nlightest joins only if it fits",
       "SortArrayByParity": "swap only wrong-left odd\nwith wrong-right even",
       "RemoveDuplicatesFromSortedArray": "r finds next unique\nwrite it at l + 1",
-      "TwoSumSorted": "sum too small -> left++\nsum too large -> right--"
+      "TwoSumSorted": "sum too small -> left++\nsum too large -> right--",
+      "FindDuplicateNumber": "values are next-index arrows\nduplicate is cycle entry"
     };
 
     const solvedOrder = [
@@ -1612,7 +1667,8 @@
       "BoatsToSavePeople",
       "SortArrayByParity",
       "RemoveDuplicatesFromSortedArray",
-      "TwoSumSorted"
+      "TwoSumSorted",
+      "FindDuplicateNumber"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
