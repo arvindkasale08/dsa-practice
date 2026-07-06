@@ -1472,6 +1472,49 @@
           "After the first meeting, reset one pointer to 0, not to nums[0] in this implementation shape.",
           "The duplicate is the cycle entry value, not merely the first slow/fast meeting point."
         ]
+      },
+      {
+        "name": "MaximumProductOfTwoElementsInArray",
+        "source": "../com/arvind/revision/twopointers/MaximumProductOfTwoElementsInArray.java",
+        "label": "Track top two",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/maximum-product-of-two-elements-in-an-array/",
+        "description": "Given an array of positive integers, choose two different elements and return the maximum value of (a-1) * (b-1).",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Largest value, second largest value",
+        "input": "nums = [3, 4, 5, 2]",
+        "output": "12",
+        "recognize": "When the final score only needs the largest two values, not their positions or all pairs.",
+        "visual": [
+          [
+            "3",
+            "4",
+            "5",
+            "2"
+          ],
+          [
+            "max1=5",
+            "max2=4"
+          ],
+          [
+            "(5-1) * (4-1)",
+            "=",
+            "12"
+          ]
+        ],
+        "visualText": "Carry two trophies while scanning: the biggest seen so far and the runner-up. Only those two can maximize the product.",
+        "core": "Scan once. If the current value beats max1, demote max1 into max2 and replace max1. Otherwise, update max2 if the value is between them.",
+        "bruteForce": "Try every pair and compute the product. This is easy to verify but takes O(n^2) time.",
+        "alternates": [
+          "Sort the array and use the last two values; simpler but O(n log n).",
+          "Use a max-heap and pop two values; works, but uses extra structure for a one-scan problem."
+        ],
+        "gotchas": [
+          "Use two different elements; max2 must come from a separate position.",
+          "When a new max1 appears, move the old max1 into max2 first.",
+          "Apply the -1 after choosing the two largest numbers."
+        ]
       }
     ];
 
@@ -1628,6 +1671,15 @@
           "Reset one pointer to 0; the second meeting is the loop entry and duplicate."
         ],
         "skeleton": "slow = 0; fast = 0\nrepeat:\n  slow = nums[slow]\n  fast = nums[nums[fast]]\nuntil slow == fast\nslow = 0\nwhile slow != fast:\n  slow = nums[slow]\n  fast = nums[fast]\nreturn slow"
+      },
+      "MaximumProductOfTwoElementsInArray": {
+        "prompt": "Before reading: what happens to the old max when a new max appears?",
+        "steps": [
+          "Keep max1 as the largest value seen.",
+          "Keep max2 as the second largest value seen.",
+          "When current becomes max1, demote old max1 into max2 before replacing it."
+        ],
+        "skeleton": "max1 = -inf; max2 = -inf\nfor value in nums:\n  if value >= max1:\n    max2 = max1\n    max1 = value\n  else if value >= max2:\n    max2 = value\nreturn (max1 - 1) * (max2 - 1)"
       }
     };
 
@@ -1648,7 +1700,8 @@
       "SortArrayByParity": "swap only wrong-left odd\nwith wrong-right even",
       "RemoveDuplicatesFromSortedArray": "r finds next unique\nwrite it at l + 1",
       "TwoSumSorted": "sum too small -> left++\nsum too large -> right--",
-      "FindDuplicateNumber": "values are next-index arrows\nduplicate is cycle entry"
+      "FindDuplicateNumber": "values are next-index arrows\nduplicate is cycle entry",
+      "MaximumProductOfTwoElementsInArray": "new max1 demotes old max1\ninto max2"
     };
 
     const solvedOrder = [
@@ -1668,7 +1721,8 @@
       "SortArrayByParity",
       "RemoveDuplicatesFromSortedArray",
       "TwoSumSorted",
-      "FindDuplicateNumber"
+      "FindDuplicateNumber",
+      "MaximumProductOfTwoElementsInArray"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
