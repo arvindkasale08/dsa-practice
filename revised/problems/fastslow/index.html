@@ -865,6 +865,52 @@
           "In phase two, both pointers move one step, not fast by two.",
           "Return the node reference, not just the node value."
         ]
+      },
+      {
+        "name": "HappyNumber",
+        "source": "../com/arvind/revision/fastslow/HappyNumber.java",
+        "label": "Digit-square cycle",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/happy-number/",
+        "description": "Given a positive integer, repeatedly replace it with the sum of the squares of its digits. Return true if the chain reaches 1, and false if it falls into a repeating cycle.",
+        "time": "O(log n) per transform; bounded overall for int inputs",
+        "space": "O(k) with visited set",
+        "structures": "HashSet of seen numbers, digit loop",
+        "input": "n = 2",
+        "output": "false",
+        "recognize": "When a value repeatedly transforms into another value and the process either reaches a target or repeats forever.",
+        "visual": [
+          [
+            "2",
+            "4",
+            "16",
+            "37"
+          ],
+          [
+            "58",
+            "89",
+            "145",
+            "42"
+          ],
+          [
+            "20",
+            "4 repeats",
+            "cycle",
+            "false"
+          ]
+        ],
+        "visualText": "Picture each number as a station in a train route. A happy route reaches station 1. An unhappy route revisits an old station and loops forever.",
+        "core": "Keep generating the digit-square sum. If the value becomes 1, return true. If a generated value was already seen, return false because the chain is cycling.",
+        "bruteForce": "Manually simulate for a fixed number of iterations and hope it stops. That can work for small examples but has no clean correctness reason.",
+        "alternates": [
+          "Use Floyd's slow/fast pointers on the generated number sequence to detect the cycle in O(1) extra space.",
+          "For base-10 integers, the sequence quickly falls into a small bounded range, so either a HashSet or Floyd is fast in practice."
+        ],
+        "gotchas": [
+          "Check for a repeated number after generating the next value.",
+          "The digit-square helper must consume all digits with modulo and division.",
+          "Do not treat reaching any small number as success; only 1 means happy."
+        ]
       }
     ];
 
@@ -886,17 +932,28 @@
           "Move both one step at a time; their next meeting is the cycle entry."
         ],
         "skeleton": "slow = head; fast = head\nwhile fast != null and fast.next != null:\n  slow = slow.next\n  fast = fast.next.next\n  if slow == fast: break\nif no meeting: return null\nfast = head\nwhile slow != fast:\n  slow = slow.next\n  fast = fast.next\nreturn slow"
+      },
+      "HappyNumber": {
+        "prompt": "Before reading: what proves the number chain will never reach 1?",
+        "steps": [
+          "Convert the current number into the sum of squared digits.",
+          "If the new value is 1, the number is happy.",
+          "If the new value was seen before, the route is cycling and cannot become happy."
+        ],
+        "skeleton": "seen = empty set\nadd n to seen\nwhile n != 1:\n  n = sumOfSquaredDigits(n)\n  if n in seen: return false\n  add n to seen\nreturn true"
       }
     };
 
     const definingMoves = {
       "LinkedListCycle": "fast moves two, slow moves one\ncycle means fast eventually catches slow",
-      "LinkedListCycleII": "after collision, restart one pointer at head\nmove both one step to find the loop door"
+      "LinkedListCycleII": "after collision, restart one pointer at head\nmove both one step to find the loop door",
+      "HappyNumber": "each number points to its digit-square sum\nrepeat means cycle, 1 means happy"
     };
 
     const solvedOrder = [
       "LinkedListCycle",
-      "LinkedListCycleII"
+      "LinkedListCycleII",
+      "HappyNumber"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
