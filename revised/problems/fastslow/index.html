@@ -983,7 +983,14 @@
           ],
           [
             "find middle",
-            "reverse right half"
+            "reverse right half",
+            "compare halves"
+          ],
+          [
+            "post = next",
+            "next = prev",
+            "prev = current",
+            "current = post"
           ],
           [
             "1 vs 1",
@@ -992,15 +999,16 @@
             "5 vs 5"
           ]
         ],
-        "visualText": "Fold the list at the middle. Reverse the right half so both halves face the same direction, then walk both sides together and compare values.",
-        "core": "Use slow and fast to reach the middle. Reverse from slow onward. Compare the reversed half with the original head until the reversed half ends.",
+        "visualText": "Fold the list at the middle. For the reverse, remember four beats: save the forward link, flip current backward, move prev onto current, then continue using the saved link.",
+        "core": "Use slow and fast to reach the middle. Reverse from slow onward with the rhythm post = current.next, current.next = prev, prev = current, current = post. Then compare the reversed half with the original head until the reversed half ends.",
         "bruteForce": "Copy all node values into an array, then use two indices from both ends. It is very simple, but costs O(n) extra space.",
         "alternates": [
           "Use recursion to compare front and back during unwinding, but it still uses O(n) call stack space.",
           "Restore the reversed half afterward if the caller expects the original list structure to remain unchanged."
         ],
         "gotchas": [
-          "Save the next node before reversing a link, otherwise the rest of the list is lost.",
+          "Always save post = current.next before current.next = prev; after the flip, current no longer knows the original next node.",
+          "Return prev from reverse, because temp/current becomes null after the last node is processed.",
           "Compare only while the reversed second half is non-null.",
           "For odd length lists, starting reversal at slow includes the middle value, which still works because the compare stops on the shorter reversed walk."
         ]
@@ -1045,13 +1053,13 @@
         "skeleton": "slow = head; fast = head\nwhile fast != null and fast.next != null:\n  slow = slow.next\n  fast = fast.next.next\nreturn slow"
       },
       "PalindromicLinkedList": {
-        "prompt": "Before reading: how do you compare a linked list from both ends without backward pointers?",
+        "prompt": "Before reading: in reverse, which pointer saves the road ahead before you flip the arrow?",
         "steps": [
           "Use slow and fast to find the middle.",
-          "Reverse the second half so it can be walked forward.",
+          "Reverse the second half with four beats: save next in post, point current back to prev, move prev forward, then move current to post.",
           "Compare head and reversed-half values one by one."
         ],
-        "skeleton": "slow = middle using fast pointer\nright = reverse(slow)\nleft = head\nwhile right != null:\n  if left.val != right.val: return false\n  left = left.next\n  right = right.next\nreturn true"
+        "skeleton": "slow = middle using fast pointer\nright = reverse(slow)\nleft = head\nwhile right != null:\n  if left.val != right.val: return false\n  left = left.next\n  right = right.next\nreturn true\n\nreverse(head):\n  prev = null; current = head\n  while current != null:\n    post = current.next      // save road ahead\n    current.next = prev      // flip arrow back\n    prev = current           // grow reversed side\n    current = post           // continue forward\n  return prev"
       }
     };
 
@@ -1060,7 +1068,7 @@
       "LinkedListCycleII": "after collision, restart one pointer at head\nmove both one step to find the loop door",
       "HappyNumber": "each number points to its digit-square sum\nrepeat means cycle, 1 means happy",
       "MiddleOfLinkedList": "fast consumes two nodes per slow step\nwhen fast ends, slow is halfway",
-      "PalindromicLinkedList": "find middle, reverse right half\ncompare left and reversed right"
+      "PalindromicLinkedList": "reverse rhythm: save, flip, advance\nthen compare left with reversed right"
     };
 
     const solvedOrder = [
