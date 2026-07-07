@@ -823,6 +823,48 @@
           "Check fast and fast.next before moving fast two steps.",
           "A null head or one-node list without a self-loop should return false."
         ]
+      },
+      {
+        "name": "LinkedListCycleII",
+        "source": "../com/arvind/revision/fastslow/LinkedListCycleII.java",
+        "label": "Find loop entry",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/linked-list-cycle-ii/",
+        "description": "Given the head of a linked list, return the exact node where the cycle begins. If the list has no cycle, return null.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Slow pointer, fast pointer, linked list nodes",
+        "input": "head = [3, 2, 0, -4], pos = 1",
+        "output": "node with value 2",
+        "recognize": "When a linked list may loop and the answer is not just whether a loop exists, but the first node of the loop.",
+        "visual": [
+          [
+            "3",
+            "2",
+            "0",
+            "-4"
+          ],
+          [
+            "phase 1: slow +1, fast +2",
+            "meet somewhere inside loop"
+          ],
+          [
+            "phase 2: head +1, meet +1",
+            "second meeting = cycle start"
+          ]
+        ],
+        "visualText": "First catch the fast runner inside the loop. Then restart one runner at head. When both move one step, they meet exactly at the loop door.",
+        "core": "Use Floyd's first meeting to prove a cycle exists. Then reset one pointer to head and move both pointers one step at a time until they meet at the cycle entry node.",
+        "bruteForce": "Put every visited node reference in a HashSet and return the first node seen twice. It is easy to reason about, but costs O(n) extra space.",
+        "alternates": [
+          "Temporarily tagging nodes can reveal the repeated node, but mutates the list and is unsafe for interview constraints.",
+          "Floyd's two-phase method is the usual constant-space solution."
+        ],
+        "gotchas": [
+          "After the first meeting, reset only one pointer to head; keep the other at the meeting point.",
+          "In phase two, both pointers move one step, not fast by two.",
+          "Return the node reference, not just the node value."
+        ]
       }
     ];
 
@@ -835,15 +877,26 @@
           "If slow and fast meet by reference, both runners are inside the same loop."
         ],
         "skeleton": "slow = head; fast = head\nwhile fast != null and fast.next != null:\n  slow = slow.next\n  fast = fast.next.next\n  if slow == fast: return true\nreturn false"
+      },
+      "LinkedListCycleII": {
+        "prompt": "Before reading: after the runners collide, where should one pointer restart?",
+        "steps": [
+          "First run slow and fast until they meet inside the cycle.",
+          "Restart one pointer at head and leave the other at the meeting node.",
+          "Move both one step at a time; their next meeting is the cycle entry."
+        ],
+        "skeleton": "slow = head; fast = head\nwhile fast != null and fast.next != null:\n  slow = slow.next\n  fast = fast.next.next\n  if slow == fast: break\nif no meeting: return null\nfast = head\nwhile slow != fast:\n  slow = slow.next\n  fast = fast.next\nreturn slow"
       }
     };
 
     const definingMoves = {
-      "LinkedListCycle": "fast moves two, slow moves one\ncycle means fast eventually catches slow"
+      "LinkedListCycle": "fast moves two, slow moves one\ncycle means fast eventually catches slow",
+      "LinkedListCycleII": "after collision, restart one pointer at head\nmove both one step to find the loop door"
     };
 
     const solvedOrder = [
-      "LinkedListCycle"
+      "LinkedListCycle",
+      "LinkedListCycleII"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
