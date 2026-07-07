@@ -911,6 +911,51 @@
           "The digit-square helper must consume all digits with modulo and division.",
           "Do not treat reaching any small number as success; only 1 means happy."
         ]
+      },
+      {
+        "name": "MiddleOfLinkedList",
+        "source": "../com/arvind/revision/fastslow/MiddleOfLinkedList.java",
+        "label": "Runner midpoint",
+        "difficulty": "Easy",
+        "leetcode": "https://leetcode.com/problems/middle-of-the-linked-list/",
+        "description": "Given the head of a singly linked list, return the middle node. If there are two middle nodes, return the second one.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Slow pointer, fast pointer, linked list nodes",
+        "input": "head = [1, 2, 3, 4, 5, 6]",
+        "output": "node with value 4",
+        "recognize": "When you need the halfway node of a linked list without first counting every node.",
+        "visual": [
+          [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          [
+            "slow +1",
+            "fast +2"
+          ],
+          [
+            "fast ends",
+            "slow at middle",
+            "second middle"
+          ]
+        ],
+        "visualText": "Imagine fast stretching the tape two nodes at a time while slow walks normally. When fast reaches the end, slow has covered exactly half the list.",
+        "core": "Start slow and fast at head. Move slow one step and fast two steps while fast and fast.next exist. When the loop stops, slow is the required middle node.",
+        "bruteForce": "Count the list length first, then walk length / 2 nodes from head. It is simple but uses two passes instead of one.",
+        "alternates": [
+          "Store nodes in an array and return array[size / 2], but that costs O(n) extra space.",
+          "The slow/fast runner approach is the one-pass O(1) space version."
+        ],
+        "gotchas": [
+          "For even length, this loop returns the second middle because slow moves before fast becomes null.",
+          "Check fast and fast.next before moving fast two nodes.",
+          "Return the node itself, not just its value."
+        ]
       }
     ];
 
@@ -941,19 +986,30 @@
           "If the new value was seen before, the route is cycling and cannot become happy."
         ],
         "skeleton": "seen = empty set\nadd n to seen\nwhile n != 1:\n  n = sumOfSquaredDigits(n)\n  if n in seen: return false\n  add n to seen\nreturn true"
+      },
+      "MiddleOfLinkedList": {
+        "prompt": "Before reading: why does slow stop exactly at the middle?",
+        "steps": [
+          "Move fast two nodes for every one node slow moves.",
+          "When fast cannot move further, it has consumed the list length.",
+          "Slow has moved half as many steps, so it points at the middle."
+        ],
+        "skeleton": "slow = head; fast = head\nwhile fast != null and fast.next != null:\n  slow = slow.next\n  fast = fast.next.next\nreturn slow"
       }
     };
 
     const definingMoves = {
       "LinkedListCycle": "fast moves two, slow moves one\ncycle means fast eventually catches slow",
       "LinkedListCycleII": "after collision, restart one pointer at head\nmove both one step to find the loop door",
-      "HappyNumber": "each number points to its digit-square sum\nrepeat means cycle, 1 means happy"
+      "HappyNumber": "each number points to its digit-square sum\nrepeat means cycle, 1 means happy",
+      "MiddleOfLinkedList": "fast consumes two nodes per slow step\nwhen fast ends, slow is halfway"
     };
 
     const solvedOrder = [
       "LinkedListCycle",
       "LinkedListCycleII",
-      "HappyNumber"
+      "HappyNumber",
+      "MiddleOfLinkedList"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
