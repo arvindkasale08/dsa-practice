@@ -31,4 +31,16 @@ public class CommonUtils {
         }
         return head;
     }
+
+    public static void print(ListNode head) {
+        if(head == null) {
+            System.out.println("Null head");
+        }
+        StringBuilder sb = new StringBuilder();
+        while (head != null) {
+            sb.append(" "+ head.val + ",");
+            head = head.next;
+        }
+        System.out.println(sb.deleteCharAt(sb.length()-1));
+    }
 }

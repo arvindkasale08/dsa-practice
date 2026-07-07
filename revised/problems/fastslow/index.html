@@ -1012,6 +1012,57 @@
           "Compare only while the reversed second half is non-null.",
           "For odd length lists, starting reversal at slow includes the middle value, which still works because the compare stops on the shorter reversed walk."
         ]
+      },
+      {
+        "name": "ReorderList",
+        "source": "../com/arvind/revision/fastslow/ReorderList.java",
+        "label": "Split reverse weave",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/reorder-list/",
+        "description": "Given a singly linked list, reorder it in-place from L0 -> L1 -> ... -> Ln into L0 -> Ln -> L1 -> Ln-1 -> L2 -> Ln-2 and so on.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Slow pointer, fast pointer, in-place linked list reversal, weaving pointers",
+        "input": "head = [1, 2, 3, 4, 5]",
+        "output": "[1, 5, 2, 4, 3]",
+        "recognize": "When a linked list must alternate nodes from the front and the back without using an array.",
+        "visual": [
+          [
+            "1",
+            "2",
+            "3",
+            "|",
+            "4",
+            "5"
+          ],
+          [
+            "split at middle",
+            "reverse right: 5 -> 4"
+          ],
+          [
+            "1 -> 5",
+            "2 -> 4",
+            "3"
+          ],
+          [
+            "save first.next",
+            "save second.next",
+            "weave",
+            "advance"
+          ]
+        ],
+        "visualText": "Think of it as folding a rope: cut after the middle, reverse the right half so the tail faces inward, then zip one node from the left and one node from the right.",
+        "core": "Find the middle with slow and fast, detach the second half, reverse that half, then weave first and second by saving both next pointers before changing links.",
+        "bruteForce": "Copy all nodes into an array or deque and rebuild links from both ends. It is easier to visualize but costs O(n) extra space.",
+        "alternates": [
+          "A stack can supply tail nodes while walking from the head, but it also uses O(n) space and is messier to stop correctly.",
+          "The split-reverse-weave approach keeps the required in-place O(1) space behavior."
+        ],
+        "gotchas": [
+          "Detach the first half with slow.next = null before weaving, otherwise old links can create a cycle.",
+          "During weaving, save tempFirst and tempSecond before changing first.next and second.next.",
+          "The middle-finding condition decides where the split happens; for odd lengths, the extra middle node stays at the end of the first half."
+        ]
       }
     ];
 
@@ -1060,6 +1111,15 @@
           "Compare head and reversed-half values one by one."
         ],
         "skeleton": "slow = middle using fast pointer\nright = reverse(slow)\nleft = head\nwhile right != null:\n  if left.val != right.val: return false\n  left = left.next\n  right = right.next\nreturn true\n\nreverse(head):\n  prev = null; current = head\n  while current != null:\n    post = current.next      // save road ahead\n    current.next = prev      // flip arrow back\n    prev = current           // grow reversed side\n    current = post           // continue forward\n  return prev"
+      },
+      "ReorderList": {
+        "prompt": "Before reading: which two next pointers must be saved before weaving one node from each half?",
+        "steps": [
+          "Find the middle, split the list, and reverse the second half.",
+          "Weave by storing first.next and second.next before reconnecting links.",
+          "Attach first -> second -> saved first-next, then advance both halves."
+        ],
+        "skeleton": "slow = node before second half\nsecond = slow.next\nslow.next = null\nsecond = reverse(second)\nfirst = head\nwhile second != null:\n  tempFirst = first.next\n  tempSecond = second.next\n  first.next = second\n  second.next = tempFirst\n  first = tempFirst\n  second = tempSecond\n\nreverse(head):\n  prev = null; curr = head\n  while curr != null:\n    post = curr.next\n    curr.next = prev\n    prev = curr\n    curr = post\n  return prev"
       }
     };
 
@@ -1068,7 +1128,8 @@
       "LinkedListCycleII": "after collision, restart one pointer at head\nmove both one step to find the loop door",
       "HappyNumber": "each number points to its digit-square sum\nrepeat means cycle, 1 means happy",
       "MiddleOfLinkedList": "fast consumes two nodes per slow step\nwhen fast ends, slow is halfway",
-      "PalindromicLinkedList": "reverse rhythm: save, flip, advance\nthen compare left with reversed right"
+      "PalindromicLinkedList": "reverse rhythm: save, flip, advance\nthen compare left with reversed right",
+      "ReorderList": "split, reverse tail, zip halves\nsave both next pointers before weaving"
     };
 
     const solvedOrder = [
@@ -1076,7 +1137,8 @@
       "LinkedListCycleII",
       "HappyNumber",
       "MiddleOfLinkedList",
-      "PalindromicLinkedList"
+      "PalindromicLinkedList",
+      "ReorderList"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
