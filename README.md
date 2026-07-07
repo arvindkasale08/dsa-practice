@@ -2,6 +2,7 @@
 
 - [Warmup](revised/problems/warmup/)
 - [Two Pointers](revised/problems/twopointers/)
+- [Fast & Slow Pointers](revised/problems/fastslow/)
 - [Stacks](revised/problems/stacks/)
 - [Hashing](revised/problems/hashing/)
 

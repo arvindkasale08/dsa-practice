@@ -27,6 +27,11 @@ const pageConfigs = {
     title: "Hashing Revision",
     label: "hashing",
     subtitle: "Fast recall cards for the current hashing package. Use Quick Review first, then expand a row when you need the full explanation."
+  },
+  fastslow: {
+    title: "Fast & Slow Pointers Revision",
+    label: "fast & slow pointers",
+    subtitle: "Fast recall cards for the current fast and slow pointers package. Picture the runner movement, then check the sample and bug magnets before opening the Java file."
   }
 };
 

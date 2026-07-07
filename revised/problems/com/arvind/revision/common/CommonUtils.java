@@ -20,4 +20,15 @@ public class CommonUtils {
         }
         System.out.println("\n ###########################");
     }
+
+    public static ListNode createList(int[] arr) {
+        ListNode head = new ListNode(arr[0]);
+        ListNode temp = head;
+        for (int i=1; i< arr.length; i++) {
+            ListNode curr = new ListNode(arr[i]);
+            temp.next = curr;
+            temp = curr;
+        }
+        return head;
+    }
 }
