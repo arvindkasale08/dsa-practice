@@ -1063,6 +1063,54 @@
           "During weaving, save tempFirst and tempSecond before changing first.next and second.next.",
           "The middle-finding condition decides where the split happens; for odd lengths, the extra middle node stays at the end of the first half."
         ]
+      },
+      {
+        "name": "RemoveNthNodeFromEndOfList",
+        "source": "../com/arvind/revision/fastslow/RemoveNthNodeFromEndOfList.java",
+        "label": "Fixed gap delete",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+        "description": "Given the head of a linked list and an integer n, remove the nth node from the end of the list and return the new head.",
+        "time": "O(n)",
+        "space": "O(1)",
+        "structures": "Dummy node, slow pointer, fast pointer",
+        "input": "head = [1, 2, 3, 4, 5], n = 5",
+        "output": "[2, 3, 4, 5]",
+        "recognize": "When you need to delete a node counted from the end in one pass, especially when the head itself might be removed.",
+        "visual": [
+          [
+            "dummy",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          [
+            "fast moves n ahead",
+            "keep fixed gap"
+          ],
+          [
+            "stop when fast.next null",
+            "slow before delete"
+          ],
+          [
+            "slow.next = slow.next.next",
+            "return dummy.next"
+          ]
+        ],
+        "visualText": "Put a guard node before head. Push fast n steps ahead, then move slow and fast together. When fast reaches the last node, slow is parked just before the node to cut.",
+        "core": "Create dummy -> head. Move fast n steps from dummy. Move both pointers until fast.next is null. Delete slow.next and return dummy.next.",
+        "bruteForce": "Count the length first, compute the index from the front, then walk again to delete. It is clear but takes two passes.",
+        "alternates": [
+          "Use an array/list of node references and delete by index, but that costs O(n) space.",
+          "The dummy plus fixed-gap method is the clean one-pass O(1) space version."
+        ],
+        "gotchas": [
+          "The dummy node is what makes deleting the original head painless.",
+          "Stop at fast.next == null so slow points to the node before the target.",
+          "After deletion, return dummy.next, not the original head."
+        ]
       }
     ];
 
@@ -1120,6 +1168,15 @@
           "Attach first -> second -> saved first-next, then advance both halves."
         ],
         "skeleton": "slow = node before second half\nsecond = slow.next\nslow.next = null\nsecond = reverse(second)\nfirst = head\nwhile second != null:\n  tempFirst = first.next\n  tempSecond = second.next\n  first.next = second\n  second.next = tempFirst\n  first = tempFirst\n  second = tempSecond\n\nreverse(head):\n  prev = null; curr = head\n  while curr != null:\n    post = curr.next\n    curr.next = prev\n    prev = curr\n    curr = post\n  return prev"
+      },
+      "RemoveNthNodeFromEndOfList": {
+        "prompt": "Before reading: why does slow need to stop before the node being deleted?",
+        "steps": [
+          "Create a dummy before head so removing the first real node is normal.",
+          "Move fast n steps ahead to create a fixed gap.",
+          "Move both until fast is at the tail; slow is just before the node to remove."
+        ],
+        "skeleton": "dummy.next = head\nslow = dummy; fast = dummy\nrepeat n times:\n  fast = fast.next\nwhile fast.next != null:\n  slow = slow.next\n  fast = fast.next\nslow.next = slow.next.next\nreturn dummy.next"
       }
     };
 
@@ -1129,7 +1186,8 @@
       "HappyNumber": "each number points to its digit-square sum\nrepeat means cycle, 1 means happy",
       "MiddleOfLinkedList": "fast consumes two nodes per slow step\nwhen fast ends, slow is halfway",
       "PalindromicLinkedList": "reverse rhythm: save, flip, advance\nthen compare left with reversed right",
-      "ReorderList": "split, reverse tail, zip halves\nsave both next pointers before weaving"
+      "ReorderList": "split, reverse tail, zip halves\nsave both next pointers before weaving",
+      "RemoveNthNodeFromEndOfList": "dummy absorbs head deletion\nfixed n-gap parks slow before target"
     };
 
     const solvedOrder = [
@@ -1138,7 +1196,8 @@
       "HappyNumber",
       "MiddleOfLinkedList",
       "PalindromicLinkedList",
-      "ReorderList"
+      "ReorderList",
+      "RemoveNthNodeFromEndOfList"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
