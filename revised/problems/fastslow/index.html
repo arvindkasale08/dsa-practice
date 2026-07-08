@@ -1111,6 +1111,52 @@
           "Stop at fast.next == null so slow points to the node before the target.",
           "After deletion, return dummy.next, not the original head."
         ]
+      },
+      {
+        "name": "CircularArrayLoop",
+        "source": "../com/arvind/revision/fastslow/CircularArrayLoop.java",
+        "label": "Index runner cycle",
+        "difficulty": "Medium",
+        "leetcode": "https://leetcode.com/problems/circular-array-loop/",
+        "description": "Given a circular array of non-zero jumps, return true if following jumps forms a cycle of length more than one where every jump moves in the same direction.",
+        "time": "O(n)",
+        "space": "O(n)",
+        "structures": "Slow pointer, fast pointer, visited boolean array, circular index math",
+        "input": "nums = [2, -1, 1, 2, 2]",
+        "output": "true",
+        "recognize": "When each array index points to exactly one next index, so the array behaves like a linked list with circular wrapping.",
+        "visual": [
+          [
+            "0:+2",
+            "2:+1",
+            "3:+2",
+            "0"
+          ],
+          [
+            "slow = next(i)",
+            "fast = next(next(i))"
+          ],
+          [
+            "same sign only",
+            "no one-node loop"
+          ],
+          [
+            "visited path",
+            "skip repeats"
+          ]
+        ],
+        "visualText": "Treat every index like a node with one arrow. Slow takes one arrow, fast takes two arrows. The route only counts if every arrow keeps the same sign and the loop has more than one node.",
+        "core": "For each unvisited index, remember its direction. Run slow and fast through nextIndex while both stay in that direction. If they meet, reject a self-loop, otherwise return true. Mark the explored same-direction path visited.",
+        "bruteForce": "From each index, follow jumps with a local set until repeat or invalid direction. It is easier to write but can revisit paths many times without global visited marking.",
+        "alternates": [
+          "You can mark exhausted paths in-place by setting values to 0, but this mutates the input.",
+          "A global visited array keeps the input unchanged while preventing repeated exploration."
+        ],
+        "gotchas": [
+          "Direction must be checked before every slow and fast move, including fast's intermediate next index.",
+          "A self-loop where nextIndex(i) == i is invalid because cycle length must be greater than one.",
+          "Use normalized modulo for negative jumps: if next < 0, add n."
+        ]
       }
     ];
 
@@ -1177,6 +1223,15 @@
           "Move both until fast is at the tail; slow is just before the node to remove."
         ],
         "skeleton": "dummy.next = head\nslow = dummy; fast = dummy\nrepeat n times:\n  fast = fast.next\nwhile fast.next != null:\n  slow = slow.next\n  fast = fast.next\nslow.next = slow.next.next\nreturn dummy.next"
+      },
+      "CircularArrayLoop": {
+        "prompt": "Before reading: what two things make a detected cycle invalid here?",
+        "steps": [
+          "Pick a start direction and allow only indexes with that same sign.",
+          "Move slow by one jump and fast by two jumps using circular nextIndex.",
+          "If they meet, reject only the one-index self-loop; otherwise it is a valid cycle."
+        ],
+        "skeleton": "for each unvisited start:\n  direction = nums[start] > 0\n  slow = start; fast = start\n  while slow and fast stay same direction:\n    nextFast = nextIndex(fast)\n    if nextFast changes direction: break\n    slow = nextIndex(slow)\n    fast = nextIndex(nextFast)\n    if slow == fast:\n      if nextIndex(slow) == slow: break\n      return true\n  mark same-direction path visited\nreturn false"
       }
     };
 
@@ -1187,7 +1242,8 @@
       "MiddleOfLinkedList": "fast consumes two nodes per slow step\nwhen fast ends, slow is halfway",
       "PalindromicLinkedList": "reverse rhythm: save, flip, advance\nthen compare left with reversed right",
       "ReorderList": "split, reverse tail, zip halves\nsave both next pointers before weaving",
-      "RemoveNthNodeFromEndOfList": "dummy absorbs head deletion\nfixed n-gap parks slow before target"
+      "RemoveNthNodeFromEndOfList": "dummy absorbs head deletion\nfixed n-gap parks slow before target",
+      "CircularArrayLoop": "array index behaves like next pointer\nsame direction and length > 1 only"
     };
 
     const solvedOrder = [
@@ -1197,7 +1253,8 @@
       "MiddleOfLinkedList",
       "PalindromicLinkedList",
       "ReorderList",
-      "RemoveNthNodeFromEndOfList"
+      "RemoveNthNodeFromEndOfList",
+      "CircularArrayLoop"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
