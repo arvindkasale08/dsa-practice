@@ -3,6 +3,7 @@
 - [Warmup](revised/problems/warmup/)
 - [Two Pointers](revised/problems/twopointers/)
 - [Fast & Slow Pointers](revised/problems/fastslow/)
+- [Sliding Window](revised/problems/slidingwindow/)
 - [Stacks](revised/problems/stacks/)
 - [Hashing](revised/problems/hashing/)
 

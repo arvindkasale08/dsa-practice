@@ -32,6 +32,11 @@ const pageConfigs = {
     title: "Fast & Slow Pointers Revision",
     label: "fast & slow pointers",
     subtitle: "Fast recall cards for the current fast and slow pointers package. Picture the runner movement, then check the sample and bug magnets before opening the Java file."
+  },
+  slidingwindow: {
+    title: "Sliding Window Revision",
+    label: "sliding window",
+    subtitle: "Fast recall cards for the current sliding window package. Picture the window boundary movement, then check the sample and bug magnets before opening the Java file."
   }
 };
 
