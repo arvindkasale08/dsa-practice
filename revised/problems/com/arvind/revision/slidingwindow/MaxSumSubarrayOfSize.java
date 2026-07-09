@@ -3,15 +3,15 @@ package com.arvind.revision.slidingwindow;
 public class MaxSumSubarrayOfSize {
 
     public int findMaxSumSubArray(int k, int[] arr) {
-        int maxSum = 0;
+        int sum = 0;
         int l = 0;
         int r = 0;
         // premove r and calculate the sum and put it in maxSum
         while (r < k) {
-            maxSum += arr[r];
+            sum += arr[r];
             r++;
         }
-        int sum = maxSum;
+        int maxSum = sum;
         while (r < arr.length) {
             sum = sum - arr[l] + arr[r];
             maxSum = Math.max(maxSum, sum);
