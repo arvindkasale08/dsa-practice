@@ -869,6 +869,51 @@
       "Negative numbers are allowed, so do not initialize the best answer to zero blindly.",
       "Because k is fixed, this is a slide-only window, not a shrink-on-condition window."
     ]
+  },
+  {
+    "name": "MinimumSizeSubarraySum",
+    "source": "../com/arvind/revision/slidingwindow/MinimumSizeSubarraySum.java",
+    "label": "Expand then shrink",
+    "difficulty": "Medium",
+    "leetcode": "https://leetcode.com/problems/minimum-size-subarray-sum/",
+    "description": "Given a target and an array of positive integers, return the minimum length of a contiguous subarray whose sum is at least target. Return 0 if no such subarray exists.",
+    "time": "O(n)",
+    "space": "O(1)",
+    "structures": "Variable window, running sum, left index, right index",
+    "input": "target = 7, nums = [2, 3, 1, 2, 4, 3]",
+    "output": "2",
+    "recognize": "When all numbers are positive and you need the shortest subarray that reaches at least a target sum.",
+    "visual": [
+      [
+        "2",
+        "3",
+        "1",
+        "2",
+        "|",
+        "4",
+        "3"
+      ],
+      [
+        "expand right",
+        "sum >= target"
+      ],
+      [
+        "shrink left",
+        "record shortest"
+      ]
+    ],
+    "visualText": "Picture the window as a belt that grows until it is strong enough, then tightens from the left as much as possible while still meeting the target.",
+    "core": "Add nums[right] as the window expands. While sum is at least target, update the best length, subtract nums[left], and move left to try to make the window shorter.",
+    "bruteForce": "Try every start index and extend right until the sum reaches target. It is clear but can take O(n^2).",
+    "alternates": [
+      "Prefix sums plus binary search can work in O(n log n), but it is more machinery than needed for positive numbers.",
+      "The O(n) shrinking window relies on every number being positive; with negatives, shrinking no longer behaves predictably."
+    ],
+    "gotchas": [
+      "Use while sum >= target, not if, because one right move may allow multiple left shrinks.",
+      "Update the answer before subtracting nums[left].",
+      "Return 0 when no valid window was ever found."
+    ]
   }
 ];
 
@@ -890,17 +935,28 @@
       "Compare the new average, making sure the division is double division."
     ],
     "skeleton": "sum = first k values\nbestAvg = (double) sum / k\nleft = 0; right = k\nwhile right < n:\n  sum = sum - nums[left] + nums[right]\n  bestAvg = max(bestAvg, (double) sum / k)\n  left++\n  right++\nreturn bestAvg"
+  },
+  "MinimumSizeSubarraySum": {
+    "prompt": "Before reading: when the sum reaches target, why do you keep shrinking instead of stopping?",
+    "steps": [
+      "Expand right and add each value to the running sum.",
+      "Once sum is at least target, record the current length.",
+      "Keep removing from the left while the window is still valid to find the shortest version."
+    ],
+    "skeleton": "left = 0; sum = 0; best = infinity\nfor right in 0..n-1:\n  sum += nums[right]\n  while sum >= target:\n    best = min(best, right - left + 1)\n    sum -= nums[left]\n    left++\nreturn best == infinity ? 0 : best"
   }
 };
 
     const definingMoves = {
   "MaxSumSubarrayOfSize": "fixed frame slides one step\nsubtract outgoing, add incoming",
-  "MaximumAverageSubarrayOfSize": "same fixed frame as max sum\nbest average follows best running sum"
+  "MaximumAverageSubarrayOfSize": "same fixed frame as max sum\nbest average follows best running sum",
+  "MinimumSizeSubarraySum": "expand until sum is enough\nthen shrink while it remains enough"
 };
 
     const solvedOrder = [
   "MaxSumSubarrayOfSize",
-  "MaximumAverageSubarrayOfSize"
+  "MaximumAverageSubarrayOfSize",
+  "MinimumSizeSubarraySum"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
