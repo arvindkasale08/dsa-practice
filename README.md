@@ -1,5 +1,6 @@
 ## Visual Revision
 
+- [Big-O Growth Reference](revised/reference/big-o.html)
 - [Warmup](revised/problems/warmup/)
 - [Two Pointers](revised/problems/twopointers/)
 - [Fast & Slow Pointers](revised/problems/fastslow/)

@@ -824,6 +824,51 @@
       "After each slide, move both boundaries exactly one step.",
       "This fixed-size pattern is not a shrinking/expanding variable window."
     ]
+  },
+  {
+    "name": "MaximumAverageSubarrayOfSize",
+    "source": "../com/arvind/revision/slidingwindow/MaximumAverageSubarrayOfSize.java",
+    "label": "Fixed-size window average",
+    "difficulty": "Easy",
+    "leetcode": "https://leetcode.com/problems/maximum-average-subarray-i/",
+    "description": "Given an integer array and a fixed window size k, return the maximum average value of any contiguous subarray of exactly k elements.",
+    "time": "O(n)",
+    "space": "O(1)",
+    "structures": "Running sum, left index, right index",
+    "input": "nums = [1, 12, -5, -6, 50, 3], k = 4",
+    "output": "12.75",
+    "recognize": "When every candidate has the same length k and the average is just the window sum divided by that fixed k.",
+    "visual": [
+      [
+        "1",
+        "12",
+        "-5",
+        "-6",
+        "|",
+        "50",
+        "3"
+      ],
+      [
+        "drop left",
+        "add right"
+      ],
+      [
+        "best sum",
+        "divide by k"
+      ]
+    ],
+    "visualText": "Do not recalculate averages from scratch. Carry the window sum forward; since k never changes, the window with the best sum also has the best average.",
+    "core": "Build the first k-length sum, store its average or best sum, then slide by subtracting nums[left] and adding nums[right]. Compare each new average.",
+    "bruteForce": "For every starting index, sum the next k values and compute the average. It is correct but costs O(n * k).",
+    "alternates": [
+      "Track maxSum instead of maxAvg and divide once at the end; this avoids repeated division.",
+      "Prefix sums can compute each window sum quickly but use O(n) extra space."
+    ],
+    "gotchas": [
+      "Cast to double before division, otherwise integer division loses the decimal.",
+      "Negative numbers are allowed, so do not initialize the best answer to zero blindly.",
+      "Because k is fixed, this is a slide-only window, not a shrink-on-condition window."
+    ]
   }
 ];
 
@@ -836,15 +881,26 @@
       "Keep the maximum sum seen after each slide."
     ],
     "skeleton": "sum = first k values\nbest = sum\nleft = 0; right = k\nwhile right < n:\n  sum = sum - arr[left] + arr[right]\n  best = max(best, sum)\n  left++\n  right++\nreturn best"
+  },
+  "MaximumAverageSubarrayOfSize": {
+    "prompt": "Before reading: why can maximum average be found by carrying only the window sum?",
+    "steps": [
+      "Sum the first k values and compute the first average.",
+      "Slide by subtracting the outgoing left value and adding the incoming right value.",
+      "Compare the new average, making sure the division is double division."
+    ],
+    "skeleton": "sum = first k values\nbestAvg = (double) sum / k\nleft = 0; right = k\nwhile right < n:\n  sum = sum - nums[left] + nums[right]\n  bestAvg = max(bestAvg, (double) sum / k)\n  left++\n  right++\nreturn bestAvg"
   }
 };
 
     const definingMoves = {
-  "MaxSumSubarrayOfSize": "fixed frame slides one step\nsubtract outgoing, add incoming"
+  "MaxSumSubarrayOfSize": "fixed frame slides one step\nsubtract outgoing, add incoming",
+  "MaximumAverageSubarrayOfSize": "same fixed frame as max sum\nbest average follows best running sum"
 };
 
     const solvedOrder = [
-  "MaxSumSubarrayOfSize"
+  "MaxSumSubarrayOfSize",
+  "MaximumAverageSubarrayOfSize"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
