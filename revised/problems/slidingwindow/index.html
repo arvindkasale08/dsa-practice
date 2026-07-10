@@ -914,6 +914,60 @@
       "Update the answer before subtracting nums[left].",
       "Return 0 when no valid window was ever found."
     ]
+  },
+  {
+    "name": "LongestSubstringWithKMostDistinctCharacters",
+    "source": "../com/arvind/revision/slidingwindow/LongestSubstringWithKMostDistinctCharacters.java",
+    "label": "At-most-K distinct window",
+    "difficulty": "Medium",
+    "leetcode": "https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/",
+    "description": "Given a string and an integer k, return the length of the longest contiguous substring that contains at most k distinct characters.",
+    "time": "O(n)",
+    "space": "O(k)",
+    "structures": "HashMap<Character, Integer>, left index, right index",
+    "input": "s = \"aabacbebebe\", k = 3",
+    "output": "7",
+    "recognize": "When the window is valid while the number of distinct keys is at most k, and repeated characters should not force shrinking.",
+    "visual": [
+      [
+        "a",
+        "a",
+        "b",
+        "a",
+        "c",
+        "b",
+        "e"
+      ],
+      [
+        "4 distinct",
+        "shrink left"
+      ],
+      [
+        "remove count",
+        "delete key at 0"
+      ],
+      [
+        "c",
+        "b",
+        "e",
+        "b",
+        "e",
+        "b",
+        "e"
+      ]
+    ],
+    "visualText": "Think of the map as a bank of character counts. The distinct count is the number of keys, and a key leaves the bank only when its count becomes zero.",
+    "core": "Expand right and increment that character count. If the map has more than k keys, shrink left until enough character counts hit zero and are removed. Track the longest valid window.",
+    "bruteForce": "Check every substring and count distinct characters each time. It is straightforward but can become O(n^2) or worse.",
+    "alternates": [
+      "For a small fixed alphabet, an int array can replace the map, but the shrink rule is the same.",
+      "A last-seen-index approach can jump the left pointer, but the frequency map version is easier to generalize."
+    ],
+    "gotchas": [
+      "At most k means fewer than k distinct characters is still valid.",
+      "Shrink while map.size() > k, not just once.",
+      "Remove a character key only when its frequency becomes zero."
+    ]
   }
 ];
 
@@ -944,19 +998,30 @@
       "Keep removing from the left while the window is still valid to find the shortest version."
     ],
     "skeleton": "left = 0; sum = 0; best = infinity\nfor right in 0..n-1:\n  sum += nums[right]\n  while sum >= target:\n    best = min(best, right - left + 1)\n    sum -= nums[left]\n    left++\nreturn best == infinity ? 0 : best"
+  },
+  "LongestSubstringWithKMostDistinctCharacters": {
+    "prompt": "Before reading: when does removing from the left actually reduce distinct count?",
+    "steps": [
+      "Expand right and increment the character count in the map.",
+      "If the map has more than k keys, shrink from the left.",
+      "Only remove a map key when that character count becomes zero."
+    ],
+    "skeleton": "left = 0; best = 0; count = empty map\nfor right in 0..n-1:\n  count[s[right]]++\n  while count.size() > k:\n    count[s[left]]--\n    if count[s[left]] == 0: remove s[left]\n    left++\n  best = max(best, right - left + 1)\nreturn best"
   }
 };
 
     const definingMoves = {
   "MaxSumSubarrayOfSize": "fixed frame slides one step\nsubtract outgoing, add incoming",
   "MaximumAverageSubarrayOfSize": "same fixed frame as max sum\nbest average follows best running sum",
-  "MinimumSizeSubarraySum": "expand until sum is enough\nthen shrink while it remains enough"
+  "MinimumSizeSubarraySum": "expand until sum is enough\nthen shrink while it remains enough",
+  "LongestSubstringWithKMostDistinctCharacters": "map size is distinct count\nshrink until a count reaches zero"
 };
 
     const solvedOrder = [
   "MaxSumSubarrayOfSize",
   "MaximumAverageSubarrayOfSize",
-  "MinimumSizeSubarraySum"
+  "MinimumSizeSubarraySum",
+  "LongestSubstringWithKMostDistinctCharacters"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
