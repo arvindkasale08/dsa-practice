@@ -968,6 +968,58 @@
       "Shrink while map.size() > k, not just once.",
       "Remove a character key only when its frequency becomes zero."
     ]
+  },
+  {
+    "name": "FruitsInBasket",
+    "source": "../com/arvind/revision/slidingwindow/FruitsInBasket.java",
+    "label": "At-most-2 types window",
+    "difficulty": "Medium",
+    "leetcode": "https://leetcode.com/problems/fruit-into-baskets/",
+    "description": "Given a row of fruit trees where each number is a fruit type, return the longest contiguous stretch you can collect when you only have two baskets, and each basket can hold one fruit type.",
+    "time": "O(n)",
+    "space": "O(1)",
+    "structures": "HashMap<Integer, Integer>, left index, right index",
+    "input": "fruits = [1, 2, 1, 3, 3, 2, 2, 2, 4, 2]",
+    "output": "5",
+    "recognize": "When the window is valid as long as it contains at most two distinct values, and repeated values can keep extending the same window.",
+    "visual": [
+      [
+        "1",
+        "2",
+        "1",
+        "|",
+        "3",
+        "3",
+        "2"
+      ],
+      [
+        "3rd type enters",
+        "shrink left"
+      ],
+      [
+        "delete only at count 0",
+        "keep best length"
+      ],
+      [
+        "2",
+        "2",
+        "2",
+        "4",
+        "2"
+      ]
+    ],
+    "visualText": "Picture two baskets as two map keys. The window can grow while only two keys are present; when a third type enters, move left until one old fruit type count becomes zero and leaves.",
+    "core": "Expand right and count that fruit type. If more than two types are inside, shrink from the left until the map has only two keys again. Track the longest valid stretch after each right move.",
+    "bruteForce": "Try every starting tree and walk right until a third fruit type appears. It is easy to reason about but can take O(n^2).",
+    "alternates": [
+      "A last-seen position approach can jump left past the older fruit type, but the count map is easier to reuse for at-most-K problems.",
+      "Because only two baskets are allowed, the extra space is O(1) even though a map is used."
+    ],
+    "gotchas": [
+      "This is exactly at most two distinct types, so one type is also valid.",
+      "Shrink while map.size() > 2, because one removal may not delete a fruit type.",
+      "Remove a fruit type from the map only when its count becomes zero."
+    ]
   }
 ];
 
@@ -1007,6 +1059,15 @@
       "Only remove a map key when that character count becomes zero."
     ],
     "skeleton": "left = 0; best = 0; count = empty map\nfor right in 0..n-1:\n  count[s[right]]++\n  while count.size() > k:\n    count[s[left]]--\n    if count[s[left]] == 0: remove s[left]\n    left++\n  best = max(best, right - left + 1)\nreturn best"
+  },
+  "FruitsInBasket": {
+    "prompt": "Before reading: when a third fruit type appears, which basket type actually leaves?",
+    "steps": [
+      "Expand right and increment the count for the current fruit type.",
+      "If there are more than two fruit types, shrink from the left.",
+      "A fruit type leaves only when its count drops to zero; then the window is valid again."
+    ],
+    "skeleton": "left = 0; best = 0; count = empty map\nfor right in 0..n-1:\n  count[fruits[right]]++\n  while count.size() > 2:\n    count[fruits[left]]--\n    if count[fruits[left]] == 0: remove fruits[left]\n    left++\n  best = max(best, right - left + 1)\nreturn best"
   }
 };
 
@@ -1014,14 +1075,16 @@
   "MaxSumSubarrayOfSize": "fixed frame slides one step\nsubtract outgoing, add incoming",
   "MaximumAverageSubarrayOfSize": "same fixed frame as max sum\nbest average follows best running sum",
   "MinimumSizeSubarraySum": "expand until sum is enough\nthen shrink while it remains enough",
-  "LongestSubstringWithKMostDistinctCharacters": "map size is distinct count\nshrink until a count reaches zero"
+  "LongestSubstringWithKMostDistinctCharacters": "map size is distinct count\nshrink until a count reaches zero",
+  "FruitsInBasket": "two baskets means two map keys\nthird type forces left shrink"
 };
 
     const solvedOrder = [
   "MaxSumSubarrayOfSize",
   "MaximumAverageSubarrayOfSize",
   "MinimumSizeSubarraySum",
-  "LongestSubstringWithKMostDistinctCharacters"
+  "LongestSubstringWithKMostDistinctCharacters",
+  "FruitsInBasket"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
