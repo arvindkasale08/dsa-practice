@@ -1069,6 +1069,56 @@
       "Update the answer after the window is valid again.",
       "This asks for substring length, so the window must remain contiguous."
     ]
+  },
+  {
+    "name": "LongestRepeatingCharacterSubString",
+    "source": "../com/arvind/revision/slidingwindow/LongestRepeatingCharacterSubString.java",
+    "label": "Replace minority chars",
+    "difficulty": "Medium",
+    "leetcode": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+    "description": "Given an uppercase string and k replacements, return the longest contiguous substring that can be turned into one repeated character by changing at most k characters.",
+    "time": "O(26 * n)",
+    "space": "O(1)",
+    "structures": "int[26] frequency array, left index, right index",
+    "input": "s = \"AABABBAAC\", k = 2",
+    "output": "5",
+    "recognize": "When a window is valid if all non-majority characters inside it can be replaced within k moves.",
+    "visual": [
+      [
+        "A",
+        "A",
+        "B",
+        "A",
+        "B"
+      ],
+      [
+        "len 5",
+        "max A = 3"
+      ],
+      [
+        "5 - 3 = 2 replacements",
+        "valid"
+      ],
+      [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A"
+      ]
+    ],
+    "visualText": "Picture choosing the most common letter in the window as the target. Every other character is a replacement cost, so the window is valid when window length minus max frequency is at most k.",
+    "core": "Expand right and count the new letter. Find the largest count inside the window. If window length minus that max count is more than k, shrink from the left until the window can be made uniform again.",
+    "bruteForce": "Try every substring and count how many changes are needed to make it all A, all B, and so on. It works but is too slow for long strings.",
+    "alternates": [
+      "Track a non-decreasing max frequency while sliding to make the solution O(n); it is faster but slightly trickier to reason about.",
+      "Because the alphabet is only uppercase English letters, the frequency array is simpler than a map."
+    ],
+    "gotchas": [
+      "You do not replace every A or every B in the whole string, only characters inside the chosen window.",
+      "The key validity check is windowLength - maxFrequency <= k.",
+      "Do not confuse substring with subsequence; the chosen block must be contiguous."
+    ]
   }
 ];
 
@@ -1126,6 +1176,15 @@
       "Add s[right], then record the current valid window length."
     ],
     "skeleton": "left = 0; best = 0; seen = empty set\nfor right in 0..n-1:\n  while seen contains s[right]:\n    seen.remove(s[left])\n    left++\n  seen.add(s[right])\n  best = max(best, right - left + 1)\nreturn best"
+  },
+  "LongestRepeatingCharacterSubString": {
+    "prompt": "Before reading: in this window, how many characters are not the majority character?",
+    "steps": [
+      "Count uppercase letters inside the current window.",
+      "Use the most frequent letter as the target character.",
+      "If window length minus that max frequency is more than k, shrink left until the replacement cost fits."
+    ],
+    "skeleton": "left = 0; best = 0; freq[26] = 0\nfor right in 0..n-1:\n  freq[s[right]]++\n  while windowLength - max(freq) > k:\n    freq[s[left]]--\n    left++\n  best = max(best, right - left + 1)\nreturn best"
   }
 };
 
@@ -1135,7 +1194,8 @@
   "MinimumSizeSubarraySum": "expand until sum is enough\nthen shrink while it remains enough",
   "LongestSubstringWithKMostDistinctCharacters": "map size is distinct count\nshrink until a count reaches zero",
   "FruitsInBasket": "two baskets means two map keys\nthird type forces left shrink",
-  "LongestSubstringWithoutRepeatingChar": "set is the current clean window\nduplicate waits outside until old copy leaves"
+  "LongestSubstringWithoutRepeatingChar": "set is the current clean window\nduplicate waits outside until old copy leaves",
+  "LongestRepeatingCharacterSubString": "majority char is the target\nwindow length - max count is replacement cost"
 };
 
     const solvedOrder = [
@@ -1144,7 +1204,8 @@
   "MinimumSizeSubarraySum",
   "LongestSubstringWithKMostDistinctCharacters",
   "FruitsInBasket",
-  "LongestSubstringWithoutRepeatingChar"
+  "LongestSubstringWithoutRepeatingChar",
+  "LongestRepeatingCharacterSubString"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
