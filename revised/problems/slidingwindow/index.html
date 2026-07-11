@@ -1119,6 +1119,65 @@
       "The key validity check is windowLength - maxFrequency <= k.",
       "Do not confuse substring with subsequence; the chosen block must be contiguous."
     ]
+  },
+  {
+    "name": "LongestSubArrayWithOnesAfterReplacement",
+    "source": "../com/arvind/revision/slidingwindow/LongestSubArrayWithOnesAfterReplacement.java",
+    "label": "At-most-K zeroes window",
+    "difficulty": "Medium",
+    "leetcode": "https://leetcode.com/problems/max-consecutive-ones-iii/",
+    "description": "Given a binary array and k flips, return the length of the longest contiguous subarray that can become all 1s by changing at most k zeroes to 1.",
+    "time": "O(n)",
+    "space": "O(1)",
+    "structures": "Zero counter, left index, right index",
+    "input": "nums = [0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1], k = 3",
+    "output": "9",
+    "recognize": "When the window is valid as long as it contains at most k zeroes.",
+    "visual": [
+      [
+        "0",
+        "1",
+        "0",
+        "0",
+        "1",
+        "1",
+        "0",
+        "1",
+        "1",
+        "0"
+      ],
+      [
+        "zero count = 4",
+        "shrink left"
+      ],
+      [
+        "drop old zero",
+        "valid again"
+      ],
+      [
+        "1",
+        "1",
+        "0",
+        "1",
+        "1",
+        "0",
+        "0",
+        "1",
+        "1"
+      ]
+    ],
+    "visualText": "Picture every zero as a flip coupon spent inside the window. The window may stretch while it uses at most k coupons; if it spends one too many, move left until one old zero leaves.",
+    "core": "Expand right. Count zeroes inside the current window. While the zero count is greater than k, move left and decrease the count when a zero exits. Track the longest valid window.",
+    "bruteForce": "Try every start index and extend right while counting zeroes. It is easy but can take O(n^2).",
+    "alternates": [
+      "This is the same shape as at-most-K distinct, but the tracked invalid item is only zero count.",
+      "A prefix-sum plus binary search approach can find valid lengths, but the sliding window is simpler and O(n)."
+    ],
+    "gotchas": [
+      "The replacement count is the number of zeroes in the window, not the number of groups of zeroes.",
+      "Shrink while zeroes > k, because the left side may pass over ones before a zero exits.",
+      "Update the best length only after the window is valid."
+    ]
   }
 ];
 
@@ -1185,6 +1244,15 @@
       "If window length minus that max frequency is more than k, shrink left until the replacement cost fits."
     ],
     "skeleton": "left = 0; best = 0; freq[26] = 0\nfor right in 0..n-1:\n  freq[s[right]]++\n  while windowLength - max(freq) > k:\n    freq[s[left]]--\n    left++\n  best = max(best, right - left + 1)\nreturn best"
+  },
+  "LongestSubArrayWithOnesAfterReplacement": {
+    "prompt": "Before reading: how many zeroes are currently spending flip coupons inside the window?",
+    "steps": [
+      "Expand right and count a zero when it enters.",
+      "If zero count becomes more than k, move left until a zero leaves.",
+      "Once the window has at most k zeroes again, record its length."
+    ],
+    "skeleton": "left = 0; best = 0; zeroes = 0\nfor right in 0..n-1:\n  if nums[right] == 0: zeroes++\n  while zeroes > k:\n    if nums[left] == 0: zeroes--\n    left++\n  best = max(best, right - left + 1)\nreturn best"
   }
 };
 
@@ -1195,7 +1263,8 @@
   "LongestSubstringWithKMostDistinctCharacters": "map size is distinct count\nshrink until a count reaches zero",
   "FruitsInBasket": "two baskets means two map keys\nthird type forces left shrink",
   "LongestSubstringWithoutRepeatingChar": "set is the current clean window\nduplicate waits outside until old copy leaves",
-  "LongestRepeatingCharacterSubString": "majority char is the target\nwindow length - max count is replacement cost"
+  "LongestRepeatingCharacterSubString": "majority char is the target\nwindow length - max count is replacement cost",
+  "LongestSubArrayWithOnesAfterReplacement": "zeroes are flip coupons spent\nshrink only when coupons exceed k"
 };
 
     const solvedOrder = [
@@ -1205,7 +1274,8 @@
   "LongestSubstringWithKMostDistinctCharacters",
   "FruitsInBasket",
   "LongestSubstringWithoutRepeatingChar",
-  "LongestRepeatingCharacterSubString"
+  "LongestRepeatingCharacterSubString",
+  "LongestSubArrayWithOnesAfterReplacement"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
