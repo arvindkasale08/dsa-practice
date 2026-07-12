@@ -1223,6 +1223,53 @@
       "Undo the outgoing left character before or while adding the incoming right character; do not let the window grow.",
       "Duplicate letters in s1 matter, so a Set is not enough."
     ]
+  },
+  {
+    "name": "StringAnagrams",
+    "source": "../com/arvind/revision/slidingwindow/StringAnagrams.java",
+    "label": "Find every anagram window",
+    "difficulty": "Medium",
+    "description": "Given a string and a pattern, return every starting index where a contiguous substring is an anagram of the pattern.",
+    "time": "O(26 * n)",
+    "space": "O(1)",
+    "structures": "int[26] frequency bank, result list, fixed-size window",
+    "input": "str = \"cbaebabacdabc\", pattern = \"abc\"",
+    "output": "[0, 6, 10]",
+    "recognize": "When you need all matching windows, not just whether one matching permutation exists.",
+    "visual": [
+      [
+        "a:1",
+        "b:1",
+        "c:1"
+      ],
+      [
+        "cba",
+        "paid",
+        "add 0"
+      ],
+      [
+        "slide",
+        "undo left",
+        "take right"
+      ],
+      [
+        "bac",
+        "abc",
+        "add starts"
+      ]
+    ],
+    "visualText": "Reuse the same debt-bank idea as permutation-in-string, but instead of returning at the first match, collect the left index every time the fixed-size window pays all pattern debts.",
+    "core": "Build the pattern count bank, subtract the first pattern-length window, and record index 0 if balanced. Then slide one step: add back the outgoing left char, subtract the incoming right char, and record the new left index whenever the bank is valid.",
+    "bruteForce": "Sort or count every pattern-length substring independently and compare with the pattern. It is clear, but repeats work for every window.",
+    "alternates": [
+      "Use two frequency arrays and compare all 26 counts for each window.",
+      "Use a matched-count optimization to avoid scanning all 26 slots, though O(26) is still constant."
+    ],
+    "gotchas": [
+      "Return starting indices, not the anagram strings.",
+      "The window must stay exactly pattern.length().",
+      "Duplicate letters in the pattern must be counted, so a Set cannot solve it."
+    ]
   }
 ];
 
@@ -1307,6 +1354,15 @@
       "Subtract the entering character and add back the leaving character; a balanced bank means permutation found."
     ],
     "skeleton": "if s1.length > s2.length: return false\nbank = counts of s1\nfor right in 0..s2.length-1:\n  bank[s2[right]]--\n  if right >= s1.length:\n    bank[s2[right - s1.length]]++\n  if right >= s1.length - 1 and bank is all zero:\n    return true\nreturn false"
+  },
+  "StringAnagrams": {
+    "prompt": "Before reading: which fixed-size windows pay the full pattern debt, and what are their left indices?",
+    "steps": [
+      "Build the pattern frequency bank.",
+      "Slide a fixed window of pattern length across the string.",
+      "Whenever the bank is balanced, add the current left index to the answer list."
+    ],
+    "skeleton": "answer = []\nbank = counts of pattern\nfor right in 0..s.length-1:\n  bank[s[right]]--\n  if right >= pattern.length:\n    bank[s[right - pattern.length]]++\n  if right >= pattern.length - 1 and bank is balanced:\n    answer.add(right - pattern.length + 1)\nreturn answer"
   }
 };
 
@@ -1319,7 +1375,8 @@
   "LongestSubstringWithoutRepeatingChar": "set is the current clean window\nduplicate waits outside until old copy leaves",
   "LongestRepeatingCharacterSubString": "majority char is the target\nwindow length - max count is replacement cost",
   "LongestSubArrayWithOnesAfterReplacement": "zeroes are flip coupons spent\nshrink only when coupons exceed k",
-  "PermutationInString": "fixed window pays s1 debts\nall zero means an anagram landed"
+  "PermutationInString": "fixed window pays s1 debts\nall zero means an anagram landed",
+  "StringAnagrams": "same debt window as permutation\ncollect every left index that balances"
 };
 
     const solvedOrder = [
@@ -1331,7 +1388,8 @@
   "LongestSubstringWithoutRepeatingChar",
   "LongestRepeatingCharacterSubString",
   "LongestSubArrayWithOnesAfterReplacement",
-  "PermutationInString"
+  "PermutationInString",
+  "StringAnagrams"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
