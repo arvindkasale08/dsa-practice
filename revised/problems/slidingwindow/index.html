@@ -1178,6 +1178,51 @@
       "Shrink while zeroes > k, because the left side may pass over ones before a zero exits.",
       "Update the best length only after the window is valid."
     ]
+  },
+  {
+    "name": "PermutationInString",
+    "source": "../com/arvind/revision/slidingwindow/PermutationInString.java",
+    "label": "Fixed anagram window",
+    "difficulty": "Medium",
+    "leetcode": "https://leetcode.com/problems/permutation-in-string/",
+    "description": "Given strings s1 and s2, return true if any contiguous substring of s2 is a permutation of s1.",
+    "time": "O(26 * n)",
+    "space": "O(1)",
+    "structures": "int[26] frequency bank, fixed-size window, left index, right index",
+    "input": "s1 = \"dc\", s2 = \"ocdicf\"",
+    "output": "true",
+    "recognize": "When order does not matter, but the matching block must be contiguous and exactly the same length as s1.",
+    "visual": [
+      [
+        "d:1",
+        "c:1"
+      ],
+      [
+        "window oc",
+        "not paid"
+      ],
+      [
+        "slide",
+        "undo o",
+        "take d"
+      ],
+      [
+        "window cd",
+        "all debt paid"
+      ]
+    ],
+    "visualText": "Think of s1 as a character debt bank. A character entering the window pays one debt; a character leaving puts that debt back. A valid window leaves no unpaid positive debt.",
+    "core": "Build the s1 frequency bank, then subtract the first s1-length window from s2. If the bank is balanced, return true. Otherwise slide one character at a time by adding back the left character and subtracting the new right character.",
+    "bruteForce": "Generate or sort every length-s1 substring and compare it with s1. It is clear but costs extra work for every window.",
+    "alternates": [
+      "Use two int[26] arrays and compare them for each fixed-size window.",
+      "Maintain a matched-count value to avoid scanning all 26 slots each time; the scan is still O(1), but matched-count is a nice optimization."
+    ],
+    "gotchas": [
+      "The window size must stay exactly s1.length().",
+      "Undo the outgoing left character before or while adding the incoming right character; do not let the window grow.",
+      "Duplicate letters in s1 matter, so a Set is not enough."
+    ]
   }
 ];
 
@@ -1253,6 +1298,15 @@
       "Once the window has at most k zeroes again, record its length."
     ],
     "skeleton": "left = 0; best = 0; zeroes = 0\nfor right in 0..n-1:\n  if nums[right] == 0: zeroes++\n  while zeroes > k:\n    if nums[left] == 0: zeroes--\n    left++\n  best = max(best, right - left + 1)\nreturn best"
+  },
+  "PermutationInString": {
+    "prompt": "Before reading: has this fixed-size window paid every character debt from s1?",
+    "steps": [
+      "Build a 26-count bank from s1.",
+      "Use a fixed window of length s1 inside s2.",
+      "Subtract the entering character and add back the leaving character; a balanced bank means permutation found."
+    ],
+    "skeleton": "if s1.length > s2.length: return false\nbank = counts of s1\nfor right in 0..s2.length-1:\n  bank[s2[right]]--\n  if right >= s1.length:\n    bank[s2[right - s1.length]]++\n  if right >= s1.length - 1 and bank is all zero:\n    return true\nreturn false"
   }
 };
 
@@ -1264,7 +1318,8 @@
   "FruitsInBasket": "two baskets means two map keys\nthird type forces left shrink",
   "LongestSubstringWithoutRepeatingChar": "set is the current clean window\nduplicate waits outside until old copy leaves",
   "LongestRepeatingCharacterSubString": "majority char is the target\nwindow length - max count is replacement cost",
-  "LongestSubArrayWithOnesAfterReplacement": "zeroes are flip coupons spent\nshrink only when coupons exceed k"
+  "LongestSubArrayWithOnesAfterReplacement": "zeroes are flip coupons spent\nshrink only when coupons exceed k",
+  "PermutationInString": "fixed window pays s1 debts\nall zero means an anagram landed"
 };
 
     const solvedOrder = [
@@ -1275,7 +1330,8 @@
   "FruitsInBasket",
   "LongestSubstringWithoutRepeatingChar",
   "LongestRepeatingCharacterSubString",
-  "LongestSubArrayWithOnesAfterReplacement"
+  "LongestSubArrayWithOnesAfterReplacement",
+  "PermutationInString"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
