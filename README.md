@@ -23,3 +23,5 @@ Regenerate PDFs after revision HTML changes:
 ```sh
 /Users/arvindkasale/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node tools/export-revision-pdfs.mjs
 ```
+
+The Drive upload target is tracked in [drive-manifest.json](revised/revision-pdfs/drive-manifest.json). After PDFs are regenerated, update the existing Google Drive files in the `DSA Revision PDFs` folder rather than uploading duplicates.

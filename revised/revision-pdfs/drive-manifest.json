@@ -1,0 +1,33 @@
+{
+  "folder": {
+    "name": "DSA Revision PDFs",
+    "id": "1ociiJd026Ra4sRsEIHNMl5_rfN9wpuWD",
+    "url": "https://drive.google.com/drive/folders/1ociiJd026Ra4sRsEIHNMl5_rfN9wpuWD"
+  },
+  "files": {
+    "fast-slow-pointers-revision.pdf": {
+      "id": "1pu_mBf_WIcAFLwp-fYLZIOwEcRPGzJFb",
+      "url": "https://drive.google.com/file/d/1pu_mBf_WIcAFLwp-fYLZIOwEcRPGzJFb/view?usp=drivesdk"
+    },
+    "hashing-revision.pdf": {
+      "id": "1LmL_uuCd3z-cAksnR8pCkZnwg-Jh7nQ0",
+      "url": "https://drive.google.com/file/d/1LmL_uuCd3z-cAksnR8pCkZnwg-Jh7nQ0/view?usp=drivesdk"
+    },
+    "sliding-window-revision.pdf": {
+      "id": "16ZewtzPZMRoBFf2Kox-OudymMkfKeeBb",
+      "url": "https://drive.google.com/file/d/16ZewtzPZMRoBFf2Kox-OudymMkfKeeBb/view?usp=drivesdk"
+    },
+    "stacks-revision.pdf": {
+      "id": "1Mnu1OpAYCmtD1DkUz_LB9d3KBCd_360c",
+      "url": "https://drive.google.com/file/d/1Mnu1OpAYCmtD1DkUz_LB9d3KBCd_360c/view?usp=drivesdk"
+    },
+    "two-pointers-revision.pdf": {
+      "id": "1Rdxm2PtvfCAP86UXGuZFhuJKNP34tstk",
+      "url": "https://drive.google.com/file/d/1Rdxm2PtvfCAP86UXGuZFhuJKNP34tstk/view?usp=drivesdk"
+    },
+    "warmup-revision.pdf": {
+      "id": "1bVqXj6C_RF9MBMpyK9EDfkdK240ry2aO",
+      "url": "https://drive.google.com/file/d/1bVqXj6C_RF9MBMpyK9EDfkdK240ry2aO/view?usp=drivesdk"
+    }
+  }
+}
