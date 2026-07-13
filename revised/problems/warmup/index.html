@@ -194,6 +194,23 @@
       color: white;
     }
 
+    .pdf-button {
+      height: 42px;
+      border: 1px solid var(--blue);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--blue);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pdf-button:hover {
+      background: rgba(50, 108, 148, .12);
+      transform: translateY(-1px);
+    }
+
     .cards {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -753,6 +770,56 @@
       .card-head { grid-template-columns: 1fr; }
       .tools { display: grid; }
     }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .page {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+      }
+
+      .back-link,
+      .tools,
+      .page-revision-controls,
+      .revision-controls,
+      .source-link {
+        display: none !important;
+      }
+
+      header {
+        position: static;
+        display: block;
+        padding: 0 0 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #cfd8d3;
+        box-shadow: none;
+      }
+
+      .subtitle {
+        margin-bottom: 12px;
+      }
+
+      .cards {
+        display: block;
+      }
+
+      .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 14px;
+        box-shadow: none;
+      }
+
+      .card:hover,
+      .quick-row:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -772,6 +839,7 @@
       <div class="tools">
         <input id="search" class="search" type="search" placeholder="Search warmup cards">
         <button id="quickMode" class="mode-button active" type="button">Card Review</button>
+        <button id="exportPdf" class="pdf-button" type="button">Export PDF</button>
       </div>
     </header>
     <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and bug magnets before opening the Java file.</p>
@@ -1206,6 +1274,7 @@
     const searchEl = document.getElementById("search");
     const emptyEl = document.getElementById("empty");
     const quickModeEl = document.getElementById("quickMode");
+    const exportPdfEl = document.getElementById("exportPdf");
     const totalCountEl = document.getElementById("totalCount");
     const incrementAllEl = document.getElementById("incrementAll");
     const resetAllEl = document.getElementById("resetAll");
@@ -1423,6 +1492,12 @@
       render();
     }
 
+    function setReviewMode(nextQuickMode) {
+      quickMode = nextQuickMode;
+      quickModeEl.classList.toggle("active", quickMode);
+      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
+    }
+
     function render() {
       const query = searchEl.value.trim().toLowerCase();
       const visible = cards.filter(card => {
@@ -1508,10 +1583,30 @@
       render();
     });
     quickModeEl.addEventListener("click", () => {
-      quickMode = !quickMode;
-      quickModeEl.classList.toggle("active", quickMode);
-      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
+      setReviewMode(!quickMode);
       render();
+    });
+    exportPdfEl.addEventListener("click", () => {
+      const previousQuickMode = quickMode;
+      const previousSearch = searchEl.value;
+      const previousExpanded = new Set(expandedQuickCards);
+
+      searchEl.value = "";
+      expandedQuickCards.clear();
+      setReviewMode(false);
+      render();
+
+      const restoreAfterPrint = () => {
+        searchEl.value = previousSearch;
+        expandedQuickCards.clear();
+        previousExpanded.forEach(name => expandedQuickCards.add(name));
+        setReviewMode(previousQuickMode);
+        render();
+        window.removeEventListener("afterprint", restoreAfterPrint);
+      };
+
+      window.addEventListener("afterprint", restoreAfterPrint);
+      window.setTimeout(() => window.print(), 50);
     });
     totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
     render();
