@@ -772,6 +772,10 @@
     }
 
     @media print {
+      @page {
+        margin: 12mm;
+      }
+
       body {
         background: white;
       }
@@ -808,10 +812,31 @@
       }
 
       .card {
+        break-inside: auto;
+        page-break-inside: auto;
+        margin-bottom: 10px;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .card-head,
+      .recall-prompt,
+      .description,
+      .sample-box,
+      .cost-item,
+      .section {
         break-inside: avoid;
         page-break-inside: avoid;
-        margin-bottom: 14px;
-        box-shadow: none;
+      }
+
+      .body {
+        padding: 10px;
+      }
+
+      .sample,
+      .cost-strip,
+      .section-grid {
+        gap: 8px;
       }
 
       .card:hover,
