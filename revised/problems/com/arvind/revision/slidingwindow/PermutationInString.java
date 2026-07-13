@@ -35,8 +35,7 @@ public class PermutationInString {
 
     private boolean isValid(int[] ref) {
         for (int i : ref) {
-            if (i < 0) continue;
-            if (i != 0) return false;
+            if (i > 0) return false;
         }
         return true;
     }
