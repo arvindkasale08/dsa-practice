@@ -1080,6 +1080,49 @@
                   "Handle 0! as 1 if the input can be zero.",
                   "Factorials grow very fast, so int overflows beyond small n."
             ]
+      },
+      {
+            "name": "FiboUsingRecursion",
+            "source": "../com/arvind/revision/recursion/FiboUsingRecursion.java",
+            "label": "Two smaller answers",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/fibonacci-number/",
+            "description": "Given N, return the Nth Fibonacci number. The sequence starts with fib(0) = 0 and fib(1) = 1, and every later value is the sum of the previous two values.",
+            "time": "O(2^n)",
+            "space": "O(n) call stack",
+            "structures": "binary recursion tree, call stack",
+            "input": "N = 5",
+            "output": "5",
+            "recognize": "When the current answer splits into two smaller answers: fib(n - 1) and fib(n - 2).",
+            "visual": [
+                  [
+                        "fib(5)",
+                        "fib(4)",
+                        "fib(3)"
+                  ],
+                  [
+                        "fib(4)",
+                        "fib(3)",
+                        "fib(2)"
+                  ],
+                  [
+                        "repeat",
+                        "fib(3)",
+                        "again"
+                  ]
+            ],
+            "visualText": "Unlike sum or factorial, one call branches into two calls. The same smaller values appear again and again, which is why plain recursion is expensive.",
+            "core": "If N <= 1, return N. Otherwise return fib(N - 1) + fib(N - 2).",
+            "bruteForce": "This plain recursive solution is the brute-force tree: solve both smaller branches every time. It is simple but repeats the same states, so time grows exponentially.",
+            "alternates": [
+                  "Add memoization so each N is computed once: O(n) time and O(n) space.",
+                  "Use bottom-up iteration with two variables for O(n) time and O(1) space."
+            ],
+            "gotchas": [
+                  "Base cases are N <= 1 returning N, not 1 for both cases.",
+                  "Plain recursion is fine for learning but too slow for large N.",
+                  "The repeated subproblems are the bridge from recursion into DP."
+            ]
       }
 ];
 
@@ -1128,6 +1171,15 @@
                   "Multiply while the stack unwinds."
             ],
             "skeleton": "fact(num):\n  if num == 1: return 1\n  return num * fact(num - 1)"
+      },
+      "FiboUsingRecursion": {
+            "prompt": "Before reading: why does Fibonacci branch into two recursive calls?",
+            "steps": [
+                  "fib(0) and fib(1) are direct answers.",
+                  "Every larger N depends on the previous two answers.",
+                  "The recursion tree repeats smaller states unless you memoize."
+            ],
+            "skeleton": "fib(N):\n  if N <= 1: return N\n  return fib(N - 1) + fib(N - 2)"
       }
 };
 
@@ -1136,7 +1188,8 @@
       "Print1ToNUsingRecursion": "print current idx first\nthen recurse with idx + 1",
       "PrintNto1Recursion": "print current n first\nthen recurse with n - 1",
       "SumOfFirstNNaturalNumbers": "return current N\nplus sum(N - 1)",
-      "Factorial": "return current num\ntimes fact(num - 1)"
+      "Factorial": "return current num\ntimes fact(num - 1)",
+      "FiboUsingRecursion": "answer = fib(N - 1)\n       + fib(N - 2)"
 };
 
     const solvedOrder = [
@@ -1144,7 +1197,8 @@
       "Print1ToNUsingRecursion",
       "PrintNto1Recursion",
       "SumOfFirstNNaturalNumbers",
-      "Factorial"
+      "Factorial",
+      "FiboUsingRecursion"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
