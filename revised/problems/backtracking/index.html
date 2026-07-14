@@ -962,6 +962,52 @@
                   "Use MOD = 1,000,000,007 and apply modulo during multiplication, not only at the end.",
                   "Use long for n and position counts; n can be very large."
             ]
+      },
+      {
+            "name": "SortStack",
+            "source": "../com/arvind/revision/backtracking/SortStack.java",
+            "label": "Sort smaller stack, insert current",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a stack of integers, sort it using recursion so that repeated pop operations return values in increasing order. The recursive idea is to sort the stack without the current top, then place that top back into its correct position.",
+            "time": "O(n^2)",
+            "space": "O(n) call stack",
+            "timeWhy": "The outer recursion removes n elements one by one. When each element is inserted back, it may move through most of the already-sorted stack, so the work adds up like 1 + 2 + 3 + ... + n.",
+            "structures": "Stack<Integer>, recursion stack",
+            "input": "stack top -> [2, 3, 1, 4]",
+            "output": "pop order: 1, 2, 3, 4",
+            "recognize": "When the problem asks to sort a stack using only stack operations and recursion, not an array sort.",
+            "visual": [
+                  [
+                        "pop 2",
+                        "sort rest",
+                        "insert 2"
+                  ],
+                  [
+                        "sorted rest",
+                        "top small",
+                        "push before bigger"
+                  ],
+                  [
+                        "pop result",
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                  ]
+            ],
+            "visualText": "Think of the stack as sorted after the recursive call returns. The only job left is to slide the saved value below smaller values and above larger values.",
+            "core": "Pop the top, recursively sort the remaining stack, then insert the popped value into the sorted stack by temporarily popping values that should stay above it.",
+            "bruteForce": "Move all values to a list or array, sort with library sort, then push them back. That is simpler but violates the stack-only recursion practice goal.",
+            "alternates": [
+                  "Use an auxiliary stack iteratively: pop from input and insert into the temporary stack in sorted order.",
+                  "If arrays are allowed, sorting externally is easier and usually faster to implement, but it is not the intended recursive stack exercise."
+            ],
+            "gotchas": [
+                  "Decide the required pop order first; this version keeps the smallest value on top after sorting.",
+                  "The insertion condition controls ordering: peek > current means current belongs above the larger value.",
+                  "Restore every temporarily popped value after inserting the current value."
+            ]
       }
 ];
 
@@ -985,17 +1031,29 @@
                   "Modulo every multiplication inside pow to prevent overflow."
             ],
             "skeleton": "even = (n + 1) / 2\nodd = n / 2\nanswer = pow(5, even) * pow(4, odd) % MOD\n\npow(base, exp):\n  if exp == 0: return 1\n  if exp even: return pow(base * base % MOD, exp / 2)\n  return base * pow(base, exp - 1) % MOD"
+      },
+      "SortStack": {
+            "prompt": "Before reading: after the smaller stack is sorted, where should the saved top value go?",
+            "steps": [
+                  "Pop the current top and trust recursion to sort the rest.",
+                  "If the sorted stack is empty or its top is bigger, push the saved value there.",
+                  "Otherwise pop the smaller/equal top, insert deeper, then push the popped value back.",
+                  "The stack rebuilds itself in sorted order during unwind."
+            ],
+            "skeleton": "sort(stack):\n  if stack empty: return\n  top = stack.pop()\n  sort(stack)\n  insertSorted(top, stack)\n\ninsertSorted(x, stack):\n  if stack empty OR stack.peek() > x:\n    stack.push(x)\n    return\n  temp = stack.pop()\n  insertSorted(x, stack)\n  stack.push(temp)"
       }
 };
 
     const definingMoves = {
       "PowXN": "n as long first\neven: x*x, n/2\nnegative: reciprocal at the end",
-      "CountGoodNumbers": "slots first, then powers\neven slots -> 5^count\nodd slots -> 4^count"
+      "CountGoodNumbers": "slots first, then powers\neven slots -> 5^count\nodd slots -> 4^count",
+      "SortStack": "sort rest first\nthen insert saved top\nrestore popped blockers"
 };
 
     const solvedOrder = [
       "PowXN",
-      "CountGoodNumbers"
+      "CountGoodNumbers",
+      "SortStack"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
