@@ -1430,6 +1430,7 @@
                 <span class="cost-value">${escapeHtml(card.structures)}</span>
               </div>
             </div>
+            ${card.timeWhy ? `<div class="section time-why"><b>Why this complexity</b>${escapeHtml(card.timeWhy)}</div>` : ""}
             <div class="section-grid">
               <div class="section">
                 <b>When to recognize it</b>

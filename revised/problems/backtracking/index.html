@@ -884,6 +884,7 @@
             "description": "Given a decimal base x and an integer exponent n, return x raised to n. Negative powers mean take the reciprocal, and the exponent can be as small as Integer.MIN_VALUE.",
             "time": "O(log n)",
             "space": "O(log n) call stack",
+            "timeWhy": "Each recursive step cuts the exponent roughly in half: n, n/2, n/4, n/8. The number of calls is the number of halvings needed to reach 0, so both work and stack depth are logarithmic.",
             "structures": "fast exponentiation, recursion stack, long exponent",
             "input": "x = 2.00000, n = -2",
             "output": "0.25000",
@@ -917,6 +918,50 @@
                   "Negative exponent means reciprocal of the positive-power answer.",
                   "Do not multiply linearly for large n; halve the exponent to stay logarithmic."
             ]
+      },
+      {
+            "name": "CountGoodNumbers",
+            "source": "../com/arvind/revision/backtracking/CountGoodNumbers.java",
+            "label": "Count positions, power choices",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/count-good-numbers/",
+            "description": "Given a length n, count how many digit strings are good. Even indices can use even digits 0, 2, 4, 6, 8, while odd indices can use prime digits 2, 3, 5, 7. Return the count modulo 1,000,000,007.",
+            "time": "O(log n)",
+            "space": "O(log n) call stack",
+            "timeWhy": "There are only two powers to compute: 5^(even positions) and 4^(odd positions). Fast power halves the exponent at every recursive step, so n becomes n/2, n/4, n/8 until it reaches 0.",
+            "structures": "modular exponentiation, recursion stack, long counts",
+            "input": "n = 3",
+            "output": "100",
+            "recognize": "When each position has a fixed number of choices and the final answer is a product of repeated choices under modulo.",
+            "visual": [
+                  [
+                        "idx 0",
+                        "even digit",
+                        "5 choices"
+                  ],
+                  [
+                        "idx 1",
+                        "prime digit",
+                        "4 choices"
+                  ],
+                  [
+                        "idx 2",
+                        "even digit",
+                        "5 choices"
+                  ]
+            ],
+            "visualText": "Think of the string as slots. Even slots get 5 choices, odd slots get 4 choices. Count how many of each slot type exist, then raise the choice count to that power.",
+            "core": "evenPositions = (n + 1) / 2 and oddPositions = n / 2. Answer is pow(5, evenPositions) * pow(4, oddPositions) modulo MOD.",
+            "bruteForce": "Walk every position and multiply by 5 or 4 depending on index parity. It is easy to understand but costs O(n), which is too slow when n is huge.",
+            "alternates": [
+                  "Use iterative binary exponentiation instead of recursion to keep O(log n) time and reduce stack space to O(1).",
+                  "A direct O(n) multiplication loop is acceptable only for tiny n and is mainly useful for checking examples."
+            ],
+            "gotchas": [
+                  "Leading zero is allowed because this is a digit string, not a normal integer.",
+                  "Use MOD = 1,000,000,007 and apply modulo during multiplication, not only at the end.",
+                  "Use long for n and position counts; n can be very large."
+            ]
       }
 ];
 
@@ -930,15 +975,27 @@
                   "If the original exponent was negative, return the reciprocal."
             ],
             "skeleton": "power = (long) n\nres = powPositive(x, abs(power))\nif n < 0: return 1 / res\nreturn res\n\npowPositive(x, p):\n  if p == 0: return 1\n  if p even: return powPositive(x * x, p / 2)\n  return x * powPositive(x, p - 1)"
+      },
+      "CountGoodNumbers": {
+            "prompt": "Before reading: how many even-index slots and odd-index slots are there?",
+            "steps": [
+                  "Even index slots have 5 choices because 0 is allowed.",
+                  "Odd index slots have 4 choices: 2, 3, 5, 7.",
+                  "Count the slots, then use fast power instead of multiplying one slot at a time.",
+                  "Modulo every multiplication inside pow to prevent overflow."
+            ],
+            "skeleton": "even = (n + 1) / 2\nodd = n / 2\nanswer = pow(5, even) * pow(4, odd) % MOD\n\npow(base, exp):\n  if exp == 0: return 1\n  if exp even: return pow(base * base % MOD, exp / 2)\n  return base * pow(base, exp - 1) % MOD"
       }
 };
 
     const definingMoves = {
-      "PowXN": "n as long first\neven: x*x, n/2\nnegative: reciprocal at the end"
+      "PowXN": "n as long first\neven: x*x, n/2\nnegative: reciprocal at the end",
+      "CountGoodNumbers": "slots first, then powers\neven slots -> 5^count\nodd slots -> 4^count"
 };
 
     const solvedOrder = [
-      "PowXN"
+      "PowXN",
+      "CountGoodNumbers"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
@@ -1085,6 +1142,7 @@
                 <span class="cost-value">${escapeHtml(card.structures)}</span>
               </div>
             </div>
+            ${card.timeWhy ? `<div class="section time-why"><b>Why this complexity</b>${escapeHtml(card.timeWhy)}</div>` : ""}
             <div class="section-grid">
               <div class="section">
                 <b>When to recognize it</b>
