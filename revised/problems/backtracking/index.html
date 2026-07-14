@@ -1008,6 +1008,50 @@
                   "The insertion condition controls ordering: peek > current means current belongs above the larger value.",
                   "Restore every temporarily popped value after inserting the current value."
             ]
+      },
+      {
+            "name": "ReverseAStack",
+            "source": "../com/arvind/revision/backtracking/ReverseAStack.java",
+            "label": "Pop all, insert each at bottom",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given a stack, reverse it using recursion and stack operations. The top element is removed, the remaining stack is reversed, and the removed element is placed at the bottom.",
+            "time": "O(n^2)",
+            "space": "O(n) call stack",
+            "timeWhy": "There are n recursive removals. For each removed value, insertAtBottom may walk through the current stack, so the total work is 1 + 2 + 3 + ... + n.",
+            "structures": "Stack<Integer>, recursion stack",
+            "input": "stack pop order: 2, 3, 1, 4",
+            "output": "after reverse pop order: 4, 1, 3, 2",
+            "recognize": "When the task asks to reverse a stack without using an array/list and recursion is allowed.",
+            "visual": [
+                  [
+                        "pop top",
+                        "reverse rest",
+                        "put top at bottom"
+                  ],
+                  [
+                        "2 held",
+                        "reverse [3,1,4]",
+                        "bottom gets 2"
+                  ],
+                  [
+                        "unwind",
+                        "bottom insert",
+                        "stack flips"
+                  ]
+            ],
+            "visualText": "Imagine every popped value waiting outside the stack. When the smaller stack is already reversed, the waiting value goes to the bottom, so original top becomes new bottom.",
+            "core": "Pop the top, recursively reverse the remaining stack, then insert the saved top at the bottom by temporarily popping everything above the bottom.",
+            "bruteForce": "Use another stack/list to collect values and push them back in reverse order. It is easier, but the recursive exercise is about doing it with stack operations and call stack only.",
+            "alternates": [
+                  "Use an auxiliary stack iteratively if extra storage is allowed.",
+                  "For linked-list-backed stacks, reversing node pointers would be O(n), but that changes the abstraction and is not the intended stack-only solution."
+            ],
+            "gotchas": [
+                  "The reverse step must happen before insertAtBottom; otherwise you only move one item around.",
+                  "insertAtBottom must restore every temporarily popped element after placing the saved value.",
+                  "Check empty stack first in both recursive functions."
+            ]
       }
 ];
 
@@ -1041,19 +1085,31 @@
                   "The stack rebuilds itself in sorted order during unwind."
             ],
             "skeleton": "sort(stack):\n  if stack empty: return\n  top = stack.pop()\n  sort(stack)\n  insertSorted(top, stack)\n\ninsertSorted(x, stack):\n  if stack empty OR stack.peek() > x:\n    stack.push(x)\n    return\n  temp = stack.pop()\n  insertSorted(x, stack)\n  stack.push(temp)"
+      },
+      "ReverseAStack": {
+            "prompt": "Before reading: why does the old top need to become the new bottom?",
+            "steps": [
+                  "Pop the current top and hold it aside.",
+                  "Trust recursion to reverse the smaller stack.",
+                  "Insert the held value at the bottom of that reversed stack.",
+                  "During unwind, each older top sinks below the stack that has already been reversed."
+            ],
+            "skeleton": "reverse(stack):\n  if stack empty: return\n  top = stack.pop()\n  reverse(stack)\n  insertAtBottom(top, stack)\n\ninsertAtBottom(x, stack):\n  if stack empty:\n    stack.push(x)\n    return\n  temp = stack.pop()\n  insertAtBottom(x, stack)\n  stack.push(temp)"
       }
 };
 
     const definingMoves = {
       "PowXN": "n as long first\neven: x*x, n/2\nnegative: reciprocal at the end",
       "CountGoodNumbers": "slots first, then powers\neven slots -> 5^count\nodd slots -> 4^count",
-      "SortStack": "sort rest first\nthen insert saved top\nrestore popped blockers"
+      "SortStack": "sort rest first\nthen insert saved top\nrestore popped blockers",
+      "ReverseAStack": "reverse rest first\nthen sink saved top\nto the bottom"
 };
 
     const solvedOrder = [
       "PowXN",
       "CountGoodNumbers",
-      "SortStack"
+      "SortStack",
+      "ReverseAStack"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
