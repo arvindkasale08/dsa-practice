@@ -42,6 +42,11 @@ const pageConfigs = {
     title: "Recursion Revision",
     label: "recursion",
     subtitle: "Fast recall cards for the current recursion package. Picture the base case, the smaller call, and the unwind before opening the Java file."
+  },
+  backtracking: {
+    title: "Backtracking Revision",
+    label: "backtracking",
+    subtitle: "Fast recall cards for the current backtracking package. Picture the choice, the smaller recursive call, and the undo step before opening the Java file."
   }
 };
 
