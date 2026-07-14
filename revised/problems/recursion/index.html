@@ -1000,6 +1000,46 @@
                   "Print before the recursive call for descending order.",
                   "Recurse with n - 1; otherwise the base case is never reached."
             ]
+      },
+      {
+            "name": "SumOfFirstNNaturalNumbers",
+            "source": "../com/arvind/revision/recursion/SumOfFirstNNaturalNumbers.java",
+            "label": "Current plus smaller sum",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given a positive integer N, return the sum of all natural numbers from 1 to N using recursion. Each call contributes the current number and asks the smaller call to finish the rest.",
+            "time": "O(n)",
+            "space": "O(n) call stack",
+            "structures": "recursion return value, call stack",
+            "input": "N = 10",
+            "output": "55",
+            "recognize": "When the answer for N can be written as N plus the same answer for N - 1.",
+            "visual": [
+                  [
+                        "sum(4)",
+                        "4 + sum(3)"
+                  ],
+                  [
+                        "sum(3)",
+                        "3 + sum(2)"
+                  ],
+                  [
+                        "sum(1)",
+                        "1"
+                  ]
+            ],
+            "visualText": "Each call holds onto its current number and waits for the smaller sum to return. During unwind, the numbers add back up.",
+            "core": "Return N when N hits the base case. Otherwise return N + sum(N - 1).",
+            "bruteForce": "A loop can accumulate total from 1 to N in O(n) time and O(1) space. The recursive version uses O(n) stack frames to practice return-based recursion.",
+            "alternates": [
+                  "Use the formula N * (N + 1) / 2 for O(1) time when recursion is not required.",
+                  "Use parameterized recursion with an accumulator: add N into total, then call N - 1."
+            ],
+            "gotchas": [
+                  "The current code assumes N >= 1; use N <= 0 as a guard if zero or negative values are possible.",
+                  "Base case should return the last real contribution, usually 1 or 0 depending on your definition.",
+                  "Do not forget to return the recursive expression; printing alone does not pass the sum back."
+            ]
       }
 ];
 
@@ -1030,19 +1070,30 @@
                   "Then recurse with n - 1 until n reaches 0."
             ],
             "skeleton": "printDesc(n):\n  if n == 0: return\n  print(n)\n  printDesc(n - 1)"
+      },
+      "SumOfFirstNNaturalNumbers": {
+            "prompt": "Before reading: what smaller answer does sum(N) depend on?",
+            "steps": [
+                  "Keep the current N as this call's contribution.",
+                  "Ask recursion for the sum up to N - 1.",
+                  "Return current plus smaller answer while the stack unwinds."
+            ],
+            "skeleton": "sum(N):\n  if N == 1: return 1\n  return N + sum(N - 1)"
       }
 };
 
     const definingMoves = {
       "PrintNameNTimes": "base case: idx >= N\nrecursive move: print, then idx + 1",
       "Print1ToNUsingRecursion": "print current idx first\nthen recurse with idx + 1",
-      "PrintNto1Recursion": "print current n first\nthen recurse with n - 1"
+      "PrintNto1Recursion": "print current n first\nthen recurse with n - 1",
+      "SumOfFirstNNaturalNumbers": "return current N\nplus sum(N - 1)"
 };
 
     const solvedOrder = [
       "PrintNameNTimes",
       "Print1ToNUsingRecursion",
-      "PrintNto1Recursion"
+      "PrintNto1Recursion",
+      "SumOfFirstNNaturalNumbers"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
