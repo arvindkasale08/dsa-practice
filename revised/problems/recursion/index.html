@@ -1,0 +1,1399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recursion Revision</title>
+  <style>
+    :root {
+      --ink: #18221e;
+      --muted: #5e6d66;
+      --line: #d4ddd7;
+      --line-strong: #b9c9bf;
+      --paper: #edf2ee;
+      --panel: #fffefa;
+      --green: #176b51;
+      --green-dark: #0f4f3c;
+      --green-soft: #e1f2e9;
+      --blue: #326c94;
+      --blue-soft: #e4f0f7;
+      --gold: #a96b16;
+      --gold-soft: #fbefd5;
+      --red: #a4473e;
+      --red-soft: #f8e7e4;
+      --shadow: 0 12px 30px rgba(31, 53, 42, .08);
+      --shadow-hover: 0 18px 38px rgba(31, 53, 42, .14);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      border-top: 4px solid var(--green);
+    }
+
+    a {
+      color: var(--green);
+      font-weight: 700;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    a:hover { color: var(--green-dark); }
+
+    button,
+    input {
+      transition: border-color .15s ease, background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 3px solid rgba(50, 108, 148, .22);
+      outline-offset: 2px;
+    }
+
+    .page {
+      width: min(1380px, 100%);
+      margin: 0 auto;
+      padding: 20px 18px 48px;
+    }
+
+    header {
+      position: sticky;
+      top: 52px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 10px;
+      padding: 12px;
+      border: 1px solid rgba(185, 201, 191, .8);
+      border-radius: 8px;
+      background: rgba(255, 254, 250, .96);
+      box-shadow: 0 8px 24px rgba(31, 53, 42, .08);
+      backdrop-filter: blur(12px);
+    }
+
+    .back-link {
+      position: sticky;
+      top: 8px;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--green);
+      padding: 5px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 5px 16px rgba(31, 53, 42, .1);
+    }
+
+    .back-link:hover {
+      border-color: var(--green);
+      background: var(--green-soft);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1;
+      letter-spacing: 0;
+      color: #13241d;
+    }
+
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .count-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      border: 1px solid #bad9ca;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 4px 12px;
+      font-size: 14px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .page-revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      max-width: 840px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .search {
+      width: min(380px, 100%);
+      height: 42px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--ink);
+      font: inherit;
+      padding: 0 12px;
+    }
+
+    .search:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(50, 108, 148, .12);
+    }
+
+    .mode-button {
+      height: 42px;
+      border: 1px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--green);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mode-button:hover {
+      background: var(--green-soft);
+      transform: translateY(-1px);
+    }
+
+    .mode-button.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    .pdf-button {
+      height: 42px;
+      border: 1px solid var(--blue);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--blue);
+      padding: 0 12px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .pdf-button:hover {
+      background: rgba(50, 108, 148, .12);
+      transform: translateY(-1px);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--green);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-width: 0;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+
+    .card.easy { border-color: #bad9ca; border-top-color: var(--green); }
+    .card.medium { border-color: #e6cf9b; border-top-color: var(--gold); }
+    .card.hard { border-color: #e5c1bc; border-top-color: var(--red); }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .card-head {
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: start;
+      background: #f8faf7;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .problem-no {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .problem-title {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .revision-controls {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 7px;
+    }
+
+    .revision-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .revision-button {
+      min-height: 26px;
+      border: 1px solid #bad9ca;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 3px 9px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .revision-button:hover {
+      border-color: var(--green);
+      background: var(--green);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .revision-button.reset {
+      border-color: var(--line);
+      background: #f6f8f5;
+      color: var(--muted);
+    }
+
+    .revision-button.reset:hover {
+      border-color: #dfb7b2;
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 10px;
+      align-items: center;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .meta-line a {
+      font-weight: 700;
+    }
+
+    .head-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 6px;
+      align-items: start;
+    }
+
+    .badge,
+    .difficulty,
+    .leetcode {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: var(--green-soft);
+      color: #28593f;
+      border: 1px solid #cfe0d2;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .difficulty.easy {
+      background: var(--green-soft);
+      border-color: #bad9ca;
+      color: var(--green-dark);
+    }
+
+    .difficulty.medium {
+      background: var(--gold-soft);
+      border-color: #edd89d;
+      color: #67480b;
+    }
+
+    .difficulty.hard {
+      background: var(--red-soft);
+      border-color: #edc5bd;
+      color: #773229;
+    }
+
+    .leetcode {
+      background: var(--blue-soft);
+      border-color: #cddfeb;
+      color: #2f536c;
+      text-decoration: none;
+    }
+
+    .body {
+      padding: 15px 16px 16px;
+      display: grid;
+      gap: 12px;
+      background: var(--panel);
+    }
+
+    .recall-prompt {
+      border: 1px solid #bad9ca;
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .description {
+      border: 1px solid #cddfeb;
+      border-left: 4px solid var(--blue);
+      border-radius: 8px;
+      background: var(--blue-soft);
+      color: #2f536c;
+      padding: 10px;
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .description b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #2f536c;
+    }
+
+    .cost-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .cost-item {
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--green);
+      border-radius: 8px;
+      background: #f8faf7;
+      padding: 9px 10px;
+      min-width: 0;
+    }
+
+    .cost-item:nth-child(2) { border-top-color: var(--blue); }
+    .cost-item:nth-child(3) { border-top-color: var(--gold); }
+
+    .cost-label {
+      display: block;
+      margin-bottom: 3px;
+      color: #3c4d43;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .cost-value {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .sample {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .sample-box {
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f6f9f7;
+      padding: 10px;
+    }
+
+    .sample-box b,
+    .section b {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      color: #3c4d43;
+    }
+
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #213c30;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffefa;
+      padding: 10px;
+      min-height: 92px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .section.full {
+      grid-column: 1 / -1;
+      border-color: #e5c9c5;
+      background: #fffaf8;
+    }
+
+    .section.brute-force {
+      border-color: #e6cf9b;
+      background: #fffdf6;
+    }
+
+    .section.alternates {
+      border-color: #bfd3e1;
+      background: #f7fbff;
+    }
+
+    .visual {
+      display: grid;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .step {
+      display: flex;
+      gap: 7px;
+      align-items: start;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.32;
+    }
+
+    .step-num {
+      flex: 0 0 auto;
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--blue-soft);
+      color: #2f536c;
+      font-weight: 900;
+      font-size: 11px;
+    }
+
+    .array {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .cell {
+      min-width: 30px;
+      height: 30px;
+      padding: 0 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      display: inline-grid;
+      place-items: center;
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .cell.green { background: var(--green-soft); }
+    .cell.blue { background: var(--blue-soft); }
+    .cell.gold { background: var(--gold-soft); }
+    .cell.red { background: var(--red-soft); }
+
+    .hint {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .gotchas {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .gotchas li {
+      margin-bottom: 5px;
+    }
+
+    .gotchas li:last-child { margin-bottom: 0; }
+
+    .empty {
+      display: none;
+      border: 1px dashed #b9c4bb;
+      border-radius: 8px;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      background: white;
+    }
+
+    .quick-review {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-item {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(240px, 1.15fr) minmax(180px, .85fr) minmax(220px, 1.2fr) minmax(220px, 1.2fr);
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 11px 40px 11px 11px;
+      cursor: pointer;
+      box-shadow: 0 5px 14px rgba(31, 53, 42, .05);
+    }
+
+    .quick-row.easy { border-color: #bad9ca; border-left-color: var(--green); }
+    .quick-row.medium { border-color: #e6cf9b; border-left-color: var(--gold); }
+    .quick-row.hard { border-color: #e5c1bc; border-left-color: var(--red); }
+
+    .quick-row:hover,
+    .quick-row:focus-visible,
+    .quick-row.expanded {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .expand-cue {
+      position: absolute;
+      top: 12px;
+      right: 13px;
+      color: var(--green);
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1;
+      transition: transform .15s ease;
+    }
+
+    .quick-row.expanded .expand-cue {
+      transform: rotate(180deg);
+    }
+
+    .quick-expanded-card {
+      box-shadow: 0 12px 28px rgba(26, 37, 31, .08);
+    }
+
+    .quick-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .quick-row strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .quick-title .difficulty {
+      min-height: 22px;
+      padding: 2px 8px;
+    }
+
+    .quick-summary {
+      display: grid;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .quick-approach {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      border-left: 3px solid var(--blue);
+      background: #eef6fa;
+      padding: 3px 7px;
+      color: #294a5e;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .quick-facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .quick-fact {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f7faf8;
+      padding: 2px 7px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .quick-fact b,
+    .quick-uses b {
+      color: #3c4d43;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .quick-uses {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .quick-label {
+      color: #3c4d43;
+      display: block;
+      margin-bottom: 3px;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    .quick-text {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    @media (max-width: 980px) {
+      header { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .search { width: 100%; }
+      .tools { justify-content: flex-start; }
+      .quick-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .sample,
+      .cost-strip,
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section.full { grid-column: auto; }
+      .card-head { grid-template-columns: 1fr; }
+      .tools { display: grid; }
+    }
+
+    @media print {
+      @page {
+        margin: 12mm;
+      }
+
+      body {
+        background: white;
+      }
+
+      .page {
+        width: 100%;
+        max-width: none;
+        padding: 0;
+      }
+
+      .back-link,
+      .tools,
+      .page-revision-controls,
+      .revision-controls,
+      .source-link {
+        display: none !important;
+      }
+
+      header {
+        position: static;
+        display: block;
+        padding: 0 0 12px;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #cfd8d3;
+        box-shadow: none;
+      }
+
+      .subtitle {
+        margin-bottom: 12px;
+      }
+
+      .cards {
+        display: block;
+      }
+
+      .card {
+        break-inside: auto;
+        page-break-inside: auto;
+        margin-bottom: 10px;
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      .card-head,
+      .recall-prompt,
+      .description,
+      .sample-box,
+      .cost-item,
+      .section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .body {
+        padding: 10px;
+      }
+
+      .sample,
+      .cost-strip,
+      .section-grid {
+        gap: 8px;
+      }
+
+      .card:hover,
+      .quick-row:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="back-link" href="../../../">Back to index</a>
+    <header>
+      <div>
+        <div class="title-row">
+          <h1>Recursion Revision</h1>
+          <span id="totalCount" class="count-pill"></span>
+          <div class="page-revision-controls">
+            <button id="incrementAll" class="revision-button" type="button">+1 All</button>
+            <button id="resetAll" class="revision-button reset" type="button">Reset All</button>
+          </div>
+        </div>
+      </div>
+      <div class="tools">
+        <input id="search" class="search" type="search" placeholder="Search recursion cards">
+        <button id="quickMode" class="mode-button active" type="button">Card Review</button>
+        <button id="exportPdf" class="pdf-button" type="button">Export PDF</button>
+      </div>
+    </header>
+    <p class="subtitle">Fast recall cards for the current recursion package. Picture the base case, the smaller call, and the unwind before opening the Java file.</p>
+
+    <section id="cards" class="cards"></section>
+    <div id="empty" class="empty">No matching recursion cards.</div>
+  </main>
+
+  <script>
+    const cards = [
+      {
+            "name": "PrintNameNTimes",
+            "source": "../com/arvind/revision/recursion/PrintNameNTimes.java",
+            "label": "Base case repetition",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given a name and a number N, print the name exactly N times using recursion. The method should stop once the recursive counter reaches N, without using a loop.",
+            "time": "O(n)",
+            "space": "O(n) call stack",
+            "structures": "recursion counter, call stack",
+            "input": "name = \"Arvind\"\nN = 5",
+            "output": "Arvind\nArvind\nArvind\nArvind\nArvind",
+            "recognize": "When the task is simply repeating the same action N times and the point is to practice the base case plus smaller recursive call shape.",
+            "visual": [
+                  [
+                        "idx 0",
+                        "print",
+                        "call 1"
+                  ],
+                  [
+                        "idx 1",
+                        "print",
+                        "call 2"
+                  ],
+                  [
+                        "idx 5",
+                        "stop"
+                  ]
+            ],
+            "visualText": "Think of idx as the repeat counter. Each call prints once, then hands the next counter value to the next call. When idx reaches N, recursion stops.",
+            "core": "Use idx as the number of prints already done. If idx >= N, return. Otherwise print the name and recurse with idx + 1.",
+            "bruteForce": "A normal for-loop from 0 to N - 1 prints the name N times in O(n) time and O(1) space. It is simpler, but it does not practice the recursive call-stack shape.",
+            "alternates": [
+                  "Use a remaining-count parameter instead: print while remaining > 0, then recurse with remaining - 1.",
+                  "For printing 1 to N or N to 1, move the print before or after the recursive call to control the order."
+            ],
+            "gotchas": [
+                  "The base condition must be checked before printing, otherwise one extra line can appear.",
+                  "Advance the counter on every recursive call; calling with the same idx never reaches the base case.",
+                  "Use idx >= N instead of idx == N if callers might pass a value already beyond N."
+            ]
+      },
+      {
+            "name": "Print1ToNUsingRecursion",
+            "source": "../com/arvind/revision/recursion/Print1ToNUsingRecursion.java",
+            "label": "Forward recursion counter",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given N, print the numbers from 1 to N using recursion. The function carries the current number forward and stops after it prints N.",
+            "time": "O(n)",
+            "space": "O(n) call stack",
+            "structures": "recursion counter, call stack",
+            "input": "N = 5",
+            "output": "1 2 3 4 5",
+            "recognize": "When each recursive call should handle exactly one number and then move to the next number in increasing order.",
+            "visual": [
+                  [
+                        "idx 1",
+                        "print 1",
+                        "call 2"
+                  ],
+                  [
+                        "idx 2",
+                        "print 2",
+                        "call 3"
+                  ],
+                  [
+                        "idx 6",
+                        "stop"
+                  ]
+            ],
+            "visualText": "The current index is the number to print now. Print before the recursive call to keep the output in increasing order.",
+            "core": "If idx > N, stop. Otherwise print idx, then recurse with idx + 1.",
+            "bruteForce": "A for-loop from 1 to N prints the same sequence in O(n) time and O(1) space. The recursive version is for learning call flow and base conditions.",
+            "alternates": [
+                  "To print N to 1, print before recursing with N - 1.",
+                  "To print 1 to N using backtracking style, recurse down first and print while returning."
+            ],
+            "gotchas": [
+                  "Use idx > N as the stop condition when starting from 1.",
+                  "Print before the recursive call for ascending order in this version.",
+                  "Always pass idx + 1; otherwise the call never progresses."
+            ]
+      },
+      {
+            "name": "PrintNto1Recursion",
+            "source": "../com/arvind/revision/recursion/PrintNto1Recursion.java",
+            "label": "Descending recursion counter",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given N, print the numbers from N down to 1 using recursion. The function prints the current number first, then moves to the smaller number until it reaches zero.",
+            "time": "O(n)",
+            "space": "O(n) call stack",
+            "structures": "recursion counter, call stack",
+            "input": "N = 5",
+            "output": "5 4 3 2 1",
+            "recognize": "When the current value itself is the next answer and the recursive call should shrink the problem by one.",
+            "visual": [
+                  [
+                        "n 5",
+                        "print 5",
+                        "call 4"
+                  ],
+                  [
+                        "n 4",
+                        "print 4",
+                        "call 3"
+                  ],
+                  [
+                        "n 0",
+                        "stop"
+                  ]
+            ],
+            "visualText": "Print before going deeper because the current number belongs first. Each call reduces n, so the stack walks downward toward zero.",
+            "core": "If n == 0, return. Otherwise print n and recurse with n - 1.",
+            "bruteForce": "A loop from N down to 1 prints the same output in O(n) time and O(1) space. Recursion costs stack space but trains the base-case pattern.",
+            "alternates": [
+                  "To print 1 to N with the same decreasing parameter, recurse first and print during unwind.",
+                  "Use an increasing idx parameter when forward order feels more natural."
+            ],
+            "gotchas": [
+                  "The stop condition is n == 0 when the final printed value is 1.",
+                  "Print before the recursive call for descending order.",
+                  "Recurse with n - 1; otherwise the base case is never reached."
+            ]
+      }
+];
+
+    const recallDetails = {
+      "PrintNameNTimes": {
+            "prompt": "Before reading: what value proves that the name has already been printed enough times?",
+            "steps": [
+                  "idx counts how many prints are already completed.",
+                  "If idx reaches N, stop immediately.",
+                  "Otherwise print once and recurse with idx + 1."
+            ],
+            "skeleton": "printName(name, idx, N):\n  if idx >= N: return\n  print(name)\n  printName(name, idx + 1, N)"
+      },
+      "Print1ToNUsingRecursion": {
+            "prompt": "Before reading: why does printing before the recursive call produce 1 to N?",
+            "steps": [
+                  "idx is the current number to print.",
+                  "Print idx immediately for forward order.",
+                  "Then call the same function for idx + 1."
+            ],
+            "skeleton": "printNumbers(idx, N):\n  if idx > N: return\n  print(idx)\n  printNumbers(idx + 1, N)"
+      },
+      "PrintNto1Recursion": {
+            "prompt": "Before reading: why does printing before n - 1 create descending order?",
+            "steps": [
+                  "The current n is the largest remaining number.",
+                  "Print it before shrinking the problem.",
+                  "Then recurse with n - 1 until n reaches 0."
+            ],
+            "skeleton": "printDesc(n):\n  if n == 0: return\n  print(n)\n  printDesc(n - 1)"
+      }
+};
+
+    const definingMoves = {
+      "PrintNameNTimes": "base case: idx >= N\nrecursive move: print, then idx + 1",
+      "Print1ToNUsingRecursion": "print current idx first\nthen recurse with idx + 1",
+      "PrintNto1Recursion": "print current n first\nthen recurse with n - 1"
+};
+
+    const solvedOrder = [
+      "PrintNameNTimes",
+      "Print1ToNUsingRecursion",
+      "PrintNto1Recursion"
+];
+
+    cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
+    cards.forEach(card => Object.assign(card, recallDetails[card.name], {
+      definingMove: definingMoves[card.name]
+    }));
+    cards.forEach((card, index) => {
+      card.problemNo = index + 1;
+      card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
+    });
+
+    const cardsEl = document.getElementById("cards");
+    const searchEl = document.getElementById("search");
+    const emptyEl = document.getElementById("empty");
+    const quickModeEl = document.getElementById("quickMode");
+    const exportPdfEl = document.getElementById("exportPdf");
+    const totalCountEl = document.getElementById("totalCount");
+    const incrementAllEl = document.getElementById("incrementAll");
+    const resetAllEl = document.getElementById("resetAll");
+    let quickMode = true;
+    const expandedQuickCards = new Set();
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function renderVisual(groups) {
+      return groups.map((group, index) => {
+        const color = index === 0 ? "green" : index === 1 ? "gold" : "blue";
+        return `<div class="array">${group.map(item => `<span class="cell ${color}">${escapeHtml(item)}</span>`).join("")}</div>`;
+      }).join("");
+    }
+
+    function renderSteps(steps) {
+      return `<div class="steps">${steps.map((step, index) => `
+        <div class="step"><span class="step-num">${index + 1}</span><span>${escapeHtml(step)}</span></div>
+      `).join("")}</div>`;
+    }
+
+    function storageKey(cardName) {
+      return `dsa-revision:recursion:${cardName}`;
+    }
+
+    function readRevision(cardName) {
+      try {
+        const raw = localStorage.getItem(storageKey(cardName));
+        if (!raw) return { count: 0, last: "" };
+        const parsed = JSON.parse(raw);
+        return {
+          count: Number(parsed.count) || 0,
+          last: typeof parsed.last === "string" ? parsed.last : ""
+        };
+      } catch {
+        return { count: 0, last: "" };
+      }
+    }
+
+    function writeRevision(cardName, revision) {
+      try {
+        localStorage.setItem(storageKey(cardName), JSON.stringify(revision));
+      } catch {
+        // Keep the page usable even if browser storage is unavailable.
+      }
+    }
+
+    function formatLastRevised(value) {
+      if (!value) return "Last revised: never";
+      const date = new Date(`${value}T00:00:00`);
+      if (Number.isNaN(date.getTime())) return `Last revised: ${value}`;
+      return `Last revised: ${date.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}`;
+    }
+
+    function todayLocalDate() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function renderRevisionControls(card) {
+      const revision = readRevision(card.name);
+      return `
+        <div class="revision-controls">
+          <span class="revision-pill">Revised ${revision.count}x</span>
+          <span class="revision-pill">${escapeHtml(formatLastRevised(revision.last))}</span>
+          <button class="revision-button" type="button" data-action="increment" data-card="${escapeHtml(card.name)}">+1</button>
+          <button class="revision-button reset" type="button" data-action="reset" data-card="${escapeHtml(card.name)}">Reset</button>
+        </div>
+      `;
+    }
+
+    function renderFullCard(card, extraClass = "") {
+      const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
+      const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
+      return `
+        <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${extraClass}">
+          <div class="card-head">
+            <div>
+              <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+              ${renderRevisionControls(card)}
+              <div class="meta-line">
+                <span>${escapeHtml(card.label)}</span>
+                <span>${escapeHtml(card.difficulty)}</span>
+                <a href="${escapeHtml(card.source)}">Source</a>
+                ${card.leetcode ? `<a href="${escapeHtml(card.leetcode)}" target="_blank" rel="noreferrer">LeetCode</a>` : ""}
+              </div>
+            </div>
+            <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
+          </div>
+          <div class="body">
+            <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
+            <div class="description">
+              <b>Problem description</b>
+              ${escapeHtml(card.description)}
+            </div>
+            <div class="sample">
+              <div class="sample-box">
+                <b>Input</b>
+                <code>${escapeHtml(card.input)}</code>
+              </div>
+              <div class="sample-box">
+                <b>Output</b>
+                <code>${escapeHtml(card.output)}</code>
+              </div>
+            </div>
+            <div class="cost-strip">
+              <div class="cost-item">
+                <span class="cost-label">Time</span>
+                <span class="cost-value">${escapeHtml(card.time)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Space</span>
+                <span class="cost-value">${escapeHtml(card.space)}</span>
+              </div>
+              <div class="cost-item">
+                <span class="cost-label">Data structures</span>
+                <span class="cost-value">${escapeHtml(card.structures)}</span>
+              </div>
+            </div>
+            <div class="section-grid">
+              <div class="section">
+                <b>When to recognize it</b>
+                ${escapeHtml(card.recognize)}
+              </div>
+              <div class="section">
+                <b>Visual hook</b>
+                <div class="visual">${renderVisual(card.visual)}</div>
+                ${renderSteps(card.steps)}
+                <span class="hint">${escapeHtml(card.visualText)}</span>
+              </div>
+              <div class="section">
+                <b>Core move</b>
+                ${escapeHtml(card.core)}
+              </div>
+              <div class="section">
+                <b>Code skeleton</b>
+                <code>${escapeHtml(card.skeleton)}</code>
+              </div>
+              <div class="section brute-force">
+                <b>Brute force / baseline</b>
+                ${escapeHtml(bruteForce)}
+              </div>
+              <div class="section alternates">
+                <b>Alternate approaches</b>
+                <ul class="gotchas">${alternates.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
+              <div class="section full">
+                <b>Bug magnets</b>
+                <ul class="gotchas">${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderQuickReview(cardsToRender) {
+      return `<div class="quick-review">${cardsToRender.map(card => {
+        const expanded = expandedQuickCards.has(card.name);
+        return `
+          <div class="quick-item">
+            <article class="quick-row ${escapeHtml(card.difficulty.toLowerCase())} ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
+              <span class="expand-cue" aria-hidden="true">⌄</span>
+              <div>
+                <div class="quick-title">
+                  <strong><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</strong>
+                  <span class="difficulty ${escapeHtml(card.difficulty.toLowerCase())}">${escapeHtml(card.difficulty)}</span>
+                </div>
+                ${renderRevisionControls(card)}
+                <div class="quick-summary">
+                  <span class="quick-approach">${escapeHtml(card.label)}</span>
+                  <div class="quick-facts">
+                    <span class="quick-fact"><b>Time</b> ${escapeHtml(card.time)}</span>
+                    <span class="quick-fact"><b>Space</b> ${escapeHtml(card.space)}</span>
+                  </div>
+                  <span class="quick-uses"><b>Uses</b> ${escapeHtml(card.structures)}</span>
+                </div>
+              </div>
+              <div>
+                <span class="quick-label">Recall prompt</span>
+                <span class="quick-text">${escapeHtml(card.prompt)}</span>
+              </div>
+              <div>
+                <span class="quick-label">Defining move</span>
+                <code>${escapeHtml(card.definingMove)}</code>
+              </div>
+              <div>
+                <span class="quick-label">Bug magnet</span>
+                <span class="quick-text">${escapeHtml(card.gotchas[0])}</span>
+              </div>
+            </article>
+            ${expanded ? renderFullCard(card, "quick-expanded-card") : ""}
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function toggleQuickCard(cardName) {
+      if (expandedQuickCards.has(cardName)) {
+        expandedQuickCards.delete(cardName);
+      } else {
+        expandedQuickCards.add(cardName);
+      }
+      render();
+    }
+
+    function setReviewMode(nextQuickMode) {
+      quickMode = nextQuickMode;
+      quickModeEl.classList.toggle("active", quickMode);
+      quickModeEl.textContent = quickMode ? "Card Review" : "Quick Review";
+    }
+
+    function render() {
+      const query = searchEl.value.trim().toLowerCase();
+      const visible = cards.filter(card => {
+        const haystack = [
+          card.name,
+          card.problemLabel,
+          card.label,
+          card.difficulty,
+          card.time,
+          card.space,
+          card.structures,
+          card.leetcode,
+          card.source,
+          card.description,
+          card.input,
+          card.output,
+          card.recognize,
+          card.visualText,
+          card.core,
+          card.prompt,
+          card.skeleton,
+          card.steps.join(" "),
+          card.gotchas.join(" ")
+        ].join(" ").toLowerCase();
+        return !query || haystack.includes(query);
+      });
+
+      if (quickMode) {
+        cardsEl.className = "quick-review";
+        cardsEl.innerHTML = renderQuickReview(visible);
+        emptyEl.style.display = visible.length ? "none" : "block";
+        return;
+      }
+
+      cardsEl.className = "cards";
+      cardsEl.innerHTML = visible.map(card => renderFullCard(card)).join("");
+
+      emptyEl.style.display = visible.length ? "none" : "block";
+    }
+
+    searchEl.addEventListener("input", render);
+    cardsEl.addEventListener("click", event => {
+      const button = event.target.closest("[data-action][data-card]");
+      if (button) {
+        const cardName = button.dataset.card;
+        if (button.dataset.action === "increment") {
+          const current = readRevision(cardName);
+          writeRevision(cardName, {
+            count: current.count + 1,
+            last: todayLocalDate()
+          });
+        }
+        if (button.dataset.action === "reset") {
+          writeRevision(cardName, { count: 0, last: "" });
+        }
+        render();
+        return;
+      }
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (quickRow) toggleQuickCard(quickRow.dataset.expandCard);
+    });
+    cardsEl.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const quickRow = event.target.closest("[data-expand-card]");
+      if (!quickRow || event.target.closest("button, a")) return;
+      event.preventDefault();
+      toggleQuickCard(quickRow.dataset.expandCard);
+    });
+    incrementAllEl.addEventListener("click", () => {
+      const today = todayLocalDate();
+      cards.forEach(card => {
+        const current = readRevision(card.name);
+        writeRevision(card.name, {
+          count: current.count + 1,
+          last: today
+        });
+      });
+      render();
+    });
+    resetAllEl.addEventListener("click", () => {
+      if (!window.confirm("Reset revision counts and dates for all recursion problems?")) return;
+      cards.forEach(card => writeRevision(card.name, { count: 0, last: "" }));
+      render();
+    });
+    quickModeEl.addEventListener("click", () => {
+      setReviewMode(!quickMode);
+      render();
+    });
+    exportPdfEl.addEventListener("click", () => {
+      const previousQuickMode = quickMode;
+      const previousSearch = searchEl.value;
+      const previousExpanded = new Set(expandedQuickCards);
+
+      searchEl.value = "";
+      expandedQuickCards.clear();
+      setReviewMode(false);
+      render();
+
+      const restoreAfterPrint = () => {
+        searchEl.value = previousSearch;
+        expandedQuickCards.clear();
+        previousExpanded.forEach(name => expandedQuickCards.add(name));
+        setReviewMode(previousQuickMode);
+        render();
+        window.removeEventListener("afterprint", restoreAfterPrint);
+      };
+
+      window.addEventListener("afterprint", restoreAfterPrint);
+      window.setTimeout(() => window.print(), 50);
+    });
+    totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
+    render();
+  </script>
+</body>
+</html>

@@ -18,6 +18,7 @@ const chromeCandidates = [
 const pageNames = {
   fastslow: "fast-slow-pointers-revision.pdf",
   hashing: "hashing-revision.pdf",
+  recursion: "recursion-revision.pdf",
   slidingwindow: "sliding-window-revision.pdf",
   stacks: "stacks-revision.pdf",
   twopointers: "two-pointers-revision.pdf",

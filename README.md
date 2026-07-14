@@ -4,6 +4,7 @@
 - [Two Pointers](revised/problems/twopointers/)
 - [Fast & Slow Pointers](revised/problems/fastslow/)
 - [Sliding Window](revised/problems/slidingwindow/)
+- [Recursion](revised/problems/recursion/)
 - [Stacks](revised/problems/stacks/)
 - [Hashing](revised/problems/hashing/)
 
