@@ -1040,6 +1040,46 @@
                   "Base case should return the last real contribution, usually 1 or 0 depending on your definition.",
                   "Do not forget to return the recursive expression; printing alone does not pass the sum back."
             ]
+      },
+      {
+            "name": "Factorial",
+            "source": "../com/arvind/revision/recursion/Factorial.java",
+            "label": "Current times smaller product",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given a positive integer n, return n factorial: the product of every number from n down to 1. For example, 5! means 5 * 4 * 3 * 2 * 1.",
+            "time": "O(n)",
+            "space": "O(n) call stack",
+            "structures": "recursion return value, call stack",
+            "input": "num = 10",
+            "output": "3628800",
+            "recognize": "When the answer for n is the current number multiplied by the same answer for n - 1.",
+            "visual": [
+                  [
+                        "fact(4)",
+                        "4 * fact(3)"
+                  ],
+                  [
+                        "fact(3)",
+                        "3 * fact(2)"
+                  ],
+                  [
+                        "fact(1)",
+                        "1"
+                  ]
+            ],
+            "visualText": "Each call keeps its current number and waits for the smaller factorial. While returning, the stack multiplies the held numbers back together.",
+            "core": "Stop at 1 and return 1. Otherwise return num * fact(num - 1).",
+            "bruteForce": "A loop can multiply values from 1 to n in O(n) time and O(1) space. Recursion has the same time but uses O(n) call stack space.",
+            "alternates": [
+                  "Use an accumulator parameter to carry the product forward in tail-recursive style.",
+                  "Use iteration in production code when avoiding stack depth matters."
+            ],
+            "gotchas": [
+                  "Do not add anything after multiplying; factorial is pure multiplication.",
+                  "Handle 0! as 1 if the input can be zero.",
+                  "Factorials grow very fast, so int overflows beyond small n."
+            ]
       }
 ];
 
@@ -1079,6 +1119,15 @@
                   "Return current plus smaller answer while the stack unwinds."
             ],
             "skeleton": "sum(N):\n  if N == 1: return 1\n  return N + sum(N - 1)"
+      },
+      "Factorial": {
+            "prompt": "Before reading: what smaller product does fact(num) wait for?",
+            "steps": [
+                  "Keep the current number as this call's multiplier.",
+                  "Ask recursion for fact(num - 1).",
+                  "Multiply while the stack unwinds."
+            ],
+            "skeleton": "fact(num):\n  if num == 1: return 1\n  return num * fact(num - 1)"
       }
 };
 
@@ -1086,14 +1135,16 @@
       "PrintNameNTimes": "base case: idx >= N\nrecursive move: print, then idx + 1",
       "Print1ToNUsingRecursion": "print current idx first\nthen recurse with idx + 1",
       "PrintNto1Recursion": "print current n first\nthen recurse with n - 1",
-      "SumOfFirstNNaturalNumbers": "return current N\nplus sum(N - 1)"
+      "SumOfFirstNNaturalNumbers": "return current N\nplus sum(N - 1)",
+      "Factorial": "return current num\ntimes fact(num - 1)"
 };
 
     const solvedOrder = [
       "PrintNameNTimes",
       "Print1ToNUsingRecursion",
       "PrintNto1Recursion",
-      "SumOfFirstNNaturalNumbers"
+      "SumOfFirstNNaturalNumbers",
+      "Factorial"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
