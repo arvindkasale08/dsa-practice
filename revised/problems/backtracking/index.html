@@ -1365,6 +1365,96 @@
                   "Undo the picked number before returning to the caller.",
                   "This is the exact LeetCode Subsets array problem; PowerSet in this package is the related string-subsequence variant."
             ]
+      },
+      {
+            "name": "CountSubsequenceWithSumK",
+            "source": "../com/arvind/revision/backtracking/CountSubsequenceWithSumK.java",
+            "label": "Count every valid branch",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given an array and a target k, count how many non-empty subsequences have sum exactly k. This is the counting version: do not stop after finding one valid subsequence, because every valid pick/skip path contributes to the answer.",
+            "time": "O(2^n)",
+            "space": "O(n) call stack",
+            "timeWhy": "Each element has two choices: pick it into the running sum or skip it. That creates a binary recursion tree with up to 2^n leaves. The stack depth is at most n because idx moves forward once per level.",
+            "structures": "index, running sum, recursion stack",
+            "input": "nums = [4, 9, 2, 5, 1], k = 10",
+            "output": "2",
+            "recognize": "When the question asks how many subsequences or subsets hit a target sum, not just whether one exists.",
+            "visual": [
+                  [
+                        "idx",
+                        "pick",
+                        "sum + nums[idx]"
+                  ],
+                  [
+                        "idx",
+                        "skip",
+                        "sum unchanged"
+                  ],
+                  [
+                        "idx == n",
+                        "sum == k",
+                        "+1 else 0"
+                  ]
+            ],
+            "visualText": "Think of each root-to-leaf path as one candidate subsequence. A leaf returns 1 only when the final sum equals k; parent calls add both child counts.",
+            "core": "Base: idx == n -> return 1 if sum == k, else 0. State carried: idx and current sum. Allowed transitions: pick nums[idx] or skip nums[idx]. Blocked transitions: with all-positive nums, you may prune once sum reaches or exceeds k. Undo: no mutable path here, so no explicit undo.",
+            "bruteForce": "Generate every subsequence list first, then sum each list and count matches. It is correct, but wastes memory because the running sum can answer the same question without storing the path.",
+            "alternates": [
+                  "For all-positive numbers, prune branches when sum exceeds k.",
+                  "If n is large or values repeat heavily, dynamic programming/memoization over idx and sum can count states instead of raw branches."
+            ],
+            "gotchas": [
+                  "This is not the same as the exists version; count must add both branches, not short-circuit with OR.",
+                  "Early return when sum == k is only safe under positive-number assumptions and when later zero choices do not need separate counting.",
+                  "If the statement excludes empty subsequences, target 0 needs special handling; the current base shape counts empty as a valid sum-0 path.",
+                  "LeetCode does not have an exact match for this Striver-style count problem."
+            ]
+      },
+      {
+            "name": "CheckSubsequenceWIthSumK",
+            "source": "../com/arvind/revision/backtracking/CheckSubsequenceWIthSumK.java",
+            "label": "Stop when any branch works",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given an array and a target k, return true if at least one subsequence has sum exactly k. This is the existence version: once one pick/skip branch succeeds, the answer is true.",
+            "time": "O(2^n)",
+            "space": "O(n) call stack",
+            "timeWhy": "In the worst case, no valid subsequence exists or the valid one is found late, so the recursion may explore both pick and skip branches for every index. The recursion depth is n.",
+            "structures": "index, running sum, recursion stack, boolean OR",
+            "input": "nums = [1, 2, 3, 4, 5], k = 8",
+            "output": "true",
+            "recognize": "When the question says check, exists, yes/no, or return true/false for a target-sum subsequence.",
+            "visual": [
+                  [
+                        "pick branch",
+                        "true",
+                        "stop"
+                  ],
+                  [
+                        "skip branch",
+                        "try only if needed",
+                        "OR"
+                  ],
+                  [
+                        "idx == n",
+                        "sum == k",
+                        "true/false"
+                  ]
+            ],
+            "visualText": "Use the same pick/skip tree, but replace addition with OR. One successful leaf can bubble true all the way back to the root.",
+            "core": "Base: idx == n -> return sum == k. State carried: idx and current sum. Allowed transitions: pick nums[idx] or skip nums[idx]. Blocked transitions: with positive nums, sum > k can return false early. Undo: no mutable path here, so no explicit undo.",
+            "bruteForce": "Generate every subsequence and check if any sum equals k. It is easy to reason about, but storing all candidates is unnecessary because the boolean can be returned directly from recursion.",
+            "alternates": [
+                  "Memoize idx and sum to avoid recomputing the same state.",
+                  "Subset-sum DP can solve the positive-integer existence version more efficiently when target is not huge."
+            ],
+            "gotchas": [
+                  "This is not the count version; use OR and short-circuit once any branch returns true.",
+                  "The class name has WIth with a capital I; keep source links and card keys matching the actual filename.",
+                  "If the statement excludes empty subsequences, an empty array with target 0 should be handled deliberately.",
+                  "LeetCode Partition Equal Subset Sum is related, but not an exact statement match."
+            ]
       }
 ];
 
@@ -1478,6 +1568,26 @@
                   "Transition B: pick nums[idx], recurse, then remove it to undo."
             ],
             "skeleton": "dfs(idx, path):\n  Base: if idx == n -> add copy(path); return\n\n  State: idx, path\n\n  Transition A: skip nums[idx]\n    dfs(idx + 1, path)\n\n  Transition B: pick nums[idx]\n    path.add(nums[idx])\n    dfs(idx + 1, path)\n    undo remove last"
+      },
+      "CountSubsequenceWithSumK": {
+            "prompt": "Before reading: why must the two recursive answers be added instead of OR-ed?",
+            "steps": [
+                  "Base condition: idx == n means the subsequence decision is complete.",
+                  "State carried: idx and running sum.",
+                  "Transition A: pick nums[idx] and add it to sum.",
+                  "Transition B: skip nums[idx]; add both child counts."
+            ],
+            "skeleton": "count(idx, sum):\n  Base: if idx == n\n    return sum == k ? 1 : 0\n\n  State: idx, running sum\n\n  Transition A: pick current\n    left = count(idx + 1, sum + nums[idx])\n\n  Transition B: skip current\n    right = count(idx + 1, sum)\n\n  return left + right"
+      },
+      "CheckSubsequenceWIthSumK": {
+            "prompt": "Before reading: why can one successful branch stop the whole search?",
+            "steps": [
+                  "Base condition: idx == n means return whether sum equals k.",
+                  "State carried: idx and running sum.",
+                  "Transition A: pick nums[idx] and recurse.",
+                  "Transition B: skip nums[idx]; OR both answers."
+            ],
+            "skeleton": "exists(idx, sum):\n  Base: if idx == n\n    return sum == k\n\n  State: idx, running sum\n\n  Transition A: pick current\n    if exists(idx + 1, sum + nums[idx]) -> true\n\n  Transition B: skip current\n    return exists(idx + 1, sum)"
       }
 };
 
@@ -1492,7 +1602,9 @@
       "BinaryWithoutConsecutiveZeroes": "Base: len == n -> save\n1 allowed always\n0 only if last != 0",
       "GenerateParanthesis": "Base: open=closed=n -> save\nopen<n -> add (\nclosed<open -> add )\nundo after each choice",
       "PowerSet": "Base: idx == n -> save\ninclude char -> recurse -> undo\nskip char -> recurse",
-      "SubSet": "Base: idx == n -> copy path\nskip nums[idx]\npick nums[idx] -> recurse -> undo"
+      "SubSet": "Base: idx == n -> copy path\nskip nums[idx]\npick nums[idx] -> recurse -> undo",
+      "CountSubsequenceWithSumK": "Base: idx == n -> 1/0\npick adds to sum\nskip keeps sum\nreturn pickCount + skipCount",
+      "CheckSubsequenceWIthSumK": "Base: idx == n -> sum == k\npick branch OR skip branch\nreturn true as soon as one works"
 };
 
     const solvedOrder = [
@@ -1506,7 +1618,9 @@
       "BinaryWithoutConsecutiveZeroes",
       "GenerateParanthesis",
       "PowerSet",
-      "SubSet"
+      "SubSet",
+      "CountSubsequenceWithSumK",
+      "CheckSubsequenceWIthSumK"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
