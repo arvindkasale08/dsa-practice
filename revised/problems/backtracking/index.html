@@ -1500,6 +1500,51 @@
                   "If the statement excludes empty subsequences, an empty array with target 0 should be handled deliberately.",
                   "LeetCode Partition Equal Subset Sum is related, but not an exact statement match."
             ]
+      },
+      {
+            "name": "PartitionEqualsSubsetSum",
+            "source": "../com/arvind/revision/backtracking/PartitionEqualsSubsetSum.java",
+            "label": "Half-sum exists, but recursion TLEs",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/partition-equal-subset-sum/",
+            "description": "Given an array of positive integers, decide whether it can be split into two subsets with equal sum. The current class reduces the problem to checking whether any subsequence sums to half of the total sum.",
+            "time": "O(2^n) current recursion",
+            "space": "O(n) call stack",
+            "timeWhy": "After checking that the total sum is even, the current recursion still makes a pick/skip choice for each number. In the worst case that explores 2^n branches, which is why it gets TLE on LeetCode-sized inputs.",
+            "structures": "total sum, target half, index, running sum, recursion stack",
+            "input": "nums = [1, 5, 11, 5]",
+            "output": "true",
+            "recognize": "When equal partition becomes: can I pick some numbers whose sum is totalSum / 2?",
+            "visual": [
+                  [
+                        "sum = 22",
+                        "target = 11",
+                        "even"
+                  ],
+                  [
+                        "pick/skip",
+                        "find 11",
+                        "exists"
+                  ],
+                  [
+                        "n large",
+                        "2^n",
+                        "TLE"
+                  ]
+            ],
+            "visualText": "First cut the total sum in half. Then the problem becomes ordinary target-sum existence. The current recursion proves the idea, but the branch tree is too large.",
+            "core": "Base: idx == n -> return sum == target. State carried: idx and running sum. Allowed transitions: pick nums[idx] or skip nums[idx]. Blocked transition: if total sum is odd, return false immediately. Tomorrow fix: cache/DP states by idx and remaining target or build a subset-sum table.",
+            "bruteForce": "Try every subset and check whether any subset sums to half the total. This is exactly the current recursive idea and is useful for understanding, but it TLEs because it is exponential.",
+            "alternates": [
+                  "Top-down memoization: cache idx and remaining target so repeated states are solved once.",
+                  "Bottom-up DP: track which sums up to target are reachable after reading each number.",
+                  "1D DP optimization: update reachable sums backward for each number to use O(target) space."
+            ],
+            "gotchas": [
+                  "Mental note: current recursion/backtracking version is expected to TLE; revisit during DP.",
+                  "Odd total sum means impossible before any recursion.",
+                  "Do not confuse proof-of-idea recursion with the accepted LeetCode approach; accepted needs memoization or DP."
+            ]
       }
 ];
 
@@ -1643,6 +1688,17 @@
                   "Transition B: skip nums[idx]; OR both answers."
             ],
             "skeleton": "exists(idx, sum):\n  Base: if idx == n\n    return sum == k\n\n  State: idx, running sum\n\n  Transition A: pick current\n    if exists(idx + 1, sum + nums[idx]) -> true\n\n  Transition B: skip current\n    return exists(idx + 1, sum)"
+      },
+      "PartitionEqualsSubsetSum": {
+            "prompt": "Before reading: what quick check happens before the target-sum recursion, and why does this version TLE?",
+            "steps": [
+                  "Base condition: idx == n means return whether running sum equals half of total.",
+                  "State carried: idx, running sum, and target = total / 2.",
+                  "Transition A: pick nums[idx] and add it to sum.",
+                  "Transition B: skip nums[idx]; OR both answers.",
+                  "Blocked transition: odd total sum returns false before recursion."
+            ],
+            "skeleton": "canPartition(nums):\n  total = sum(nums)\n  if total odd -> false\n  target = total / 2\n  return exists(0, 0)\n\nexists(idx, sum):\n  Base: if idx == n -> sum == target\n\n  State: idx, sum\n  Transition A: pick nums[idx]\n  Transition B: skip nums[idx]\n  return pick OR skip\n\nDP tomorrow:\n  memo(idx, targetLeft) or bottom-up reachable sums"
       }
 };
 
@@ -1660,7 +1716,8 @@
       "PowerSet": "Base: idx == n -> save\ninclude char -> recurse -> undo\nskip char -> recurse",
       "SubSet": "Base: idx == n -> copy path\nskip nums[idx]\npick nums[idx] -> recurse -> undo",
       "CountSubsequenceWithSumK": "Base: idx == n -> 1/0\npick adds to sum\nskip keeps sum\nreturn pickCount + skipCount",
-      "CheckSubsequenceWIthSumK": "Base: idx == n -> sum == k\npick branch OR skip branch\nreturn true as soon as one works"
+      "CheckSubsequenceWIthSumK": "Base: idx == n -> sum == k\npick branch OR skip branch\nreturn true as soon as one works",
+      "PartitionEqualsSubsetSum": "Odd total -> false\ntarget = total/2\ncurrent recursion = subset-sum exists\nTLE until DP/memo"
 };
 
     const solvedOrder = [
@@ -1677,7 +1734,8 @@
       "PowerSet",
       "SubSet",
       "CountSubsequenceWithSumK",
-      "CheckSubsequenceWIthSumK"
+      "CheckSubsequenceWIthSumK",
+      "PartitionEqualsSubsetSum"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

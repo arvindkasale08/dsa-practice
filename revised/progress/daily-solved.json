@@ -27,7 +27,7 @@
     },
     {
       "date": "2026-07-15",
-      "solved": 8,
+      "solved": 9,
       "cardsSynced": [
         "backtracking/AtoIRecurse",
         "backtracking/BinaryWithoutConsecutiveOnes",
@@ -36,9 +36,10 @@
         "backtracking/PowerSet",
         "backtracking/SubSet",
         "backtracking/CountSubsequenceWithSumK",
-        "backtracking/CheckSubsequenceWIthSumK"
+        "backtracking/CheckSubsequenceWIthSumK",
+        "backtracking/PartitionEqualsSubsetSum"
       ],
-      "notes": "Started daily solved-count tracking. Includes the AtoIRecurse caveat card synced on 2026-07-15. Synced binary string backtracking cards. Synced generate parentheses backtracking card. Synced power set subsequences card. Synced array subsets card. Synced subsequence sum count and exists cards."
+      "notes": "Started daily solved-count tracking. Includes the AtoIRecurse caveat card synced on 2026-07-15. Synced binary string backtracking cards. Synced generate parentheses backtracking card. Synced power set subsequences card. Synced array subsets card. Synced subsequence sum count and exists cards. Synced partition equal subset sum recursion card; revisit with DP."
     }
   ]
 }
