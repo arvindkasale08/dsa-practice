@@ -27,14 +27,15 @@
     },
     {
       "date": "2026-07-15",
-      "solved": 4,
+      "solved": 5,
       "cardsSynced": [
         "backtracking/AtoIRecurse",
         "backtracking/BinaryWithoutConsecutiveOnes",
         "backtracking/BinaryWithoutConsecutiveZeroes",
-        "backtracking/GenerateParanthesis"
+        "backtracking/GenerateParanthesis",
+        "backtracking/PowerSet"
       ],
-      "notes": "Started daily solved-count tracking. Includes the AtoIRecurse caveat card synced on 2026-07-15. Synced binary string backtracking cards. Synced generate parentheses backtracking card."
+      "notes": "Started daily solved-count tracking. Includes the AtoIRecurse caveat card synced on 2026-07-15. Synced binary string backtracking cards. Synced generate parentheses backtracking card. Synced power set subsequences card."
     }
   ]
 }

@@ -907,7 +907,7 @@
                   ]
             ],
             "visualText": "Even power: square the base and cut the exponent in half. Odd power: keep one base outside, then reduce the exponent by one so the next step becomes even.",
-            "core": "Convert n to long first. Use abs(power) safely, recurse by halving even powers, and invert the final result when the original n was negative.",
+            "core": "Base: power == 0 -> return 1. State: base x and remaining power. Transition: even power squares the base and halves power; odd power keeps one x and reduces power. Blocked: never take abs while n is still int. No undo because this is divide-and-conquer recursion.",
             "bruteForce": "Multiply x by itself |n| times. It is easy to trust but costs O(n), which is too slow for large exponents and still needs special handling for negative powers.",
             "alternates": [
                   "Iterative binary exponentiation keeps the same O(log n) time and uses O(1) space by multiplying the answer when the current bit is set.",
@@ -951,7 +951,7 @@
                   ]
             ],
             "visualText": "Think of the string as slots. Even slots get 5 choices, odd slots get 4 choices. Count how many of each slot type exist, then raise the choice count to that power.",
-            "core": "evenPositions = (n + 1) / 2 and oddPositions = n / 2. Answer is pow(5, evenPositions) * pow(4, oddPositions) modulo MOD.",
+            "core": "Base for pow: exponent == 0 -> return 1. State: base and exponent. Transition: if exponent even, square base and halve exponent; if odd, consume one base and reduce exponent. Blocked: do not multiply linearly across all positions. No undo because this is divide-and-conquer recursion, not choice backtracking.",
             "bruteForce": "Walk every position and multiply by 5 or 4 depending on index parity. It is easy to understand but costs O(n), which is too slow when n is huge.",
             "alternates": [
                   "Use iterative binary exponentiation instead of recursion to keep O(log n) time and reduce stack space to O(1).",
@@ -997,7 +997,7 @@
                   ]
             ],
             "visualText": "Think of the stack as sorted after the recursive call returns. The only job left is to slide the saved value below smaller values and above larger values.",
-            "core": "Pop the top, recursively sort the remaining stack, then insert the popped value into the sorted stack by temporarily popping values that should stay above it.",
+            "core": "Base: stack empty -> return. State: current stack plus the popped top held outside. Transition: sort the smaller stack, then insert the held value into its sorted position. Blocked: stop moving deeper when stack is empty or peek > held value. Restore: push back every temporarily popped value.",
             "bruteForce": "Move all values to a list or array, sort with library sort, then push them back. That is simpler but violates the stack-only recursion practice goal.",
             "alternates": [
                   "Use an auxiliary stack iteratively: pop from input and insert into the temporary stack in sorted order.",
@@ -1041,7 +1041,7 @@
                   ]
             ],
             "visualText": "Imagine every popped value waiting outside the stack. When the smaller stack is already reversed, the waiting value goes to the bottom, so original top becomes new bottom.",
-            "core": "Pop the top, recursively reverse the remaining stack, then insert the saved top at the bottom by temporarily popping everything above the bottom.",
+            "core": "Base: stack empty -> return. State: current stack plus the popped top held outside. Transition: reverse the smaller stack, then insert the held value at bottom. Blocked: no pop when stack is empty. Undo/restore: insertAtBottom temporarily pops blockers and pushes them back after placing the held value.",
             "bruteForce": "Use another stack/list to collect values and push them back in reverse order. It is easier, but the recursive exercise is about doing it with stack operations and call stack only.",
             "alternates": [
                   "Use an auxiliary stack iteratively if extra storage is allowed.",
@@ -1090,7 +1090,7 @@
                   ]
             ],
             "visualText": "Think of a small parser gate: spaces first, then at most one sign, then digits only. Once a non-digit appears after digits begin, the number is finished.",
-            "core": "The optimal shape is a simple while-loop parser: skip spaces, read one optional sign, consume digits while updating result, clamp during construction, then return sign * result.",
+            "core": "Base for digit consumption: index is out of range or current char is not a digit -> stop. State: index, sign, and numeric accumulator. Transitions: skip spaces first, read one optional sign once, then consume digits only. Blocked: second sign, sign after digits, and parsing a huge digit string after the fact. No backtracking undo; this is parser recursion/iteration.",
             "bruteForce": "Collect the digit substring and parse it later. That is easier to write, but it is fragile because a very large digit string can overflow even long before clamping.",
             "alternates": [
                   "Preferred interview version: iterative parser with result = result * 10 + digit and early clamp checks.",
@@ -1134,7 +1134,7 @@
                   ]
             ],
             "visualText": "Keep one memory: the last bit. Zero is always safe; one needs permission from the previous bit.",
-            "core": "Append 0 unconditionally. Append 1 only if the path is empty or the last character is not 1. Stop when path length reaches n.",
+            "core": "Base: path length == n -> save path. State: path and last bit. Transitions: add 0 always; add 1 only if path is empty or last bit is not 1. Blocked: another 1 after 1. Undo: not needed with immutable string; with StringBuilder, delete last char.",
             "bruteForce": "Generate all 2^n binary strings and filter out strings containing 11. That is simpler but wastes work on invalid branches.",
             "alternates": [
                   "Use a StringBuilder path and undo the last append to reduce temporary string creation.",
@@ -1178,7 +1178,7 @@
                   ]
             ],
             "visualText": "Keep one memory: the last bit. One is always safe; zero needs permission from the previous bit.",
-            "core": "Append 0 only if the path is empty or the last character is not 0. Append 1 unconditionally. Stop when path length reaches n.",
+            "core": "Base: path length == n -> save path. State: path and last bit. Transitions: add 1 always; add 0 only if path is empty or last bit is not 0. Blocked: another 0 after 0. Undo: not needed with immutable string; with StringBuilder, delete last char.",
             "bruteForce": "Generate all 2^n binary strings and filter out strings containing 00. It is correct but explores invalid strings that can be pruned early.",
             "alternates": [
                   "Use StringBuilder with append/recurse/delete to avoid creating many intermediate strings.",
@@ -1222,7 +1222,7 @@
                   ]
             ],
             "visualText": "Think of open as available building blocks and closed as debt repayment. You can open until the quota is full; you can close only if there is an unmatched open waiting.",
-            "core": "Add the current string when open == n and closed == n. Add ( if open < n. Add ) if closed < open. Undo the append after each recursive call.",
+            "core": "Base: open == n and closed == n -> save path. State: open count, closed count, path. Transitions: add ( if open < n; add ) if closed < open. Blocked: no extra ( after n, and no ) when it would exceed opens. Undo: delete the appended bracket after each recursive call.",
             "bruteForce": "Generate every length 2n string made of ( and ), then filter valid ones. It is correct but explores many impossible prefixes that backtracking prunes immediately.",
             "alternates": [
                   "Use immutable strings instead of StringBuilder; simpler, but creates more temporary strings.",
@@ -1233,101 +1233,156 @@
                   "Do not add ( after open reaches n; the answer must use exactly n pairs.",
                   "When using StringBuilder, delete the last character after each recursive call to undo the choice."
             ]
+      },
+      {
+            "name": "PowerSet",
+            "source": "../com/arvind/revision/backtracking/PowerSet.java",
+            "label": "Include or skip each char",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a string, generate all subsequences by deciding for every character whether to include it in the current path or skip it. This is conceptually similar to LeetCode Subsets, but this class works on string subsequences rather than an array of unique integers.",
+            "time": "O(2^n * n)",
+            "space": "O(n) call stack + output",
+            "timeWhy": "Each of n characters has two choices: include or skip, so there are 2^n branches. Copying each completed subsequence can cost up to n.",
+            "structures": "StringBuilder path, index, result list, recursion stack",
+            "input": "s = \"abc\"",
+            "output": "[abc, ab, ac, a, bc, b, c, \"\"]",
+            "recognize": "When the problem says all subsequences or all subsets and every element has a binary include/skip choice.",
+            "visual": [
+                  [
+                        "idx 0: a",
+                        "include a",
+                        "skip a"
+                  ],
+                  [
+                        "idx 1: b",
+                        "include b",
+                        "skip b"
+                  ],
+                  [
+                        "idx == n",
+                        "save path",
+                        "return"
+                  ]
+            ],
+            "visualText": "At each character, the recursion splits into two doors: take it into the path, or leave it out. The index moves forward in both doors.",
+            "core": "Base: idx == n -> save current path. State: idx and StringBuilder path. Transitions: include s[idx], recurse, undo; then skip s[idx], recurse. Blocked: no more choices after idx reaches n.",
+            "bruteForce": "Use bit masks from 0 to 2^n - 1 and build the subsequence represented by each mask. It is iterative and clean, but the recursive include/skip tree is easier to reuse for richer constraints.",
+            "alternates": [
+                  "For array subsets, use the same include/skip skeleton but store lists of integers instead of strings.",
+                  "For duplicate characters where duplicate subsequences should be removed, add sorting/set logic or skip duplicate choices carefully."
+            ],
+            "gotchas": [
+                  "LeetCode Subsets is an array problem; this class is string subsequences, so the link is related but not exact.",
+                  "Undo the included character before taking the skip branch.",
+                  "Decide whether the empty subsequence should be included; this implementation includes it."
+            ]
       }
 ];
 
     const recallDetails = {
       "PowXN": {
-            "prompt": "Before reading: why is Integer.MIN_VALUE dangerous when taking abs(n)?",
+            "prompt": "Before reading: what state must be converted before recursion starts?",
             "steps": [
-                  "Promote n to long before changing its sign.",
-                  "Use exponent parity: even powers square the base and halve the exponent.",
-                  "For odd powers, keep one x and reduce the exponent toward an even case.",
-                  "If the original exponent was negative, return the reciprocal."
+                  "Base condition: power 0 returns 1.",
+                  "State carried: base x and power as a long.",
+                  "Transition if even: square x and halve power.",
+                  "Transition if odd: keep one x and reduce power toward an even case."
             ],
-            "skeleton": "power = (long) n\nres = powPositive(x, abs(power))\nif n < 0: return 1 / res\nreturn res\n\npowPositive(x, p):\n  if p == 0: return 1\n  if p even: return powPositive(x * x, p / 2)\n  return x * powPositive(x, p - 1)"
+            "skeleton": "myPow(x, n):\n  State setup: power = (long) n\n  if power < 0: remember reciprocal and negate safely\n  return powPositive(x, power) or reciprocal\n\npowPositive(x, power):\n  Base: if power == 0 -> 1\n  if power even -> powPositive(x * x, power / 2)\n  if power odd -> x * powPositive(x, power - 1)"
       },
       "CountGoodNumbers": {
-            "prompt": "Before reading: how many even-index slots and odd-index slots are there?",
+            "prompt": "Before reading: what is the base case for fast power, and how does exponent parity change the transition?",
             "steps": [
-                  "Even index slots have 5 choices because 0 is allowed.",
-                  "Odd index slots have 4 choices: 2, 3, 5, 7.",
-                  "Count the slots, then use fast power instead of multiplying one slot at a time.",
-                  "Modulo every multiplication inside pow to prevent overflow."
+                  "Base condition: exponent 0 returns 1.",
+                  "State carried: current base and remaining exponent.",
+                  "Transition if even: square base, halve exponent.",
+                  "Transition if odd: multiply by one base, reduce exponent by 1."
             ],
-            "skeleton": "even = (n + 1) / 2\nodd = n / 2\nanswer = pow(5, even) * pow(4, odd) % MOD\n\npow(base, exp):\n  if exp == 0: return 1\n  if exp even: return pow(base * base % MOD, exp / 2)\n  return base * pow(base, exp - 1) % MOD"
+            "skeleton": "countGoodNumbers(n):\n  even = (n + 1) / 2\n  odd = n / 2\n  return pow(5, even) * pow(4, odd) % MOD\n\npow(base, exp):\n  Base: if exp == 0 -> 1\n  State: base, exp\n  if exp even -> pow(base * base % MOD, exp / 2)\n  if exp odd -> base * pow(base, exp - 1) % MOD"
       },
       "SortStack": {
-            "prompt": "Before reading: after the smaller stack is sorted, where should the saved top value go?",
+            "prompt": "Before reading: after the smaller stack is sorted, what transition places the held top?",
             "steps": [
-                  "Pop the current top and trust recursion to sort the rest.",
-                  "If the sorted stack is empty or its top is bigger, push the saved value there.",
-                  "Otherwise pop the smaller/equal top, insert deeper, then push the popped value back.",
-                  "The stack rebuilds itself in sorted order during unwind."
+                  "Base condition: empty stack means sorted.",
+                  "State carried: the popped top value and the remaining stack.",
+                  "Transition: recursively sort the remaining stack.",
+                  "Transition/restore: insert held value by popping blockers, placing it, then pushing blockers back."
             ],
-            "skeleton": "sort(stack):\n  if stack empty: return\n  top = stack.pop()\n  sort(stack)\n  insertSorted(top, stack)\n\ninsertSorted(x, stack):\n  if stack empty OR stack.peek() > x:\n    stack.push(x)\n    return\n  temp = stack.pop()\n  insertSorted(x, stack)\n  stack.push(temp)"
+            "skeleton": "sort(stack):\n  Base: if stack empty -> return\n\n  State: top = stack.pop(), rest stack\n  Transition: sort(rest)\n  Transition: insertSorted(top)\n\ninsertSorted(x):\n  Base/stop: if stack empty OR stack.peek() > x -> push x; return\n  State: temp = stack.pop()\n  Transition: insertSorted(x)\n  Restore: push temp back"
       },
       "ReverseAStack": {
-            "prompt": "Before reading: why does the old top need to become the new bottom?",
+            "prompt": "Before reading: what is the held state after popping the top?",
             "steps": [
-                  "Pop the current top and hold it aside.",
-                  "Trust recursion to reverse the smaller stack.",
-                  "Insert the held value at the bottom of that reversed stack.",
-                  "During unwind, each older top sinks below the stack that has already been reversed."
+                  "Base condition: empty stack means nothing left to reverse.",
+                  "State carried: the current stack and the popped top value held outside recursion.",
+                  "Transition: reverse the smaller stack first, then sink the held top to the bottom.",
+                  "Restore step: insertAtBottom pops blockers, places the value, then pushes blockers back."
             ],
-            "skeleton": "reverse(stack):\n  if stack empty: return\n  top = stack.pop()\n  reverse(stack)\n  insertAtBottom(top, stack)\n\ninsertAtBottom(x, stack):\n  if stack empty:\n    stack.push(x)\n    return\n  temp = stack.pop()\n  insertAtBottom(x, stack)\n  stack.push(temp)"
+            "skeleton": "reverse(stack):\n  Base: if stack empty -> return\n\n  State: top = stack.pop(), smaller stack remains\n  Transition: reverse(smaller stack)\n  Transition: insertAtBottom(top)\n\ninsertAtBottom(x):\n  Base: if stack empty -> push x; return\n  State: temp = stack.pop()\n  Transition: insertAtBottom(x)\n  Restore: push temp back"
       },
       "AtoIRecurse": {
-            "prompt": "Before reading: what are the parser gates, in exact order?",
+            "prompt": "Before reading: what are the parser states, and when must parsing stop?",
             "steps": [
-                  "Skip leading spaces only.",
-                  "Read at most one sign before any digit.",
-                  "Consume consecutive digits and stop at the first non-digit.",
-                  "Build the number safely and clamp before overflow escapes the range."
+                  "Base condition: digit reader stops at end or first non-digit.",
+                  "State carried: index, sign, and result/accumulator.",
+                  "Transitions: skip leading spaces, read one optional sign, then read consecutive digits.",
+                  "Blocked transitions: extra signs or sign after digit; clamp while building to avoid overflow."
             ],
-            "skeleton": "i = skipSpaces(s)\nsign = readOptionalSign(s, i)\nwhile i < n and digit:\n  digit = s[i] - 0\n  result = result * 10 + digit\n  if signed result crosses int range: clamp\nreturn sign * result"
+            "skeleton": "parse(s):\n  State: index i, sign, result\n  Transition: skip leading spaces\n  Transition: read one optional sign\n  Transition: consume digits\n\nconsumeDigits(i, result):\n  Base: i == n OR not digit -> return clamped result\n  State: result, digit\n  Transition: result = result * 10 + digit\n  Block: if result crosses int range -> clamp"
       },
       "BinaryWithoutConsecutiveOnes": {
-            "prompt": "Before reading: which digit is always allowed, and which digit needs a last-bit check?",
+            "prompt": "Before reading: what is the base condition, and which digit transition is blocked?",
             "steps": [
-                  "Carry the current string/path.",
-                  "Add 0 without checking because the rule only blocks consecutive 1s.",
-                  "Add 1 only when the path is empty or the last bit is not 1.",
-                  "When path length reaches n, store it."
+                  "Base condition: when path length becomes n, add path to result and return.",
+                  "State carried: current path and its last character.",
+                  "Allowed transitions: add 0 from every state; add 1 only when last is not 1.",
+                  "Blocked transition: do not add 1 immediately after 1."
             ],
-            "skeleton": "dfs(path):\n  if path.length == n: add path; return\n  dfs(path + \"0\")\n  if path empty OR last != \"1\":\n    dfs(path + \"1\")"
+            "skeleton": "dfs(path):\n  Base: if path.length == n -> add path; return\n\n  State: path, last char\n\n  Transition A: add 0 always\n    dfs(path + \"0\")\n\n  Transition B: add 1 only if path empty OR last != 1\n    dfs(path + \"1\")\n\n  Undo: none for string; delete last char if using StringBuilder"
       },
       "BinaryWithoutConsecutiveZeroes": {
-            "prompt": "Before reading: why is 1 unconditional but 0 guarded?",
+            "prompt": "Before reading: what state tells you whether 0 is allowed?",
             "steps": [
-                  "Carry the current string/path.",
-                  "Add 0 only when the previous bit is not 0.",
-                  "Add 1 without checking because consecutive 1s are allowed.",
-                  "When path length reaches n, store it."
+                  "Base condition: when path length becomes n, add path to result and return.",
+                  "State carried: current path and its last character.",
+                  "Allowed transitions: add 1 from every state; add 0 only when last is not 0.",
+                  "Blocked transition: do not add 0 immediately after 0."
             ],
-            "skeleton": "dfs(path):\n  if path.length == n: add path; return\n  if path empty OR last != \"0\":\n    dfs(path + \"0\")\n  dfs(path + \"1\")"
+            "skeleton": "dfs(path):\n  Base: if path.length == n -> add path; return\n\n  State: path, last char\n\n  Transition A: add 0 only if path empty OR last != 0\n    dfs(path + \"0\")\n\n  Transition B: add 1 always\n    dfs(path + \"1\")\n\n  Undo: none for string; delete last char if using StringBuilder"
       },
       "GenerateParanthesis": {
-            "prompt": "Before reading: when are you allowed to add (, and when are you allowed to add )?",
+            "prompt": "Before reading: what is the base condition, and what two transitions can happen from a state?",
             "steps": [
-                  "If open == n and closed == n, save the built string.",
-                  "Add ( only while open < n.",
-                  "Add ) only while closed < open.",
-                  "After each recursive call, delete the last character to undo that choice."
+                  "Base condition: open == n and closed == n means the path is complete, so save it.",
+                  "State carried: open count, closed count, and the StringBuilder path.",
+                  "Allowed transition: add ( only while open < n.",
+                  "Allowed transition: add ) only while closed < open, then undo each append."
             ],
-            "skeleton": "dfs(open, closed):\n  if open == n and closed == n: add path; return\n  if open < n:\n    append \"(\"; dfs(open + 1, closed); undo\n  if closed < open:\n    append \")\"; dfs(open, closed + 1); undo"
+            "skeleton": "dfs(open, closed, path):\n  Base: if open == n AND closed == n -> add path; return\n\n  State: open used, closed used, path\n\n  Transition A: if open < n\n    append \"(\"\n    dfs(open + 1, closed, path)\n    undo append\n\n  Transition B: if closed < open\n    append \")\"\n    dfs(open, closed + 1, path)\n    undo append"
+      },
+      "PowerSet": {
+            "prompt": "Before reading: what is the base condition, and what are the two transitions at each index?",
+            "steps": [
+                  "Base condition: idx == n means all characters have been decided, so save the path.",
+                  "State carried: idx and StringBuilder path.",
+                  "Transition A: include s[idx], recurse with idx + 1, then undo.",
+                  "Transition B: skip s[idx], recurse with idx + 1."
+            ],
+            "skeleton": "dfs(idx, path):\n  Base: if idx == n -> add path; return\n\n  State: idx, path\n\n  Transition A: include current char\n    path.append(s[idx])\n    dfs(idx + 1, path)\n    undo append\n\n  Transition B: skip current char\n    dfs(idx + 1, path)"
       }
 };
 
     const definingMoves = {
-      "PowXN": "n as long first\neven: x*x, n/2\nnegative: reciprocal at the end",
-      "CountGoodNumbers": "slots first, then powers\neven slots -> 5^count\nodd slots -> 4^count",
-      "SortStack": "sort rest first\nthen insert saved top\nrestore popped blockers",
-      "ReverseAStack": "reverse rest first\nthen sink saved top\nto the bottom",
-      "AtoIRecurse": "spaces -> one sign -> digits\nstop on first invalid\nclamp while building",
-      "BinaryWithoutConsecutiveOnes": "0 is free\n1 needs last != 1",
-      "BinaryWithoutConsecutiveZeroes": "1 is free\n0 needs last != 0",
-      "GenerateParanthesis": "open < n -> add (\nclosed < open -> add )\nboth n -> save"
+      "PowXN": "State: x, power as long\nBase: power 0 -> 1\neven -> x*x, power/2\nnegative -> reciprocal",
+      "CountGoodNumbers": "State: base, exponent\nBase: exponent 0 -> 1\neven -> square/halve\nodd -> consume one base",
+      "SortStack": "Base: stack empty -> return\nsort smaller stack\ninsert held top in sorted spot\nrestore blockers",
+      "ReverseAStack": "Base: stack empty -> return\npop top, reverse rest\ninsert held top at bottom\nrestore blockers",
+      "AtoIRecurse": "State: index, sign, result\nBase: non-digit/end -> stop\ntransitions: spaces -> sign -> digits\nclamp while building",
+      "BinaryWithoutConsecutiveOnes": "Base: len == n -> save\n0 allowed always\n1 only if last != 1",
+      "BinaryWithoutConsecutiveZeroes": "Base: len == n -> save\n1 allowed always\n0 only if last != 0",
+      "GenerateParanthesis": "Base: open=closed=n -> save\nopen<n -> add (\nclosed<open -> add )\nundo after each choice",
+      "PowerSet": "Base: idx == n -> save\ninclude char -> recurse -> undo\nskip char -> recurse"
 };
 
     const solvedOrder = [
@@ -1338,7 +1393,8 @@
       "AtoIRecurse",
       "BinaryWithoutConsecutiveOnes",
       "BinaryWithoutConsecutiveZeroes",
-      "GenerateParanthesis"
+      "GenerateParanthesis",
+      "PowerSet"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
