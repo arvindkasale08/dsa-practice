@@ -232,6 +232,13 @@
     .card.medium { border-color: #e6cf9b; border-top-color: var(--gold); }
     .card.hard { border-color: #e5c1bc; border-top-color: var(--red); }
 
+    .card.theory {
+      background: #f8f4ff;
+      border-color: #cfc1ea;
+      border-top-color: #7b61b8;
+      box-shadow: 0 12px 28px rgba(78, 60, 128, .10);
+    }
+
     .card:hover {
       box-shadow: var(--shadow-hover);
       transform: translateY(-2px);
@@ -247,6 +254,15 @@
       background: #f8faf7;
     }
 
+    .card.theory .card-head,
+    .card.theory .body {
+      background: #fbf8ff;
+    }
+
+    .card.theory .card-head {
+      border-bottom-color: #ded4f1;
+    }
+
     h2 {
       margin: 0;
       font-size: 23px;
@@ -257,6 +273,12 @@
     .problem-no {
       color: var(--green);
       font-weight: 900;
+    }
+
+    .card.theory .problem-no,
+    .quick-row.theory .problem-no,
+    .quick-row.theory .expand-cue {
+      color: #5d3e99;
     }
 
     .problem-title {
@@ -647,12 +669,25 @@
     .quick-row.medium { border-color: #e6cf9b; border-left-color: var(--gold); }
     .quick-row.hard { border-color: #e5c1bc; border-left-color: var(--red); }
 
+    .quick-row.theory {
+      background: #fbf8ff;
+      border-color: #cfc1ea;
+      border-left-color: #7b61b8;
+      box-shadow: 0 6px 16px rgba(78, 60, 128, .10);
+    }
+
     .quick-row:hover,
     .quick-row:focus-visible,
     .quick-row.expanded {
       box-shadow: var(--shadow-hover);
       transform: translateY(-1px);
       outline: none;
+    }
+
+    .quick-row.theory:hover,
+    .quick-row.theory:focus-visible,
+    .quick-row.theory.expanded {
+      background: #f5efff;
     }
 
     .expand-cue {
@@ -1312,6 +1347,7 @@
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
+      card.isTheory = card.name.endsWith("Theory");
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
     });
@@ -1407,7 +1443,7 @@
       const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
       const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
       return `
-        <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${extraClass}">
+        <article class="card ${escapeHtml(card.difficulty.toLowerCase())} ${card.isTheory ? "theory" : ""} ${extraClass}">
           <div class="card-head">
             <div>
               <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
@@ -1495,7 +1531,7 @@
         const expanded = expandedQuickCards.has(card.name);
         return `
           <div class="quick-item">
-            <article class="quick-row ${escapeHtml(card.difficulty.toLowerCase())} ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
+            <article class="quick-row ${escapeHtml(card.difficulty.toLowerCase())} ${card.isTheory ? "theory" : ""} ${expanded ? "expanded" : ""}" data-expand-card="${escapeHtml(card.name)}" role="button" tabindex="0" aria-expanded="${expanded}">
               <span class="expand-cue" aria-hidden="true">⌄</span>
               <div>
                 <div class="quick-title">
