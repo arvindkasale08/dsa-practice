@@ -3,6 +3,234 @@
   "timezone": "Asia/Kolkata",
   "entries": [
     {
+      "date": "2026-06-05",
+      "solved": 24,
+      "cardsSynced": [
+        "twopointers/CellsWithOddValues",
+        "twopointers/DutchNationalFlagProblem",
+        "twopointers/PairWithTargetSum",
+        "twopointers/RemoveDuplicates",
+        "twopointers/SquaringSortedArray",
+        "twopointers/ThreeSum",
+        "twopointers/ThreeSumClosest",
+        "twopointers/ThreeSumSmaller",
+        "warmup/CheckIfStringsEquivalent",
+        "warmup/ClosestToZero",
+        "warmup/ContainsDuplicate",
+        "warmup/FindNumbersWithEvenDigits",
+        "warmup/FlippingImage",
+        "warmup/GoodPair",
+        "warmup/IsSubsequence",
+        "warmup/MajorityElement",
+        "warmup/MergeStringsAlternately",
+        "warmup/MoveZeroes",
+        "warmup/Pangram",
+        "warmup/ReverseVowels",
+        "warmup/ShortestWordDistance",
+        "warmup/Sqrt",
+        "warmup/ValidAnagram",
+        "warmup/ValidPalindrome"
+      ],
+      "notes": "Backfilled from git history when revised/problems was created."
+    },
+    {
+      "date": "2026-06-09",
+      "solved": 5,
+      "cardsSynced": [
+        "stacks/ReverseUsingStacks",
+        "stacks/ValidParanthesis",
+        "stacks/StackUsingQueues",
+        "stacks/StackUsingLinkedList",
+        "stacks/StackUsingAnArray"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-10",
+      "solved": 2,
+      "cardsSynced": [
+        "stacks/MinimumRemoveToMakeValidParanthesis",
+        "stacks/RemoveAllAdjacentDuplicates"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-11",
+      "solved": 2,
+      "cardsSynced": [
+        "stacks/DecodeString",
+        "stacks/ValidParenthesisString"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-13",
+      "solved": 3,
+      "cardsSynced": [
+        "stacks/ExclusiveTimeOfFunctions",
+        "stacks/EvaluateReversePolishNotation",
+        "stacks/SimplifyPath"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-14",
+      "solved": 8,
+      "cardsSynced": [
+        "stacks/NextGreaterElementI",
+        "stacks/NextGreaterElementIV2",
+        "stacks/AsteroidCollision",
+        "stacks/SumOfSubarrayMinimums",
+        "stacks/DailyTemperatures",
+        "stacks/MinimumStack",
+        "stacks/MakeStringGreat",
+        "stacks/ScoreOfParanthesis"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-15",
+      "solved": 3,
+      "cardsSynced": [
+        "stacks/MaximumWidthRamp",
+        "stacks/StockSpanner",
+        "stacks/NextGreaterElementII"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-16",
+      "solved": 3,
+      "cardsSynced": [
+        "stacks/RemoveAllAdjacentDuplicatesII",
+        "stacks/RemoveDuplicateLetters",
+        "stacks/SortingStack"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-17",
+      "solved": 4,
+      "cardsSynced": [
+        "stacks/RemoveKDigits",
+        "stacks/OneThreeTwoPattern",
+        "stacks/DecimalToBinary",
+        "stacks/RemoveNodesFromLinkedList"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-18",
+      "solved": 5,
+      "cardsSynced": [
+        "hashing/LongestPalindrome",
+        "hashing/MaximumNumberOfBalloons",
+        "hashing/RansomNote",
+        "hashing/LargestUniqueNumber",
+        "hashing/FirstNonRepeating"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-20",
+      "solved": 7,
+      "cardsSynced": [
+        "hashing/TopKFrequentElements",
+        "hashing/LongestConsecutiveSequence",
+        "hashing/MyHashMap",
+        "hashing/WordPattern",
+        "hashing/IsomorphicStrings",
+        "hashing/GroupAnagrams",
+        "hashing/TwoSum"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-06-24",
+      "solved": 2,
+      "cardsSynced": [
+        "twopointers/ValidPalindromeII",
+        "twopointers/BackspaceStringCompare"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-07-06",
+      "solved": 9,
+      "cardsSynced": [
+        "twopointers/RearrangeBySign",
+        "twopointers/MaximumProductOfTwoElementsInArray",
+        "twopointers/FindDuplicateNumber",
+        "twopointers/TwoSumSorted",
+        "twopointers/RemoveDuplicatesFromSortedArray",
+        "twopointers/SortArrayByParity",
+        "twopointers/BoatsToSavePeople",
+        "twopointers/ContainerWithMostWater",
+        "twopointers/ShortestUnsortedContinuousSubarray"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-07-07",
+      "solved": 6,
+      "cardsSynced": [
+        "fastslow/ReorderList",
+        "fastslow/PalindromicLinkedList",
+        "fastslow/MiddleOfLinkedList",
+        "fastslow/HappyNumber",
+        "fastslow/LinkedListCycleII",
+        "fastslow/LinkedListCycle"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-07-08",
+      "solved": 2,
+      "cardsSynced": [
+        "fastslow/CircularArrayLoop",
+        "fastslow/RemoveNthNodeFromEndOfList"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-07-09",
+      "solved": 3,
+      "cardsSynced": [
+        "slidingwindow/MinimumSizeSubarraySum",
+        "slidingwindow/MaximumAverageSubarrayOfSize",
+        "slidingwindow/MaxSumSubarrayOfSize"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-07-10",
+      "solved": 4,
+      "cardsSynced": [
+        "slidingwindow/LongestRepeatingCharacterSubString",
+        "slidingwindow/LongestSubstringWithoutRepeatingChar",
+        "slidingwindow/FruitsInBasket",
+        "slidingwindow/LongestSubstringWithKMostDistinctCharacters"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-07-11",
+      "solved": 1,
+      "cardsSynced": [
+        "slidingwindow/LongestSubArrayWithOnesAfterReplacement"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
+      "date": "2026-07-12",
+      "solved": 2,
+      "cardsSynced": [
+        "slidingwindow/StringAnagrams",
+        "slidingwindow/PermutationInString"
+      ],
+      "notes": "Backfilled from first-added Java files."
+    },
+    {
       "date": "2026-07-13",
       "solved": 0,
       "cardsSynced": [],
