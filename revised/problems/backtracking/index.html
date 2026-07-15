@@ -1656,6 +1656,51 @@
                   "After picking, recurse with i + 1 because the same input occurrence cannot be reused.",
                   "Sorting is what makes sibling duplicate skipping possible."
             ]
+      },
+      {
+            "name": "SubsetSumI",
+            "source": "../com/arvind/revision/backtracking/SubsetSumI.java",
+            "label": "Collect every pick-skip sum",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given an integer array, generate the sum of every subset, including the empty subset sum 0. The GFG/TUF version expects the final list of sums in increasing order.",
+            "variantLens": "Subset Sum I returns all subset sums, not the subsets themselves. It is related to Subsets, but the saved value is currSum. For the GFG/TUF statement, sort the sums before returning.",
+            "time": "O(2^n log 2^n) with sorting",
+            "space": "O(n) stack + O(2^n) output",
+            "timeWhy": "Every element has two choices, pick or skip, so there are 2^n subset sums. Sorting those sums for increasing order adds O(2^n log 2^n).",
+            "structures": "idx, currSum, recursion stack, result list",
+            "input": "arr = [5, 2, 1]",
+            "output": "[0, 1, 2, 3, 5, 6, 7, 8]",
+            "recognize": "When the question asks for sums of all subsets, not the actual subset lists.",
+            "visual": [
+                  [
+                        "idx 0: 5",
+                        "skip sum 0",
+                        "pick sum 5"
+                  ],
+                  [
+                        "idx 1: 2",
+                        "carry sum",
+                        "or add 2"
+                  ],
+                  [
+                        "idx == n",
+                        "save currSum",
+                        "sort final"
+                  ]
+            ],
+            "visualText": "Picture the usual pick/skip tree, but instead of carrying a path list you carry only a running sum. At each leaf, drop that sum into the result bucket.",
+            "core": "Base: idx == arr.length -> add currSum to result. State carried: idx and currSum. Transition A: skip arr[idx] and keep currSum. Transition B: pick arr[idx] and add it to currSum. Final step for the common problem statement: sort the result before returning.",
+            "bruteForce": "Generate every subset list first, then sum each subset afterward. It is correct but stores more data than needed because the running sum can be carried directly.",
+            "alternates": [
+                  "Use bitmasking from 0 to 2^n - 1 and compute the sum represented by each mask.",
+                  "If only existence of a target sum is needed, switch to subset-sum DP instead of generating all sums."
+            ],
+            "gotchas": [
+                  "The recursive generation order is not guaranteed sorted; [3, 1, 2] produced 0,2,1,3,3,5,4,6 in testing.",
+                  "Include the empty subset sum 0.",
+                  "This is not an exact LeetCode problem; GFG/TUF expect sorted subset sums."
+            ]
       }
 ];
 
@@ -1833,6 +1878,17 @@
                   "Allowed transition: the same equal value can still be chosen down the line after the first copy has entered the path and remaining target is still non-negative."
             ],
             "skeleton": "dfs(idx, remaining, path):\n  Base: if remaining == 0 -> add copy(path); return\n  Block: if remaining < 0 -> return\n\n  State: sorted candidates, idx, remaining, path\n\n  for i from idx to n - 1:\n    Block duplicate sibling:\n      if i > idx AND candidates[i] == candidates[i - 1]\n        continue\n\n    Transition: pick candidates[i] once\n      path.add(candidates[i])\n      dfs(i + 1, remaining - candidates[i], path)\n      undo remove last"
+      },
+      "SubsetSumI": {
+            "prompt": "Before reading: what are you saving at the leaf: the path or only the running sum?",
+            "steps": [
+                  "Base condition: idx == arr.length means all elements have been decided, so save currSum.",
+                  "State carried: idx and currSum.",
+                  "Transition A: skip arr[idx] and move to idx + 1.",
+                  "Transition B: pick arr[idx], add it to currSum, and move to idx + 1.",
+                  "Post step: sort result if the statement asks for increasing order."
+            ],
+            "skeleton": "dfs(idx, currSum):\n  Base: if idx == n\n    result.add(currSum)\n    return\n\n  State: idx, currSum\n\n  Transition A: skip current\n    dfs(idx + 1, currSum)\n\n  Transition B: pick current\n    dfs(idx + 1, currSum + arr[idx])\n\n  final answer:\n    sort(result) when increasing order is required"
       }
 };
 
@@ -1853,7 +1909,8 @@
       "CheckSubsequenceWIthSumK": "Base: idx == n -> sum == k\npick branch OR skip branch\nreturn true as soon as one works",
       "PartitionEqualsSubsetSum": "Odd total -> false\ntarget = total/2\ncurrent recursion = subset-sum exists\nTLE until DP/memo",
       "CombinationSum": "pick current -> stay on idx\nskip current -> idx + 1\nsum > target blocks\nidx == n saves only exact target",
-      "CombinationSumII": "sort first\nskip only same-depth duplicate siblings\nsecond equal can be deeper valid choice\npick -> recurse i+1"
+      "CombinationSumII": "sort first\nskip only same-depth duplicate siblings\nsecond equal can be deeper valid choice\npick -> recurse i+1",
+      "SubsetSumI": "Base: idx == n -> save currSum\nskip keeps sum\npick adds arr[idx]\nsort final sums if required"
 };
 
     const solvedOrder = [
@@ -1873,7 +1930,8 @@
       "CheckSubsequenceWIthSumK",
       "PartitionEqualsSubsetSum",
       "CombinationSum",
-      "CombinationSumII"
+      "CombinationSumII",
+      "SubsetSumI"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
