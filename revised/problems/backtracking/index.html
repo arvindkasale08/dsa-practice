@@ -986,6 +986,51 @@
             ]
       },
       {
+            "name": "BacktrackingSaveTimingTheory",
+            "source": "",
+            "label": "Save when the current state is already an answer",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Backtracking problems differ mainly in when the current path becomes a valid answer. Some paths are valid immediately, some only after a target is hit, and some only when the path is complete.",
+            "variantLens": "Subsets save at entry because every partial path is valid. Target combinations save only on success, such as remaining == 0. Permutations and parentheses save only at full length/completion.",
+            "time": "Depends on search tree",
+            "space": "O(depth) + output",
+            "timeWhy": "This rule does not change the branching factor; it changes where answers are captured. Capturing too late misses valid partial answers, while capturing too early stores incomplete invalid answers.",
+            "structures": "path, idx, target/remaining, recursion state",
+            "input": "Question: if I stop here, is path already valid?",
+            "output": "Yes -> save now. No -> wait for success/base condition.",
+            "recognize": "When you are confused whether result.add(path) belongs before the loop, inside the loop, or only at the base condition.",
+            "visual": [
+                  [
+                        "Subsets",
+                        "[] [1] [1,2]",
+                        "save at entry"
+                  ],
+                  [
+                        "Target sum",
+                        "[1] maybe invalid",
+                        "save on target"
+                  ],
+                  [
+                        "Permutation",
+                        "partial order",
+                        "save at full length"
+                  ]
+            ],
+            "visualText": "Imagine pausing the recursion at the current node. If the current path can be printed as an answer right now, save it before extending. If it still needs more proof, wait.",
+            "core": "Ask: if I stop right here, is this already a valid output? If yes, add the current path at entry before choices. If no, add only when the success/base condition is met. Subsets add before the loop; Combination Sum adds when target becomes 0; permutations add when path length reaches n.",
+            "bruteForce": "A messy way is to generate every path and filter afterward. The better backtracking habit is to save at exactly the moment the state first becomes a valid answer.",
+            "alternates": [
+                  "Binary pick/skip subset style often saves at idx == n because that style intentionally waits until every item is decided.",
+                  "Loop-based subset style saves at entry because each recursion state represents one already-valid subset before it is extended."
+            ],
+            "gotchas": [
+                  "Loop-style subsets miss answers if you save only at idx == n.",
+                  "Target problems become wrong if you save partial paths before the target is reached.",
+                  "The same problem can have two valid recursion styles; save timing follows the style's meaning of the current state."
+            ]
+      },
+      {
             "name": "PowXN",
             "source": "../com/arvind/revision/backtracking/PowXN.java",
             "label": "Square the base, halve the power",
@@ -1725,6 +1770,16 @@
             ],
             "skeleton": "beforeBacktracking(n, choices):\n  branches = choices^n\n\n  if n <= 20 for binary choices:\n    raw backtracking may be okay\n  else if n around 30-40:\n    need strong pruning or meet-in-the-middle\n  else:\n    look for DP/memo/greedy/math\n\n  Remember:\n    stack depth O(n) may be fine\n    branch count O(2^n) is the real danger"
       },
+      "BacktrackingSaveTimingTheory": {
+            "prompt": "Before reading: if recursion stopped at this exact state, can this path already be returned?",
+            "steps": [
+                  "If the current path is already a valid answer, save it before trying more choices.",
+                  "If the path is valid only after a condition is met, save only at that condition.",
+                  "If the path must be complete, save only when the full length or full state is reached.",
+                  "Map examples: Subsets -> save at entry; Combination Sum -> save when target is 0; Permutations -> save when path length is n."
+            ],
+            "skeleton": "dfs(state, path):\n  Question: is path valid right now?\n\n  Case 1: every partial path is valid\n    add copy(path) at entry\n    then extend with choices\n\n  Case 2: only success states are valid\n    if success condition -> add copy(path); return\n    then extend/prune choices\n\n  Case 3: only complete paths are valid\n    if path complete -> add copy(path); return\n    then continue building"
+      },
       "PowXN": {
             "prompt": "Before reading: what state must be converted before recursion starts?",
             "steps": [
@@ -1895,6 +1950,7 @@
     const definingMoves = {
       "SubsequencePatternsTheory": "Base: idx == n -> save/check\npick current -> recurse -> undo\nskip current -> recurse\nadd constraints as state",
       "BacktrackingScaleTheory": "Depth n is not the issue\nbranch count 2^n is the issue\nn<=20 okay, n=200 impossible\nswitch to DP/memo/math",
+      "BacktrackingSaveTimingTheory": "Ask: if I stop here, is path valid?\nyes -> save before choices\nsuccess-only -> save at condition\ncomplete-only -> save at full length",
       "PowXN": "State: x, power as long\nBase: power 0 -> 1\neven -> x*x, power/2\nnegative -> reciprocal",
       "CountGoodNumbers": "State: base, exponent\nBase: exponent 0 -> 1\neven -> square/halve\nodd -> consume one base",
       "SortStack": "Base: stack empty -> return\nsort smaller stack\ninsert held top in sorted spot\nrestore blockers",
@@ -1916,6 +1972,7 @@
     const solvedOrder = [
       "SubsequencePatternsTheory",
       "BacktrackingScaleTheory",
+      "BacktrackingSaveTimingTheory",
       "PowXN",
       "CountGoodNumbers",
       "SortStack",
