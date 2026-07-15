@@ -3,10 +3,35 @@
   "timezone": "Asia/Kolkata",
   "entries": [
     {
-      "date": "2026-07-15",
+      "date": "2026-07-13",
       "solved": 0,
       "cardsSynced": [],
-      "notes": "Started daily solved-count tracking. Increment by the number of newly synced cards."
+      "notes": "Backfilled from git history. PDF/export workflow and code edits happened, but no new revision cards were synced."
+    },
+    {
+      "date": "2026-07-14",
+      "solved": 10,
+      "cardsSynced": [
+        "recursion/PrintNameNTimes",
+        "recursion/Print1ToNUsingRecursion",
+        "recursion/PrintNto1Recursion",
+        "recursion/SumOfFirstNNaturalNumbers",
+        "recursion/Factorial",
+        "recursion/FiboUsingRecursion",
+        "backtracking/PowXN",
+        "backtracking/CountGoodNumbers",
+        "backtracking/SortStack",
+        "backtracking/ReverseAStack"
+      ],
+      "notes": "Backfilled from card-sync commits on 2026-07-14. Excludes AtoIRecurse temp commit because its card was synced on 2026-07-15."
+    },
+    {
+      "date": "2026-07-15",
+      "solved": 1,
+      "cardsSynced": [
+        "backtracking/AtoIRecurse"
+      ],
+      "notes": "Started daily solved-count tracking. Includes the AtoIRecurse caveat card synced on 2026-07-15."
     }
   ]
 }

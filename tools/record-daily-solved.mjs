@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 
 const repoRoot = path.resolve(new URL("..", import.meta.url).pathname);
 const logPath = path.join(repoRoot, "revised/progress/daily-solved.json");
@@ -28,6 +29,16 @@ function readLog() {
 function writeLog(log) {
   fs.mkdirSync(path.dirname(logPath), { recursive: true });
   fs.writeFileSync(logPath, `${JSON.stringify(log, null, 2)}\n`);
+}
+
+function refreshDashboard() {
+  const result = spawnSync(process.execPath, [path.join(repoRoot, "tools/render-progress-dashboard.mjs")], {
+    cwd: repoRoot,
+    stdio: "inherit"
+  });
+  if (result.status !== 0) {
+    throw new Error("Could not refresh progress dashboard");
+  }
 }
 
 function argValue(name, fallback = "") {
@@ -91,6 +102,7 @@ function main() {
   }
 
   writeLog(log);
+  refreshDashboard();
   console.log(`${date}: ${entry.solved} solved`);
 }
 
