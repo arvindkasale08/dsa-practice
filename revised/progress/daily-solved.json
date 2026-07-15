@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "timezone": "Asia/Kolkata",
+  "entries": [
+    {
+      "date": "2026-07-15",
+      "solved": 0,
+      "cardsSynced": [],
+      "notes": "Started daily solved-count tracking. Increment by the number of newly synced cards."
+    }
+  ]
+}
