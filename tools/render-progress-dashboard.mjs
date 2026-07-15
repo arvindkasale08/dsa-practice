@@ -9,7 +9,7 @@ const logPath = path.join(progressDir, "daily-solved.json");
 const outputPath = path.join(progressDir, "index.html");
 
 const log = JSON.parse(fs.readFileSync(logPath, "utf8"));
-const entries = [...(log.entries || [])].sort((a, b) => a.date.localeCompare(b.date));
+const entries = [...(log.entries || [])].sort((a, b) => b.date.localeCompare(a.date));
 const total = entries.reduce((sum, entry) => sum + Number(entry.solved || 0), 0);
 const best = entries.reduce((winner, entry) => Number(entry.solved || 0) > Number(winner.solved || 0) ? entry : winner, entries[0] || { solved: 0, date: "" });
 const updated = new Intl.DateTimeFormat("en-IN", {
