@@ -522,6 +522,14 @@
       background: #f7fbff;
     }
 
+    .section.variant-lens {
+      border-color: #e6cf9b;
+      border-left: 4px solid var(--gold);
+      background: #fff8e8;
+      color: #60430d;
+      font-weight: 700;
+    }
+
     .visual {
       display: grid;
       gap: 7px;
@@ -701,6 +709,19 @@
       font-size: 12px;
       font-weight: 800;
       line-height: 1.3;
+    }
+
+    .quick-variant {
+      display: inline-flex;
+      width: fit-content;
+      max-width: 100%;
+      border-left: 3px solid var(--gold);
+      background: #fff5dc;
+      padding: 3px 7px;
+      color: #76510d;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.35;
     }
 
     .quick-facts {
@@ -1553,6 +1574,7 @@
             "difficulty": "Medium",
             "leetcode": "https://leetcode.com/problems/combination-sum/",
             "description": "Given distinct positive candidates and a target, return every unique combination whose sum equals the target. A candidate can be used any number of times, so after picking a number you may stay on the same index.",
+            "variantLens": "Combination Sum I: candidates are distinct and reusable. Pick -> stay on same idx. Skip -> idx + 1. Combination Sum II changes this: each input occurrence is used once, so pick -> idx + 1 and duplicate values need skip guards.",
             "time": "O(branches * path length)",
             "space": "O(target / min candidate) stack + output",
             "timeWhy": "The recursion branches between taking the current candidate again and moving to the next candidate. The depth can grow up to target divided by the smallest candidate, and each valid path is copied into the answer.",
@@ -1945,6 +1967,7 @@
                 <b>When to recognize it</b>
                 ${escapeHtml(card.recognize)}
               </div>
+              ${card.variantLens ? `<div class="section variant-lens"><b>Variant lens</b>${escapeHtml(card.variantLens)}</div>` : ""}
               <div class="section">
                 <b>Visual hook</b>
                 <div class="visual">${renderVisual(card.visual)}</div>
@@ -1992,6 +2015,7 @@
                 ${renderRevisionControls(card)}
                 <div class="quick-summary">
                   <span class="quick-approach">${escapeHtml(card.label)}</span>
+                  ${card.variantLens ? `<span class="quick-variant"><b>Variant</b> ${escapeHtml(card.variantLens)}</span>` : ""}
                   <div class="quick-facts">
                     <span class="quick-fact"><b>Time</b> ${escapeHtml(card.time)}</span>
                     <span class="quick-fact"><b>Space</b> ${escapeHtml(card.space)}</span>
