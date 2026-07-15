@@ -35,6 +35,16 @@ public class CommonUtils {
         System.out.println("\n ###########################");
     }
 
+    public static void printListListInt(List<List<Integer>> res) {
+        for (List<Integer> r : res) {
+            for (Integer i : r) {
+                System.out.print(i + ", ");
+            }
+            System.out.println("\n ############################");
+        }
+        System.out.println("\n ############################");
+    }
+
     public static ListNode createList(int[] arr) {
         ListNode head = new ListNode(arr[0]);
         ListNode temp = head;

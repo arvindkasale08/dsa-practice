@@ -1277,6 +1277,50 @@
                   "Undo the included character before taking the skip branch.",
                   "Decide whether the empty subsequence should be included; this implementation includes it."
             ]
+      },
+      {
+            "name": "SubSet",
+            "source": "../com/arvind/revision/backtracking/SubSet.java",
+            "label": "Skip or pick each number",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/subsets/",
+            "description": "Given an array of unique integers, return every possible subset. The result must not contain duplicate subsets, and order does not matter.",
+            "time": "O(2^n * n)",
+            "space": "O(n) call stack + output",
+            "timeWhy": "Each of n numbers has two choices: skip or pick, so there are 2^n subsets. Copying each current list into the answer can cost up to n.",
+            "structures": "List<Integer> path, index, result list, recursion stack",
+            "input": "nums = [1, 2, 3]",
+            "output": "[[], [3], [2], [2,3], [1], [1,3], [1,2], [1,2,3]]",
+            "recognize": "When every element can independently be absent or present in the final collection.",
+            "visual": [
+                  [
+                        "idx 0: 1",
+                        "skip 1",
+                        "pick 1"
+                  ],
+                  [
+                        "idx 1: 2",
+                        "skip 2",
+                        "pick 2"
+                  ],
+                  [
+                        "idx == n",
+                        "copy path",
+                        "return"
+                  ]
+            ],
+            "visualText": "Every number opens two doors: leave it out or take it. The index moves forward either way; the path records the choices taken so far.",
+            "core": "Base: idx == n -> copy current list into result. State: idx and current subset list. Transitions: skip nums[idx], recurse; then pick nums[idx], recurse, undo by removing it. Blocked: no choices after idx reaches n.",
+            "bruteForce": "Use bit masks from 0 to 2^n - 1 and build the subset selected by each mask. It is iterative and valid, but the recursive skip/pick tree generalizes better to constrained subset problems.",
+            "alternates": [
+                  "Iterative cascading: start with [[]], and for each number append it to every existing subset to create new subsets.",
+                  "For inputs with duplicates, sort first and skip duplicate choices carefully; that is a different problem, Subsets II."
+            ],
+            "gotchas": [
+                  "Copy the current list at the base case; do not add the same mutable list reference.",
+                  "Undo the picked number before returning to the caller.",
+                  "This is the exact LeetCode Subsets array problem; PowerSet in this package is the related string-subsequence variant."
+            ]
       }
 ];
 
@@ -1370,6 +1414,16 @@
                   "Transition B: skip s[idx], recurse with idx + 1."
             ],
             "skeleton": "dfs(idx, path):\n  Base: if idx == n -> add path; return\n\n  State: idx, path\n\n  Transition A: include current char\n    path.append(s[idx])\n    dfs(idx + 1, path)\n    undo append\n\n  Transition B: skip current char\n    dfs(idx + 1, path)"
+      },
+      "SubSet": {
+            "prompt": "Before reading: what is the base condition, and what are the two transitions for nums[idx]?",
+            "steps": [
+                  "Base condition: idx == n means every number has been decided, so copy the current subset.",
+                  "State carried: idx and current subset list.",
+                  "Transition A: skip nums[idx] and recurse.",
+                  "Transition B: pick nums[idx], recurse, then remove it to undo."
+            ],
+            "skeleton": "dfs(idx, path):\n  Base: if idx == n -> add copy(path); return\n\n  State: idx, path\n\n  Transition A: skip nums[idx]\n    dfs(idx + 1, path)\n\n  Transition B: pick nums[idx]\n    path.add(nums[idx])\n    dfs(idx + 1, path)\n    undo remove last"
       }
 };
 
@@ -1382,7 +1436,8 @@
       "BinaryWithoutConsecutiveOnes": "Base: len == n -> save\n0 allowed always\n1 only if last != 1",
       "BinaryWithoutConsecutiveZeroes": "Base: len == n -> save\n1 allowed always\n0 only if last != 0",
       "GenerateParanthesis": "Base: open=closed=n -> save\nopen<n -> add (\nclosed<open -> add )\nundo after each choice",
-      "PowerSet": "Base: idx == n -> save\ninclude char -> recurse -> undo\nskip char -> recurse"
+      "PowerSet": "Base: idx == n -> save\ninclude char -> recurse -> undo\nskip char -> recurse",
+      "SubSet": "Base: idx == n -> copy path\nskip nums[idx]\npick nums[idx] -> recurse -> undo"
 };
 
     const solvedOrder = [
@@ -1394,7 +1449,8 @@
       "BinaryWithoutConsecutiveOnes",
       "BinaryWithoutConsecutiveZeroes",
       "GenerateParanthesis",
-      "PowerSet"
+      "PowerSet",
+      "SubSet"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
