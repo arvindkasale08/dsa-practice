@@ -18,6 +18,13 @@ public class CommonUtils {
         System.out.println("\n#################");
     }
 
+    public static void printListStr(List<String> lst) {
+        for (String s : lst) {
+            System.out.print(s + ", ");
+        }
+        System.out.println("\n#################");
+    }
+
     public static void print(List<List<String>> res) {
         for (List<String> r: res) {
             for (String s : r) {

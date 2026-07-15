@@ -1101,6 +1101,94 @@
                   "Only one sign is allowed, and it must appear before digits: \"--12\" and \"+-12\" should become 0.",
                   "Do not parse the full digit string with Long.parseLong; clamp while building to avoid overflow."
             ]
+      },
+      {
+            "name": "BinaryWithoutConsecutiveOnes",
+            "source": "../com/arvind/revision/backtracking/BinaryWithoutConsecutiveOnes.java",
+            "label": "Choose 0 freely, guard 1",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a length n, generate all binary strings of length n that do not contain two adjacent 1s. At every position you may place 0, but you may place 1 only when the previous character is not 1.",
+            "time": "O(k * n)",
+            "space": "O(n) call stack + output",
+            "timeWhy": "The recursion visits every valid string prefix and stores each complete answer. If k valid strings are produced, copying/building strings of length n makes the output cost O(k * n).",
+            "structures": "String path, result list, recursion stack",
+            "input": "n = 3",
+            "output": "[000, 001, 010, 100, 101]",
+            "recognize": "When a binary choice is restricted only by the previous character.",
+            "visual": [
+                  [
+                        "last = empty",
+                        "try 0",
+                        "try 1"
+                  ],
+                  [
+                        "last = 0",
+                        "try 0",
+                        "try 1"
+                  ],
+                  [
+                        "last = 1",
+                        "try 0",
+                        "block 1"
+                  ]
+            ],
+            "visualText": "Keep one memory: the last bit. Zero is always safe; one needs permission from the previous bit.",
+            "core": "Append 0 unconditionally. Append 1 only if the path is empty or the last character is not 1. Stop when path length reaches n.",
+            "bruteForce": "Generate all 2^n binary strings and filter out strings containing 11. That is simpler but wastes work on invalid branches.",
+            "alternates": [
+                  "Use a StringBuilder path and undo the last append to reduce temporary string creation.",
+                  "The adjacent-zero LeetCode variant is the mirror image: place 1 freely and guard 0."
+            ],
+            "gotchas": [
+                  "This is a variant of the adjacent-zero LeetCode problem, not the exact same problem.",
+                  "Do not block both digits; only the repeated restricted digit is blocked.",
+                  "Stop exactly at length n before adding to the result."
+            ]
+      },
+      {
+            "name": "BinaryWithoutConsecutiveZeroes",
+            "source": "../com/arvind/revision/backtracking/BinaryWithoutConsecutiveZeroes.java",
+            "label": "Choose 1 freely, guard 0",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/generate-binary-strings-without-adjacent-zeros/",
+            "description": "Given a length n, generate all binary strings of length n that do not contain two adjacent 0s. At every position you may place 1, but you may place 0 only when the previous character is not 0.",
+            "time": "O(k * n)",
+            "space": "O(n) call stack + output",
+            "timeWhy": "The recursion prunes invalid adjacent-zero branches, but it still has to output every valid string. With k valid strings, each of length n, output construction dominates at O(k * n).",
+            "structures": "String path, result list, recursion stack",
+            "input": "n = 3",
+            "output": "[010, 011, 101, 110, 111]",
+            "recognize": "When the next choice depends only on whether the previous bit was 0.",
+            "visual": [
+                  [
+                        "last = empty",
+                        "try 0",
+                        "try 1"
+                  ],
+                  [
+                        "last = 1",
+                        "try 0",
+                        "try 1"
+                  ],
+                  [
+                        "last = 0",
+                        "block 0",
+                        "try 1"
+                  ]
+            ],
+            "visualText": "Keep one memory: the last bit. One is always safe; zero needs permission from the previous bit.",
+            "core": "Append 0 only if the path is empty or the last character is not 0. Append 1 unconditionally. Stop when path length reaches n.",
+            "bruteForce": "Generate all 2^n binary strings and filter out strings containing 00. It is correct but explores invalid strings that can be pruned early.",
+            "alternates": [
+                  "Use StringBuilder with append/recurse/delete to avoid creating many intermediate strings.",
+                  "Dynamic programming can count the number of valid strings, but backtracking is needed when the actual strings must be returned."
+            ],
+            "gotchas": [
+                  "The LeetCode problem is specifically adjacent zeros, not generic all binary strings.",
+                  "For n = 1, both 0 and 1 are valid because there is no adjacency yet.",
+                  "Always add 1 after the guarded 0 branch; 1 does not need a previous-character check."
+            ]
       }
 ];
 
@@ -1154,6 +1242,26 @@
                   "Build the number safely and clamp before overflow escapes the range."
             ],
             "skeleton": "i = skipSpaces(s)\nsign = readOptionalSign(s, i)\nwhile i < n and digit:\n  digit = s[i] - 0\n  result = result * 10 + digit\n  if signed result crosses int range: clamp\nreturn sign * result"
+      },
+      "BinaryWithoutConsecutiveOnes": {
+            "prompt": "Before reading: which digit is always allowed, and which digit needs a last-bit check?",
+            "steps": [
+                  "Carry the current string/path.",
+                  "Add 0 without checking because the rule only blocks consecutive 1s.",
+                  "Add 1 only when the path is empty or the last bit is not 1.",
+                  "When path length reaches n, store it."
+            ],
+            "skeleton": "dfs(path):\n  if path.length == n: add path; return\n  dfs(path + \"0\")\n  if path empty OR last != \"1\":\n    dfs(path + \"1\")"
+      },
+      "BinaryWithoutConsecutiveZeroes": {
+            "prompt": "Before reading: why is 1 unconditional but 0 guarded?",
+            "steps": [
+                  "Carry the current string/path.",
+                  "Add 0 only when the previous bit is not 0.",
+                  "Add 1 without checking because consecutive 1s are allowed.",
+                  "When path length reaches n, store it."
+            ],
+            "skeleton": "dfs(path):\n  if path.length == n: add path; return\n  if path empty OR last != \"0\":\n    dfs(path + \"0\")\n  dfs(path + \"1\")"
       }
 };
 
@@ -1162,7 +1270,9 @@
       "CountGoodNumbers": "slots first, then powers\neven slots -> 5^count\nodd slots -> 4^count",
       "SortStack": "sort rest first\nthen insert saved top\nrestore popped blockers",
       "ReverseAStack": "reverse rest first\nthen sink saved top\nto the bottom",
-      "AtoIRecurse": "spaces -> one sign -> digits\nstop on first invalid\nclamp while building"
+      "AtoIRecurse": "spaces -> one sign -> digits\nstop on first invalid\nclamp while building",
+      "BinaryWithoutConsecutiveOnes": "0 is free\n1 needs last != 1",
+      "BinaryWithoutConsecutiveZeroes": "1 is free\n0 needs last != 0"
 };
 
     const solvedOrder = [
@@ -1170,7 +1280,9 @@
       "CountGoodNumbers",
       "SortStack",
       "ReverseAStack",
-      "AtoIRecurse"
+      "AtoIRecurse",
+      "BinaryWithoutConsecutiveOnes",
+      "BinaryWithoutConsecutiveZeroes"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

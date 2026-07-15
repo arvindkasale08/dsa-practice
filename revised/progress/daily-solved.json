@@ -27,11 +27,13 @@
     },
     {
       "date": "2026-07-15",
-      "solved": 1,
+      "solved": 3,
       "cardsSynced": [
-        "backtracking/AtoIRecurse"
+        "backtracking/AtoIRecurse",
+        "backtracking/BinaryWithoutConsecutiveOnes",
+        "backtracking/BinaryWithoutConsecutiveZeroes"
       ],
-      "notes": "Started daily solved-count tracking. Includes the AtoIRecurse caveat card synced on 2026-07-15."
+      "notes": "Started daily solved-count tracking. Includes the AtoIRecurse caveat card synced on 2026-07-15. Synced binary string backtracking cards."
     }
   ]
 }
