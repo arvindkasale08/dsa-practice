@@ -1052,6 +1052,55 @@
                   "insertAtBottom must restore every temporarily popped element after placing the saved value.",
                   "Check empty stack first in both recursive functions."
             ]
+      },
+      {
+            "name": "AtoIRecurse",
+            "source": "../com/arvind/revision/backtracking/AtoIRecurse.java",
+            "label": "Parse rules before digits",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/string-to-integer-atoi/",
+            "description": "Given a string, convert the initial valid integer portion to a 32-bit signed integer. Ignore leading spaces, allow one optional sign, read consecutive digits, stop at the first invalid character, and clamp outside [-2^31, 2^31 - 1].",
+            "time": "O(n)",
+            "space": "O(n) call stack if recursive",
+            "timeWhy": "Each character is inspected at most once while parsing spaces, sign, and digits. The optimal loop version uses O(1) extra space; a recursive digit reader adds call-stack depth for the digit run.",
+            "structures": "index pointer, sign flag, long/clamped accumulator",
+            "input": "s = \"   -42 with words\"",
+            "output": "-42",
+            "recognize": "When the problem is mostly about strict parsing order and overflow, not about clever recursion.",
+            "visual": [
+                  [
+                        "spaces",
+                        "skip",
+                        "   -42"
+                  ],
+                  [
+                        "sign",
+                        "read once",
+                        "-"
+                  ],
+                  [
+                        "digits",
+                        "build",
+                        "4 -> 42"
+                  ],
+                  [
+                        "invalid",
+                        "stop",
+                        "space"
+                  ]
+            ],
+            "visualText": "Think of a small parser gate: spaces first, then at most one sign, then digits only. Once a non-digit appears after digits begin, the number is finished.",
+            "core": "The optimal shape is a simple while-loop parser: skip spaces, read one optional sign, consume digits while updating result, clamp during construction, then return sign * result.",
+            "bruteForce": "Collect the digit substring and parse it later. That is easier to write, but it is fragile because a very large digit string can overflow even long before clamping.",
+            "alternates": [
+                  "Preferred interview version: iterative parser with result = result * 10 + digit and early clamp checks.",
+                  "Recursive version is possible for practice, but it makes the validation rules feel more annoying than the algorithm itself."
+            ],
+            "gotchas": [
+                  "Pesky logic note: the current class has validation edge cases that are not fully fixed; use this card for the optimal parsing shape, not as a claim that the class is perfect.",
+                  "Only one sign is allowed, and it must appear before digits: \"--12\" and \"+-12\" should become 0.",
+                  "Do not parse the full digit string with Long.parseLong; clamp while building to avoid overflow."
+            ]
       }
 ];
 
@@ -1095,6 +1144,16 @@
                   "During unwind, each older top sinks below the stack that has already been reversed."
             ],
             "skeleton": "reverse(stack):\n  if stack empty: return\n  top = stack.pop()\n  reverse(stack)\n  insertAtBottom(top, stack)\n\ninsertAtBottom(x, stack):\n  if stack empty:\n    stack.push(x)\n    return\n  temp = stack.pop()\n  insertAtBottom(x, stack)\n  stack.push(temp)"
+      },
+      "AtoIRecurse": {
+            "prompt": "Before reading: what are the parser gates, in exact order?",
+            "steps": [
+                  "Skip leading spaces only.",
+                  "Read at most one sign before any digit.",
+                  "Consume consecutive digits and stop at the first non-digit.",
+                  "Build the number safely and clamp before overflow escapes the range."
+            ],
+            "skeleton": "i = skipSpaces(s)\nsign = readOptionalSign(s, i)\nwhile i < n and digit:\n  digit = s[i] - 0\n  result = result * 10 + digit\n  if signed result crosses int range: clamp\nreturn sign * result"
       }
 };
 
@@ -1102,14 +1161,16 @@
       "PowXN": "n as long first\neven: x*x, n/2\nnegative: reciprocal at the end",
       "CountGoodNumbers": "slots first, then powers\neven slots -> 5^count\nodd slots -> 4^count",
       "SortStack": "sort rest first\nthen insert saved top\nrestore popped blockers",
-      "ReverseAStack": "reverse rest first\nthen sink saved top\nto the bottom"
+      "ReverseAStack": "reverse rest first\nthen sink saved top\nto the bottom",
+      "AtoIRecurse": "spaces -> one sign -> digits\nstop on first invalid\nclamp while building"
 };
 
     const solvedOrder = [
       "PowXN",
       "CountGoodNumbers",
       "SortStack",
-      "ReverseAStack"
+      "ReverseAStack",
+      "AtoIRecurse"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
