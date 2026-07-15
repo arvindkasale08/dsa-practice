@@ -1619,7 +1619,7 @@
             "difficulty": "Medium",
             "leetcode": "https://leetcode.com/problems/combination-sum-ii/",
             "description": "Given candidate numbers that may contain duplicates and a target, return every unique combination whose sum equals the target. Each input occurrence can be used at most once.",
-            "variantLens": "Combination Sum II: sort first, each occurrence is use-once, and pick -> i + 1. Skip duplicates only among siblings with i > idx. Combination Sum I instead has distinct reusable candidates and pick -> stay on same idx.",
+            "variantLens": "Combination Sum II: sort first, each occurrence is use-once, and pick -> i + 1. Skip duplicates only among siblings with i > idx. A later equal value is still valid deeper in the path when it is chosen after the first one and the remaining target allows it.",
             "time": "O(2^n * path length)",
             "space": "O(n) call stack + output",
             "timeWhy": "Each sorted candidate can either appear or not appear in a combination, so the search tree is still exponential. Copying each accepted path adds path-length cost, while duplicate skipping removes repeated sibling branches.",
@@ -1644,15 +1644,15 @@
                         "skip"
                   ]
             ],
-            "visualText": "Picture each recursion depth choosing the next number from a sorted shelf. Once you choose shelf item i, the next shelf starts at i + 1. Equal items beside each other are skipped only when they are competing for the same slot.",
-            "core": "Base/save: if remaining target becomes 0, copy the path and return. Blocked: if remaining target becomes negative, stop. State carried: start idx, remaining target, and path. Transition: loop i from idx, skip candidates[i] when it equals candidates[i - 1] at the same depth, pick candidates[i], recurse with i + 1, then undo.",
+            "visualText": "Picture each recursion depth choosing the next number from a sorted shelf. The second 1 is skipped only if it is trying to fill the same slot as the first 1. If the first 1 is already in the path, the second 1 can be chosen later as the next slot, as long as the remaining target is not broken.",
+            "core": "Base/save: if remaining target becomes 0, copy the path and return. Blocked: if remaining target becomes negative, stop. State carried: start idx, remaining target, and path. Transition: loop i from idx, skip candidates[i] when it equals candidates[i - 1] at the same depth, pick candidates[i], recurse with i + 1, then undo. The key nuance: same-depth duplicate is a repeated sibling choice; deeper duplicate is a valid subsequent choice.",
             "bruteForce": "Generate every subset of input indices, sum it, sort/deduplicate the resulting combinations in a set. It is correct but wastes work and makes duplicate handling messy after the fact.",
             "alternates": [
                   "Use remaining target and break early once sorted candidates[i] is greater than remaining target.",
                   "Frequency-count variant: compress equal values into value/count pairs, then choose count 0..freq for each value."
             ],
             "gotchas": [
-                  "Skip duplicates only when i > idx; otherwise you accidentally block valid repeated values from different depths like [1, 1, 6].",
+                  "Skip duplicates only when i > idx; the second equal value is not a sibling when it is selected deeper after the first value, and can be valid if the remaining target still permits it.",
                   "After picking, recurse with i + 1 because the same input occurrence cannot be reused.",
                   "Sorting is what makes sibling duplicate skipping possible."
             ]
@@ -1829,7 +1829,8 @@
                   "Blocked condition: remaining target < 0 means this branch is too large.",
                   "State carried: sorted candidates, start idx, remaining target, and current path.",
                   "Transition: for each i from idx, pick candidates[i], recurse with i + 1, then undo.",
-                  "Blocked transition: if i > idx and candidates[i] == candidates[i - 1], skip that sibling."
+                  "Blocked transition: if i > idx and candidates[i] == candidates[i - 1], skip that sibling.",
+                  "Allowed transition: the same equal value can still be chosen down the line after the first copy has entered the path and remaining target is still non-negative."
             ],
             "skeleton": "dfs(idx, remaining, path):\n  Base: if remaining == 0 -> add copy(path); return\n  Block: if remaining < 0 -> return\n\n  State: sorted candidates, idx, remaining, path\n\n  for i from idx to n - 1:\n    Block duplicate sibling:\n      if i > idx AND candidates[i] == candidates[i - 1]\n        continue\n\n    Transition: pick candidates[i] once\n      path.add(candidates[i])\n      dfs(i + 1, remaining - candidates[i], path)\n      undo remove last"
       }
@@ -1852,7 +1853,7 @@
       "CheckSubsequenceWIthSumK": "Base: idx == n -> sum == k\npick branch OR skip branch\nreturn true as soon as one works",
       "PartitionEqualsSubsetSum": "Odd total -> false\ntarget = total/2\ncurrent recursion = subset-sum exists\nTLE until DP/memo",
       "CombinationSum": "pick current -> stay on idx\nskip current -> idx + 1\nsum > target blocks\nidx == n saves only exact target",
-      "CombinationSumII": "sort first\nloop i from idx\nskip duplicate siblings: i>idx && same\npick -> recurse i+1"
+      "CombinationSumII": "sort first\nskip only same-depth duplicate siblings\nsecond equal can be deeper valid choice\npick -> recurse i+1"
 };
 
     const solvedOrder = [
