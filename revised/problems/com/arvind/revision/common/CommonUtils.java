@@ -42,7 +42,6 @@ public class CommonUtils {
             }
             System.out.println("\n ############################");
         }
-        System.out.println("\n ############################");
     }
 
     public static ListNode createList(int[] arr) {

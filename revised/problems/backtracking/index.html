@@ -1781,6 +1781,96 @@
                   "Include the empty subset sum 0.",
                   "This is not an exact LeetCode problem; GFG/TUF expect sorted subset sums."
             ]
+      },
+      {
+            "name": "SubsetII",
+            "source": "../com/arvind/revision/backtracking/SubsetII.java",
+            "label": "Save every path, skip duplicate siblings",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/subsets-ii/",
+            "description": "Given an integer array that may contain duplicate values, return every unique subset. The answer must not contain duplicate subset lists.",
+            "variantLens": "Subsets II is Subsets with duplicates. Sort first, save the current path at every node, and skip equal values only when they are duplicate siblings at the same recursion depth.",
+            "time": "O(2^n * path length)",
+            "space": "O(n) stack + output",
+            "timeWhy": "Every value can still be picked or skipped, so the number of unique subsets is exponential. Copying each saved path adds path-length cost; sorting and sibling-skip only remove duplicate branches.",
+            "structures": "sorted array, start idx, path list, recursion stack",
+            "input": "nums = [1, 2, 2]",
+            "output": "[[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]",
+            "recognize": "When the question asks for all subsets, the input may contain duplicates, and duplicate subset lists are not allowed.",
+            "visual": [
+                  [
+                        "sort",
+                        "1 2 2",
+                        "same values touch"
+                  ],
+                  [
+                        "save path now",
+                        "[] / [1] / [1,2]",
+                        "every node valid"
+                  ],
+                  [
+                        "same depth 2",
+                        "i > idx",
+                        "skip sibling"
+                  ]
+            ],
+            "visualText": "Picture each recursion level as choosing the next slot in the subset. The second 2 cannot start the same slot after the first 2 already tried that slot. But once a 2 is already chosen, the next 2 can be chosen deeper to make [2, 2].",
+            "core": "Base/save: the current path is always a valid subset, so copy it at the start of each call. State carried: sorted nums, start idx, and path. Transition: loop i from idx, skip nums[i] only when i > idx and nums[i] == nums[i - 1], pick nums[i], recurse with i + 1, then undo.",
+            "bruteForce": "Generate all subsets by pick/skip, then store them in a set to remove duplicates. It works, but duplicate cleanup happens late and the same subset can be generated many times.",
+            "alternates": [
+                  "Frequency-count variant: compress each value with its count, then choose 0..count copies.",
+                  "Bitmasking can generate subsets, but duplicate filtering becomes clumsy."
+            ],
+            "gotchas": [
+                  "Save at entry, not only at idx == n, because every partial subset is already a valid answer.",
+                  "The duplicate check must be i > idx, not i > 0; only duplicate siblings are skipped.",
+                  "Sort first, otherwise equal values are not adjacent and sibling skipping breaks."
+            ]
+      },
+      {
+            "name": "CombinationSumIII",
+            "source": "../com/arvind/revision/backtracking/CombinationSumIII.java",
+            "label": "Pick k digits from 1..9 once",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/combination-sum-iii/",
+            "description": "Find every combination of exactly k numbers from 1 to 9 that adds up to n. Each number can be used at most once.",
+            "variantLens": "Combination Sum III fixes the candidate set to 1..9 and adds an exact count rule. Unlike Combination Sum I, reuse is not allowed. Unlike Combination Sum II, there are no duplicate candidates to skip.",
+            "time": "O(2^9 * k)",
+            "space": "O(k) stack + output",
+            "timeWhy": "There are only 9 possible digits, and each digit is either picked or skipped. Copying an accepted answer costs up to k.",
+            "structures": "digits 1..9, idx, remaining target, digitsLeft, path list",
+            "input": "k = 3, n = 7",
+            "output": "[[1, 2, 4]]",
+            "recognize": "When you must choose exactly k distinct numbers from 1..9 and hit a target sum.",
+            "visual": [
+                  [
+                        "digits",
+                        "1 2 3 4 5 6 7 8 9",
+                        "use once"
+                  ],
+                  [
+                        "pick",
+                        "target -= digit",
+                        "digitsLeft--"
+                  ],
+                  [
+                        "save only if",
+                        "target 0",
+                        "digitsLeft 0"
+                  ]
+            ],
+            "visualText": "Picture a 1-to-9 shelf. For each digit, either take it into the basket or walk past it. The basket is accepted only when it has exactly k digits and the remaining target is exactly 0.",
+            "core": "Base/save: if target == 0 and digitsLeft == 0, copy the path. Blocked: if digitsLeft == 0, idx == 9, or target goes negative, stop. State carried: idx, target, digitsLeft, and path. Transition A: pick nums[idx], recurse idx + 1, target - nums[idx], digitsLeft - 1, then undo. Transition B: skip nums[idx] and recurse idx + 1.",
+            "bruteForce": "Generate every subset of digits 1..9, then filter by size k and sum n. This is still bounded, but direct backtracking can stop earlier once size or sum is impossible.",
+            "alternates": [
+                  "Use a for-loop from start to 9 instead of explicit pick/skip; recurse with i + 1 after picking.",
+                  "Prune when target < 0 or digitsLeft becomes larger than the numbers remaining."
+            ],
+            "gotchas": [
+                  "Both conditions are required: target must be 0 and digitsLeft must be 0.",
+                  "After picking a digit, move to the next index because digits cannot be reused.",
+                  "There are no duplicate candidates here, so no sibling duplicate skip is needed."
+            ]
       }
 ];
 
@@ -1979,6 +2069,26 @@
                   "Post step: sort result if the statement asks for increasing order."
             ],
             "skeleton": "dfs(idx, currSum):\n  Base: if idx == n\n    result.add(currSum)\n    return\n\n  State: idx, currSum\n\n  Transition A: skip current\n    dfs(idx + 1, currSum)\n\n  Transition B: pick current\n    dfs(idx + 1, currSum + arr[idx])\n\n  final answer:\n    sort(result) when increasing order is required"
+      },
+      "SubsetII": {
+            "prompt": "Before reading: why is the current path saved before the loop, and which duplicate is skipped?",
+            "steps": [
+                  "Base/save condition: every current path is a valid subset, so save it at the start of the call.",
+                  "State carried: sorted nums, start idx, and current path.",
+                  "Allowed transition: choose nums[i], recurse from i + 1, then undo.",
+                  "Blocked transition: if i > idx and nums[i] equals nums[i - 1], skip that duplicate sibling."
+            ],
+            "skeleton": "dfs(idx, path):\n  Save: add copy(path) immediately\n\n  State: sorted nums, idx, path\n\n  for i from idx to n - 1:\n    Block duplicate sibling:\n      if i > idx AND nums[i] == nums[i - 1]\n        continue\n\n    Transition: pick nums[i]\n      path.add(nums[i])\n      dfs(i + 1, path)\n      undo remove last"
+      },
+      "CombinationSumIII": {
+            "prompt": "Before reading: what two counters must both be satisfied before saving?",
+            "steps": [
+                  "Base/save condition: target == 0 and digitsLeft == 0 means the path is valid.",
+                  "State carried: idx, remaining target, digitsLeft, and path.",
+                  "Transition A: pick current digit, reduce target, reduce digitsLeft, recurse, then undo.",
+                  "Transition B: skip current digit and move forward."
+            ],
+            "skeleton": "dfs(idx, target, digitsLeft, path):\n  Base: if target == 0 AND digitsLeft == 0\n    add copy(path); return\n\n  Block: if digitsLeft == 0 OR idx == 9 OR target < 0\n    return\n\n  State: idx, target, digitsLeft, path\n\n  Transition A: pick digit idx\n    dfs(idx + 1, target - digit, digitsLeft - 1)\n    undo\n\n  Transition B: skip digit idx\n    dfs(idx + 1, target, digitsLeft)"
       }
 };
 
@@ -2001,7 +2111,9 @@
       "PartitionEqualsSubsetSum": "Odd total -> false\ntarget = total/2\ncurrent recursion = subset-sum exists\nTLE until DP/memo",
       "CombinationSum": "pick current -> stay on idx\nskip current -> idx + 1\nsum > target blocks\nidx == n saves only exact target",
       "CombinationSumII": "sort first\nskip only same-depth duplicate siblings\nsecond equal can be deeper valid choice\npick -> recurse i+1",
-      "SubsetSumI": "Base: idx == n -> save currSum\nskip keeps sum\npick adds arr[idx]\nsort final sums if required"
+      "SubsetSumI": "Base: idx == n -> save currSum\nskip keeps sum\npick adds arr[idx]\nsort final sums if required",
+      "SubsetII": "Save path at entry\nduplicate rule is only i > idx\npick -> recurse i+1 -> undo",
+      "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1"
 };
 
     const solvedOrder = [
@@ -2023,7 +2135,9 @@
       "PartitionEqualsSubsetSum",
       "CombinationSum",
       "CombinationSumII",
-      "SubsetSumI"
+      "SubsetSumI",
+      "SubsetII",
+      "CombinationSumIII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
