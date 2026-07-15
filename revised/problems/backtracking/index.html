@@ -876,6 +876,50 @@
   <script>
     const cards = [
       {
+            "name": "SubsequencePatternsTheory",
+            "source": "https://takeuforward.org/data-structure/learn-all-patterns-of-subsequences-theory",
+            "label": "Pick or skip every item",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "A subsequence is made by deleting zero or more elements while keeping the remaining order. Elements do not need to be adjacent. Most subsequence problems start from the same decision: for each item, either pick it into the current path or skip it.",
+            "time": "O(2^n * n) to generate",
+            "space": "O(n) call stack + output",
+            "timeWhy": "Every item has two choices: pick or skip. That creates 2^n branches. If you copy or print each completed subsequence, each output can cost up to n more work.",
+            "structures": "index, path/list, recursion stack",
+            "input": "s = \"abc\"",
+            "output": "non-empty subsequences: a, b, c, ab, ac, bc, abc",
+            "recognize": "When the question says subsequence, subset, all choices, target sum from selected elements, or keep original order while skipping elements.",
+            "visual": [
+                  [
+                        "idx 0: a",
+                        "pick",
+                        "skip"
+                  ],
+                  [
+                        "idx 1: b",
+                        "pick",
+                        "skip"
+                  ],
+                  [
+                        "idx == n",
+                        "save/check",
+                        "return"
+                  ]
+            ],
+            "visualText": "Picture a binary decision tree. Every level is one index. Left door picks the item, right door skips it, and both doors move to the next index.",
+            "core": "Base: idx == n -> save, count, or validate the current path. State carried: idx, current path, and any extra rule state like sum or count. Allowed transitions: pick current item or skip it. Blocked transitions: stop early when a constraint is already broken. Undo: remove the picked item before returning.",
+            "bruteForce": "Generate every possible combination using bitmasks from 0 to 2^n - 1. It is correct and useful for small n, but recursion makes constraints like sum, length, or duplicate skipping easier to attach.",
+            "alternates": [
+                  "Bitmasking uses the same idea iteratively: each bit says whether an item is picked.",
+                  "Dynamic programming appears when you do not need to print every subsequence, but need an optimal count/length such as LIS, LCS, or subset-sum feasibility."
+            ],
+            "gotchas": [
+                  "Subsequence keeps order but may skip items; substring/subarray must be continuous.",
+                  "There are 2^n total subsequences including empty, and 2^n - 1 if empty is excluded.",
+                  "For generate-all questions, exponential time is expected; for large n, look for DP/counting instead."
+            ]
+      },
+      {
             "name": "PowXN",
             "source": "../com/arvind/revision/backtracking/PowXN.java",
             "label": "Square the base, halve the power",
@@ -1325,6 +1369,16 @@
 ];
 
     const recallDetails = {
+      "SubsequencePatternsTheory": {
+            "prompt": "Before reading: what is the base condition, and what are the two choices at every index?",
+            "steps": [
+                  "Base condition: idx == n means every element has been decided.",
+                  "State carried: idx, current path, and optional rule state such as sum or count.",
+                  "Transition A: pick the current item, recurse, then undo.",
+                  "Transition B: skip the current item and recurse."
+            ],
+            "skeleton": "dfs(idx, path):\n  Base: if idx == n\n    save/count/check path\n    return\n\n  State: idx, path, optional sum/count\n\n  Transition A: pick current item\n    path.add(arr[idx])\n    dfs(idx + 1, path)\n    undo remove last\n\n  Transition B: skip current item\n    dfs(idx + 1, path)"
+      },
       "PowXN": {
             "prompt": "Before reading: what state must be converted before recursion starts?",
             "steps": [
@@ -1428,6 +1482,7 @@
 };
 
     const definingMoves = {
+      "SubsequencePatternsTheory": "Base: idx == n -> save/check\npick current -> recurse -> undo\nskip current -> recurse\nadd constraints as state",
       "PowXN": "State: x, power as long\nBase: power 0 -> 1\neven -> x*x, power/2\nnegative -> reciprocal",
       "CountGoodNumbers": "State: base, exponent\nBase: exponent 0 -> 1\neven -> square/halve\nodd -> consume one base",
       "SortStack": "Base: stack empty -> return\nsort smaller stack\ninsert held top in sorted spot\nrestore blockers",
@@ -1441,6 +1496,7 @@
 };
 
     const solvedOrder = [
+      "SubsequencePatternsTheory",
       "PowXN",
       "CountGoodNumbers",
       "SortStack",
