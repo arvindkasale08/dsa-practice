@@ -1189,6 +1189,50 @@
                   "For n = 1, both 0 and 1 are valid because there is no adjacency yet.",
                   "Always add 1 after the guarded 0 branch; 1 does not need a previous-character check."
             ]
+      },
+      {
+            "name": "GenerateParanthesis",
+            "source": "../com/arvind/revision/backtracking/GenerateParanthesis.java",
+            "label": "Open limit, close balance",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/generate-parentheses/",
+            "description": "Given n pairs of parentheses, generate every valid string that uses exactly n opening brackets and n closing brackets. A prefix is valid only when it never has more closing brackets than opening brackets.",
+            "time": "O(Cn * n)",
+            "space": "O(n) call stack + output",
+            "timeWhy": "There are Cn valid parenthesis strings, where Cn is the nth Catalan number. Each completed string has length 2n, so producing/copying all answers costs proportional to number of answers times n.",
+            "structures": "StringBuilder path, open/closed counters, result list, recursion stack",
+            "input": "n = 3",
+            "output": "[((())), (()()), (())(), ()(()), ()()()]",
+            "recognize": "When you are building balanced parentheses and the only state that matters is how many opens and closes have already been used.",
+            "visual": [
+                  [
+                        "open < n",
+                        "add (",
+                        "grow left"
+                  ],
+                  [
+                        "closed < open",
+                        "add )",
+                        "balance"
+                  ],
+                  [
+                        "open = closed = n",
+                        "save",
+                        "done"
+                  ]
+            ],
+            "visualText": "Think of open as available building blocks and closed as debt repayment. You can open until the quota is full; you can close only if there is an unmatched open waiting.",
+            "core": "Add the current string when open == n and closed == n. Add ( if open < n. Add ) if closed < open. Undo the append after each recursive call.",
+            "bruteForce": "Generate every length 2n string made of ( and ), then filter valid ones. It is correct but explores many impossible prefixes that backtracking prunes immediately.",
+            "alternates": [
+                  "Use immutable strings instead of StringBuilder; simpler, but creates more temporary strings.",
+                  "Use BFS over partial strings with open/closed counts; same state idea, more queue memory."
+            ],
+            "gotchas": [
+                  "Do not add ) when closed == open; that would make the prefix invalid immediately.",
+                  "Do not add ( after open reaches n; the answer must use exactly n pairs.",
+                  "When using StringBuilder, delete the last character after each recursive call to undo the choice."
+            ]
       }
 ];
 
@@ -1262,6 +1306,16 @@
                   "When path length reaches n, store it."
             ],
             "skeleton": "dfs(path):\n  if path.length == n: add path; return\n  if path empty OR last != \"0\":\n    dfs(path + \"0\")\n  dfs(path + \"1\")"
+      },
+      "GenerateParanthesis": {
+            "prompt": "Before reading: when are you allowed to add (, and when are you allowed to add )?",
+            "steps": [
+                  "If open == n and closed == n, save the built string.",
+                  "Add ( only while open < n.",
+                  "Add ) only while closed < open.",
+                  "After each recursive call, delete the last character to undo that choice."
+            ],
+            "skeleton": "dfs(open, closed):\n  if open == n and closed == n: add path; return\n  if open < n:\n    append \"(\"; dfs(open + 1, closed); undo\n  if closed < open:\n    append \")\"; dfs(open, closed + 1); undo"
       }
 };
 
@@ -1272,7 +1326,8 @@
       "ReverseAStack": "reverse rest first\nthen sink saved top\nto the bottom",
       "AtoIRecurse": "spaces -> one sign -> digits\nstop on first invalid\nclamp while building",
       "BinaryWithoutConsecutiveOnes": "0 is free\n1 needs last != 1",
-      "BinaryWithoutConsecutiveZeroes": "1 is free\n0 needs last != 0"
+      "BinaryWithoutConsecutiveZeroes": "1 is free\n0 needs last != 0",
+      "GenerateParanthesis": "open < n -> add (\nclosed < open -> add )\nboth n -> save"
 };
 
     const solvedOrder = [
@@ -1282,7 +1337,8 @@
       "ReverseAStack",
       "AtoIRecurse",
       "BinaryWithoutConsecutiveOnes",
-      "BinaryWithoutConsecutiveZeroes"
+      "BinaryWithoutConsecutiveZeroes",
+      "GenerateParanthesis"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
