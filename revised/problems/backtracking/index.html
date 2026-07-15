@@ -920,6 +920,51 @@
             ]
       },
       {
+            "name": "BacktrackingScaleTheory",
+            "source": "",
+            "label": "Know when 2^n explodes",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Raw backtracking is a decision-tree search. If each item has two choices, the tree has about 2^n branches. That is fine for small n, but impossible when n is large, even if each branch is simple.",
+            "time": "O(2^n) for binary choices",
+            "space": "O(n) call stack",
+            "timeWhy": "At every level the recursion can split into two calls. After n levels, the number of leaves is 2^n. For n = 20 that is about one million leaves; for n = 40 it is about one trillion; for n = 200 it is around 1.6 * 10^60.",
+            "structures": "recursion tree, pruning, memoization, DP state",
+            "input": "n = 200, choices per item = pick/skip",
+            "output": "raw backtracking is not practical",
+            "recognize": "When n is large and the solution idea says try every subset, subsequence, path, assignment, or pick/skip combination.",
+            "visual": [
+                  [
+                        "n <= 20",
+                        "2^n",
+                        "often okay"
+                  ],
+                  [
+                        "n 30-40",
+                        "huge",
+                        "prune / meet-middle"
+                  ],
+                  [
+                        "n = 200",
+                        "impossible",
+                        "DP / greedy / math"
+                  ]
+            ],
+            "visualText": "Picture each extra item doubling the search tree. Ten more decisions multiply work by about 1024, so a small n increase can destroy a backtracking solution.",
+            "core": "Base: raw backtracking is acceptable only when the total state tree is small enough. State carried: depth, choices left, and any pruning facts. Allowed transition: recurse only when the branch can still lead to an answer. Blocked transition: if n is too large for 2^n, switch approach instead of hoping recursion passes. Undo depends on the specific problem.",
+            "bruteForce": "Pure backtracking tries every branch and is the baseline for proving correctness on small n. It becomes unusable once the decision tree crosses practical limits.",
+            "alternates": [
+                  "Memoization or DP works when many branches collapse into the same smaller state, such as idx + target sum.",
+                  "Meet-in-the-middle can stretch subset-style problems from roughly n = 25 to around n = 40 by splitting the set in half.",
+                  "Greedy or math is needed when constraints are far beyond any enumerable state space."
+            ],
+            "gotchas": [
+                  "Do not judge by recursion depth alone; n = 200 depth is fine, but 2^200 branches is impossible.",
+                  "Pruning helps only if it removes most branches early; weak pruning still behaves exponentially.",
+                  "If constraints say n is 100 or 200, raw generate-all backtracking is almost certainly the wrong final approach."
+            ]
+      },
+      {
             "name": "PowXN",
             "source": "../com/arvind/revision/backtracking/PowXN.java",
             "label": "Square the base, halve the power",
@@ -1469,6 +1514,16 @@
             ],
             "skeleton": "dfs(idx, path):\n  Base: if idx == n\n    save/count/check path\n    return\n\n  State: idx, path, optional sum/count\n\n  Transition A: pick current item\n    path.add(arr[idx])\n    dfs(idx + 1, path)\n    undo remove last\n\n  Transition B: skip current item\n    dfs(idx + 1, path)"
       },
+      "BacktrackingScaleTheory": {
+            "prompt": "Before reading: is the problem hard because the recursion is deep, or because the branch count explodes?",
+            "steps": [
+                  "Base condition: estimate the total number of branches before coding.",
+                  "State carried: n, branching factor, and any pruning/memo state.",
+                  "Transition: raw pick/skip doubles the tree at every level.",
+                  "Blocked transition: if 2^n is too large, move to DP, memoization, pruning, meet-in-the-middle, greedy, or math."
+            ],
+            "skeleton": "beforeBacktracking(n, choices):\n  branches = choices^n\n\n  if n <= 20 for binary choices:\n    raw backtracking may be okay\n  else if n around 30-40:\n    need strong pruning or meet-in-the-middle\n  else:\n    look for DP/memo/greedy/math\n\n  Remember:\n    stack depth O(n) may be fine\n    branch count O(2^n) is the real danger"
+      },
       "PowXN": {
             "prompt": "Before reading: what state must be converted before recursion starts?",
             "steps": [
@@ -1593,6 +1648,7 @@
 
     const definingMoves = {
       "SubsequencePatternsTheory": "Base: idx == n -> save/check\npick current -> recurse -> undo\nskip current -> recurse\nadd constraints as state",
+      "BacktrackingScaleTheory": "Depth n is not the issue\nbranch count 2^n is the issue\nn<=20 okay, n=200 impossible\nswitch to DP/memo/math",
       "PowXN": "State: x, power as long\nBase: power 0 -> 1\neven -> x*x, power/2\nnegative -> reciprocal",
       "CountGoodNumbers": "State: base, exponent\nBase: exponent 0 -> 1\neven -> square/halve\nodd -> consume one base",
       "SortStack": "Base: stack empty -> return\nsort smaller stack\ninsert held top in sorted spot\nrestore blockers",
@@ -1609,6 +1665,7 @@
 
     const solvedOrder = [
       "SubsequencePatternsTheory",
+      "BacktrackingScaleTheory",
       "PowXN",
       "CountGoodNumbers",
       "SortStack",
