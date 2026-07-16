@@ -276,12 +276,13 @@
     },
     {
       "date": "2026-07-16",
-      "solved": 4,
+      "solved": 5,
       "cardsSynced": [
         "backtracking/LetterCombinationsOfPhoneNumber",
         "backtracking/PalindromePartitioning",
         "backtracking/WordSearch",
-        "backtracking/NQueens"
+        "backtracking/NQueens",
+        "backtracking/RatMaze"
       ],
       "notes": ""
     }

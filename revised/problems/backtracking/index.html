@@ -1963,6 +1963,51 @@
             ]
       },
       {
+            "name": "RatMaze",
+            "source": "../com/arvind/revision/backtracking/RatMaze.java",
+            "label": "Collect every open-cell path",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a grid where 1 means open and 0 means blocked, return every path from the top-left cell to the bottom-right cell using U, R, D, and L moves without revisiting cells in the same path.",
+            "variantLens": "This is Rat in a Maze, not Unique Paths III. Rat Maze returns path strings and only needs to reach the destination. Unique Paths III returns a count and must visit every non-obstacle cell exactly once.",
+            "time": "O(4^(m*n))",
+            "space": "O(m*n) visited + O(m*n) stack + output",
+            "timeWhy": "A path can branch in up to four directions from each open cell, while visited checks prevent cycling inside the current path.",
+            "structures": "grid, visited matrix, path string, four direction DFS",
+            "input": "grid = [[1,0,0,0],[1,1,0,1],[1,1,0,0],[0,1,1,1]]",
+            "output": "[\"DDRDRR\", \"DRDDRR\"]",
+            "recognize": "When the question asks for all route strings through a blocked grid, not just whether a route exists.",
+            "visual": [
+                  [
+                        "1",
+                        "open cell",
+                        "can step"
+                  ],
+                  [
+                        "0",
+                        "blocked cell",
+                        "cannot step"
+                  ],
+                  [
+                        "path",
+                        "U/R/D/L",
+                        "mark -> dfs -> unmark"
+                  ]
+            ],
+            "visualText": "Picture dropping a breadcrumb on each open cell you enter. Try all four directions, append the move letter, and pick the breadcrumb back up when that route is done.",
+            "core": "Base/save: when the current cell is the bottom-right cell, add the path string. State carried: row, col, path string, visited matrix, and grid. Allowed transitions: move to an in-bounds open unvisited cell. Blocked transitions: outside grid, blocked cell, or already visited. Undo: clear visited for the current cell after exploring all moves.",
+            "bruteForce": "Try every possible move sequence up to grid size and keep the ones that land at the destination. Direct DFS is cleaner because it stops immediately on blocked or revisited cells.",
+            "alternates": [
+                  "Use direction arrays plus matching direction characters to avoid writing four DFS calls manually.",
+                  "For shortest path only, switch to BFS; for all paths, DFS/backtracking is the natural fit."
+            ],
+            "gotchas": [
+                  "Do not revisit a cell in the same path.",
+                  "The path string records the move taken to enter the next cell, not the current cell itself.",
+                  "If output order matters, use the direction order expected by the platform."
+            ]
+      },
+      {
             "name": "CombinationSumIII",
             "source": "../com/arvind/revision/backtracking/CombinationSumIII.java",
             "label": "Pick k digits from 1..9 once",
@@ -2293,6 +2338,17 @@
             ],
             "skeleton": "dfs(row):\n  Base: if row == n\n    add copy(board); return\n\n  State: row, board\n\n  for col from 0 to n - 1:\n    Block: if not safe(row, col) -> continue\n\n    Transition: place queen\n      board[row][col] = 'Q'\n      dfs(row + 1)\n      undo board[row][col] = '.'\n\nsafe(row, col):\n  check north column\n  check north-west diagonal\n  check north-east diagonal"
       },
+      "RatMaze": {
+            "prompt": "Before reading: what state prevents the path from walking in circles?",
+            "steps": [
+                  "Base/save condition: current cell is bottom-right, so add the built path string.",
+                  "State carried: row, col, path string, visited matrix, and grid.",
+                  "Allowed transitions: try U, R, D, and L only when the next cell is open and unvisited.",
+                  "Blocked transition: outside grid, blocked cell, or visited cell.",
+                  "Undo step: unmark the current cell after all four directions finish."
+            ],
+            "skeleton": "dfs(row, col, path):\n  Base: if row == m-1 AND col == n-1\n    add path; return\n\n  Block: if unsafe cell -> return\n\n  State: row, col, path, visited\n  mark visited[row][col]\n\n  Transition U/R/D/L:\n    dfs(nextRow, nextCol, path + moveChar)\n\n  Undo:\n    visited[row][col] = false"
+      },
       "CombinationSumIII": {
             "prompt": "Before reading: what two counters must both be satisfied before saving?",
             "steps": [
@@ -2339,6 +2395,7 @@
       "PalindromePartitioning": "Base: idx == n -> save partition\nslide end from idx\nonly palindrome piece recurses\ncut -> dfs(end+1) -> undo",
       "WordSearch": "Start from matching first char\nmark cell visited\nmove only to next matching neighbor\nfailed branch -> unmark",
       "NQueens": "Row is the recursion level\ntry every column\nsafe means north/NW/NE clear\nplace -> next row -> undo",
+      "RatMaze": "Path is the answer string\nmark current cell\ntry U/R/D/L\nappend move char -> dfs -> unmark",
       "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
       "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path"
 };
@@ -2368,7 +2425,8 @@
       "LetterCombinationsOfPhoneNumber",
       "PalindromePartitioning",
       "WordSearch",
-      "NQueens"
+      "NQueens",
+      "RatMaze"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
