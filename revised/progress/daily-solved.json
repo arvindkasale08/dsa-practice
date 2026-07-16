@@ -276,10 +276,11 @@
     },
     {
       "date": "2026-07-16",
-      "solved": 2,
+      "solved": 3,
       "cardsSynced": [
         "backtracking/LetterCombinationsOfPhoneNumber",
-        "backtracking/PalindromePartitioning"
+        "backtracking/PalindromePartitioning",
+        "backtracking/WordSearch"
       ],
       "notes": ""
     }

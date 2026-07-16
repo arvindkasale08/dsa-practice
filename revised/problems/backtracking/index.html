@@ -1873,6 +1873,51 @@
             ]
       },
       {
+            "name": "WordSearch",
+            "source": "../com/arvind/revision/backtracking/WordSearch.java",
+            "label": "Grid DFS with visited undo",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/word-search/",
+            "description": "Given a 2D character board and a word, return true if the word can be built by walking horizontally or vertically through adjacent cells. A cell cannot be reused in the same word path.",
+            "variantLens": "This is path-existence backtracking, not collect-all paths. Return true as soon as one path spells the word, and undo visited marks only when that path fails.",
+            "time": "O(m * n * 4^L)",
+            "space": "O(m * n) visited + O(L) stack",
+            "timeWhy": "Every board cell can be a start. From each matched cell, the search can branch into up to 4 directions for word length L, though visited and character checks prune many branches.",
+            "structures": "char grid, word index, visited matrix, four directions, recursion stack",
+            "input": "board = [[A,B,C,E],[S,F,C,S],[A,D,E,E]], word = \"SEE\"",
+            "output": "true",
+            "recognize": "When you need to trace a word/path through a grid and each cell is allowed at most once in the current path.",
+            "visual": [
+                  [
+                        "start",
+                        "find first char",
+                        "S cells"
+                  ],
+                  [
+                        "move",
+                        "up/right/down/left",
+                        "next char only"
+                  ],
+                  [
+                        "visited",
+                        "mark before dfs",
+                        "unmark on fail"
+                  ]
+            ],
+            "visualText": "Picture laying a trail of pins on the board. Each pin must match the next word character. If the trail dead-ends, pull the last pin out before trying another direction.",
+            "core": "Base/save: if index reaches the last character, the word is found. State carried: cell coordinates, current word index, and visited cells. Allowed transitions: move to an in-bounds unvisited neighbor that matches the next character. Blocked transitions: out of bounds, already visited, or wrong character. Undo: clear visited when a branch fails.",
+            "bruteForce": "Generate every possible path from every cell, then compare it to the word. That is much noisier because it explores paths whose characters already stopped matching.",
+            "alternates": [
+                  "Mark visited in-place by temporarily replacing board[i][j] with a sentinel, then restore it after recursion.",
+                  "Before DFS, count board letters and return false early if the word needs more of any letter than the board has."
+            ],
+            "gotchas": [
+                  "Do not reuse a cell in the same path.",
+                  "Only unmark visited after a branch fails; if a branch returns true, bubble true upward immediately.",
+                  "The base case should fire after matching the final character, not after stepping past the board."
+            ]
+      },
+      {
             "name": "CombinationSumIII",
             "source": "../com/arvind/revision/backtracking/CombinationSumIII.java",
             "label": "Pick k digits from 1..9 once",
@@ -2181,6 +2226,17 @@
             ],
             "skeleton": "dfs(idx, path):\n  Base: if idx == s.length\n    add copy(path); return\n\n  State: idx, path of chosen palindrome pieces\n\n  for end from idx to n - 1:\n    piece = s[idx..end]\n    Block: if piece is not palindrome -> continue\n\n    Transition: cut this piece\n      path.add(piece)\n      dfs(end + 1, path)\n      undo remove last"
       },
+      "WordSearch": {
+            "prompt": "Before reading: after matching this cell, what exact state must be marked and later undone?",
+            "steps": [
+                  "Base/success condition: current index is the last word character and it matched.",
+                  "State carried: row, col, word index, and visited matrix.",
+                  "Allowed transitions: try the four neighbors only if they are in bounds, unvisited, and match word[index + 1].",
+                  "Blocked transitions: wrong character, already visited, or outside the grid.",
+                  "Undo step: unmark the neighbor when that branch does not find the word."
+            ],
+            "skeleton": "exist(board, word):\n  for each cell:\n    if cell matches word[0]\n      mark visited\n      if dfs(row, col, 0) -> true\n      undo visited\n  return false\n\ndfs(row, col, idx):\n  Base: if idx == word.length - 1 -> true\n\n  State: row, col, idx, visited\n\n  for each direction:\n    next = neighbor cell\n    Block: out of bounds OR visited OR board[next] != word[idx + 1]\n\n    Transition: mark next\n      if dfs(nextRow, nextCol, idx + 1) -> true\n      undo next"
+      },
       "CombinationSumIII": {
             "prompt": "Before reading: what two counters must both be satisfied before saving?",
             "steps": [
@@ -2225,6 +2281,7 @@
       "SubsetSumI": "Base: idx == n -> save currSum\nskip keeps sum\npick adds arr[idx]\nsort final sums if required",
       "SubsetII": "Save path at entry\nduplicate rule is only i > idx\npick -> recurse i+1 -> undo",
       "PalindromePartitioning": "Base: idx == n -> save partition\nslide end from idx\nonly palindrome piece recurses\ncut -> dfs(end+1) -> undo",
+      "WordSearch": "Start from matching first char\nmark cell visited\nmove only to next matching neighbor\nfailed branch -> unmark",
       "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
       "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path"
 };
@@ -2251,6 +2308,7 @@
       "SubsetSumI",
       "SubsetII",
       "PalindromePartitioning",
+      "WordSearch",
       "CombinationSumIII",
       "LetterCombinationsOfPhoneNumber"
 ];
