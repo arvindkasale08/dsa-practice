@@ -1918,6 +1918,51 @@
             ]
       },
       {
+            "name": "NQueens",
+            "source": "../com/arvind/revision/backtracking/NQueens.java",
+            "label": "One queen per row",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/n-queens/",
+            "description": "Given n, place n queens on an n x n chessboard so that no two queens attack each other. Return every valid board layout.",
+            "variantLens": "N-Queens is placement backtracking. Unlike subset problems, each row must choose exactly one column, and safety is checked against previously placed rows.",
+            "time": "O(n! * n)",
+            "space": "O(n^2) board + O(n) stack + output",
+            "timeWhy": "The search tries column placements row by row. At most one queen can survive per column, giving roughly factorial branching, and the simple safety check scans up to n cells.",
+            "structures": "char board, row index, column loop, safety scan, recursion stack",
+            "input": "n = 4",
+            "output": "[[\".Q..\", \"...Q\", \"Q...\", \"..Q.\"], [\"..Q.\", \"Q...\", \"...Q\", \".Q..\"]]",
+            "recognize": "When you must place one item per row/level and reject choices that conflict with earlier placements.",
+            "visual": [
+                  [
+                        "row i",
+                        "try every col",
+                        "one queen"
+                  ],
+                  [
+                        "check up",
+                        "same col",
+                        "north"
+                  ],
+                  [
+                        "check diagonals",
+                        "NW / NE",
+                        "then undo"
+                  ]
+            ],
+            "visualText": "Picture filling the board row by row. For the current row, slide the queen across columns. A square is safe only if no earlier queen can hit it from above or either upper diagonal.",
+            "core": "Base/save: if row == n, copy the board as a valid layout. State carried: current row and board. Allowed transition: place Q in a column only if north, northwest, and northeast are clear. Blocked transition: any existing queen in those attack lines. Undo: reset board[row][col] back to '.' after recursion.",
+            "bruteForce": "Try every arrangement of n queens across n x n cells, then filter invalid boards. That wastes huge work because it does not enforce one queen per row during construction.",
+            "alternates": [
+                  "Use boolean arrays or sets for columns, row-col diagonals, and row+col diagonals to make safety checks O(1).",
+                  "For counting only, use the related N-Queens II variant and store just the count instead of boards."
+            ],
+            "gotchas": [
+                  "Only check upward directions because lower rows have not been filled yet.",
+                  "Copy the board at the base case; storing the live board reference will mutate saved answers.",
+                  "Always undo the placed queen before trying the next column."
+            ]
+      },
+      {
             "name": "CombinationSumIII",
             "source": "../com/arvind/revision/backtracking/CombinationSumIII.java",
             "label": "Pick k digits from 1..9 once",
@@ -2237,6 +2282,17 @@
             ],
             "skeleton": "exist(board, word):\n  for each cell:\n    if cell matches word[0]\n      mark visited\n      if dfs(row, col, 0) -> true\n      undo visited\n  return false\n\ndfs(row, col, idx):\n  Base: if idx == word.length - 1 -> true\n\n  State: row, col, idx, visited\n\n  for each direction:\n    next = neighbor cell\n    Block: out of bounds OR visited OR board[next] != word[idx + 1]\n\n    Transition: mark next\n      if dfs(nextRow, nextCol, idx + 1) -> true\n      undo next"
       },
+      "NQueens": {
+            "prompt": "Before reading: why do we only check the rows above the current row?",
+            "steps": [
+                  "Base/save condition: row == n means all queens were placed safely, so copy the board.",
+                  "State carried: current row and the mutable board.",
+                  "Allowed transition: try each column in the current row and place Q only if safe.",
+                  "Blocked transition: same column, upper-left diagonal, or upper-right diagonal already has a queen.",
+                  "Undo step: set board[row][col] back to '.' after returning from recursion."
+            ],
+            "skeleton": "dfs(row):\n  Base: if row == n\n    add copy(board); return\n\n  State: row, board\n\n  for col from 0 to n - 1:\n    Block: if not safe(row, col) -> continue\n\n    Transition: place queen\n      board[row][col] = 'Q'\n      dfs(row + 1)\n      undo board[row][col] = '.'\n\nsafe(row, col):\n  check north column\n  check north-west diagonal\n  check north-east diagonal"
+      },
       "CombinationSumIII": {
             "prompt": "Before reading: what two counters must both be satisfied before saving?",
             "steps": [
@@ -2282,6 +2338,7 @@
       "SubsetII": "Save path at entry\nduplicate rule is only i > idx\npick -> recurse i+1 -> undo",
       "PalindromePartitioning": "Base: idx == n -> save partition\nslide end from idx\nonly palindrome piece recurses\ncut -> dfs(end+1) -> undo",
       "WordSearch": "Start from matching first char\nmark cell visited\nmove only to next matching neighbor\nfailed branch -> unmark",
+      "NQueens": "Row is the recursion level\ntry every column\nsafe means north/NW/NE clear\nplace -> next row -> undo",
       "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
       "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path"
 };
@@ -2309,6 +2366,7 @@
       "SubsetII",
       "PalindromePartitioning",
       "WordSearch",
+      "NQueens",
       "CombinationSumIII",
       "LetterCombinationsOfPhoneNumber"
 ];
