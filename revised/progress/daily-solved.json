@@ -276,9 +276,10 @@
     },
     {
       "date": "2026-07-16",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "backtracking/LetterCombinationsOfPhoneNumber"
+        "backtracking/LetterCombinationsOfPhoneNumber",
+        "backtracking/PalindromePartitioning"
       ],
       "notes": ""
     }

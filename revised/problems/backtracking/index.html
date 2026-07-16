@@ -1828,6 +1828,51 @@
             ]
       },
       {
+            "name": "PalindromePartitioning",
+            "source": "../com/arvind/revision/backtracking/PalindromePartitioning.java",
+            "label": "Cut only palindromic pieces",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/palindrome-partitioning/",
+            "description": "Given a string, return every way to split it into substrings where every substring is a palindrome.",
+            "variantLens": "This is string partitioning, not subset pick/skip. At each start index, try every possible end index, but recurse only when the piece s[start..end] is a palindrome.",
+            "time": "O(n^2 * 2^n)",
+            "space": "O(n) stack + output",
+            "timeWhy": "There are exponentially many cut patterns in a length-n string. With an on-the-fly palindrome check, each candidate piece can add up to O(n) checking work.",
+            "structures": "start idx, path list, palindrome check, recursion stack",
+            "input": "s = \"aab\"",
+            "output": "[[\"a\", \"a\", \"b\"], [\"aa\", \"b\"]]",
+            "recognize": "When the answer asks for every way to cut a string and each piece must satisfy a local rule.",
+            "visual": [
+                  [
+                        "start 0",
+                        "a / aa / aab",
+                        "slide end"
+                  ],
+                  [
+                        "palindrome?",
+                        "a yes, aa yes, aab no",
+                        "only yes branches"
+                  ],
+                  [
+                        "cut",
+                        "recurse end+1",
+                        "undo piece"
+                  ]
+            ],
+            "visualText": "Picture a knife fixed at the current start. Slide the right edge one character at a time. Only a palindromic slice becomes a branch; non-palindrome slices are ignored.",
+            "core": "Base/save: if idx reaches the string length, copy the current partition. State carried: idx and the current list of chosen palindrome pieces. Transition: for each end from idx to n - 1, take s[idx..end] only if it is palindrome, recurse from end + 1, then remove that piece.",
+            "bruteForce": "Generate every possible cut pattern first, then validate every piece in every partition. It is correct, but wastes work on partitions that already contain a bad piece.",
+            "alternates": [
+                  "Precompute a palindrome DP table so s[start..end] checks become O(1).",
+                  "Memoize partitions starting at each index if the same suffix is revisited in a different formulation."
+            ],
+            "gotchas": [
+                  "Save only when idx == s.length(); before that the partition is incomplete.",
+                  "The palindrome check must use the exact substring from idx to end.",
+                  "Always remove the last chosen piece after recursion before trying the next cut."
+            ]
+      },
+      {
             "name": "CombinationSumIII",
             "source": "../com/arvind/revision/backtracking/CombinationSumIII.java",
             "label": "Pick k digits from 1..9 once",
@@ -2125,6 +2170,17 @@
             ],
             "skeleton": "dfs(idx, path):\n  Save: add copy(path) immediately\n\n  State: sorted nums, idx, path\n\n  for i from idx to n - 1:\n    Block duplicate sibling:\n      if i > idx AND nums[i] == nums[i - 1]\n        continue\n\n    Transition: pick nums[i]\n      path.add(nums[i])\n      dfs(i + 1, path)\n      undo remove last"
       },
+      "PalindromePartitioning": {
+            "prompt": "Before reading: from this start index, which cuts are allowed to become branches?",
+            "steps": [
+                  "Base/save condition: idx == s.length() means every character has been partitioned, so copy the path.",
+                  "State carried: current start idx and the list of palindrome pieces already chosen.",
+                  "Allowed transition: choose substring s[idx..end] only when it is palindrome.",
+                  "Blocked transition: skip any substring that is not palindrome.",
+                  "Undo step: remove the chosen substring after returning from recursion."
+            ],
+            "skeleton": "dfs(idx, path):\n  Base: if idx == s.length\n    add copy(path); return\n\n  State: idx, path of chosen palindrome pieces\n\n  for end from idx to n - 1:\n    piece = s[idx..end]\n    Block: if piece is not palindrome -> continue\n\n    Transition: cut this piece\n      path.add(piece)\n      dfs(end + 1, path)\n      undo remove last"
+      },
       "CombinationSumIII": {
             "prompt": "Before reading: what two counters must both be satisfied before saving?",
             "steps": [
@@ -2168,6 +2224,7 @@
       "CombinationSumII": "sort first\nskip only same-depth duplicate siblings\nsecond equal can be deeper valid choice\npick -> recurse i+1",
       "SubsetSumI": "Base: idx == n -> save currSum\nskip keeps sum\npick adds arr[idx]\nsort final sums if required",
       "SubsetII": "Save path at entry\nduplicate rule is only i > idx\npick -> recurse i+1 -> undo",
+      "PalindromePartitioning": "Base: idx == n -> save partition\nslide end from idx\nonly palindrome piece recurses\ncut -> dfs(end+1) -> undo",
       "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
       "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path"
 };
@@ -2193,6 +2250,7 @@
       "CombinationSumII",
       "SubsetSumI",
       "SubsetII",
+      "PalindromePartitioning",
       "CombinationSumIII",
       "LetterCombinationsOfPhoneNumber"
 ];
