@@ -1871,6 +1871,51 @@
                   "After picking a digit, move to the next index because digits cannot be reused.",
                   "There are no duplicate candidates here, so no sibling duplicate skip is needed."
             ]
+      },
+      {
+            "name": "LetterCombinationsOfPhoneNumber",
+            "source": "../com/arvind/revision/backtracking/LetterCombinationsOfPhoneNumber.java",
+            "label": "One digit chooses one letter",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/letter-combinations-of-a-phone-number/",
+            "description": "Given a string of digits from 2 to 9, return every possible letter string those digits can represent on a phone keypad. Each digit contributes one letter to each output string.",
+            "variantLens": "This is not pick/skip. It is one-choice-from-many per position: for every digit, choose exactly one mapped letter, then move to the next digit.",
+            "time": "O(4^n * n)",
+            "space": "O(n) stack + output",
+            "timeWhy": "Each digit creates up to 4 branches, and each completed string has length n when copied into the result.",
+            "structures": "digit-to-letters map, idx, StringBuilder path, recursion stack",
+            "input": "digits = \"23\"",
+            "output": "[\"ad\", \"ae\", \"af\", \"bd\", \"be\", \"bf\", \"cd\", \"ce\", \"cf\"]",
+            "recognize": "When each input position has a small fixed list of choices and every output must choose exactly one option per position.",
+            "visual": [
+                  [
+                        "2",
+                        "a b c",
+                        "choose one"
+                  ],
+                  [
+                        "3",
+                        "d e f",
+                        "choose one"
+                  ],
+                  [
+                        "path length == digits length",
+                        "save",
+                        "undo"
+                  ]
+            ],
+            "visualText": "Picture a row of digit locks. At digit 2, branch into a/b/c. At digit 3, each branch splits into d/e/f. A path is complete only when it has one letter for every digit.",
+            "core": "Base/save: if idx == digits.length(), add the current path. State carried: idx, digits, and StringBuilder path. Transition: look up letters for digits[idx], append one letter, recurse with idx + 1, then delete the last letter to undo.",
+            "bruteForce": "Manually build combinations with nested loops for two or three digits. That breaks once digit count changes, while recursion naturally handles any length.",
+            "alternates": [
+                  "Use immutable path + letter for simpler code; easier to read, but creates more temporary strings.",
+                  "Use BFS/queue to expand prefixes digit by digit."
+            ],
+            "gotchas": [
+                  "Empty input should return an empty list for LeetCode, not a list containing the empty string.",
+                  "Only digits 2 to 9 have mappings in this problem.",
+                  "With StringBuilder, always undo the appended letter after recursion."
+            ]
       }
 ];
 
@@ -2089,6 +2134,16 @@
                   "Transition B: skip current digit and move forward."
             ],
             "skeleton": "dfs(idx, target, digitsLeft, path):\n  Base: if target == 0 AND digitsLeft == 0\n    add copy(path); return\n\n  Block: if digitsLeft == 0 OR idx == 9 OR target < 0\n    return\n\n  State: idx, target, digitsLeft, path\n\n  Transition A: pick digit idx\n    dfs(idx + 1, target - digit, digitsLeft - 1)\n    undo\n\n  Transition B: skip digit idx\n    dfs(idx + 1, target, digitsLeft)"
+      },
+      "LetterCombinationsOfPhoneNumber": {
+            "prompt": "Before reading: for each digit, do you pick/skip, or must you choose exactly one mapped letter?",
+            "steps": [
+                  "Base/save condition: idx == digits.length() means the path has one letter per digit.",
+                  "State carried: idx, digits, keypad map, and StringBuilder path.",
+                  "Allowed transitions: for each mapped letter of digits[idx], append it and recurse to idx + 1.",
+                  "Undo step: delete the appended letter before trying the next mapped letter."
+            ],
+            "skeleton": "dfs(idx, path):\n  Base: if idx == digits.length\n    add path.toString()\n    return\n\n  State: idx, digits, keypad map, path\n\n  for letter in map[digits[idx]]:\n    Transition: choose this letter\n      path.append(letter)\n      dfs(idx + 1, path)\n      undo delete last char"
       }
 };
 
@@ -2113,7 +2168,8 @@
       "CombinationSumII": "sort first\nskip only same-depth duplicate siblings\nsecond equal can be deeper valid choice\npick -> recurse i+1",
       "SubsetSumI": "Base: idx == n -> save currSum\nskip keeps sum\npick adds arr[idx]\nsort final sums if required",
       "SubsetII": "Save path at entry\nduplicate rule is only i > idx\npick -> recurse i+1 -> undo",
-      "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1"
+      "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
+      "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path"
 };
 
     const solvedOrder = [
@@ -2137,7 +2193,8 @@
       "CombinationSumII",
       "SubsetSumI",
       "SubsetII",
-      "CombinationSumIII"
+      "CombinationSumIII",
+      "LetterCombinationsOfPhoneNumber"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
