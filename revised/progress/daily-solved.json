@@ -288,9 +288,10 @@
     },
     {
       "date": "2026-07-19",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "backtracking/SplitStringIntoMaxNuoOfUniqueStrings"
+        "backtracking/SplitStringIntoMaxNuoOfUniqueStrings",
+        "greedy/BuyTwoChocolates"
       ],
       "notes": ""
     }
