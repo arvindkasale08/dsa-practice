@@ -2096,6 +2096,50 @@
                   "Only digits 2 to 9 have mappings in this problem.",
                   "With StringBuilder, always undo the appended letter after recursion."
             ]
+      },
+      {
+            "name": "SplitStringIntoMaxNuoOfUniqueStrings",
+            "source": "../com/arvind/revision/backtracking/SplitStringIntoMaxNuoOfUniqueStrings.java",
+            "label": "Cut into most unique chunks",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/split-a-string-into-the-max-number-of-unique-substrings/",
+            "description": "Given a string, split it into non-empty contiguous substrings so every chosen substring is unique. Return the maximum number of unique pieces possible.",
+            "time": "O(n * 2^n)",
+            "space": "O(n) stack + HashSet",
+            "timeWhy": "At each cut boundary, the search can either end the current chunk or keep extending it. That creates an exponential number of split patterns, and building/checking chunks adds extra string work.",
+            "structures": "idx, HashSet, recursion stack, substring choices",
+            "input": "s = \"ababccc\"",
+            "output": "5, for example [\"a\", \"b\", \"ab\", \"c\", \"cc\"]",
+            "recognize": "When the problem asks for the maximum number of pieces after cutting a string, and every piece must be unique.",
+            "visual": [
+                  [
+                        "idx",
+                        "try s[idx..i]",
+                        "all cut lengths"
+                  ],
+                  [
+                        "seen set",
+                        "skip duplicate",
+                        "choose new"
+                  ],
+                  [
+                        "idx == n",
+                        "update max",
+                        "return"
+                  ]
+            ],
+            "visualText": "Picture the string as a ribbon. At each index, slide the scissors right to try every possible next chunk. A chunk can be cut only if it is not already in the seen bucket.",
+            "core": "Base/save: if idx reaches the end, update the best answer with the current set size. State carried: idx and the set of already-used substrings. Allowed transition: choose any substring s[idx..i] that is not in the set, then recurse from i + 1. Blocked transition: skip a substring already present in the set. Undo: remove the chosen substring after recursion.",
+            "bruteForce": "Generate every possible way to split the string, then filter the splits where all pieces are unique and take the largest size. Backtracking folds the uniqueness check into the search so duplicate chunks are rejected early.",
+            "alternates": [
+                  "Use a returned integer from dfs(idx, set) instead of a mutable max holder; this keeps the helper pure and avoids one-element lists.",
+                  "Use a class-level max field for shorter LeetCode code, but remember to reset it per call."
+            ],
+            "gotchas": [
+                  "The answer is the number of chunks, not the length of the longest chunk.",
+                  "After choosing s[idx..i], recurse from i + 1, not idx + 1; otherwise chunks overlap.",
+                  "The undo step is set.remove(part), exactly matching the earlier set.add(part)."
+            ]
       }
 ];
 
@@ -2368,6 +2412,16 @@
                   "Undo step: delete the appended letter before trying the next mapped letter."
             ],
             "skeleton": "dfs(idx, path):\n  Base: if idx == digits.length\n    add path.toString()\n    return\n\n  State: idx, digits, keypad map, path\n\n  for letter in map[digits[idx]]:\n    Transition: choose this letter\n      path.append(letter)\n      dfs(idx + 1, path)\n      undo delete last char"
+      },
+      "SplitStringIntoMaxNuoOfUniqueStrings": {
+            "prompt": "Before reading: after choosing s[idx..i], where must the next recursion start?",
+            "steps": [
+                  "Base/save condition: idx == s.length() means the whole string has been split, so update max with set.size().",
+                  "State carried: idx, the original string, and a HashSet of already-used chunks.",
+                  "Allowed transitions: try every substring from idx to i; choose it only if it is not already in the set.",
+                  "Undo step: remove the exact substring after recursion so sibling choices start with the clean set."
+            ],
+            "skeleton": "dfs(idx, used):\n  Base: if idx == s.length\n    update max with used.size\n    return\n\n  State: idx, used substrings\n\n  for end from idx to n-1:\n    part = s[idx..end]\n\n    Block: if part already used\n      continue\n\n    Transition: choose part\n      used.add(part)\n      dfs(end + 1, used)\n      undo used.remove(part)"
       }
 };
 
@@ -2397,7 +2451,8 @@
       "NQueens": "Row is the recursion level\ntry every column\nsafe means north/NW/NE clear\nplace -> next row -> undo",
       "RatMaze": "Path is the answer string\nmark current cell\ntry U/R/D/L\nappend move char -> dfs -> unmark",
       "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
-      "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path"
+      "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path",
+      "SplitStringIntoMaxNuoOfUniqueStrings": "Try every chunk s[idx..i]\nif unseen: add -> recurse i+1 -> remove\nbase updates max with set size"
 };
 
     const solvedOrder = [
@@ -2426,7 +2481,8 @@
       "PalindromePartitioning",
       "WordSearch",
       "NQueens",
-      "RatMaze"
+      "RatMaze",
+      "SplitStringIntoMaxNuoOfUniqueStrings"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
