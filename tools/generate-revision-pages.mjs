@@ -168,6 +168,11 @@ function findAssignmentBlock(html, name) {
   throw new Error(`Could not close literal for ${name}`);
 }
 
+function valueFromAssignmentBlock(html, name) {
+  const block = findAssignmentBlock(html, name);
+  return Function(`${block}\nreturn ${name};`)();
+}
+
 function replaceAssignmentBlock(html, name, replacement) {
   const current = findAssignmentBlock(html, name);
   return html.replace(current, replacement);
@@ -254,6 +259,40 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "AssignCookies") {
+    return {
+      name: className,
+      source,
+      label: "Give smallest fitting cookie",
+      difficulty: "Easy",
+      leetcode: "https://leetcode.com/problems/assign-cookies/",
+      description: "Given children with greed values and cookies with sizes, maximize how many children become content. A child is content when assigned one cookie whose size is at least that child's greed.",
+      time: "O(n log n + m log m)",
+      space: "O(1)",
+      timeWhy: "Both arrays are sorted first. After that, each child and cookie pointer moves at most once.",
+      structures: "sorted arrays, two pointers",
+      input: "g = [1, 2, 3], s = [1, 1]",
+      output: "1",
+      recognize: "When each resource can satisfy at most one demand and using a bigger resource on a smaller demand can waste future options.",
+      visual: [
+        ["small kid", "small cookie", "fit?"],
+        ["fit", "count + 1", "move both"],
+        ["no fit", "try bigger cookie", "keep kid"]
+      ],
+      visualText: "Picture children and cookies standing in two sorted lines. Always try to satisfy the easiest remaining child with the smallest cookie that can work.",
+      core: "Sort greed and cookie sizes. Use two pointers. If the current cookie satisfies the current child, count it and move both. If not, discard that cookie by moving only the cookie pointer.",
+      bruteForce: "Try assigning every cookie to every child and keep the best matching. That wastes time because sorting exposes the safest smallest-fit choice.",
+      alternates: [
+        "Scan from largest child to largest cookie instead. The idea is the same: use the smallest sufficient resource for each demand directionally.",
+        "A multiset can find the smallest cookie >= greed, but sorting with two pointers is simpler."
+      ],
+      gotchas: [
+        "Do not give a large cookie to an easy child if a smaller cookie can satisfy them.",
+        "A cookie can be used once, and a child can receive at most one cookie."
+      ]
+    };
+  }
+
   return generic;
 }
 
@@ -268,6 +307,19 @@ function defaultDetailsFor(pattern, className) {
         "Return leftover only when the two cheapest fit the budget."
       ],
       skeleton: "scan prices\n  update cheapest and second-cheapest\n\ncost = cheapest + secondCheapest\nif cost <= money\n  return money - cost\nreturn money"
+    };
+  }
+
+  if (className === "AssignCookies") {
+    return {
+      prompt: "Before reading: why is the smallest sufficient cookie the safest gift?",
+      steps: [
+        "Sort children by greed and cookies by size.",
+        "Try to satisfy the current easiest child with the current smallest cookie.",
+        "If it fits, count one content child and move both pointers.",
+        "If it does not fit, that cookie cannot help this child or any greedier child, so skip only the cookie."
+      ],
+      skeleton: "sort greed\nsort cookies\nchild = 0, cookie = 0\nwhile child and cookie are in range\n  if cookie fits child\n    answer++\n    child++\n  cookie++\nreturn answer"
     };
   }
 
@@ -287,20 +339,41 @@ function defaultDefiningMoveFor(pattern, className) {
   if (className === "BuyTwoChocolates") {
     return "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money";
   }
+  if (className === "AssignCookies") {
+    return "Sort both arrays\nsmallest cookie tries easiest child\nfit moves both, miss moves cookie only";
+  }
   return "Find the safe local choice\nkeep minimal comparison state\ncommit without backtracking";
 }
 
-function makeDataBlocksForNewPattern(pattern) {
+function makeDataBlocksForPattern(pattern, html = "") {
   const classes = javaClassesFor(pattern);
-  const cards = classes.map(className => defaultCardFor(pattern, className));
-  const recallDetails = Object.fromEntries(classes.map(className => [className, defaultDetailsFor(pattern, className)]));
-  const definingMoves = Object.fromEntries(classes.map(className => [className, defaultDefiningMoveFor(pattern, className)]));
+  const existingCards = html ? valueFromAssignmentBlock(html, "cards") : [];
+  const recallDetails = html ? valueFromAssignmentBlock(html, "recallDetails") : {};
+  const definingMoves = html ? valueFromAssignmentBlock(html, "definingMoves") : {};
+  const existingOrder = html ? valueFromAssignmentBlock(html, "solvedOrder") : [];
+  const existingNames = new Set(existingCards.map(card => card.name));
+  const cards = [
+    ...existingCards,
+    ...classes.filter(className => !existingNames.has(className)).map(className => defaultCardFor(pattern, className))
+  ];
+
+  for (const className of classes) {
+    recallDetails[className] ??= defaultDetailsFor(pattern, className);
+    definingMoves[className] ??= defaultDefiningMoveFor(pattern, className);
+  }
+
+  const existingOrderSet = new Set(existingOrder);
+  const solvedOrder = [
+    ...existingOrder,
+    ...classes.filter(className => !existingOrderSet.has(className)),
+    ...cards.map(card => card.name).filter(name => !existingOrderSet.has(name) && !classes.includes(name))
+  ];
 
   return {
     cards: `const cards = ${JSON.stringify(cards, null, 6)};`,
     recallDetails: `const recallDetails = ${JSON.stringify(recallDetails, null, 6)};`,
     definingMoves: `const definingMoves = ${JSON.stringify(definingMoves, null, 6)};`,
-    solvedOrder: `const solvedOrder = ${JSON.stringify(classes, null, 6)};`
+    solvedOrder: `const solvedOrder = ${JSON.stringify(solvedOrder, null, 6)};`
   };
 }
 
@@ -349,9 +422,8 @@ function main() {
 
   for (const pattern of patterns) {
     const pagePath = path.join(pagesRoot, pattern, "index.html");
-    const dataBlocks = fs.existsSync(pagePath)
-      ? extractDataBlocks(readPage(pattern))
-      : makeDataBlocksForNewPattern(pattern);
+    const currentHtml = fs.existsSync(pagePath) ? readPage(pattern) : "";
+    const dataBlocks = makeDataBlocksForPattern(pattern, currentHtml);
     const nextHtml = renderFromCanonical(canonicalTemplate, dataBlocks, pattern);
     writePage(pattern, nextHtml);
     console.log(`Generated ${path.relative(repoRoot, pagePath)}`);
