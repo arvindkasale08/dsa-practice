@@ -297,11 +297,12 @@
     },
     {
       "date": "2026-07-20",
-      "solved": 3,
+      "solved": 4,
       "cardsSynced": [
         "greedy/BoatsToSavePeople",
         "greedy/AssignCookies",
-        "greedy/LemonadeChange"
+        "greedy/LemonadeChange",
+        "greedy/ValidParanthesisString"
       ],
       "notes": ""
     }

@@ -328,6 +328,41 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "ValidParanthesisString") {
+    return {
+      name: className,
+      source,
+      label: "Track possible open range",
+      difficulty: "Medium",
+      leetcode: "https://leetcode.com/problems/valid-parenthesis-string/",
+      description: "Given a string containing '(', ')' and '*', decide if it can become a valid parenthesis string. Each '*' can act as '(', ')' or an empty character.",
+      time: "O(n)",
+      space: "O(1)",
+      timeWhy: "Each character updates the possible range of unmatched opens once.",
+      structures: "min/max open counters",
+      input: "s = \"(*))\"",
+      output: "true",
+      recognize: "When '*' creates several possible states, but you only need the minimum and maximum possible unmatched '(' count.",
+      visual: [
+        ["(", "min=1", "max=1"],
+        ["*", "min can drop", "max can rise"],
+        [")", "both drop", "max must stay >= 0"]
+      ],
+      visualText: "Picture carrying a rubber band of possible open counts. `minOpen` is the lowest possible opens, `maxOpen` is the highest possible opens.",
+      core: "Scan left to right. '(' increases both bounds. ')' decreases both bounds. '*' lowers the minimum and raises the maximum. Clamp the minimum to zero, and fail if the maximum drops below zero.",
+      bruteForce: "Try all three meanings for every '*'. This is useful for understanding but becomes O(3^stars).",
+      alternates: [
+        "Use two stacks of indexes for '(' and '*', then pair leftover '(' only with later '*'.",
+        "Use recursion with memoization on index and balance; clearer for state exploration but heavier than the greedy range."
+      ],
+      gotchas: [
+        "Clamp minOpen to zero after it decreases; negative minimum only means choose empty instead.",
+        "Check maxOpen after consuming a ')'. If it is negative, no interpretation can save the prefix.",
+        "Valid at the end means minOpen is zero, not necessarily maxOpen."
+      ]
+    };
+  }
+
   return generic;
 }
 
@@ -371,6 +406,19 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (className === "ValidParanthesisString") {
+    return {
+      prompt: "Before reading: what range of open counts can '*' create?",
+      steps: [
+        "Keep minOpen and maxOpen as the possible unmatched '(' range.",
+        "'(' shifts the whole range up.",
+        "')' shifts the whole range down and fails if maxOpen becomes negative.",
+        "'*' can be ')', empty, or '(', so widen the range and clamp minOpen to zero."
+      ],
+      skeleton: "minOpen = 0, maxOpen = 0\nfor each char\n  update minOpen and maxOpen by char type\n  if maxOpen < 0: return false\n  minOpen = max(0, minOpen)\nreturn minOpen == 0"
+    };
+  }
+
   return {
     prompt: "Before reading: what local choice is safe to commit to?",
     steps: [
@@ -392,6 +440,9 @@ function defaultDefiningMoveFor(pattern, className) {
   }
   if (className === "LemonadeChange") {
     return "Process bills in original queue order\n$20 prefers $10 + $5\nfail the moment change goes negative";
+  }
+  if (className === "ValidParanthesisString") {
+    return "Carry possible open-count range\n'*' widens min/max\nfail if maxOpen goes negative";
   }
   return "Find the safe local choice\nkeep minimal comparison state\ncommit without backtracking";
 }
