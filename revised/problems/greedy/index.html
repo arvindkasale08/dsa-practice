@@ -1196,6 +1196,50 @@
                   "Do not give a large cookie to an easy child if a smaller cookie can satisfy them.",
                   "A cookie can be used once, and a child can receive at most one cookie."
             ]
+      },
+      {
+            "name": "LemonadeChange",
+            "source": "../com/arvind/revision/greedy/LemonadeChange.java",
+            "label": "Preserve customer order",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/lemonade-change/",
+            "description": "Customers pay for $5 lemonade using $5, $10, or $20 bills. Starting with no change, return whether every customer can be served in the exact arrival order.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "timeWhy": "Each bill is processed once, and only counts of available $5 and $10 bills are needed.",
+            "structures": "two counters for $5 and $10 bills",
+            "input": "bills = [5, 5, 5, 20, 10, 10]",
+            "output": "false",
+            "recognize": "When transactions must happen in queue order and every decision depends on the change you currently hold.",
+            "visual": [
+                  [
+                        "$5",
+                        "keep five",
+                        "five = 1"
+                  ],
+                  [
+                        "$10",
+                        "give $5",
+                        "ten = 1"
+                  ],
+                  [
+                        "$20",
+                        "prefer $10+$5",
+                        "save $5s"
+                  ]
+            ],
+            "visualText": "Picture a cash drawer with only two slots: $5 bills and $10 bills. Every customer changes the drawer before the next one arrives.",
+            "core": "Scan bills in original order. For $5, collect it. For $10, spend one $5 and collect one $10. For $20, prefer giving $10 + $5; if not possible, give three $5 bills.",
+            "bruteForce": "Try simulating all possible change choices for each $20. This is unnecessary because using $10 + $5 first preserves more $5 bills for future $10 customers.",
+            "alternates": [
+                  "For $20, giving three $5 bills also works only when no $10 bill is available.",
+                  "A cash-count map is more general, but two integer counters are simpler because only $5 and $10 change matter."
+            ],
+            "gotchas": [
+                  "Do not sort the bills. The queue order is part of the problem.",
+                  "A $20 customer needs $15 change, preferably one $10 and one $5.",
+                  "If a counter goes negative, fail immediately."
+            ]
       }
 ];
 
@@ -1262,6 +1306,16 @@
                   "If it does not fit, that cookie cannot help this child or any greedier child, so skip only the cookie."
             ],
             "skeleton": "sort greed\nsort cookies\nchild = 0, cookie = 0\nwhile child and cookie are in range\n  if cookie fits child\n    answer++\n    child++\n  cookie++\nreturn answer"
+      },
+      "LemonadeChange": {
+            "prompt": "Before reading: why would sorting customers change the problem?",
+            "steps": [
+                  "Keep counts of $5 and $10 bills in the drawer.",
+                  "Process each bill in arrival order; never rearrange customers.",
+                  "For $20, use $10 + $5 first because it saves more $5 bills.",
+                  "Return false as soon as required change cannot be made."
+            ],
+            "skeleton": "five = 0, ten = 0\nfor bill in original order\n  if bill is 5: five++\n  if bill is 10: five--, ten++\n  if bill is 20:\n    if ten > 0: ten--, five--\n    else: five -= 3\n  if five < 0 or ten < 0: return false\nreturn true"
       }
 };
 
@@ -1271,7 +1325,8 @@
       "GreedyProsConsTheory": "Greedy is fast because it does not explore alternatives\nit is correct only when the local choice can be safely forced into an optimum",
       "BuyTwoChocolates": "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money",
       "BoatsToSavePeople": "Always settle the heaviest remaining person\npair with lightest if possible\notherwise heaviest rides alone",
-      "AssignCookies": "Sort both arrays\nsmallest cookie tries easiest child\nfit moves both, miss moves cookie only"
+      "AssignCookies": "Sort both arrays\nsmallest cookie tries easiest child\nfit moves both, miss moves cookie only",
+      "LemonadeChange": "Process bills in original queue order\n$20 prefers $10 + $5\nfail the moment change goes negative"
 };
 
     const solvedOrder = [
@@ -1280,7 +1335,8 @@
       "GreedyProsConsTheory",
       "BuyTwoChocolates",
       "BoatsToSavePeople",
-      "AssignCookies"
+      "AssignCookies",
+      "LemonadeChange"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

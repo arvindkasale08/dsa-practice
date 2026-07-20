@@ -293,6 +293,41 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "LemonadeChange") {
+    return {
+      name: className,
+      source,
+      label: "Preserve customer order",
+      difficulty: "Easy",
+      leetcode: "https://leetcode.com/problems/lemonade-change/",
+      description: "Customers pay for $5 lemonade using $5, $10, or $20 bills. Starting with no change, return whether every customer can be served in the exact arrival order.",
+      time: "O(n)",
+      space: "O(1)",
+      timeWhy: "Each bill is processed once, and only counts of available $5 and $10 bills are needed.",
+      structures: "two counters for $5 and $10 bills",
+      input: "bills = [5, 5, 5, 20, 10, 10]",
+      output: "false",
+      recognize: "When transactions must happen in queue order and every decision depends on the change you currently hold.",
+      visual: [
+        ["$5", "keep five", "five = 1"],
+        ["$10", "give $5", "ten = 1"],
+        ["$20", "prefer $10+$5", "save $5s"]
+      ],
+      visualText: "Picture a cash drawer with only two slots: $5 bills and $10 bills. Every customer changes the drawer before the next one arrives.",
+      core: "Scan bills in original order. For $5, collect it. For $10, spend one $5 and collect one $10. For $20, prefer giving $10 + $5; if not possible, give three $5 bills.",
+      bruteForce: "Try simulating all possible change choices for each $20. This is unnecessary because using $10 + $5 first preserves more $5 bills for future $10 customers.",
+      alternates: [
+        "For $20, giving three $5 bills also works only when no $10 bill is available.",
+        "A cash-count map is more general, but two integer counters are simpler because only $5 and $10 change matter."
+      ],
+      gotchas: [
+        "Do not sort the bills. The queue order is part of the problem.",
+        "A $20 customer needs $15 change, preferably one $10 and one $5.",
+        "If a counter goes negative, fail immediately."
+      ]
+    };
+  }
+
   return generic;
 }
 
@@ -323,6 +358,19 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (className === "LemonadeChange") {
+    return {
+      prompt: "Before reading: why would sorting customers change the problem?",
+      steps: [
+        "Keep counts of $5 and $10 bills in the drawer.",
+        "Process each bill in arrival order; never rearrange customers.",
+        "For $20, use $10 + $5 first because it saves more $5 bills.",
+        "Return false as soon as required change cannot be made."
+      ],
+      skeleton: "five = 0, ten = 0\nfor bill in original order\n  if bill is 5: five++\n  if bill is 10: five--, ten++\n  if bill is 20:\n    if ten > 0: ten--, five--\n    else: five -= 3\n  if five < 0 or ten < 0: return false\nreturn true"
+    };
+  }
+
   return {
     prompt: "Before reading: what local choice is safe to commit to?",
     steps: [
@@ -342,19 +390,27 @@ function defaultDefiningMoveFor(pattern, className) {
   if (className === "AssignCookies") {
     return "Sort both arrays\nsmallest cookie tries easiest child\nfit moves both, miss moves cookie only";
   }
+  if (className === "LemonadeChange") {
+    return "Process bills in original queue order\n$20 prefers $10 + $5\nfail the moment change goes negative";
+  }
   return "Find the safe local choice\nkeep minimal comparison state\ncommit without backtracking";
 }
 
 function makeDataBlocksForPattern(pattern, html = "") {
   const classes = javaClassesFor(pattern);
   const existingCards = html ? valueFromAssignmentBlock(html, "cards") : [];
+  const existingNames = new Set(existingCards.map(card => card.name));
+  const missingClasses = classes.filter(className => !existingNames.has(className));
+  if (html && missingClasses.length === 0) {
+    return extractDataBlocks(html);
+  }
+
   const recallDetails = html ? valueFromAssignmentBlock(html, "recallDetails") : {};
   const definingMoves = html ? valueFromAssignmentBlock(html, "definingMoves") : {};
   const existingOrder = html ? valueFromAssignmentBlock(html, "solvedOrder") : [];
-  const existingNames = new Set(existingCards.map(card => card.name));
   const cards = [
     ...existingCards,
-    ...classes.filter(className => !existingNames.has(className)).map(className => defaultCardFor(pattern, className))
+    ...missingClasses.map(className => defaultCardFor(pattern, className))
   ];
 
   for (const className of classes) {
