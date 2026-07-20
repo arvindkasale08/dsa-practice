@@ -363,6 +363,41 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "CanPlaceFlowers") {
+    return {
+      name: className,
+      source,
+      label: "Plant earliest safe spot",
+      difficulty: "Easy",
+      leetcode: "https://leetcode.com/problems/can-place-flowers/",
+      description: "Given a flowerbed of 0s and 1s, decide whether n new flowers can be planted without placing flowers in adjacent plots.",
+      time: "O(n)",
+      space: "O(1)",
+      timeWhy: "Each plot is inspected once, and planting in place updates the state for the next plot.",
+      structures: "array scan, boundary checks",
+      input: "flowerbed = [0, 0, 1, 0, 0, 0, 1, 0, 0], n = 2",
+      output: "true",
+      recognize: "When choosing the earliest valid placement cannot reduce the maximum number of future placements.",
+      visual: [
+        ["left", "plot", "right"],
+        ["0", "0", "0"],
+        ["plant", "mark 1", "continue"]
+      ],
+      visualText: "Picture a three-cell window. If left, current, and right are all empty, plant immediately and the array itself remembers the decision.",
+      core: "Scan left to right. Treat outside boundaries as empty. If left/current/right are all 0, plant at current by writing 1 and reduce n. At the end, check whether n is zero or less.",
+      bruteForce: "Try all combinations of empty plots and test adjacency. That is unnecessary because the earliest safe placement never blocks a better total.",
+      alternates: [
+        "Count lengths of zero-runs and compute capacity mathematically, but direct scanning is easier and less bug-prone.",
+        "Skip the next index after planting as a small optimization, since it cannot be planted."
+      ],
+      gotchas: [
+        "Boundary plots only have one neighbor, so treat the missing neighbor as empty.",
+        "Mutating flowerbed is fine for this problem, but remember it changes later neighbor checks.",
+        "Return true as soon as n reaches zero if you want an early exit."
+      ]
+    };
+  }
+
   return generic;
 }
 
@@ -419,6 +454,19 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (className === "CanPlaceFlowers") {
+    return {
+      prompt: "Before reading: why is planting at the first safe empty plot never harmful?",
+      steps: [
+        "Scan each plot with its left and right neighbors.",
+        "Treat missing boundary neighbors as empty.",
+        "If left, current, and right are all empty, plant immediately.",
+        "Mark the current plot as planted so the next check sees the updated bed."
+      ],
+      skeleton: "for each index\n  left = boundary ? 0 : flowerbed[i - 1]\n  right = boundary ? 0 : flowerbed[i + 1]\n  if left == 0 and current == 0 and right == 0\n    flowerbed[i] = 1\n    n--\nreturn n <= 0"
+    };
+  }
+
   return {
     prompt: "Before reading: what local choice is safe to commit to?",
     steps: [
@@ -443,6 +491,9 @@ function defaultDefiningMoveFor(pattern, className) {
   }
   if (className === "ValidParanthesisString") {
     return "Carry possible open-count range\n'*' widens min/max\nfail if maxOpen goes negative";
+  }
+  if (className === "CanPlaceFlowers") {
+    return "Check left-current-right window\nplant immediately when all empty\nwrite 1 so next plot is blocked";
   }
   return "Find the safe local choice\nkeep minimal comparison state\ncommit without backtracking";
 }
