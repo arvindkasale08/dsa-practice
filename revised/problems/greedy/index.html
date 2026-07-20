@@ -932,6 +932,138 @@
   <script>
     const cards = [
       {
+            "name": "GreedyAlgorithmTheory",
+            "source": "https://www.designgurus.io/course-play/grokking-the-coding-interview/doc/introduction-to-greedy-algorithm",
+            "label": "Local best choice",
+            "difficulty": "Theory",
+            "leetcode": "",
+            "description": "Greedy means making the best-looking choice right now and never undoing it. It works only when local choices safely build the global answer; otherwise the same idea can give a tempting but wrong result.",
+            "time": "Pattern dependent",
+            "space": "Pattern dependent",
+            "timeWhy": "The greedy decision is usually cheap; most cost comes from sorting, scanning, heap operations, or interval processing used to make that decision reliable.",
+            "structures": "sort order, priority queue, counters, intervals",
+            "input": "At each step: current state + available choices",
+            "output": "Choose the locally best option if it cannot hurt the final answer",
+            "recognize": "When the problem asks for min/max, earliest/latest, fewest/most, or best total, and each choice can be locked without needing future backtracking.",
+            "visual": [
+                  [
+                        "state",
+                        "choices",
+                        "pick best now"
+                  ],
+                  [
+                        "lock it",
+                        "shrink problem",
+                        "repeat"
+                  ],
+                  [
+                        "local proof",
+                        "global answer",
+                        "done"
+                  ]
+            ],
+            "visualText": "Picture a row of doors. At every door, greedy chooses the door with the strongest rule and then throws away the key to go back.",
+            "core": "Define the exact local rule, process choices in the right order, and prove that taking this choice now does not block a better final answer.",
+            "bruteForce": "Try all valid choice sequences and keep the best answer. This proves what the target means, but it usually explodes because every decision branches.",
+            "alternates": [
+                  "Dynamic programming is needed when today's choice can change what is possible tomorrow.",
+                  "Backtracking is needed when you must explore many candidate choice sequences before knowing which one works."
+            ],
+            "gotchas": [
+                  "A choice that feels locally good is not enough; you need an exchange argument or invariant.",
+                  "Sorting direction often defines the whole solution, so choose it deliberately.",
+                  "If a later decision can invalidate an earlier one, plain greedy is probably unsafe."
+            ]
+      },
+      {
+            "name": "StandardGreedyAlgorithmsTheory",
+            "source": "https://www.designgurus.io/course-play/grokking-the-coding-interview/doc/introduction-to-greedy-algorithm",
+            "label": "Classic greedy patterns",
+            "difficulty": "Theory",
+            "leetcode": "",
+            "description": "A quick map of standard greedy algorithms. Each one has a local choice rule, but the rule differs: cheapest safe edge, nearest frontier vertex, best value density, earliest finishing activity, or smallest frequency merge.",
+            "time": "Varies by algorithm",
+            "space": "Varies by algorithm",
+            "timeWhy": "Most classic greedy algorithms spend time sorting choices, maintaining a heap/priority queue, or checking graph structure such as visited nodes or disjoint sets.",
+            "structures": "sort, priority queue, DSU, graph, heap, intervals",
+            "input": "A graph, item list, activity list, or frequency table",
+            "output": "A locally built optimal structure or selected subset",
+            "recognize": "When the problem has a famous local rule: pick the cheapest safe edge, nearest candidate, smallest frequency pair, highest ratio, or earliest finish time.",
+            "visual": [
+                  [
+                        "Kruskal",
+                        "Prim",
+                        "Dijkstra"
+                  ],
+                  [
+                        "Huffman",
+                        "Knapsack",
+                        "Activity"
+                  ],
+                  [
+                        "Best-first",
+                        "local priority",
+                        "safe pick"
+                  ]
+            ],
+            "visualText": "Picture greedy as a priority list. Each algorithm defines what gets priority and what makes a pick safe.",
+            "core": "Identify the priority rule, keep the structure that validates the rule, and repeatedly accept the best safe candidate.",
+            "bruteForce": "Try all possible trees, paths, schedules, encodings, or item combinations and choose the best. That baseline is usually exponential or far too slow.",
+            "alternates": [
+                  "Dynamic programming replaces greedy when choices interact across future states, such as 0/1 knapsack.",
+                  "BFS/DFS replaces greedy when all edges are unweighted or when you must explore structure rather than optimize weighted choices."
+            ],
+            "gotchas": [
+                  "Kruskal needs cycle detection; Prim and Dijkstra need a priority queue frontier.",
+                  "Fractional knapsack is greedy by value/weight ratio, but 0/1 knapsack is not.",
+                  "Greedy best-first search can be fast, but its heuristic can lead away from the truly shortest path."
+            ]
+      },
+      {
+            "name": "GreedyProsConsTheory",
+            "source": "https://www.designgurus.io/course-play/grokking-the-coding-interview/doc/introduction-to-greedy-algorithm",
+            "label": "Fast but needs proof",
+            "difficulty": "Theory",
+            "leetcode": "",
+            "description": "Greedy is attractive because it is usually fast, simple, and memory-light. The danger is that it sees only the current best move, so it can miss a globally better answer when the problem does not have the greedy-choice property.",
+            "time": "Often O(n) or O(n log n)",
+            "space": "Often O(1) to O(n)",
+            "timeWhy": "Greedy usually scans once after sorting, or repeatedly pulls the best candidate from a heap. It avoids exploring all combinations.",
+            "structures": "sort, heap, counters, intervals, local state",
+            "input": "A problem with many possible choices",
+            "output": "A fast answer if local choices are globally safe",
+            "recognize": "Use greedy when local choices can be locked in. Be suspicious when an early choice changes what future choices are possible.",
+            "visual": [
+                  [
+                        "pros",
+                        "fast",
+                        "simple"
+                  ],
+                  [
+                        "safe only if",
+                        "greedy-choice",
+                        "optimal substructure"
+                  ],
+                  [
+                        "cons",
+                        "shortsighted",
+                        "can miss global best"
+                  ]
+            ],
+            "visualText": "Picture greedy as a sprinter: very fast on the right track, but it does not stop to survey the full map.",
+            "core": "Before trusting greedy, ask: if I take this choice now, can any optimal answer be adjusted to include it without becoming worse?",
+            "bruteForce": "Enumerate every possible solution path and compare totals. This catches the true optimum, but it is usually too slow for interview constraints.",
+            "alternates": [
+                  "Use DP when each decision affects future possibilities and overlapping states appear.",
+                  "Use backtracking when the task asks for all valid configurations or the safe choice is not obvious."
+            ],
+            "gotchas": [
+                  "Fast and easy does not mean correct.",
+                  "A tree/path example can fool greedy: choosing the largest immediate edge may skip a smaller edge that leads to a much larger total later.",
+                  "Always look for greedy-choice property and optimal substructure before committing."
+            ]
+      },
+      {
             "name": "BuyTwoChocolates",
             "source": "../com/arvind/revision/greedy/BuyTwoChocolates.java",
             "label": "Keep the two cheapest prices",
@@ -973,10 +1105,90 @@
                   "When a new smallest price appears, move the old smallest into second place before replacing it.",
                   "If the cheapest two exceed the budget, return the original money, not a negative leftover."
             ]
+      },
+      {
+            "name": "BoatsToSavePeople",
+            "source": "../com/arvind/revision/greedy/BoatsToSavePeople.java",
+            "label": "Pair heaviest with lightest",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/boats-to-save-people/",
+            "description": "Given people's weights and a boat limit, return the minimum number of boats needed. Each boat can carry at most two people, and their combined weight must not exceed the limit.",
+            "time": "O(n log n)",
+            "space": "O(log n)",
+            "timeWhy": "Sorting dominates the runtime; after sorting, the two-pointer scan is linear. Primitive int sorting uses only small recursion stack space.",
+            "structures": "sorted array, left pointer, right pointer",
+            "input": "people = [10, 55, 70, 20, 90, 85], limit = 100",
+            "output": "4",
+            "recognize": "When every boat can take at most two people and you want the fewest boats after pairing weights under a limit.",
+            "visual": [
+                  [
+                        "10",
+                        "20",
+                        "55",
+                        "70",
+                        "85",
+                        "90"
+                  ],
+                  [
+                        "lightest",
+                        "+",
+                        "heaviest",
+                        "<= limit"
+                  ],
+                  [
+                        "pair if fits",
+                        "else heavy alone",
+                        "count boat"
+                  ]
+            ],
+            "visualText": "Picture the heaviest person standing at the right end. If even the lightest cannot join them, nobody else can, so the heaviest must go alone.",
+            "core": "Sort weights. Try to pair the lightest remaining person with the heaviest remaining person. If they fit, move both pointers. If not, send the heaviest alone. Every step uses exactly one boat.",
+            "bruteForce": "Try all possible pairings and keep the minimum boats. This is hard to manage and too slow because pair choices branch heavily.",
+            "alternates": [
+                  "Counting sort can be used if weights have a small bounded range, but normal sorting is simpler and reliable.",
+                  "A TreeMap/frequency approach can pair lightest and heaviest counts, but it is heavier than sorting."
+            ],
+            "gotchas": [
+                  "Do not pair the heaviest with another heavy person first; test heaviest with the lightest.",
+                  "When the pair does not fit, only move the right pointer because the heaviest must go alone.",
+                  "After the loop, if left equals right, one person remains and needs one boat."
+            ]
       }
 ];
 
     const recallDetails = {
+      "GreedyAlgorithmTheory": {
+            "prompt": "Before reading: what local choice can I lock now, and why will I never regret it?",
+            "steps": [
+                  "Name the local choice in one sentence.",
+                  "Choose an ordering that makes the local rule obvious.",
+                  "Lock the choice only if it cannot harm future choices.",
+                  "Use a small proof idea: exchange, invariant, or stays-ahead."
+            ],
+            "skeleton": "prepare choices if needed\nwhile choices remain\n  take the locally best safe choice\n  update state\n\nreturn built answer"
+      },
+      "StandardGreedyAlgorithmsTheory": {
+            "prompt": "Before reading: what does this greedy algorithm prioritize, and what structure proves the pick is safe?",
+            "steps": [
+                  "Kruskal: sort edges, add the smallest edge that does not form a cycle.",
+                  "Prim: grow from visited vertices using the nearest outgoing edge.",
+                  "Dijkstra: expand the currently closest known node for non-negative weights.",
+                  "Huffman: repeatedly merge the two least frequent nodes.",
+                  "Knapsack/activity: sort by value density or earliest finish time, then take safe choices."
+            ],
+            "skeleton": "choose priority rule\nprepare candidates by sort or heap\nwhile candidates remain\n  take best candidate\n  if safe, accept and update state\n\nreturn final structure"
+      },
+      "GreedyProsConsTheory": {
+            "prompt": "Before reading: why is greedy tempting, and what one question prevents a wrong greedy solution?",
+            "steps": [
+                  "Pros: usually fast, simple, and memory-light.",
+                  "Works best when local optimum safely builds the global optimum.",
+                  "Useful as an approximation when exact search is too expensive.",
+                  "Cons: can be shortsighted when early choices affect later options.",
+                  "Safety question: can an optimal answer be transformed to include this local choice?"
+            ],
+            "skeleton": "if local choice is provably safe\n  use greedy\nelse if choices overlap by state\n  consider DP\nelse if choices must be explored\n  consider backtracking"
+      },
       "BuyTwoChocolates": {
             "prompt": "Before reading: what two values are enough to decide whether buying is possible?",
             "steps": [
@@ -986,15 +1198,34 @@
                   "Return leftover only when the two cheapest fit the budget."
             ],
             "skeleton": "scan prices\n  update cheapest and second-cheapest\n\ncost = cheapest + secondCheapest\nif cost <= money\n  return money - cost\nreturn money"
+      },
+      "BoatsToSavePeople": {
+            "prompt": "Before reading: why is it safe to decide the boat for the current heaviest person first?",
+            "steps": [
+                  "Sort weights so lightest and heaviest are visible.",
+                  "Check whether lightest + heaviest fits the limit.",
+                  "If it fits, pair them and move both pointers.",
+                  "If it does not fit, heaviest cannot pair with anyone, so send them alone.",
+                  "Each decision consumes one boat."
+            ],
+            "skeleton": "sort people\nleft = 0, right = n - 1\nwhile left < right\n  if people[left] + people[right] <= limit\n    left++, right--\n  else\n    right--\n  boats++\nif left == right\n  boats++\nreturn boats"
       }
 };
 
     const definingMoves = {
-      "BuyTwoChocolates": "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money"
+      "GreedyAlgorithmTheory": "Find the choice you can lock forever\nprove it stays safe after every step\nif you cannot prove it, suspect DP/backtracking",
+      "StandardGreedyAlgorithmsTheory": "Every classic greedy has two parts\npriority rule: what is best now\nsafety structure: why accepting it is allowed",
+      "GreedyProsConsTheory": "Greedy is fast because it does not explore alternatives\nit is correct only when the local choice can be safely forced into an optimum",
+      "BuyTwoChocolates": "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money",
+      "BoatsToSavePeople": "Always settle the heaviest remaining person\npair with lightest if possible\notherwise heaviest rides alone"
 };
 
     const solvedOrder = [
-      "BuyTwoChocolates"
+      "GreedyAlgorithmTheory",
+      "StandardGreedyAlgorithmsTheory",
+      "GreedyProsConsTheory",
+      "BuyTwoChocolates",
+      "BoatsToSavePeople"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

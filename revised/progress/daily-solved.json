@@ -294,6 +294,14 @@
         "greedy/BuyTwoChocolates"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-07-20",
+      "solved": 1,
+      "cardsSynced": [
+        "greedy/BoatsToSavePeople"
+      ],
+      "notes": ""
     }
   ]
 }
