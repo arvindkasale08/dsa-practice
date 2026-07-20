@@ -398,6 +398,41 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "Candy") {
+    return {
+      name: className,
+      source,
+      label: "Satisfy both neighbor directions",
+      difficulty: "Hard",
+      leetcode: "https://leetcode.com/problems/candy/",
+      description: "Given children ratings, give each child at least one candy. Any child with a higher rating than an adjacent child must receive more candy than that neighbor. Return the minimum total candies.",
+      time: "O(n)",
+      space: "O(n)",
+      timeWhy: "One left-to-right pass satisfies increasing slopes from the left, one right-to-left pass fixes decreasing slopes from the right, then one sum pass totals candies.",
+      structures: "candies array, two directional passes",
+      input: "ratings = [1, 3, 2, 2, 1]",
+      output: "7",
+      recognize: "When each position must satisfy local constraints against both left and right neighbors.",
+      visual: [
+        ["left pass", "1 < 3", "raise right"],
+        ["right pass", "2 > 1", "raise left"],
+        ["merge", "take max", "minimum valid"]
+      ],
+      visualText: "Picture two waves. The left wave handles children higher than the left neighbor; the right wave handles children higher than the right neighbor.",
+      core: "Start every child with one candy. Sweep left to right and increase candy when rating rises from the left. Sweep right to left and use max when rating rises from the right. Sum the final candies.",
+      bruteForce: "Repeatedly adjust candies until all neighbor rules are satisfied. It works as a mental model but can revisit positions many times.",
+      alternates: [
+        "Use slope counting to solve in O(1) extra space, but it is harder to remember.",
+        "Priority queue by rating can assign lower-rated children first, but it is O(n log n) and more machinery."
+      ],
+      gotchas: [
+        "Equal ratings do not require more candy.",
+        "The right pass must use max, otherwise it can destroy a value already needed by the left pass.",
+        "Initialize every child with one candy before enforcing neighbor rules."
+      ]
+    };
+  }
+
   return generic;
 }
 
@@ -467,6 +502,19 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (className === "Candy") {
+    return {
+      prompt: "Before reading: why does one pass see only half of the neighbor rules?",
+      steps: [
+        "Give every child one candy first.",
+        "Left pass handles ratings[i] > ratings[i - 1].",
+        "Right pass handles ratings[i] > ratings[i + 1].",
+        "Use max on the right pass so both directions stay satisfied."
+      ],
+      skeleton: "candies = all 1\nleft to right\n  if rating rises from left\n    candies[i] = candies[i-1] + 1\nright to left\n  if rating rises from right\n    candies[i] = max(candies[i], candies[i+1] + 1)\nreturn sum(candies)"
+    };
+  }
+
   return {
     prompt: "Before reading: what local choice is safe to commit to?",
     steps: [
@@ -494,6 +542,9 @@ function defaultDefiningMoveFor(pattern, className) {
   }
   if (className === "CanPlaceFlowers") {
     return "Check left-current-right window\nplant immediately when all empty\nwrite 1 so next plot is blocked";
+  }
+  if (className === "Candy") {
+    return "Left pass fixes left-neighbor rises\nright pass fixes right-neighbor rises\nmerge with max";
   }
   return "Find the safe local choice\nkeep minimal comparison state\ncommit without backtracking";
 }
