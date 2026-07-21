@@ -398,6 +398,41 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "ValidPalindromeII") {
+    return {
+      name: className,
+      source,
+      label: "One deletion fork",
+      difficulty: "Easy",
+      leetcode: "https://leetcode.com/problems/valid-palindrome-ii/",
+      description: "Given a string, return whether it is already a palindrome or can become one after deleting at most one character.",
+      time: "O(n)",
+      space: "O(1)",
+      timeWhy: "The main two-pointer scan moves inward once. At the first mismatch, at most two remaining substrings are checked linearly.",
+      structures: "two pointers, bounded helper scan",
+      input: "s = \"cbbcc\"",
+      output: "true",
+      recognize: "When a palindrome check allows one mistake, so the first mismatch is the only moment where you get to spend the deletion.",
+      visual: [
+        ["c", "b", "b", "c", "c"],
+        ["match ends", "move in", "b vs c mismatch"],
+        ["skip left OR skip right", "one must finish", "true/false"]
+      ],
+      visualText: "Picture two fingers walking inward. When they disagree, you get one coupon: remove the left char or remove the right char, then the rest must be a clean palindrome.",
+      core: "Use two pointers from both ends. While characters match, move inward. On the first mismatch, check both possible remaining ranges: skip the left character, or skip the right character. If either range is a palindrome, return true.",
+      bruteForce: "Delete every index one by one and test whether the remaining string is a palindrome. That is O(n^2) because each deletion can require a full scan.",
+      alternates: [
+        "Recursive version with a deletion count works, but it is heavier than the two helper checks.",
+        "Building new strings after deletion is simpler to visualize but wastes O(n) space per attempt."
+      ],
+      gotchas: [
+        "Do not choose the skip side only from the next immediate character; try both sides.",
+        "Only one mismatch can spend the deletion. The helper check should be a plain palindrome check.",
+        "Use indexes for the helper so no new string is needed."
+      ]
+    };
+  }
+
   if (className === "Candy") {
     return {
       name: className,
@@ -502,6 +537,20 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (className === "ValidPalindromeII") {
+    return {
+      prompt: "Before reading: when the two ends mismatch, which side are you allowed to delete?",
+      steps: [
+        "Walk inward while the two ends match.",
+        "At the first mismatch, spend the one deletion in exactly two possible ways.",
+        "Check the remaining range after skipping left.",
+        "Check the remaining range after skipping right.",
+        "If either check succeeds, the original string can be saved."
+      ],
+      skeleton: "left = 0, right = n - 1\nwhile left < right\n  if chars match: move both inward\n  else:\n    return isPalindrome(left + 1, right) OR isPalindrome(left, right - 1)\nreturn true"
+    };
+  }
+
   if (className === "Candy") {
     return {
       prompt: "Before reading: why does one pass see only half of the neighbor rules?",
@@ -543,32 +592,46 @@ function defaultDefiningMoveFor(pattern, className) {
   if (className === "CanPlaceFlowers") {
     return "Check left-current-right window\nplant immediately when all empty\nwrite 1 so next plot is blocked";
   }
+  if (className === "ValidPalindromeII") {
+    return "At first mismatch, branch only once\nskip left OR skip right\nremaining range must be a clean palindrome";
+  }
   if (className === "Candy") {
     return "Left pass fixes left-neighbor rises\nright pass fixes right-neighbor rises\nmerge with max";
   }
   return "Find the safe local choice\nkeep minimal comparison state\ncommit without backtracking";
 }
 
+const authoredCardOverrides = new Set([
+  "greedy/ValidPalindromeII"
+]);
+
 function makeDataBlocksForPattern(pattern, html = "") {
   const classes = javaClassesFor(pattern);
   const existingCards = html ? valueFromAssignmentBlock(html, "cards") : [];
   const existingNames = new Set(existingCards.map(card => card.name));
   const missingClasses = classes.filter(className => !existingNames.has(className));
-  if (html && missingClasses.length === 0) {
+  const overrideClasses = classes.filter(className => authoredCardOverrides.has(`${pattern}/${className}`));
+  if (html && missingClasses.length === 0 && overrideClasses.length === 0) {
     return extractDataBlocks(html);
   }
 
   const recallDetails = html ? valueFromAssignmentBlock(html, "recallDetails") : {};
   const definingMoves = html ? valueFromAssignmentBlock(html, "definingMoves") : {};
   const existingOrder = html ? valueFromAssignmentBlock(html, "solvedOrder") : [];
+  const overrideNames = new Set(overrideClasses);
   const cards = [
-    ...existingCards,
+    ...existingCards.map(card => overrideNames.has(card.name) ? defaultCardFor(pattern, card.name) : card),
     ...missingClasses.map(className => defaultCardFor(pattern, className))
   ];
 
   for (const className of classes) {
-    recallDetails[className] ??= defaultDetailsFor(pattern, className);
-    definingMoves[className] ??= defaultDefiningMoveFor(pattern, className);
+    if (overrideNames.has(className)) {
+      recallDetails[className] = defaultDetailsFor(pattern, className);
+      definingMoves[className] = defaultDefiningMoveFor(pattern, className);
+    } else {
+      recallDetails[className] ??= defaultDetailsFor(pattern, className);
+      definingMoves[className] ??= defaultDefiningMoveFor(pattern, className);
+    }
   }
 
   const existingOrderSet = new Set(existingOrder);

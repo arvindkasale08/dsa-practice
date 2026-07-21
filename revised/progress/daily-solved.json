@@ -307,6 +307,14 @@
         "greedy/Candy"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-07-21",
+      "solved": 1,
+      "cardsSynced": [
+        "greedy/ValidPalindromeII"
+      ],
+      "notes": ""
     }
   ]
 }

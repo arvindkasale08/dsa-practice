@@ -1372,6 +1372,52 @@
                   "The right pass must use max, otherwise it can destroy a value already needed by the left pass.",
                   "Initialize every child with one candy before enforcing neighbor rules."
             ]
+      },
+      {
+            "name": "ValidPalindromeII",
+            "source": "../com/arvind/revision/greedy/ValidPalindromeII.java",
+            "label": "One deletion fork",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/valid-palindrome-ii/",
+            "description": "Given a string, return whether it is already a palindrome or can become one after deleting at most one character.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "timeWhy": "The main two-pointer scan moves inward once. At the first mismatch, at most two remaining substrings are checked linearly.",
+            "structures": "two pointers, bounded helper scan",
+            "input": "s = \"cbbcc\"",
+            "output": "true",
+            "recognize": "When a palindrome check allows one mistake, so the first mismatch is the only moment where you get to spend the deletion.",
+            "visual": [
+                  [
+                        "c",
+                        "b",
+                        "b",
+                        "c",
+                        "c"
+                  ],
+                  [
+                        "match ends",
+                        "move in",
+                        "b vs c mismatch"
+                  ],
+                  [
+                        "skip left OR skip right",
+                        "one must finish",
+                        "true/false"
+                  ]
+            ],
+            "visualText": "Picture two fingers walking inward. When they disagree, you get one coupon: remove the left char or remove the right char, then the rest must be a clean palindrome.",
+            "core": "Use two pointers from both ends. While characters match, move inward. On the first mismatch, check both possible remaining ranges: skip the left character, or skip the right character. If either range is a palindrome, return true.",
+            "bruteForce": "Delete every index one by one and test whether the remaining string is a palindrome. That is O(n^2) because each deletion can require a full scan.",
+            "alternates": [
+                  "Recursive version with a deletion count works, but it is heavier than the two helper checks.",
+                  "Building new strings after deletion is simpler to visualize but wastes O(n) space per attempt."
+            ],
+            "gotchas": [
+                  "Do not choose the skip side only from the next immediate character; try both sides.",
+                  "Only one mismatch can spend the deletion. The helper check should be a plain palindrome check.",
+                  "Use indexes for the helper so no new string is needed."
+            ]
       }
 ];
 
@@ -1478,6 +1524,17 @@
                   "Use max on the right pass so both directions stay satisfied."
             ],
             "skeleton": "candies = all 1\nleft to right\n  if rating rises from left\n    candies[i] = candies[i-1] + 1\nright to left\n  if rating rises from right\n    candies[i] = max(candies[i], candies[i+1] + 1)\nreturn sum(candies)"
+      },
+      "ValidPalindromeII": {
+            "prompt": "Before reading: when the two ends mismatch, which side are you allowed to delete?",
+            "steps": [
+                  "Walk inward while the two ends match.",
+                  "At the first mismatch, spend the one deletion in exactly two possible ways.",
+                  "Check the remaining range after skipping left.",
+                  "Check the remaining range after skipping right.",
+                  "If either check succeeds, the original string can be saved."
+            ],
+            "skeleton": "left = 0, right = n - 1\nwhile left < right\n  if chars match: move both inward\n  else:\n    return isPalindrome(left + 1, right) OR isPalindrome(left, right - 1)\nreturn true"
       }
 };
 
@@ -1491,7 +1548,8 @@
       "LemonadeChange": "Process bills in original queue order\n$20 prefers $10 + $5\nfail the moment change goes negative",
       "ValidParanthesisString": "Carry possible open-count range\n'*' widens min/max\nfail if maxOpen goes negative",
       "CanPlaceFlowers": "Check left-current-right window\nplant immediately when all empty\nwrite 1 so next plot is blocked",
-      "Candy": "Left pass fixes left-neighbor rises\nright pass fixes right-neighbor rises\nmerge with max"
+      "Candy": "Left pass fixes left-neighbor rises\nright pass fixes right-neighbor rises\nmerge with max",
+      "ValidPalindromeII": "At first mismatch, branch only once\nskip left OR skip right\nremaining range must be a clean palindrome"
 };
 
     const solvedOrder = [
@@ -1504,7 +1562,8 @@
       "LemonadeChange",
       "ValidParanthesisString",
       "CanPlaceFlowers",
-      "Candy"
+      "Candy",
+      "ValidPalindromeII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
