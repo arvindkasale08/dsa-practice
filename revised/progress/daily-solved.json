@@ -310,9 +310,10 @@
     },
     {
       "date": "2026-07-21",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "greedy/ValidPalindromeII"
+        "greedy/ValidPalindromeII",
+        "greedy/MaximumLengthOfPairChains"
       ],
       "notes": ""
     }

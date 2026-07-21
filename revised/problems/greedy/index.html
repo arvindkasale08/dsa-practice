@@ -1418,6 +1418,50 @@
                   "Only one mismatch can spend the deletion. The helper check should be a plain palindrome check.",
                   "Use indexes for the helper so no new string is needed."
             ]
+      },
+      {
+            "name": "MaximumLengthOfPairChains",
+            "source": "../com/arvind/revision/greedy/MaximumLengthOfPairChains.java",
+            "label": "Finish earliest interval",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/maximum-length-of-pair-chain/",
+            "description": "Given pairs [left, right], choose the longest chain where each next pair must start after the previous pair ends. You can reorder pairs and do not need to use all of them.",
+            "time": "O(n log n)",
+            "space": "O(1)",
+            "timeWhy": "Sorting by right endpoint dominates. After sorting, one scan decides whether to take or skip each pair.",
+            "structures": "sorted intervals, last selected end",
+            "input": "pairs = [[1, 2], [2, 3], [3, 4]]",
+            "output": "2",
+            "recognize": "When you need the maximum number of non-overlapping intervals and the only thing that matters for the future is how early the current choice ends.",
+            "visual": [
+                  [
+                        "[1,2]",
+                        "ends early",
+                        "take"
+                  ],
+                  [
+                        "[2,3]",
+                        "2 is not > 2",
+                        "skip"
+                  ],
+                  [
+                        "[3,4]",
+                        "3 > 2",
+                        "take"
+                  ]
+            ],
+            "visualText": "Picture each pair as a meeting slot. Taking the meeting that ends earliest leaves the most room for whatever comes next.",
+            "core": "Sort pairs by their right value. Keep the right value of the last selected pair. For each pair, take it only if its left value is greater than the last selected right value, then update the last right.",
+            "bruteForce": "Try every subset/order of pairs and check valid chains. That explodes because each pair can be chosen or skipped in many orders.",
+            "alternates": [
+                  "Dynamic programming after sorting by start or end can compute the longest chain, but it is O(n^2) and unnecessary here.",
+                  "This is the same shape as activity selection: choose the interval that frees the timeline earliest."
+            ],
+            "gotchas": [
+                  "The rule is strict: next left must be greater than previous right, not greater than or equal.",
+                  "Sort by end, not start. Early start can block a shorter interval that ends sooner.",
+                  "Initialize lastRight below every possible value so the first selected pair is allowed."
+            ]
       }
 ];
 
@@ -1535,6 +1579,17 @@
                   "If either check succeeds, the original string can be saved."
             ],
             "skeleton": "left = 0, right = n - 1\nwhile left < right\n  if chars match: move both inward\n  else:\n    return isPalindrome(left + 1, right) OR isPalindrome(left, right - 1)\nreturn true"
+      },
+      "MaximumLengthOfPairChains": {
+            "prompt": "Before reading: why is the pair that ends earliest the safest one to keep?",
+            "steps": [
+                  "Sort all pairs by their right endpoint.",
+                  "Keep the right endpoint of the last pair you accepted.",
+                  "If the next pair starts after that endpoint, accept it.",
+                  "If it overlaps or just touches, skip it because it would not extend the chain.",
+                  "Count accepted pairs."
+            ],
+            "skeleton": "sort pairs by end\nlastRight = very small\ncount = 0\nfor pair in sorted pairs\n  if pair.left > lastRight\n    count++\n    lastRight = pair.right\nreturn count"
       }
 };
 
@@ -1549,7 +1604,8 @@
       "ValidParanthesisString": "Carry possible open-count range\n'*' widens min/max\nfail if maxOpen goes negative",
       "CanPlaceFlowers": "Check left-current-right window\nplant immediately when all empty\nwrite 1 so next plot is blocked",
       "Candy": "Left pass fixes left-neighbor rises\nright pass fixes right-neighbor rises\nmerge with max",
-      "ValidPalindromeII": "At first mismatch, branch only once\nskip left OR skip right\nremaining range must be a clean palindrome"
+      "ValidPalindromeII": "At first mismatch, branch only once\nskip left OR skip right\nremaining range must be a clean palindrome",
+      "MaximumLengthOfPairChains": "Sort by smallest right endpoint\ntake pair only when left > lastRight\nending early leaves maximum room"
 };
 
     const solvedOrder = [
@@ -1563,7 +1619,8 @@
       "ValidParanthesisString",
       "CanPlaceFlowers",
       "Candy",
-      "ValidPalindromeII"
+      "ValidPalindromeII",
+      "MaximumLengthOfPairChains"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

@@ -433,6 +433,41 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "MaximumLengthOfPairChains") {
+    return {
+      name: className,
+      source,
+      label: "Finish earliest interval",
+      difficulty: "Medium",
+      leetcode: "https://leetcode.com/problems/maximum-length-of-pair-chain/",
+      description: "Given pairs [left, right], choose the longest chain where each next pair must start after the previous pair ends. You can reorder pairs and do not need to use all of them.",
+      time: "O(n log n)",
+      space: "O(1)",
+      timeWhy: "Sorting by right endpoint dominates. After sorting, one scan decides whether to take or skip each pair.",
+      structures: "sorted intervals, last selected end",
+      input: "pairs = [[1, 2], [2, 3], [3, 4]]",
+      output: "2",
+      recognize: "When you need the maximum number of non-overlapping intervals and the only thing that matters for the future is how early the current choice ends.",
+      visual: [
+        ["[1,2]", "ends early", "take"],
+        ["[2,3]", "2 is not > 2", "skip"],
+        ["[3,4]", "3 > 2", "take"]
+      ],
+      visualText: "Picture each pair as a meeting slot. Taking the meeting that ends earliest leaves the most room for whatever comes next.",
+      core: "Sort pairs by their right value. Keep the right value of the last selected pair. For each pair, take it only if its left value is greater than the last selected right value, then update the last right.",
+      bruteForce: "Try every subset/order of pairs and check valid chains. That explodes because each pair can be chosen or skipped in many orders.",
+      alternates: [
+        "Dynamic programming after sorting by start or end can compute the longest chain, but it is O(n^2) and unnecessary here.",
+        "This is the same shape as activity selection: choose the interval that frees the timeline earliest."
+      ],
+      gotchas: [
+        "The rule is strict: next left must be greater than previous right, not greater than or equal.",
+        "Sort by end, not start. Early start can block a shorter interval that ends sooner.",
+        "Initialize lastRight below every possible value so the first selected pair is allowed."
+      ]
+    };
+  }
+
   if (className === "Candy") {
     return {
       name: className,
@@ -551,6 +586,20 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (className === "MaximumLengthOfPairChains") {
+    return {
+      prompt: "Before reading: why is the pair that ends earliest the safest one to keep?",
+      steps: [
+        "Sort all pairs by their right endpoint.",
+        "Keep the right endpoint of the last pair you accepted.",
+        "If the next pair starts after that endpoint, accept it.",
+        "If it overlaps or just touches, skip it because it would not extend the chain.",
+        "Count accepted pairs."
+      ],
+      skeleton: "sort pairs by end\nlastRight = very small\ncount = 0\nfor pair in sorted pairs\n  if pair.left > lastRight\n    count++\n    lastRight = pair.right\nreturn count"
+    };
+  }
+
   if (className === "Candy") {
     return {
       prompt: "Before reading: why does one pass see only half of the neighbor rules?",
@@ -595,6 +644,9 @@ function defaultDefiningMoveFor(pattern, className) {
   if (className === "ValidPalindromeII") {
     return "At first mismatch, branch only once\nskip left OR skip right\nremaining range must be a clean palindrome";
   }
+  if (className === "MaximumLengthOfPairChains") {
+    return "Sort by smallest right endpoint\ntake pair only when left > lastRight\nending early leaves maximum room";
+  }
   if (className === "Candy") {
     return "Left pass fixes left-neighbor rises\nright pass fixes right-neighbor rises\nmerge with max";
   }
@@ -602,7 +654,8 @@ function defaultDefiningMoveFor(pattern, className) {
 }
 
 const authoredCardOverrides = new Set([
-  "greedy/ValidPalindromeII"
+  "greedy/ValidPalindromeII",
+  "greedy/MaximumLengthOfPairChains"
 ]);
 
 function makeDataBlocksForPattern(pattern, html = "") {
