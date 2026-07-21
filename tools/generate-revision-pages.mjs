@@ -398,6 +398,41 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (className === "MinimumAddToMakeParenthesisValid") {
+    return {
+      name: className,
+      source,
+      label: "Pay for unmatched brackets",
+      difficulty: "Medium",
+      leetcode: "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/",
+      description: "Given a parentheses string, return the minimum number of parentheses you must add so every closing bracket has a matching earlier opening bracket and every opening bracket is eventually closed.",
+      time: "O(n)",
+      space: "O(1)",
+      timeWhy: "Each character is scanned once and only two counters are updated.",
+      structures: "open counter, additions counter",
+      input: "s = \"))((\"",
+      output: "4",
+      recognize: "When the question asks how many brackets are missing, not whether the string can be rearranged or deleted.",
+      visual: [
+        [")", "no open", "add '('"],
+        ["(", "open++", "wait"],
+        [")", "match open", "open--"]
+      ],
+      visualText: "Picture unmatched ')' as immediate bills you must pay, while unmatched '(' are pending doors that need closers at the end.",
+      core: "Scan left to right. Count unmatched '(' as open. When ')' appears, consume one open if possible; otherwise count one required added '('. After the scan, every remaining open needs one added ')'.",
+      bruteForce: "Try inserting parentheses in different positions until the string becomes valid. That proves the meaning but is far more work than counting exactly what is missing.",
+      alternates: [
+        "Use a stack and push unmatched parentheses, then return stack size; simple but uses O(n) space.",
+        "This is a smaller sibling of wildcard parentheses problems because there is no '*' flexibility."
+      ],
+      gotchas: [
+        "An unmatched ')' must be counted immediately; a later '(' cannot fix an earlier close.",
+        "Do not forget to add leftover open count after the scan.",
+        "This is add-to-valid, not remove-to-valid; the answer is a count, not a rebuilt string."
+      ]
+    };
+  }
+
   if (className === "ValidPalindromeII") {
     return {
       name: className,
@@ -572,6 +607,20 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (className === "MinimumAddToMakeParenthesisValid") {
+    return {
+      prompt: "Before reading: which invalid bracket must be paid for immediately, and which can wait until the end?",
+      steps: [
+        "Carry open = unmatched '(' waiting for closers.",
+        "For '(', increase open.",
+        "For ')', consume open if one exists.",
+        "If ')' has no open to consume, add one missing '(' to the answer.",
+        "After the scan, add all leftover open because each needs a ')'."
+      ],
+      skeleton: "open = 0, add = 0\nfor char in s\n  if char is '(':\n    open++\n  else if open > 0:\n    open--\n  else:\n    add++\nreturn add + open"
+    };
+  }
+
   if (className === "ValidPalindromeII") {
     return {
       prompt: "Before reading: when the two ends mismatch, which side are you allowed to delete?",
@@ -641,6 +690,9 @@ function defaultDefiningMoveFor(pattern, className) {
   if (className === "CanPlaceFlowers") {
     return "Check left-current-right window\nplant immediately when all empty\nwrite 1 so next plot is blocked";
   }
+  if (className === "MinimumAddToMakeParenthesisValid") {
+    return "Unmatched ')' adds one immediately\nunmatched '(' stays as open\nanswer is additions + leftover open";
+  }
   if (className === "ValidPalindromeII") {
     return "At first mismatch, branch only once\nskip left OR skip right\nremaining range must be a clean palindrome";
   }
@@ -654,6 +706,7 @@ function defaultDefiningMoveFor(pattern, className) {
 }
 
 const authoredCardOverrides = new Set([
+  "greedy/MinimumAddToMakeParenthesisValid",
   "greedy/ValidPalindromeII",
   "greedy/MaximumLengthOfPairChains"
 ]);
