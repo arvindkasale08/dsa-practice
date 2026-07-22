@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hashing Revision</title>
+  <title>Graphs Revision</title>
   <style>
     :root {
       --ink: #18221e;
@@ -1009,7 +1009,7 @@
     <header>
       <div>
         <div class="title-row">
-          <h1>Hashing Revision</h1>
+          <h1>Graphs Revision</h1>
           <span id="totalCount" class="count-pill"></span>
           <div class="page-revision-controls">
             <button id="incrementAll" class="revision-button" type="button">+1 All</button>
@@ -1018,520 +1018,65 @@
         </div>
       </div>
       <div class="tools">
-        <input id="search" class="search" type="search" placeholder="Search hashing cards">
+        <input id="search" class="search" type="search" placeholder="Search graphs cards">
         <button id="quickMode" class="mode-button active" type="button">Card Review</button>
         <button id="exportPdf" class="pdf-button" type="button">Export PDF</button>
       </div>
     </header>
-    <p class="subtitle">Fast recall cards for the current hashing package. Use Quick Review first, then expand a row when you need the full explanation.</p>
+    <p class="subtitle">Reference notes for graph fundamentals and Java representation. Open the linked workbook notes or visual guide when revising.</p>
 
     <section id="cards" class="cards"></section>
-    <div id="empty" class="empty">No matching hashing cards.</div>
+    <div id="empty" class="empty">No matching graphs cards.</div>
   </main>
 
   <script>
     const cards = [
       {
-        "name": "FirstNonRepeating",
-        "source": "../com/arvind/revision/hashing/FirstNonRepeating.java",
-        "label": "Count first, preserve order second",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/first-unique-character-in-a-string/",
-        "description": "Given a string, return the index of the first character that appears exactly once. If every character repeats, return -1.",
-        "time": "O(n)",
-        "space": "O(k), where k is the number of distinct characters",
-        "structures": "HashMap<Character, Integer> frequency count",
-        "input": "s = \"loveleetcode\"",
-        "output": "2",
-        "recognize": "When the answer depends on both frequency and original order: count all characters first, then scan the string again to find the earliest count-one character.",
-        "visual": [
-          ["l:1", "o:2", "v:1", "e:4"],
-          ["scan left to right", "first count 1 = v", "index 2"]
-        ],
-        "visualText": "Picture the map as a frequency board, not the final answer. The second pass is what preserves the left-to-right order of the original string.",
-        "core": "Build a frequency map in one pass. Scan the string again from left to right and return the first index whose character has count one. If none exists, return -1.",
-        "bruteForce": "For every character, scan the whole string to see whether it appears again. This preserves order but costs O(n²).",
-        "alternates": [
-          "Use an int[26] array instead of a HashMap when the input is guaranteed to be lowercase English letters.",
-          "Use a LinkedHashMap storing counts and first indexes, then inspect entries in insertion order; this still needs the full count information before the answer is reliable."
-        ],
+        "name": "GraphTheoryReference",
+        "source": "graph-theory-essentials.txt",
+        "label": "Reference files",
+        "difficulty": "Theory",
+        "leetcode": "",
+        "referenceOnly": true,
+        "description": "Your graph-theory reference notes and visual guides are saved beside this page. Open the text files for the extracted notes, or open the images for the visual summaries.",
+        "time": "Reference",
+        "space": "Reference",
+        "structures": "Graph theory notes + visual guide",
+        "prompt": "Open the linked reference when revising graph fundamentals or Java graph representation.",
+        "definingMove": "Use this as the source reference\nnot a generated summary",
         "gotchas": [
-          "A single pass cannot know that the current character will stay unique later.",
-          "The map finds counts; the second scan finds the first index.",
-          "If the character set is fixed and small, an array is simpler and faster than a HashMap."
-        ]
-      },
-      {
-        "name": "LargestUniqueNumber",
-        "source": "../com/arvind/revision/hashing/LargestUniqueNumber.java",
-        "label": "Count first, choose largest count-one value",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/largest-unique-number/",
-        "description": "Given an integer array, return the largest number that appears exactly once. If every number repeats, return -1.",
-        "time": "O(n)",
-        "space": "O(k), where k is the number of distinct values",
-        "structures": "HashMap<Integer, Integer> frequency count",
-        "input": "nums = [5, 7, 3, 9, 4, 9, 8, 3, 1]",
-        "output": "8",
-        "recognize": "When uniqueness is based on frequency, but the answer asks for the largest unique value instead of the first position.",
-        "visual": [
-          ["5:1", "7:1", "3:2", "9:2"],
-          ["4:1", "8:1", "1:1", "max = 8"]
+          "Reference-only card."
         ],
-        "visualText": "Picture the map as a scoreboard. Cross out every value whose count is more than one, then pick the biggest value still standing.",
-        "core": "Count every number first. Scan the array values and keep the maximum number whose count is exactly one. If no such value exists, return -1.",
-        "bruteForce": "For each number, scan the whole array to count how often it appears, then keep the largest number with count one. It is correct but costs O(n²).",
-        "alternates": [
-          "Use a TreeMap or sorted keys after counting, then scan from largest to smallest until a count-one value appears; this is cleaner for ordered lookup but costs extra sorting/tree overhead.",
-          "If the value range is small and fixed, use a frequency array instead of a HashMap."
+        "referenceLinks": [
+          {
+            "label": "Open fundamentals notes",
+            "href": "graph-theory-essentials.txt"
+          },
+          {
+            "label": "Open fundamentals visual guide",
+            "href": "graph-theory-essentials.png"
+          },
+          {
+            "label": "Open representation/traversal notes",
+            "href": "graph-representation-traversal-guide.txt"
+          },
+          {
+            "label": "Open representation/traversal visual guide",
+            "href": "graph-representation-traversal-guide.png"
+          }
         ],
-        "gotchas": [
-          "Do not update the answer while counting; a value that looks unique early may repeat later.",
-          "Return -1 when no count-one value exists.",
-          "The second pass can scan the original array or the map entries; both are fine for O(n)."
-        ]
-      },
-      {
-        "name": "MaximumNumberOfBalloons",
-        "source": "../com/arvind/revision/hashing/MaximumNumberOfBalloons.java",
-        "label": "Word frequency limit",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/maximum-number-of-balloons/",
-        "description": "Given a text string, return how many times you can form the word \"balloon\" using each character from the text at most once.",
-        "time": "O(n)",
-        "space": "O(1), only lowercase letter counts",
-        "structures": "HashMap<Character, Integer> or int[26] frequency count",
-        "input": "text = \"loonbalxballpoon\"",
-        "output": "2",
-        "recognize": "When a target word has repeated letters and the answer is limited by the scarcest required character.",
-        "visual": [
-          ["b:2", "a:2", "l:4", "o:4", "n:2"],
-          ["b/1=2", "a/1=2", "l/2=2", "o/2=2", "n/1=2"]
-        ],
-        "visualText": "Picture each required letter as a bucket. Because \"balloon\" needs two l's and two o's, divide those counts by two before taking the minimum bucket.",
-        "core": "Count letters in the text. For each character needed by \"balloon\", divide available count by required count. The smallest quotient is the number of full words you can build.",
-        "bruteForce": "Repeatedly try to remove the letters b, a, l, l, o, o, n from the text until one removal fails. It works, but repeated searching/removal is clumsy and can become O(n × answer).",
-        "alternates": [
-          "Use an int[26] array and directly compute min(count[b], count[a], count[l] / 2, count[o] / 2, count[n]). This is the cleanest version for lowercase English letters.",
-          "Build a target frequency map for a generic word; slightly more general, but more code than needed for fixed \"balloon\"."
-        ],
-        "gotchas": [
-          "Remember l and o are required twice.",
-          "The answer is the minimum quotient across required letters, not the total count of matching letters.",
-          "Extra unrelated letters in text do not matter."
-        ]
-      },
-      {
-        "name": "LongestPalindrome",
-        "source": "../com/arvind/revision/hashing/LongestPalindrome.java",
-        "label": "Pair counts plus one center",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/longest-palindrome/",
-        "description": "Given a string, return the length of the longest palindrome that can be built using its letters. Characters are case-sensitive.",
-        "time": "O(n)",
-        "space": "O(k), where k is the number of distinct characters",
-        "structures": "HashMap<Character, Integer> frequency count",
-        "input": "s = \"abccccdd\"",
-        "output": "7",
-        "recognize": "When order does not matter and you only need the longest palindrome length: every pair can be used, and at most one odd leftover can sit in the middle.",
-        "visual": [
-          ["a:1", "b:1", "c:4", "d:2"],
-          ["cc", "dd", "cc", "+ center a"]
-        ],
-        "visualText": "Picture building the palindrome from mirrored pairs first. After all pairs are placed, one leftover single character may become the center.",
-        "core": "Count character frequencies. Add the largest even portion from every count. If any character had an unused odd leftover, add one more for the center.",
-        "bruteForce": "Try building palindromes by choosing letters and checking whether the arrangement can mirror. That wastes effort because only counts matter.",
-        "alternates": [
-          "Track a Set of unmatched characters: add when first seen, remove when a pair is completed, and increase length by two for every completed pair. Add one center if the set is non-empty.",
-          "Use an int array when the character range is known; use a HashMap for general characters."
-        ],
-        "gotchas": [
-          "Only one odd leftover can be used as the center.",
-          "Do not add every odd count fully; add count - 1 as pairs, then maybe one center.",
-          "Uppercase and lowercase are different characters on LeetCode."
-        ]
-      },
-      {
-        "name": "RansomNote",
-        "source": "../com/arvind/revision/hashing/RansomNote.java",
-        "label": "Spend magazine letters",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/ransom-note/",
-        "description": "Given two strings, return true if the ransom note can be built using letters from the magazine, where each magazine character can be used only once.",
-        "time": "O(n + m)",
-        "space": "O(1), 26 lowercase letter counts",
-        "structures": "int[26] character bank",
-        "input": "ransomNote = \"hello\", magazine = \"helloworld\"",
-        "output": "true",
-        "recognize": "When one string is a supply bank and the other string spends from that bank one character at a time.",
-        "visual": [
-          ["h:1", "e:1", "l:3", "o:2"],
-          ["spend h", "spend e", "spend l", "spend l", "spend o"]
-        ],
-        "visualText": "Picture magazine as a bank of letters. The note withdraws letters; if any balance goes negative, construction is impossible.",
-        "core": "Count all magazine letters. For each ransom note letter, decrement its count. If any count becomes negative, return false; otherwise return true.",
-        "bruteForce": "For every note character, search the magazine for an unused matching character and mark it consumed. This is straightforward but can take O(n × m).",
-        "alternates": [
-          "Use a HashMap if the character set is not fixed to lowercase English letters.",
-          "Return false immediately during the note scan when a count drops below zero; the final scan over all counts is then unnecessary."
-        ],
-        "gotchas": [
-          "Each magazine character can be used only once.",
-          "Count magazine first, not ransom note first, because magazine is the supply.",
-          "With lowercase letters, int[26] is simpler than a HashMap."
-        ]
-      },
-      {
-        "name": "TwoSum",
-        "source": "../com/arvind/revision/hashing/TwoSum.java",
-        "label": "Store complement while scanning",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/two-sum/",
-        "description": "Given an integer array and a target, return the indexes of two different numbers whose values add up to the target. Exactly one valid answer is guaranteed.",
-        "time": "O(n)",
-        "space": "O(n)",
-        "structures": "HashMap<Integer, Integer> complement to index",
-        "input": "nums = [3, 2, 4], target = 6",
-        "output": "[2, 1]",
-        "recognize": "When each number needs a partner value: target - current. A map lets you ask whether this current number was needed by something earlier.",
-        "visual": [
-          ["3 needs 3", "2 needs 4", "4 found"],
-          ["bank: 3->0", "bank: 4->1", "answer: 2,1"]
-        ],
-        "visualText": "Picture the map as a wish list. Each earlier number stores the value it is waiting for; when the current number appears in the wish list, the pair is complete.",
-        "core": "Scan left to right. If the current number already exists in the complement map, return current index plus the stored index. Otherwise store target - current as a needed future value.",
-        "bruteForce": "Try every pair i, j and check whether nums[i] + nums[j] equals the target. This is simple but costs O(n²).",
-        "alternates": [
-          "Store value to index instead of complement to index; then check whether target - current already exists before adding current.",
-          "Sorting plus two pointers works for values, but it loses original indexes unless you carry pairs, so the hash map is cleaner."
-        ],
-        "gotchas": [
-          "Check the map before inserting the current number so the same element is not reused.",
-          "Duplicate values are valid if they are at different indexes.",
-          "Returning indexes in either order is accepted."
-        ]
-      },
-      {
-        "name": "GroupAnagrams",
-        "source": "../com/arvind/revision/hashing/GroupAnagrams.java",
-        "label": "Same signature means same group",
-        "difficulty": "Medium",
-        "leetcode": "https://leetcode.com/problems/group-anagrams/",
-        "description": "Given an array of strings, group together the words that are anagrams of each other. The groups and words can be returned in any order.",
-        "time": "O(n * k)",
-        "space": "O(n * k)",
-        "structures": "HashMap<String, List<String>>, int[26] frequency signature",
-        "input": "strs = [\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"]",
-        "output": "[[\"eat\", \"tea\", \"ate\"], [\"tan\", \"nat\"], [\"bat\"]]",
-        "recognize": "When words are equivalent after rearranging letters: convert each word into a stable signature, then use that signature as the group key.",
-        "visual": [
-          ["eat -> aet", "tea -> aet", "ate -> aet"],
-          ["tan -> ant", "nat -> ant", "bat -> abt"]
-        ],
-        "visualText": "Picture every word wearing a sorted-letter name tag. Words with the same name tag walk into the same bucket.",
-        "core": "For each string, build a canonical key from its letter counts. Put the original string into the list stored at that key. Return all map values.",
-        "bruteForce": "Compare every pair of strings with an anagram check and build groups manually. It works but can take O(n² * k).",
-        "alternates": [
-          "Sort each string and use the sorted string as the key; simpler to write, but costs O(n * k log k).",
-          "Use a delimiter-based count key such as #1#0#0... to avoid ambiguity when counts have multiple digits."
-        ],
-        "gotchas": [
-          "Use the original string in the group, not the sorted/signature string.",
-          "The signature must be unambiguous; raw count concatenation can collide without delimiters or fixed reconstruction.",
-          "Empty string is a valid key and should form its own group."
-        ]
-      },
-      {
-        "name": "IsomorphicStrings",
-        "source": "../com/arvind/revision/hashing/IsomorphicStrings.java",
-        "label": "Two-way character mapping",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/isomorphic-strings/",
-        "description": "Given two strings of the same length, return true if characters in the first string can be consistently replaced to form the second string. Each source character maps to one target character, and no two source characters may map to the same target character.",
-        "time": "O(n)",
-        "space": "O(k), where k is the number of distinct characters",
-        "structures": "Two HashMaps<Character, Character> or two int arrays",
-        "input": "s = \"badc\", t = \"baba\"",
-        "output": "false",
-        "recognize": "When the strings must keep the same position pattern: repeated characters in one string must line up with repeated characters in the other.",
-        "visual": [
-          ["b->b", "a->a", "d->b breaks"],
-          ["target b already taken", "need one-to-one", "false"]
-        ],
-        "visualText": "Picture every character wearing a reserved partner tag. The forward map checks consistency from s to t; the reverse map prevents two different s characters from sharing one t character.",
-        "core": "Scan both strings together. For each pair, verify the old mapping in both directions if it exists. If either direction conflicts, return false; otherwise store both mappings.",
-        "bruteForce": "For every pair of positions i and j, check whether s[i] == s[j] has the same truth value as t[i] == t[j]. This checks the pattern directly but costs O(n²).",
-        "alternates": [
-          "Use two int[256] arrays storing last seen positions. If the last seen positions differ at any index, the pattern differs.",
-          "Encode each string into a first-seen pattern such as 1,2,2 and compare the encoded patterns."
-        ],
-        "gotchas": [
-          "Checking only s -> t is not enough; two source characters could map to the same target.",
-          "A character may map to itself, but still only one source character can own that target character.",
-          "The order of characters means positions stay fixed; replacements do not rearrange the string."
-        ]
-      },
-      {
-        "name": "WordPattern",
-        "source": "../com/arvind/revision/hashing/WordPattern.java",
-        "label": "Pattern char to word bijection",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/word-pattern/",
-        "description": "Given a pattern string and a sentence, return true if each pattern character maps consistently to exactly one word, and no two pattern characters map to the same word.",
-        "time": "O(n)",
-        "space": "O(k), where k is the number of distinct pattern characters and words",
-        "structures": "Two HashMaps<String, String> for pattern-to-word and word-to-pattern",
-        "input": "pattern = \"abba\", s = \"dog cat cat dog\"",
-        "output": "true",
-        "recognize": "When positions in a short pattern must match whole words in a sentence one-to-one.",
-        "visual": [
-          ["a->dog", "b->cat", "b->cat", "a->dog"],
-          ["same pattern", "same word", "two-way lock"]
-        ],
-        "visualText": "Picture each pattern letter reserving a word, and each word reserving a pattern letter. Both reservations must agree at every position.",
-        "core": "Split the sentence into words. If the number of words differs from the pattern length, return false. Walk both arrays together and verify both maps before storing the current pair.",
-        "bruteForce": "For every pair of positions, compare whether pattern[i] == pattern[j] matches words[i].equals(words[j]). This directly checks the pattern but costs O(n²).",
-        "alternates": [
-          "Use a single map plus a HashSet of already-used words to block two pattern letters from sharing one word.",
-          "Encode pattern and words into first-seen IDs, then compare the two ID sequences."
-        ],
-        "gotchas": [
-          "Check word count against pattern length before mapping.",
-          "One-way mapping is not enough; two pattern letters cannot share one word.",
-          "Split on spaces carefully; the LeetCode input uses single spaces between words."
-        ]
-      },
-      {
-        "name": "MyHashMap",
-        "source": "../com/arvind/revision/hashing/MyHashMap.java",
-        "label": "Bucket array with collision chain",
-        "difficulty": "Easy",
-        "leetcode": "https://leetcode.com/problems/design-hashmap/",
-        "description": "Design a hash map with put, get, and remove operations without using a built-in hash table. Each key maps to one value, get returns -1 for missing keys, and put updates an existing key.",
-        "time": "Average O(1), worst O(chain length)",
-        "space": "O(bucket count + stored keys)",
-        "structures": "Node[] buckets, doubly linked collision chains",
-        "input": "put(1,10), put(1001,30), put(2001,40), remove(1001), get(2001)",
-        "output": "40",
-        "recognize": "When the problem asks you to build the table mechanics yourself: bucket index first, then walk only that bucket's chain.",
-        "visual": [
-          ["bucket 1", "2001:40", "1001:30", "1:10"],
-          ["remove 1001", "link 2001 -> 1", "get 2001 = 40"]
-        ],
-        "visualText": "Picture the array cell as a parking slot. Colliding keys park in a linked line at that slot; remove must reconnect the cars before and after the removed key.",
-        "core": "Hash the key to a bucket. Put inserts or updates inside that bucket's chain. Get searches that chain. Remove unlinks the matching node and updates the bucket head when needed.",
-        "bruteForce": "Store key-value pairs in one list and scan the whole list for every operation. It is easy to write but every put, get, and remove can become O(n).",
-        "alternates": [
-          "Use a larger bucket array or resize when chains get long to keep average operations closer to O(1).",
-          "Use singly linked chains instead of doubly linked nodes, but removal needs tracking the previous node while scanning."
-        ],
-        "gotchas": [
-          "Updating an existing key must change the value, not insert a duplicate node.",
-          "Removing the head of a chain must update the bucket array cell.",
-          "Collision tests need keys with the same key % bucketCount, such as 1, 1001, and 2001."
-        ]
-      },
-      {
-        "name": "LongestConsecutiveSequence",
-        "source": "../com/arvind/revision/hashing/LongestConsecutiveSequence.java",
-        "label": "Start only at chain heads",
-        "difficulty": "Medium",
-        "leetcode": "https://leetcode.com/problems/longest-consecutive-sequence/",
-        "description": "Given an unsorted integer array, return the length of the longest run of consecutive values. The algorithm must run in O(n) time.",
-        "time": "O(n)",
-        "space": "O(n)",
-        "structures": "HashSet<Integer> for membership, optional visited set",
-        "input": "nums = [100, 4, 200, 1, 3, 2]",
-        "output": "4",
-        "recognize": "When order in the array does not matter, but consecutive numeric neighbors matter. Use the set for O(1) membership and only expand from true starts.",
-        "visual": [
-          ["100", "4", "200", "1", "3", "2"],
-          ["1 has no 0", "walk 1->2->3->4", "length 4"]
-        ],
-        "visualText": "Picture each number as a dot on a number line. Only start walking from a dot that has no left neighbor; that avoids recounting the same chain from the middle.",
-        "core": "Put every number in a set. For each number, if num - 1 is not in the set, treat it as the left edge of a sequence and walk upward while num + offset exists.",
-        "bruteForce": "Sort the array, then scan and count consecutive runs. It is easy and handles duplicates, but sorting costs O(n log n), which misses the required O(n).",
-        "alternates": [
-          "Use a HashMap boundary-length merge approach that updates sequence lengths at the ends; it is O(n), but harder to remember.",
-          "A visited set can avoid repeated duplicate work, but the key optimization is still starting only where num - 1 is absent."
-        ],
-        "gotchas": [
-          "Do not start counting from every number; that can become O(n²).",
-          "Duplicates should not reset or inflate a sequence.",
-          "An empty input should return 0."
-        ]
-      },
-      {
-        "name": "TopKFrequentElements",
-        "source": "../com/arvind/revision/hashing/TopKFrequentElements.java",
-        "label": "Frequency buckets from high to low",
-        "difficulty": "Medium",
-        "leetcode": "https://leetcode.com/problems/top-k-frequent-elements/",
-        "description": "Given an integer array and an integer k, return the k values that appear most frequently. The answer can be returned in any order.",
-        "time": "O(n)",
-        "space": "O(n)",
-        "structures": "HashMap<Integer, Integer> counts, frequency-to-values buckets",
-        "input": "nums = [1, 2, 1, 2, 1, 2, 3, 1, 3, 2], k = 2",
-        "output": "[1, 2]",
-        "recognize": "When the answer asks for most frequent values and k can be smaller than the number of distinct values.",
-        "visual": [
-          ["1:4", "2:4", "3:2"],
-          ["freq 4 -> [1,2]", "freq 2 -> [3]", "take first k"]
-        ],
-        "visualText": "Picture numbers first going into count boxes, then those counts becoming shelves. Walk shelves from highest frequency downward until k values are collected.",
-        "core": "Count each value. Group values by their frequency. Iterate frequencies from nums.length down to 1 and collect values until k slots are filled.",
-        "bruteForce": "Count frequencies, then repeatedly scan all distinct values to find the current largest remaining count. This works but can take O(k * distinct).",
-        "alternates": [
-          "Use a min-heap of size k over the frequency map; this is O(n log k) and useful when bucket memory is not preferred.",
-          "Sort distinct values by frequency; simpler to reason about, but O(d log d) where d is distinct count."
-        ],
-        "gotchas": [
-          "Bucket index is frequency, not the value itself.",
-          "Multiple values can share the same frequency.",
-          "Stop after k values; do not keep adding an entire bucket if it would exceed k."
-        ]
+        "previewImage": "graph-representation-traversal-guide.png"
       }
     ];
 
-    const recallDetails = {
-      "FirstNonRepeating": {
-        "prompt": "Before reading: why is counting alone not enough to know the first unique character?",
-        "steps": [
-          "First pass records how often each character appears.",
-          "Second pass walks the original string order.",
-          "The first character with count one gives the answer index."
-        ],
-        "skeleton": "count = map\nfor c in s:\n  count[c]++\nfor i from 0 to s.length - 1:\n  if count[s[i]] == 1:\n    return i\nreturn -1"
-      },
-      "LargestUniqueNumber": {
-        "prompt": "Before reading: why must you finish counting before trusting a number as unique?",
-        "steps": [
-          "Count how many times every number appears.",
-          "Ignore every number whose count is not one.",
-          "Among the count-one numbers, keep the largest value."
-        ],
-        "skeleton": "count = map\nfor num in nums:\n  count[num]++\nanswer = -1\nfor num in nums:\n  if count[num] == 1:\n    answer = max(answer, num)\nreturn answer"
-      },
-      "MaximumNumberOfBalloons": {
-        "prompt": "Before reading: which letter in \"balloon\" is the bottleneck?",
-        "steps": [
-          "Count letters in the text.",
-          "Compare only b, a, l, o, and n.",
-          "Divide l and o by two, then take the minimum."
-        ],
-        "skeleton": "count = letter counts from text\nreturn min(\n  count['b'],\n  count['a'],\n  count['l'] / 2,\n  count['o'] / 2,\n  count['n']\n)"
-      },
-      "LongestPalindrome": {
-        "prompt": "Before reading: how many odd-count characters can stand in the middle?",
-        "steps": [
-          "Count every character.",
-          "Use all possible pairs from each count.",
-          "Add one extra center only if some character has an unused odd leftover."
-        ],
-        "skeleton": "count = map\nlength = 0\nhasOddLeftover = false\nfor freq in count values:\n  length += (freq / 2) * 2\n  if freq is odd:\n    hasOddLeftover = true\nif hasOddLeftover:\n  length++\nreturn length"
-      },
-      "RansomNote": {
-        "prompt": "Before reading: which string is the supply and which string spends letters?",
-        "steps": [
-          "Count magazine letters as available supply.",
-          "Spend one count for each ransom note letter.",
-          "If any letter balance goes negative, return false."
-        ],
-        "skeleton": "bank = int[26]\nfor c in magazine:\n  bank[c]++\nfor c in ransomNote:\n  bank[c]--\n  if bank[c] < 0:\n    return false\nreturn true"
-      },
-      "TwoSum": {
-        "prompt": "Before reading: what partner value is the current number looking for?",
-        "steps": [
-          "Scan one number at a time.",
-          "If the current number is already in the complement bank, return both indexes.",
-          "Otherwise store the value needed to pair with this number."
-        ],
-        "skeleton": "needToIndex = map\nfor i from 0 to nums.length - 1:\n  if nums[i] in needToIndex:\n    return [i, needToIndex[nums[i]]]\n  needToIndex[target - nums[i]] = i"
-      },
-      "GroupAnagrams": {
-        "prompt": "Before reading: what key makes two rearranged words look identical?",
-        "steps": [
-          "Build the same canonical key for all anagrams.",
-          "Use that key as the HashMap bucket.",
-          "Append the original word to that bucket."
-        ],
-        "skeleton": "groups = map key -> list\nfor word in strs:\n  key = letter-count signature(word)\n  groups[key].add(word)\nreturn all group lists"
-      },
-      "IsomorphicStrings": {
-        "prompt": "Before reading: why is one map not enough for badc -> baba?",
-        "steps": [
-          "Read both strings at the same index.",
-          "Check s-to-t mapping for consistency.",
-          "Check t-to-s mapping so no target character is reused by a different source."
-        ],
-        "skeleton": "forward = map\nreverse = map\nfor i from 0 to n - 1:\n  a = s[i]\n  b = t[i]\n  if forward[a] exists and forward[a] != b: return false\n  if reverse[b] exists and reverse[b] != a: return false\n  forward[a] = b\n  reverse[b] = a\nreturn true"
-      },
-      "WordPattern": {
-        "prompt": "Before reading: why must dog be owned by only one pattern letter?",
-        "steps": [
-          "Split the sentence into words.",
-          "Check pattern-to-word consistency.",
-          "Check word-to-pattern consistency so two letters cannot share a word."
-        ],
-        "skeleton": "words = s.split spaces\nif pattern.length != words.length: return false\nforward = map\nreverse = map\nfor i from 0 to words.length - 1:\n  p = pattern[i]\n  w = words[i]\n  if forward[p] exists and forward[p] != w: return false\n  if reverse[w] exists and reverse[w] != p: return false\n  forward[p] = w\n  reverse[w] = p\nreturn true"
-      },
-      "MyHashMap": {
-        "prompt": "Before reading: after hashing to a bucket, where can the key actually be?",
-        "steps": [
-          "Compute key % bucketCount to choose the bucket.",
-          "Search only that bucket's linked chain.",
-          "When removing, reconnect prev and next and fix the bucket head if needed."
-        ],
-        "skeleton": "bucket = key % bucketCount\nput:\n  find key in bucket chain\n  update if found, else insert node\nget:\n  find key in bucket chain\n  return value or -1\nremove:\n  find key in bucket chain\n  unlink node; if head, move bucket head"
-      },
-      "LongestConsecutiveSequence": {
-        "prompt": "Before reading: why should counting start only when num - 1 is missing?",
-        "steps": [
-          "Put every number into a HashSet.",
-          "Skip any number that has a left neighbor.",
-          "From a true start, walk right while the next number exists."
-        ],
-        "skeleton": "set = all nums\nbest = 0\nfor num in nums:\n  if set does not contain num - 1:\n    length = 1\n    while set contains num + length:\n      length++\n    best = max(best, length)\nreturn best"
-      },
-      "TopKFrequentElements": {
-        "prompt": "Before reading: after counting values, what should be sorted by frequency without sorting?",
-        "steps": [
-          "Count each number's frequency.",
-          "Put each number on the bucket for its count.",
-          "Walk buckets from highest frequency down until k values are collected."
-        ],
-        "skeleton": "freq = map value -> count\nbuckets = map count -> values\nfor value,count in freq:\n  buckets[count].add(value)\nanswer = []\nfor count from nums.length down to 1:\n  for value in buckets[count]:\n    add value until answer size == k\nreturn answer"
-      }
-    };
+    const recallDetails = {};
 
     const definingMoves = {
-      "FirstNonRepeating": "map answers frequency\nsecond pass answers first position",
-      "LargestUniqueNumber": "map removes repeated values\nmax only among count-one values",
-      "MaximumNumberOfBalloons": "target word creates required ratios\nanswer is the minimum available ratio",
-      "LongestPalindrome": "pairs build both sides\none odd leftover can be the center",
-      "RansomNote": "magazine fills the bank\nransom note spends from it",
-      "TwoSum": "store the missing partner\ncurrent number completes an earlier wish",
-      "GroupAnagrams": "canonical key collapses rearrangements\nmap key owns the group",
-      "IsomorphicStrings": "forward map checks consistency\nreverse map blocks shared targets",
-      "WordPattern": "pattern letter reserves word\nword reserves pattern letter",
-      "MyHashMap": "bucket narrows the search\nchain handles same-bucket keys",
-      "LongestConsecutiveSequence": "only chain heads start walks\nset answers next-number existence",
-      "TopKFrequentElements": "count values first\nfrequency buckets avoid sorting"
+      "GraphTheoryReference": "Use this as the source reference\nnot a generated summary"
     };
 
     const solvedOrder = [
-      "FirstNonRepeating",
-      "LargestUniqueNumber",
-      "MaximumNumberOfBalloons",
-      "LongestPalindrome",
-      "RansomNote",
-      "TwoSum",
-      "GroupAnagrams",
-      "IsomorphicStrings",
-      "WordPattern",
-      "MyHashMap",
-      "LongestConsecutiveSequence",
-      "TopKFrequentElements"
+      "GraphTheoryReference"
     ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
@@ -1579,7 +1124,7 @@
     }
 
     function storageKey(cardName) {
-      return `dsa-revision:hashing:${cardName}`;
+      return `dsa-revision:graphs:${cardName}`;
     }
 
     function readRevision(cardName) {
@@ -1963,7 +1508,7 @@
       render();
     });
     resetAllEl.addEventListener("click", () => {
-      if (!window.confirm("Reset revision counts and dates for all hashing problems?")) return;
+      if (!window.confirm("Reset revision counts and dates for all graphs problems?")) return;
       cards.forEach(card => writeRevision(card.name, { count: 0, last: "" }));
       render();
     });

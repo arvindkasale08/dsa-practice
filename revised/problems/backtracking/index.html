@@ -239,6 +239,10 @@
       box-shadow: 0 14px 30px rgba(79, 47, 159, .18);
     }
 
+    .cards .card.theory {
+      grid-column: 1 / -1;
+    }
+
     .card:hover {
       box-shadow: var(--shadow-hover);
       transform: translateY(-2px);
@@ -261,6 +265,44 @@
 
     .card.theory .card-head {
       border-bottom-color: #b79ee8;
+    }
+
+    .reference-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .reference-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      border: 1px solid #b79ee8;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #3f1f8f;
+      padding: 6px 11px;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .reference-link:hover {
+      background: #eadfff;
+    }
+
+    .reference-preview {
+      display: block;
+      width: min(100%, 760px);
+      max-height: 460px;
+      object-fit: contain;
+      object-position: top left;
+      border: 1px solid #b79ee8;
+      border-radius: 8px;
+      background: white;
+      margin-top: 12px;
     }
 
     h2 {
@@ -397,6 +439,12 @@
       background: var(--red-soft);
       border-color: #edc5bd;
       color: #773229;
+    }
+
+    .difficulty.theory {
+      background: #eadfff;
+      border-color: #b79ee8;
+      color: #3f1f8f;
     }
 
     .leetcode {
@@ -550,6 +598,53 @@
       background: #fff8e8;
       color: #60430d;
       font-weight: 700;
+    }
+
+    .theory-layout {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 10px;
+    }
+
+    .theory-layout .section {
+      min-height: auto;
+    }
+
+    .theory-hero,
+    .theory-wide {
+      grid-column: 1 / -1;
+    }
+
+    .theory-hero {
+      border-color: #9d85db;
+      background: #fff;
+      color: #30224f;
+      font-size: 15px;
+    }
+
+    .theory-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .theory-map-item {
+      border: 1px solid #d8c9ff;
+      border-radius: 8px;
+      background: #fbf8ff;
+      padding: 9px;
+      color: #3d315a;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .theory-map-item span {
+      display: block;
+      margin-top: 4px;
+      color: #695b80;
+      font-weight: 650;
+      font-size: 12px;
     }
 
     .visual {
@@ -818,11 +913,16 @@
     @media (max-width: 620px) {
       .sample,
       .cost-strip,
-      .section-grid {
+      .section-grid,
+      .theory-layout {
         grid-template-columns: 1fr;
       }
 
-      .section.full { grid-column: auto; }
+      .section.full,
+      .theory-hero,
+      .theory-wide {
+        grid-column: auto;
+      }
       .card-head { grid-template-columns: 1fr; }
       .tools { display: grid; }
     }
@@ -2140,6 +2240,51 @@
                   "After choosing s[idx..i], recurse from i + 1, not idx + 1; otherwise chunks overlap.",
                   "The undo step is set.remove(part), exactly matching the earlier set.add(part)."
             ]
+      },
+      {
+            "name": "ExpressionAddOperators",
+            "source": "../com/arvind/revision/backtracking/ExpressionAddOperators.java",
+            "label": "Choose chunk, then operator",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/expression-add-operators/",
+            "description": "Given a string of digits and a target value, insert +, -, or * between digit chunks so the final expression evaluates to the target. Digits must stay in order, chunks can be more than one digit, and chunks cannot have leading zeroes.",
+            "time": "O(4^n)",
+            "space": "O(n) recursion + output",
+            "timeWhy": "At every split point you choose the next digit chunk length, and after the first chunk there are three operator choices. This creates an exponential search tree; n is small, so exhaustive backtracking is expected.",
+            "structures": "Recursion, path string, running sum, signed last operand",
+            "input": "num = \"232\", target = 8",
+            "output": "[\"2*3+2\", \"2+3*2\"]",
+            "recognize": "When you must insert operators between ordered digits and respect normal multiplication precedence without evaluating the full expression at the end.",
+            "visual": [
+                  [
+                        "2",
+                        "+3",
+                        "*2"
+                  ],
+                  [
+                        "sum before * = 5",
+                        "last = 3",
+                        "repair: 5 - 3 + 3*2 = 8"
+                  ],
+                  [
+                        "2",
+                        "*3",
+                        "+2"
+                  ]
+            ],
+            "visualText": "Think of multiplication as rewriting the previous operand contribution. The running sum already contains last, so remove last and add last * current.",
+            "core": "At each index, try every valid digit chunk. The first chunk starts the expression with no operator. For + and -, update the running sum directly and store last as signed. For *, repair precedence with sum - last + last * current and store last * current.",
+            "bruteForce": "Generate every possible expression string, then parse/evaluate it at the end. It is easier to reason about but wastes work and still needs a parser that handles multiplication precedence.",
+            "alternates": [
+                  "Carry the expression as a StringBuilder instead of string concatenation to reduce temporary objects.",
+                  "Use long for sum, last, and chunk values so intermediate calculations do not overflow int."
+            ],
+            "gotchas": [
+                  "The first number is special: do not prepend +, -, or * before it.",
+                  "Leading zero rule: if the chunk starts with 0, only the single digit 0 is valid; stop longer chunks from that index.",
+                  "For subtraction, store last as negative so later multiplication repair works for expressions like 1-2*3.",
+                  "For multiplication, new sum is sum - last + last * current; new last is last * current for chained multiplication."
+            ]
       }
 ];
 
@@ -2422,6 +2567,19 @@
                   "Undo step: remove the exact substring after recursion so sibling choices start with the clean set."
             ],
             "skeleton": "dfs(idx, used):\n  Base: if idx == s.length\n    update max with used.size\n    return\n\n  State: idx, used substrings\n\n  for end from idx to n-1:\n    part = s[idx..end]\n\n    Block: if part already used\n      continue\n\n    Transition: choose part\n      used.add(part)\n      dfs(end + 1, used)\n      undo used.remove(part)"
+      },
+      "ExpressionAddOperators": {
+            "prompt": "Before reading: what previous contribution must multiplication replace?",
+            "steps": [
+                  "Base/save condition: idx == num.length() and sum == target means the built expression is valid.",
+                  "State carried: idx, running sum, signed last operand, path, and result list.",
+                  "Allowed transition: choose every digit chunk num[idx..i] that does not violate the leading-zero rule.",
+                  "First chunk transition: place the number as-is with no operator before it.",
+                  "+ transition: sum + current, last = current.",
+                  "- transition: sum - current, last = -current.",
+                  "* transition: sum - last + last * current, last = last * current."
+            ],
+            "skeleton": "dfs(idx, sum, last, path):\n  Base: if idx == n\n    if sum == target add path\n    return\n\n  for end from idx to n-1:\n    chunk = num[idx..end]\n\n    Block: if chunk starts with 0 and length > 1\n      stop longer chunks\n\n    if idx == 0:\n      dfs(end + 1, chunkValue, chunkValue, chunk)\n    else:\n      dfs(end + 1, sum + value, value, path + \"+\" + chunk)\n      dfs(end + 1, sum - value, -value, path + \"-\" + chunk)\n      dfs(end + 1, sum - last + last * value, last * value, path + \"*\" + chunk)"
       }
 };
 
@@ -2452,7 +2610,8 @@
       "RatMaze": "Path is the answer string\nmark current cell\ntry U/R/D/L\nappend move char -> dfs -> unmark",
       "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
       "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path",
-      "SplitStringIntoMaxNuoOfUniqueStrings": "Try every chunk s[idx..i]\nif unseen: add -> recurse i+1 -> remove\nbase updates max with set size"
+      "SplitStringIntoMaxNuoOfUniqueStrings": "Try every chunk s[idx..i]\nif unseen: add -> recurse i+1 -> remove\nbase updates max with set size",
+      "ExpressionAddOperators": "Choose a digit chunk first\nfirst chunk has no operator\n* repairs precedence: sum - last + last * current"
 };
 
     const solvedOrder = [
@@ -2482,7 +2641,8 @@
       "WordSearch",
       "NQueens",
       "RatMaze",
-      "SplitStringIntoMaxNuoOfUniqueStrings"
+      "SplitStringIntoMaxNuoOfUniqueStrings",
+      "ExpressionAddOperators"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
@@ -2490,7 +2650,7 @@
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
-      card.isTheory = card.name.endsWith("Theory");
+      card.isTheory = card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
     });
@@ -2582,7 +2742,111 @@
       `;
     }
 
+    function renderTheoryCard(card, extraClass = "") {
+      const tradeoffs = card.alternates || [];
+      if (card.referenceOnly) {
+        const links = card.referenceLinks || [];
+        return `
+          <article class="card theory ${extraClass}">
+            <div class="card-head">
+              <div>
+                <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+                ${renderRevisionControls(card)}
+                <div class="meta-line">
+                  <span>${escapeHtml(card.label)}</span>
+                  <span>Theory</span>
+                </div>
+              </div>
+              <span class="difficulty theory">Theory</span>
+            </div>
+            <div class="body">
+              <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
+              <div class="section theory-hero">
+                <b>Reference material</b>
+                ${escapeHtml(card.description)}
+                <div class="reference-links">
+                  ${links.map(link => `<a class="reference-link" href="${escapeHtml(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`).join("")}
+                </div>
+                ${card.previewImage ? `<a href="${escapeHtml(card.previewImage)}" target="_blank" rel="noreferrer"><img class="reference-preview" src="${escapeHtml(card.previewImage)}" alt="${escapeHtml(card.name)} reference preview"></a>` : ""}
+              </div>
+            </div>
+          </article>
+        `;
+      }
+      return `
+        <article class="card theory ${extraClass}">
+          <div class="card-head">
+            <div>
+              <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+              ${renderRevisionControls(card)}
+              <div class="meta-line">
+                <span>${escapeHtml(card.label)}</span>
+                <span>Theory</span>
+                <a href="${escapeHtml(card.source)}" target="_blank" rel="noreferrer">Source</a>
+              </div>
+            </div>
+            <span class="difficulty theory">Theory</span>
+          </div>
+          <div class="body">
+            <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
+            <div class="theory-layout">
+              <div class="section theory-hero">
+                <b>Core idea</b>
+                ${escapeHtml(card.description)}
+              </div>
+              <div class="section">
+                <b>Decision map</b>
+                <div class="theory-map">${card.visual.map(row => `
+                  <div class="theory-map-item">
+                    ${escapeHtml(row[0] ?? "")}
+                    <span>${escapeHtml(row.slice(1).join(" → "))}</span>
+                  </div>
+                `).join("")}</div>
+                ${renderSteps(card.steps)}
+              </div>
+              <div class="section">
+                <b>Use this when</b>
+                ${escapeHtml(card.recognize)}
+              </div>
+              <div class="section">
+                <b>Mental picture</b>
+                ${escapeHtml(card.visualText)}
+              </div>
+              <div class="section">
+                <b>Complexity snapshot</b>
+                <div class="cost-strip">
+                  <div class="cost-item">
+                    <span class="cost-label">Time</span>
+                    <span class="cost-value">${escapeHtml(card.time)}</span>
+                  </div>
+                  <div class="cost-item">
+                    <span class="cost-label">Space</span>
+                    <span class="cost-value">${escapeHtml(card.space)}</span>
+                  </div>
+                  <div class="cost-item">
+                    <span class="cost-label">Structures</span>
+                    <span class="cost-value">${escapeHtml(card.structures)}</span>
+                  </div>
+                </div>
+                ${card.timeWhy ? `<span class="hint">${escapeHtml(card.timeWhy)}</span>` : ""}
+              </div>
+              <div class="section">
+                <b>Implementation shape</b>
+                <code>${escapeHtml(card.skeleton)}</code>
+              </div>
+              ${tradeoffs.length ? `<div class="section alternates theory-wide"><b>Tradeoffs</b><ul class="gotchas">${tradeoffs.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>` : ""}
+              <div class="section full">
+                <b>Watch outs</b>
+                <ul class="gotchas">${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
     function renderFullCard(card, extraClass = "") {
+      if (card.isTheory) return renderTheoryCard(card, extraClass);
       const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
       const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
       return `
@@ -2671,6 +2935,10 @@
 
     function renderQuickReview(cardsToRender) {
       return `<div class="quick-review">${cardsToRender.map(card => {
+        if (card.referenceOnly) {
+          return `<div class="quick-item">${renderTheoryCard(card)}</div>`;
+        }
+
         const expanded = expandedQuickCards.has(card.name);
         return `
           <div class="quick-item">
@@ -2747,8 +3015,8 @@
           card.core,
           card.prompt,
           card.skeleton,
-          card.steps.join(" "),
-          card.gotchas.join(" ")
+          (card.steps || []).join(" "),
+          (card.gotchas || []).join(" ")
         ].join(" ").toLowerCase();
         return !query || haystack.includes(query);
       });
@@ -2836,7 +3104,8 @@
       window.addEventListener("afterprint", restoreAfterPrint);
       window.setTimeout(() => window.print(), 50);
     });
-    totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
+    const countLabel = cards.every(card => card.referenceOnly) ? "reference" : "problem";
+    totalCountEl.textContent = `${cards.length} ${countLabel}${cards.length === 1 ? "" : "s"}`;
     render();
   </script>
 </body>

@@ -52,10 +52,18 @@ const pageConfigs = {
     title: "Greedy Revision",
     label: "greedy",
     subtitle: "Fast recall cards for the current greedy package. Look for the local choice that locks in the best outcome, then check the sample and bug magnets before opening the Java file."
+  },
+  graphs: {
+    title: "Graphs Revision",
+    label: "graphs",
+    subtitle: "Reference notes for graph fundamentals and Java representation. Open the linked workbook notes or visual guide when revising."
   }
 };
 
 const ignoredJavaPackages = new Set(["common"]);
+const ignoredJavaClasses = new Set([
+  "greedy/RemoveDuplicateLetters"
+]);
 const requestedPatterns = process.argv.slice(2);
 const patterns = requestedPatterns.length ? requestedPatterns : discoverPatterns();
 
@@ -194,6 +202,7 @@ function javaClassesFor(pattern) {
     .readdirSync(javaDir, { withFileTypes: true })
     .filter(entry => entry.isFile() && entry.name.endsWith(".java"))
     .map(entry => entry.name.replace(/\.java$/, ""))
+    .filter(className => !ignoredJavaClasses.has(`${pattern}/${className}`))
     .sort((left, right) => {
       const leftStat = fs.statSync(path.join(javaDir, `${left}.java`));
       const rightStat = fs.statSync(path.join(javaDir, `${right}.java`));

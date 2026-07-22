@@ -317,6 +317,14 @@
         "greedy/MinimumAddToMakeParenthesisValid"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-07-22",
+      "solved": 1,
+      "cardsSynced": [
+        "backtracking/ExpressionAddOperators"
+      ],
+      "notes": ""
     }
   ]
 }

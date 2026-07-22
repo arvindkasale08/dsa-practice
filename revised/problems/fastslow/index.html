@@ -239,6 +239,10 @@
       box-shadow: 0 14px 30px rgba(79, 47, 159, .18);
     }
 
+    .cards .card.theory {
+      grid-column: 1 / -1;
+    }
+
     .card:hover {
       box-shadow: var(--shadow-hover);
       transform: translateY(-2px);
@@ -261,6 +265,44 @@
 
     .card.theory .card-head {
       border-bottom-color: #b79ee8;
+    }
+
+    .reference-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .reference-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      border: 1px solid #b79ee8;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #3f1f8f;
+      padding: 6px 11px;
+      font-size: 13px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .reference-link:hover {
+      background: #eadfff;
+    }
+
+    .reference-preview {
+      display: block;
+      width: min(100%, 760px);
+      max-height: 460px;
+      object-fit: contain;
+      object-position: top left;
+      border: 1px solid #b79ee8;
+      border-radius: 8px;
+      background: white;
+      margin-top: 12px;
     }
 
     h2 {
@@ -397,6 +439,12 @@
       background: var(--red-soft);
       border-color: #edc5bd;
       color: #773229;
+    }
+
+    .difficulty.theory {
+      background: #eadfff;
+      border-color: #b79ee8;
+      color: #3f1f8f;
     }
 
     .leetcode {
@@ -550,6 +598,53 @@
       background: #fff8e8;
       color: #60430d;
       font-weight: 700;
+    }
+
+    .theory-layout {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 10px;
+    }
+
+    .theory-layout .section {
+      min-height: auto;
+    }
+
+    .theory-hero,
+    .theory-wide {
+      grid-column: 1 / -1;
+    }
+
+    .theory-hero {
+      border-color: #9d85db;
+      background: #fff;
+      color: #30224f;
+      font-size: 15px;
+    }
+
+    .theory-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .theory-map-item {
+      border: 1px solid #d8c9ff;
+      border-radius: 8px;
+      background: #fbf8ff;
+      padding: 9px;
+      color: #3d315a;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .theory-map-item span {
+      display: block;
+      margin-top: 4px;
+      color: #695b80;
+      font-weight: 650;
+      font-size: 12px;
     }
 
     .visual {
@@ -818,11 +913,16 @@
     @media (max-width: 620px) {
       .sample,
       .cost-strip,
-      .section-grid {
+      .section-grid,
+      .theory-layout {
         grid-template-columns: 1fr;
       }
 
-      .section.full { grid-column: auto; }
+      .section.full,
+      .theory-hero,
+      .theory-wide {
+        grid-column: auto;
+      }
       .card-head { grid-template-columns: 1fr; }
       .tools { display: grid; }
     }
@@ -1411,7 +1511,7 @@
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
-      card.isTheory = card.name.endsWith("Theory");
+      card.isTheory = card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
     });
@@ -1503,7 +1603,111 @@
       `;
     }
 
+    function renderTheoryCard(card, extraClass = "") {
+      const tradeoffs = card.alternates || [];
+      if (card.referenceOnly) {
+        const links = card.referenceLinks || [];
+        return `
+          <article class="card theory ${extraClass}">
+            <div class="card-head">
+              <div>
+                <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+                ${renderRevisionControls(card)}
+                <div class="meta-line">
+                  <span>${escapeHtml(card.label)}</span>
+                  <span>Theory</span>
+                </div>
+              </div>
+              <span class="difficulty theory">Theory</span>
+            </div>
+            <div class="body">
+              <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
+              <div class="section theory-hero">
+                <b>Reference material</b>
+                ${escapeHtml(card.description)}
+                <div class="reference-links">
+                  ${links.map(link => `<a class="reference-link" href="${escapeHtml(link.href)}" target="_blank" rel="noreferrer">${escapeHtml(link.label)}</a>`).join("")}
+                </div>
+                ${card.previewImage ? `<a href="${escapeHtml(card.previewImage)}" target="_blank" rel="noreferrer"><img class="reference-preview" src="${escapeHtml(card.previewImage)}" alt="${escapeHtml(card.name)} reference preview"></a>` : ""}
+              </div>
+            </div>
+          </article>
+        `;
+      }
+      return `
+        <article class="card theory ${extraClass}">
+          <div class="card-head">
+            <div>
+              <h2 class="problem-title"><span><span class="problem-no">${escapeHtml(card.problemLabel)}</span> ${escapeHtml(card.name)}</span></h2>
+              ${renderRevisionControls(card)}
+              <div class="meta-line">
+                <span>${escapeHtml(card.label)}</span>
+                <span>Theory</span>
+                <a href="${escapeHtml(card.source)}" target="_blank" rel="noreferrer">Source</a>
+              </div>
+            </div>
+            <span class="difficulty theory">Theory</span>
+          </div>
+          <div class="body">
+            <div class="recall-prompt">${escapeHtml(card.prompt)}</div>
+            <div class="theory-layout">
+              <div class="section theory-hero">
+                <b>Core idea</b>
+                ${escapeHtml(card.description)}
+              </div>
+              <div class="section">
+                <b>Decision map</b>
+                <div class="theory-map">${card.visual.map(row => `
+                  <div class="theory-map-item">
+                    ${escapeHtml(row[0] ?? "")}
+                    <span>${escapeHtml(row.slice(1).join(" → "))}</span>
+                  </div>
+                `).join("")}</div>
+                ${renderSteps(card.steps)}
+              </div>
+              <div class="section">
+                <b>Use this when</b>
+                ${escapeHtml(card.recognize)}
+              </div>
+              <div class="section">
+                <b>Mental picture</b>
+                ${escapeHtml(card.visualText)}
+              </div>
+              <div class="section">
+                <b>Complexity snapshot</b>
+                <div class="cost-strip">
+                  <div class="cost-item">
+                    <span class="cost-label">Time</span>
+                    <span class="cost-value">${escapeHtml(card.time)}</span>
+                  </div>
+                  <div class="cost-item">
+                    <span class="cost-label">Space</span>
+                    <span class="cost-value">${escapeHtml(card.space)}</span>
+                  </div>
+                  <div class="cost-item">
+                    <span class="cost-label">Structures</span>
+                    <span class="cost-value">${escapeHtml(card.structures)}</span>
+                  </div>
+                </div>
+                ${card.timeWhy ? `<span class="hint">${escapeHtml(card.timeWhy)}</span>` : ""}
+              </div>
+              <div class="section">
+                <b>Implementation shape</b>
+                <code>${escapeHtml(card.skeleton)}</code>
+              </div>
+              ${tradeoffs.length ? `<div class="section alternates theory-wide"><b>Tradeoffs</b><ul class="gotchas">${tradeoffs.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>` : ""}
+              <div class="section full">
+                <b>Watch outs</b>
+                <ul class="gotchas">${card.gotchas.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
     function renderFullCard(card, extraClass = "") {
+      if (card.isTheory) return renderTheoryCard(card, extraClass);
       const bruteForce = card.bruteForce || "Start with the simplest correct approach that directly follows the problem statement, then compare it with the optimized move above.";
       const alternates = card.alternates || ["No strong alternate approach needed for quick revision; focus on the core move."];
       return `
@@ -1592,6 +1796,10 @@
 
     function renderQuickReview(cardsToRender) {
       return `<div class="quick-review">${cardsToRender.map(card => {
+        if (card.referenceOnly) {
+          return `<div class="quick-item">${renderTheoryCard(card)}</div>`;
+        }
+
         const expanded = expandedQuickCards.has(card.name);
         return `
           <div class="quick-item">
@@ -1668,8 +1876,8 @@
           card.core,
           card.prompt,
           card.skeleton,
-          card.steps.join(" "),
-          card.gotchas.join(" ")
+          (card.steps || []).join(" "),
+          (card.gotchas || []).join(" ")
         ].join(" ").toLowerCase();
         return !query || haystack.includes(query);
       });
@@ -1757,7 +1965,8 @@
       window.addEventListener("afterprint", restoreAfterPrint);
       window.setTimeout(() => window.print(), 50);
     });
-    totalCountEl.textContent = `${cards.length} problem${cards.length === 1 ? "" : "s"}`;
+    const countLabel = cards.every(card => card.referenceOnly) ? "reference" : "problem";
+    totalCountEl.textContent = `${cards.length} ${countLabel}${cards.length === 1 ? "" : "s"}`;
     render();
   </script>
 </body>
