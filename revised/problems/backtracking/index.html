@@ -2285,6 +2285,55 @@
                   "For subtraction, store last as negative so later multiplication repair works for expressions like 1-2*3.",
                   "For multiplication, new sum is sum - last + last * current; new last is last * current for chained multiplication."
             ]
+      },
+      {
+            "name": "FactorCombinations",
+            "source": "../com/arvind/revision/backtracking/FactorCombinations.java",
+            "label": "Nondecreasing factor DFS",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/factor-combinations/",
+            "description": "Given an integer n, return all ways to express n as a product of factors between 2 and n - 1. Each answer should multiply back to n, and the same factors in a different order should not be repeated.",
+            "time": "Output-sensitive / exponential",
+            "space": "O(log n) path + output",
+            "timeWhy": "The DFS explores valid factor splits. The number of combinations can grow quickly, and every valid combination must be output.",
+            "structures": "Recursion, path list, result list",
+            "input": "n = 32",
+            "output": "[[2,16], [2,2,8], [2,2,2,4], [2,2,2,2,2], [2,4,4], [4,8]]",
+            "recognize": "When you need all multiplicative decompositions of a number, but order should not create duplicates.",
+            "visual": [
+                  [
+                        "32",
+                        "pick 2",
+                        "remaining 16"
+                  ],
+                  [
+                        "start = 2",
+                        "pick 2",
+                        "remaining 8"
+                  ],
+                  [
+                        "path [2,2]",
+                        "add 8",
+                        "[2,2,8]"
+                  ],
+                  [
+                        "never go back",
+                        "to factor < start",
+                        "no [2,8,2]"
+                  ]
+            ],
+            "visualText": "Picture the factor list as an increasing staircase. Once you step onto factor 3, you never step back to 2 in that same path.",
+            "core": "Carry a start factor to force nondecreasing combinations. For each divisor i from start to sqrt(remaining), choose i, optionally save path + complement, then recurse into complement with start still at i.",
+            "bruteForce": "Try every factor at every step and remove duplicate lists later. It works as a mental baseline, but it creates repeated permutations like [2,3,2] and [3,2,2].",
+            "alternates": [
+                  "Instead of recursing down to number == 1 to save path + complement, you can add the complement directly when it is at least the chosen factor.",
+                  "A set of sorted lists can remove duplicates, but carrying start is cleaner and avoids generating them."
+            ],
+            "gotchas": [
+                  "Do not include 1 or n alone as factors.",
+                  "Carry start forward; otherwise the same product appears in multiple orders.",
+                  "Only add complement when complement >= current factor, or the order becomes decreasing."
+            ]
       }
 ];
 
@@ -2580,6 +2629,18 @@
                   "* transition: sum - last + last * current, last = last * current."
             ],
             "skeleton": "dfs(idx, sum, last, path):\n  Base: if idx == n\n    if sum == target add path\n    return\n\n  for end from idx to n-1:\n    chunk = num[idx..end]\n\n    Block: if chunk starts with 0 and length > 1\n      stop longer chunks\n\n    if idx == 0:\n      dfs(end + 1, chunkValue, chunkValue, chunk)\n    else:\n      dfs(end + 1, sum + value, value, path + \"+\" + chunk)\n      dfs(end + 1, sum - value, -value, path + \"-\" + chunk)\n      dfs(end + 1, sum - last + last * value, last * value, path + \"*\" + chunk)"
+      },
+      "FactorCombinations": {
+            "prompt": "Before reading: what prevents [2,3,2] from duplicating [2,2,3]?",
+            "steps": [
+                  "Base/save condition: remaining number becomes 1 and the path has at least two factors.",
+                  "State carried: start factor, remaining number, current factor path, result list.",
+                  "Allowed transition: try factor i from start upward while i can still divide the remaining number.",
+                  "Shortcut save: if i divides remaining and complement >= i, path + i + complement is a valid answer.",
+                  "Deeper transition: after choosing i, recurse on remaining / i with start = i.",
+                  "Undo step: remove the factor or complement you just added before trying the next i."
+            ],
+            "skeleton": "dfs(start, remaining, path):\n  Base: if remaining == 1 AND path has at least two factors\n    add copy(path)\n    return\n\n  for factor from start to sqrt(remaining):\n    Block: if remaining % factor != 0\n      continue\n\n    complement = remaining / factor\n\n    Transition A: save direct pair if complement >= factor\n      path.add(factor)\n      path.add(complement)\n      save copy through base/direct save\n      undo complement\n\n    Transition B: split complement further\n      dfs(factor, complement, path)\n      undo factor"
       }
 };
 
@@ -2611,7 +2672,8 @@
       "CombinationSumIII": "Need target == 0 AND digitsLeft == 0\npick digit once -> i+1\nskip digit -> i+1",
       "LetterCombinationsOfPhoneNumber": "At each digit, choose exactly one mapped letter\nappend -> recurse idx+1 -> undo\nbase saves full-length path",
       "SplitStringIntoMaxNuoOfUniqueStrings": "Try every chunk s[idx..i]\nif unseen: add -> recurse i+1 -> remove\nbase updates max with set size",
-      "ExpressionAddOperators": "Choose a digit chunk first\nfirst chunk has no operator\n* repairs precedence: sum - last + last * current"
+      "ExpressionAddOperators": "Choose a digit chunk first\nfirst chunk has no operator\n* repairs precedence: sum - last + last * current",
+      "FactorCombinations": "Carry start factor to keep path nondecreasing\nchoose divisor i -> remaining / i\nsave complement only if complement >= i"
 };
 
     const solvedOrder = [
@@ -2642,7 +2704,8 @@
       "NQueens",
       "RatMaze",
       "SplitStringIntoMaxNuoOfUniqueStrings",
-      "ExpressionAddOperators"
+      "ExpressionAddOperators",
+      "FactorCombinations"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
