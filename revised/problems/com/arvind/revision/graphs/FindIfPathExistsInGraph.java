@@ -4,6 +4,33 @@ import java.util.*;
 
 public class FindIfPathExistsInGraph {
 
+    public boolean validPathDFS(int n, int[][] edges, int source, int destination) {
+        List<List<Integer>> graph = new ArrayList<>();
+        for (int i=0; i<n; i++) {
+            graph.add(i, new ArrayList<>());
+        }
+        for (int[] edge : edges) {
+            graph.get(edge[0]).add(edge[1]);
+            graph.get(edge[1]).add(edge[0]);
+        }
+        int[] visited = new int[n];
+
+        return dfs(source, destination, graph, visited);
+    }
+
+    private boolean dfs(int node, int destination, List<List<Integer>> graph, int[] visited) {
+
+        if (destination == node) {
+            return true;
+        }
+        if (visited[node] == 1) return false;
+        visited[node] = 1;
+        for (int neighbor : graph.get(node)) {
+            if (dfs(neighbor, destination, graph, visited)) return true;
+        }
+        return false;
+    }
+
     public boolean validPath(int n, int[][] edges, int source, int destination) {
         List<List<Integer>> graph = new ArrayList<>();
         for (int i=0; i<n; i++) {
@@ -44,6 +71,6 @@ public class FindIfPathExistsInGraph {
         int dest = 2;
 
         FindIfPathExistsInGraph solution = new FindIfPathExistsInGraph();
-        System.out.println(solution.validPath(n, edges, source, dest));
+        System.out.println(solution.validPathDFS(n, edges, source, dest));
     }
 }
