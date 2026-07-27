@@ -336,9 +336,10 @@
     },
     {
       "date": "2026-07-27",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "graphs/BFSGraph"
+        "graphs/BFSGraph",
+        "graphs/DFSGraph"
       ],
       "notes": ""
     }
