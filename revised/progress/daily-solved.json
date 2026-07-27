@@ -333,6 +333,14 @@
         "backtracking/FactorCombinations"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-07-27",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/BFSGraph"
+      ],
+      "notes": ""
     }
   ]
 }

@@ -1032,52 +1032,104 @@
   <script>
     const cards = [
       {
-        "name": "GraphTheoryReference",
-        "source": "graph-theory-essentials.txt",
-        "label": "Reference files",
-        "difficulty": "Theory",
-        "leetcode": "",
-        "referenceOnly": true,
-        "description": "Your graph-theory reference notes and visual guides are saved beside this page. Open the text files for the extracted notes, or open the images for the visual summaries.",
-        "time": "Reference",
-        "space": "Reference",
-        "structures": "Graph theory notes + visual guide",
-        "prompt": "Open the linked reference when revising graph fundamentals or Java graph representation.",
-        "definingMove": "Use this as the source reference\nnot a generated summary",
-        "gotchas": [
-          "Reference-only card."
-        ],
-        "referenceLinks": [
-          {
-            "label": "Open fundamentals notes",
-            "href": "graph-theory-essentials.txt"
-          },
-          {
-            "label": "Open fundamentals visual guide",
-            "href": "graph-theory-essentials.png"
-          },
-          {
-            "label": "Open representation/traversal notes",
-            "href": "graph-representation-traversal-guide.txt"
-          },
-          {
-            "label": "Open representation/traversal visual guide",
-            "href": "graph-representation-traversal-guide.png"
-          }
-        ],
-        "previewImage": "graph-representation-traversal-guide.png"
+            "name": "GraphTheoryReference",
+            "source": "graph-theory-essentials.txt",
+            "label": "Reference files",
+            "difficulty": "Theory",
+            "leetcode": "",
+            "referenceOnly": true,
+            "description": "Your graph-theory reference notes and visual guides are saved beside this page. Open the text files for the extracted notes, or open the images for the visual summaries.",
+            "time": "Reference",
+            "space": "Reference",
+            "structures": "Graph theory notes + visual guide",
+            "prompt": "Open the linked reference when revising graph fundamentals or Java graph representation.",
+            "definingMove": "Use this as the source reference\nnot a generated summary",
+            "gotchas": [
+                  "Reference-only card."
+            ],
+            "referenceLinks": [
+                  {
+                        "label": "Open fundamentals notes",
+                        "href": "graph-theory-essentials.txt"
+                  },
+                  {
+                        "label": "Open fundamentals visual guide",
+                        "href": "graph-theory-essentials.png"
+                  },
+                  {
+                        "label": "Open representation/traversal notes",
+                        "href": "graph-representation-traversal-guide.txt"
+                  },
+                  {
+                        "label": "Open representation/traversal visual guide",
+                        "href": "graph-representation-traversal-guide.png"
+                  }
+            ],
+            "previewImage": "graph-representation-traversal-guide.png"
+      },
+      {
+            "name": "BFSGraph",
+            "source": "../com/arvind/revision/graphs/BFSGraph.java",
+            "label": "Traverse level by level",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given a vertex count and undirected edges, build an adjacency list and return a breadth-first traversal. Start BFS again from every still-unvisited vertex so disconnected components are included.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "Building the adjacency list touches each edge twice, and BFS processes every vertex and adjacency entry once.",
+            "structures": "Adjacency list, queue, visited array, result list",
+            "input": "vertices = 4, edges = [[0,1],[0,3],[1,2],[3,2]]",
+            "output": "[0, 1, 3, 2]",
+            "recognize": "When nodes must be visited level by level, when you need minimum edges in an unweighted graph, or when every connected component must be traversed.",
+            "visual": [
+                  [
+                        "0"
+                  ],
+                  [
+                        "1",
+                        "3"
+                  ],
+                  [
+                        "2"
+                  ]
+            ],
+            "visualText": "Queue waves: visit 0, then all nodes one edge away (1 and 3), then node 2. The outer loop starts another wave if a disconnected vertex remains.",
+            "core": "For each unvisited vertex, enqueue it and mark it visited immediately. Repeatedly dequeue one node, record it, then enqueue each unseen neighbor.",
+            "bruteForce": "With an adjacency matrix, BFS can scan all V possible neighbors for every removed node. It is correct, but traversal becomes O(V²) even when the graph is sparse.",
+            "alternates": [
+                  "DFS uses recursion or a stack and explores one branch deeply before returning.",
+                  "An adjacency matrix is simpler for dense graphs or constant-time edge checks, but costs O(V²) space."
+            ],
+            "gotchas": [
+                  "Mark a node visited when it is enqueued, not when it is removed, or multiple parents may enqueue it.",
+                  "For an undirected graph, add both u -> v and v -> u.",
+                  "A single BFS call misses disconnected components; keep the outer vertex loop."
+            ]
       }
-    ];
+];
 
-    const recallDetails = {};
+    const recallDetails = {
+      "BFSGraph": {
+            "prompt": "Before reading: when exactly should a neighbor be marked visited, and why is there an outer loop over every vertex?",
+            "steps": [
+                  "Build both directions in the adjacency list.",
+                  "For each unseen component root, enqueue and mark it.",
+                  "Poll one node, record it, and enqueue each unseen neighbor.",
+                  "Continue until the queue is empty, then check for another component."
+            ],
+            "skeleton": "build adjacency list from edges\n\nfor each vertex\n  if unseen\n    mark + enqueue vertex\n    while queue not empty\n      node = dequeue\n      add node to result\n      for each neighbor\n        if unseen\n          mark + enqueue neighbor"
+      }
+};
 
     const definingMoves = {
-      "GraphTheoryReference": "Use this as the source reference\nnot a generated summary"
-    };
+      "GraphTheoryReference": "Use this as the source reference\nnot a generated summary",
+      "BFSGraph": "Mark when enqueued, then process queue level by level\nouter loop restarts BFS for disconnected components"
+};
 
     const solvedOrder = [
-      "GraphTheoryReference"
-    ];
+      "GraphTheoryReference",
+      "BFSGraph"
+];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
     cards.forEach(card => Object.assign(card, recallDetails[card.name], {
