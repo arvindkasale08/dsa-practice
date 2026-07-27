@@ -336,10 +336,11 @@
     },
     {
       "date": "2026-07-27",
-      "solved": 2,
+      "solved": 3,
       "cardsSynced": [
         "graphs/BFSGraph",
-        "graphs/DFSGraph"
+        "graphs/DFSGraph",
+        "graphs/FindIfPathExistsInGraph"
       ],
       "notes": ""
     }

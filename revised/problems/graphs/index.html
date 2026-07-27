@@ -1143,6 +1143,40 @@
                   "A single DFS call covers only one connected component; retain the outer vertex loop.",
                   "Traversal order depends on the order neighbors were inserted, so several DFS orders can be valid."
             ]
+      },
+      {
+            "name": "FindIfPathExistsInGraph",
+            "source": "../com/arvind/revision/graphs/FindIfPathExistsInGraph.java",
+            "label": "BFS until destination is reachable",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/find-if-path-exists-in-graph/",
+            "description": "Given an undirected graph with vertices 0 through n - 1, determine whether any path connects the source vertex to the destination vertex.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "Building the adjacency list touches both directions of every edge, and BFS processes each reachable vertex and adjacency entry at most once.",
+            "structures": "Adjacency list, queue, distance/visited array",
+            "input": "n = 3, edges = [[0,1],[1,2],[2,0]], source = 0, destination = 2",
+            "output": "true",
+            "recognize": "When the question asks whether two vertices are connected by any route in an unweighted graph.",
+            "visual": [
+                  [
+                        "0",
+                        "1",
+                        "2"
+                  ]
+            ],
+            "visualText": "Start a wave at source 0. Reaching 1 exposes 2; once destination 2 receives a finite distance, a path exists.",
+            "core": "Build both directions of every edge, mark the source reachable, then BFS through unseen neighbors. The destination is connected if it no longer has the unreachable sentinel.",
+            "bruteForce": "Enumerate possible walks from the source without a visited rule. Cycles repeat the same vertices and can make the search run forever.",
+            "alternates": [
+                  "DFS gives the same O(V + E) reachability answer using recursion or an explicit stack.",
+                  "A boolean visited array is sufficient when only existence matters; distances are useful when hop counts may also be needed."
+            ],
+            "gotchas": [
+                  "Because the graph is undirected, add both u -> v and v -> u.",
+                  "Mark the source before BFS; source equal to destination must return true even without edges.",
+                  "Reachability needs only visited state. Distance relaxation is valid here, but more state than the question requires."
+            ]
       }
 ];
 
@@ -1166,19 +1200,31 @@
                   "Recurse into each unseen neighbor; return to continue siblings."
             ],
             "skeleton": "dfs(node)\n  mark node visited\n  add node to result\n  for each neighbor\n    if unseen\n      dfs(neighbor)\n\nfor each vertex\n  if unseen\n    dfs(vertex)"
+      },
+      "FindIfPathExistsInGraph": {
+            "prompt": "Before reading: what single state change proves that the destination is reachable?",
+            "steps": [
+                  "Create one adjacency list for every vertex and add each edge in both directions.",
+                  "Mark the source reachable and place it in the queue.",
+                  "Remove one vertex and discover each still-unreached neighbor.",
+                  "After BFS, check whether the destination was ever reached."
+            ],
+            "skeleton": "build undirected adjacency list\nmark source reachable\nenqueue source\n\nwhile queue not empty\n  node = dequeue\n  for each neighbor\n    if neighbor is unreached\n      mark neighbor reachable\n      enqueue neighbor\n\nreturn destination is reachable"
       }
 };
 
     const definingMoves = {
       "GraphTheoryReference": "Use this as the source reference\nnot a generated summary",
       "BFSGraph": "Mark when enqueued, then process queue level by level\nouter loop restarts BFS for disconnected components",
-      "DFSGraph": "Mark on entry, record node, recurse into unseen neighbors\nreturn naturally resumes the remaining siblings"
+      "DFSGraph": "Mark on entry, record node, recurse into unseen neighbors\nreturn naturally resumes the remaining siblings",
+      "FindIfPathExistsInGraph": "Start BFS at source and mark every discovered neighbor\nreachable destination means a path exists"
 };
 
     const solvedOrder = [
       "GraphTheoryReference",
       "BFSGraph",
-      "DFSGraph"
+      "DFSGraph",
+      "FindIfPathExistsInGraph"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
