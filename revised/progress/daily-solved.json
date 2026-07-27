@@ -336,11 +336,12 @@
     },
     {
       "date": "2026-07-27",
-      "solved": 3,
+      "solved": 4,
       "cardsSynced": [
         "graphs/BFSGraph",
         "graphs/DFSGraph",
-        "graphs/FindIfPathExistsInGraph"
+        "graphs/FindIfPathExistsInGraph",
+        "graphs/NumberOfProvinces"
       ],
       "notes": ""
     }

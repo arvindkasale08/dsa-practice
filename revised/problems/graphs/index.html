@@ -1179,6 +1179,43 @@
                   "DFS must mark visited before exploring neighbors or an undirected edge immediately recurses back to its parent.",
                   "Reachability needs only visited state. Distance relaxation is valid here, but more state than the question requires."
             ]
+      },
+      {
+            "name": "NumberOfProvinces",
+            "source": "../com/arvind/revision/graphs/NumberOfProvinces.java",
+            "label": "Count DFS component starts",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/number-of-provinces/",
+            "description": "Given a symmetric city-connection matrix, return how many separate groups of directly or indirectly connected cities exist.",
+            "time": "O(n²)",
+            "space": "O(n²)",
+            "timeWhy": "The implementation scans every matrix cell to build an adjacency list. Across all DFS calls, it then visits every stored connection once.",
+            "structures": "Connection matrix, adjacency list, visited array, recursion stack",
+            "input": "isConnected = [[1,1,0],[1,1,0],[0,0,1]]",
+            "output": "2",
+            "recognize": "When an adjacency matrix describes friendship or connectivity and the answer asks for separate connected groups.",
+            "visual": [
+                  [
+                        "0",
+                        "1"
+                  ],
+                  [
+                        "2"
+                  ]
+            ],
+            "visualText": "Cities 0 and 1 are consumed by the first DFS, so they form one province. City 2 remains unseen and starts the second province.",
+            "core": "Scan every city. Whenever a city is still unvisited, increment the province count once and run DFS to mark every city in that connected component.",
+            "bruteForce": "Repeatedly rescan the full matrix to merge connected groups without preserving visited state. It repeats the same connectivity work and obscures the component invariant.",
+            "alternates": [
+                  "DFS directly on the matrix avoids building an adjacency list and uses O(n) auxiliary space.",
+                  "BFS with a queue counts components using the same outer-loop invariant.",
+                  "Union-Find can union every connected pair and then count distinct roots."
+            ],
+            "gotchas": [
+                  "Increment the answer only when starting from an unvisited city, not for every DFS call.",
+                  "The diagonal entries connect each city to itself; ignoring them while building the list is fine.",
+                  "One DFS call covers only one province, so the outer loop over all cities is essential."
+            ]
       }
 ];
 
@@ -1212,6 +1249,16 @@
                   "Stop successfully as soon as the destination is reached."
             ],
             "skeleton": "build undirected adjacency list\n\nbfs:\n  mark + enqueue source\n  expand unseen neighbors until destination is reached\n\ndfs(node):\n  if node is destination: true\n  if visited: false\n  mark visited\n  return true if any neighbor DFS succeeds"
+      },
+      "NumberOfProvinces": {
+            "prompt": "Before reading: why does every unvisited city found by the outer loop represent exactly one new province?",
+            "steps": [
+                  "Convert each non-diagonal matrix connection into an adjacency-list edge.",
+                  "Scan cities from 0 through n - 1.",
+                  "When a city is unseen, increment the province count once.",
+                  "DFS from that city to consume its entire connected component."
+            ],
+            "skeleton": "build adjacency list from matrix\n\nprovinces = 0\nfor each city\n  if unseen\n    provinces++\n    dfs(city)\n\ndfs(city)\n  mark city visited\n  for each neighbor\n    if unseen\n      dfs(neighbor)"
       }
 };
 
@@ -1219,14 +1266,16 @@
       "GraphTheoryReference": "Use this as the source reference\nnot a generated summary",
       "BFSGraph": "Mark when enqueued, then process queue level by level\nouter loop restarts BFS for disconnected components",
       "DFSGraph": "Mark on entry, record node, recurse into unseen neighbors\nreturn naturally resumes the remaining siblings",
-      "FindIfPathExistsInGraph": "BFS widens with a queue; DFS dives with recursion\nboth share visited state and stop at destination"
+      "FindIfPathExistsInGraph": "BFS widens with a queue; DFS dives with recursion\nboth share visited state and stop at destination",
+      "NumberOfProvinces": "Each unseen outer-loop city starts one new province\nDFS consumes every city belonging to that province"
 };
 
     const solvedOrder = [
       "GraphTheoryReference",
       "BFSGraph",
       "DFSGraph",
-      "FindIfPathExistsInGraph"
+      "FindIfPathExistsInGraph",
+      "NumberOfProvinces"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
