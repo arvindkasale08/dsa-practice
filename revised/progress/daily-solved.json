@@ -347,13 +347,14 @@
     },
     {
       "date": "2026-07-29",
-      "solved": 5,
+      "solved": 6,
       "cardsSynced": [
         "graphs/NumberOfIslands",
         "graphs/RottingOranges",
         "graphs/FloodFill",
         "graphs/CycleInUndirectedGraphBFS",
-        "graphs/CycleInUndirectedGraphDFS"
+        "graphs/CycleInUndirectedGraphDFS",
+        "graphs/DistanceToNearestOne"
       ],
       "notes": ""
     }

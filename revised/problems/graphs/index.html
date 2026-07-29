@@ -1416,6 +1416,51 @@
                   "Start DFS from every unseen vertex because a disconnected component may contain the cycle.",
                   "Handle an empty edge list before reading edges[0]."
             ]
+      },
+      {
+            "name": "DistanceToNearestOne",
+            "source": "../com/arvind/revision/graphs/DistanceToNearestOne.java",
+            "label": "Multi-source BFS from every zero",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/01-matrix/",
+            "description": "Given a binary matrix, replace every cell with its shortest four-directional distance to any zero. Zero cells keep distance 0.",
+            "time": "O(m × n)",
+            "space": "O(m × n)",
+            "timeWhy": "The initial scan visits every cell once. Multi-source BFS marks and enqueues each non-zero cell at most once, while the queue and visited matrix can each hold m × n cells.",
+            "structures": "Matrix, visited matrix, multi-source BFS queue of [row, column, distance]",
+            "input": "mat = [[0,1,1],[1,1,1],[1,1,0]]",
+            "output": "[[0,1,2],[1,2,1],[2,1,0]]",
+            "recognize": "When every cell needs its distance to the nearest member of the same source group, such as the nearest zero, gate, or facility.",
+            "visual": [
+                  [
+                        "0",
+                        "1",
+                        "2"
+                  ],
+                  [
+                        "1",
+                        "2",
+                        "1"
+                  ],
+                  [
+                        "2",
+                        "1",
+                        "0"
+                  ]
+            ],
+            "visualText": "Place both zeros in the queue at distance 0. Their BFS waves expand together, so each cell is first reached by its nearest zero.",
+            "core": "Seed the queue with every zero before traversal. Remove one cell, inspect four neighbors, and assign each unseen one distance + 1 when it is first reached. First arrival is shortest because BFS expands in increasing distance.",
+            "bruteForce": "Run a separate BFS from every 1 until a zero is found. It is straightforward but repeats nearly the same grid traversal for many cells.",
+            "alternates": [
+                  "A two-pass dynamic-programming solution combines distances from top-left and bottom-right directions.",
+                  "Process BFS one level at a time instead of storing distance in every queue entry."
+            ],
+            "gotchas": [
+                  "Enqueue all zeros before BFS; running from them separately loses the shared shortest-wave behavior.",
+                  "Mark a neighbor when enqueued so another source cannot enqueue it again.",
+                  "Only four-directional moves count; diagonals do not reduce distance.",
+                  "The local class name says nearest one, but this implementation solves distance to the nearest zero."
+            ]
       }
 ];
 
@@ -1509,6 +1554,16 @@
                   "Return true when a visited neighbor differs from parent, and propagate true upward."
             ],
             "skeleton": "build undirected adjacency list\n\nfor each vertex\n  if unseen and dfs(vertex, -1)\n    return true\nreturn false\n\ndfs(node, parent)\n  mark node\n  for each neighbor\n    if unseen\n      if dfs(neighbor, node): return true\n    else if neighbor != parent\n      return true\n  return false"
+      },
+      "DistanceToNearestOne": {
+            "prompt": "Before reading: why should every zero enter the queue before BFS begins instead of running one search per matrix cell?",
+            "steps": [
+                  "Scan the matrix and enqueue every zero with distance 0.",
+                  "Mark every source zero visited before traversal starts.",
+                  "Pop a cell and inspect its four neighbors.",
+                  "For each unseen 1, write distance + 1, mark it, and enqueue it."
+            ],
+            "skeleton": "for each cell\n  if cell == 0\n    mark + enqueue [row, col, 0]\n\nwhile queue not empty\n  row, col, distance = dequeue\n  for each of 4 neighbors\n    if in bounds and unseen\n      matrix[neighbor] = distance + 1\n      mark + enqueue [neighbor, distance + 1]\n\nreturn matrix"
       }
 };
 
@@ -1522,7 +1577,8 @@
       "RottingOranges": "Seed every rotten orange at time 0\none shared BFS models all simultaneous spreading waves",
       "FloodFill": "Save the source's original color before changing it\nBFS only through four-neighbors that match that original",
       "CycleInUndirectedGraphBFS": "Carry [node, parent] through BFS\nvisited neighbor != parent means a second route closed a cycle",
-      "CycleInUndirectedGraphDFS": "Pass parent into every DFS call\nvisited neighbor != parent closes a cycle; propagate true upward"
+      "CycleInUndirectedGraphDFS": "Pass parent into every DFS call\nvisited neighbor != parent closes a cycle; propagate true upward",
+      "DistanceToNearestOne": "Seed every zero at distance 0\nfirst multi-source BFS arrival gives each cell its nearest-zero distance"
 };
 
     const solvedOrder = [
@@ -1535,7 +1591,8 @@
       "RottingOranges",
       "FloodFill",
       "CycleInUndirectedGraphBFS",
-      "CycleInUndirectedGraphDFS"
+      "CycleInUndirectedGraphDFS",
+      "DistanceToNearestOne"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
