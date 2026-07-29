@@ -1341,6 +1341,43 @@
                   "Mark or recolor a cell when it is enqueued so multiple parents cannot enqueue it again.",
                   "If no visited matrix is used and the replacement equals the original color, return early or traversal can cycle. This implementation is safe because it keeps separate visited state."
             ]
+      },
+      {
+            "name": "CycleInUndirectedGraphBFS",
+            "source": "../com/arvind/revision/graphs/CycleInUndirectedGraphBFS.java",
+            "label": "BFS with node and parent",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given an undirected graph with vertices numbered from 1 to V, return true if any connected component contains a cycle; otherwise return false.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "Building the adjacency list stores both directions of every edge. Across all BFS runs, every vertex is visited once and every stored edge is inspected once.",
+            "structures": "Undirected adjacency list, visited array, BFS queue of [node, parent]",
+            "input": "V = 3, edges = [[1,2],[2,3],[3,1]]",
+            "output": "true",
+            "recognize": "When an undirected graph asks whether following edges can bring you back to an already reached vertex without merely stepping back to the parent.",
+            "visual": [
+                  [
+                        "1"
+                  ],
+                  [
+                        "2",
+                        "3"
+                  ]
+            ],
+            "visualText": "In the triangle 1-2-3-1, BFS reaches a vertex whose neighbor is already visited and is not its parent. That extra connection closes the cycle.",
+            "core": "Queue each vertex together with the parent that discovered it. For every neighbor: enqueue it if unseen; if it is already visited and is not the current vertex's parent, a second route reached it and the component contains a cycle.",
+            "bruteForce": "For each edge, temporarily remove it and test whether its endpoints remain connected. If they do, that edge belongs to a cycle, but repeating traversal for many edges is expensive.",
+            "alternates": [
+                  "DFS uses the same node-parent rule recursively instead of storing pairs in a queue.",
+                  "Disjoint Set Union detects a cycle while adding edges: an edge whose endpoints already share a root closes a cycle."
+            ],
+            "gotchas": [
+                  "An undirected edge appears in both adjacency lists. Seeing the parent again is normal and must not be called a cycle.",
+                  "Start BFS from every unseen vertex because the cycle may be inside a disconnected component.",
+                  "Mark a vertex when it is enqueued so it cannot be queued repeatedly by different neighbors.",
+                  "An empty edge list must be handled before reading edges[0]."
+            ]
       }
 ];
 
@@ -1414,6 +1451,16 @@
                   "Mark, recolor, and enqueue each accepted neighbor until the queue is empty."
             ],
             "skeleton": "original = image[sr][sc]\nmark + recolor + enqueue source\n\nwhile queue not empty\n  cell = dequeue\n  for each of 4 neighbors\n    if in bounds, unseen, and image[nr][nc] == original\n      mark + recolor + enqueue neighbor\n\nreturn image"
+      },
+      "CycleInUndirectedGraphBFS": {
+            "prompt": "Before reading: when does an already visited neighbor prove a cycle, and when is it only the reverse copy of the parent edge?",
+            "steps": [
+                  "Build both directions of every undirected edge.",
+                  "For each unseen vertex, start BFS with parent = -1.",
+                  "Mark unseen neighbors and enqueue each with the current node as parent.",
+                  "Return true when a neighbor is already visited and differs from the current parent."
+            ],
+            "skeleton": "build undirected adjacency list\n\nfor each vertex\n  if unseen\n    mark + enqueue [vertex, -1]\n    while queue not empty\n      node, parent = dequeue\n      for each neighbor\n        if unseen\n          mark + enqueue [neighbor, node]\n        else if neighbor != parent\n          return true\n\nreturn false"
       }
 };
 
@@ -1425,7 +1472,8 @@
       "NumberOfProvinces": "Each unseen outer-loop city starts one new province\nDFS consumes every city belonging to that province",
       "NumberOfIslands": "Each unseen land cell starts exactly one island\nBFS marks and consumes its entire four-directional region",
       "RottingOranges": "Seed every rotten orange at time 0\none shared BFS models all simultaneous spreading waves",
-      "FloodFill": "Save the source's original color before changing it\nBFS only through four-neighbors that match that original"
+      "FloodFill": "Save the source's original color before changing it\nBFS only through four-neighbors that match that original",
+      "CycleInUndirectedGraphBFS": "Carry [node, parent] through BFS\nvisited neighbor != parent means a second route closed a cycle"
 };
 
     const solvedOrder = [
@@ -1436,7 +1484,8 @@
       "NumberOfProvinces",
       "NumberOfIslands",
       "RottingOranges",
-      "FloodFill"
+      "FloodFill",
+      "CycleInUndirectedGraphBFS"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
