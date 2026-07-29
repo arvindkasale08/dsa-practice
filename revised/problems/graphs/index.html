@@ -1378,6 +1378,44 @@
                   "Mark a vertex when it is enqueued so it cannot be queued repeatedly by different neighbors.",
                   "An empty edge list must be handled before reading edges[0]."
             ]
+      },
+      {
+            "name": "CycleInUndirectedGraphDFS",
+            "source": "../com/arvind/revision/graphs/CycleInUndirectedGraphDFS.java",
+            "label": "DFS with node and parent",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given an undirected graph with vertices numbered from 1 to V, return true if any connected component contains a cycle; otherwise return false.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "Building the adjacency list stores both directions of every edge. Across all DFS calls, every vertex is entered once and every stored edge is inspected once.",
+            "structures": "Undirected adjacency list, visited array, recursive DFS call stack",
+            "input": "V = 3, edges = [[1,2],[2,3],[3,1]]",
+            "output": "true",
+            "recognize": "When an undirected graph asks whether DFS can reach a vertex that was already visited through a route other than the edge back to its parent.",
+            "variantLens": "BFS carries [node, parent] in a queue. DFS passes parent as a recursive argument. The cycle test is identical.",
+            "visual": [
+                  [
+                        "1"
+                  ],
+                  [
+                        "2",
+                        "3"
+                  ]
+            ],
+            "visualText": "DFS follows 1 → 2 → 3. From 3 it sees visited vertex 1, which is not 3's parent 2, so the edge closes a cycle.",
+            "core": "Pass the current vertex's parent into each recursive call. Recurse into unseen neighbors; if a neighbor is already visited and differs from the parent, return true immediately and propagate that result up the call stack.",
+            "bruteForce": "For each edge, temporarily remove it and test whether its endpoints remain connected. A remaining route proves that edge lies on a cycle, but repeated traversals are expensive.",
+            "alternates": [
+                  "BFS stores [node, parent] pairs in a queue and uses the same visited-neighbor rule.",
+                  "Disjoint Set Union detects a cycle when an added edge joins vertices already in the same set."
+            ],
+            "gotchas": [
+                  "The edge back to the parent is expected in an undirected adjacency list and is not a cycle.",
+                  "Return true from every recursive level as soon as a deeper call finds a cycle.",
+                  "Start DFS from every unseen vertex because a disconnected component may contain the cycle.",
+                  "Handle an empty edge list before reading edges[0]."
+            ]
       }
 ];
 
@@ -1461,6 +1499,16 @@
                   "Return true when a neighbor is already visited and differs from the current parent."
             ],
             "skeleton": "build undirected adjacency list\n\nfor each vertex\n  if unseen\n    mark + enqueue [vertex, -1]\n    while queue not empty\n      node, parent = dequeue\n      for each neighbor\n        if unseen\n          mark + enqueue [neighbor, node]\n        else if neighbor != parent\n          return true\n\nreturn false"
+      },
+      "CycleInUndirectedGraphDFS": {
+            "prompt": "Before reading: what extra value must every DFS call carry so the reverse parent edge is not mistaken for a cycle?",
+            "steps": [
+                  "Build both directions of every undirected edge.",
+                  "For each unseen vertex, call DFS with parent = -1.",
+                  "Mark the current vertex and recurse into each unseen neighbor with current as parent.",
+                  "Return true when a visited neighbor differs from parent, and propagate true upward."
+            ],
+            "skeleton": "build undirected adjacency list\n\nfor each vertex\n  if unseen and dfs(vertex, -1)\n    return true\nreturn false\n\ndfs(node, parent)\n  mark node\n  for each neighbor\n    if unseen\n      if dfs(neighbor, node): return true\n    else if neighbor != parent\n      return true\n  return false"
       }
 };
 
@@ -1473,7 +1521,8 @@
       "NumberOfIslands": "Each unseen land cell starts exactly one island\nBFS marks and consumes its entire four-directional region",
       "RottingOranges": "Seed every rotten orange at time 0\none shared BFS models all simultaneous spreading waves",
       "FloodFill": "Save the source's original color before changing it\nBFS only through four-neighbors that match that original",
-      "CycleInUndirectedGraphBFS": "Carry [node, parent] through BFS\nvisited neighbor != parent means a second route closed a cycle"
+      "CycleInUndirectedGraphBFS": "Carry [node, parent] through BFS\nvisited neighbor != parent means a second route closed a cycle",
+      "CycleInUndirectedGraphDFS": "Pass parent into every DFS call\nvisited neighbor != parent closes a cycle; propagate true upward"
 };
 
     const solvedOrder = [
@@ -1485,7 +1534,8 @@
       "NumberOfIslands",
       "RottingOranges",
       "FloodFill",
-      "CycleInUndirectedGraphBFS"
+      "CycleInUndirectedGraphBFS",
+      "CycleInUndirectedGraphDFS"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
