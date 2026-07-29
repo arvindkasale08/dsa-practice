@@ -11,6 +11,16 @@ public class CommonUtils {
         System.out.println("\n #########################");
     }
 
+    public static void print(int[][] num) {
+        for (int[] n : num) {
+            for (int x : n) {
+                System.out.print(x + ", ");
+            }
+            System.out.println("");
+        }
+        System.out.println("\n #########################");
+    }
+
     public static void printList(List<Integer> num) {
         for (Integer i : num) {
             System.out.print(i + ", ");

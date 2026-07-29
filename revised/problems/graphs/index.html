@@ -1296,6 +1296,51 @@
                   "Compare reached-fresh count with total-fresh count; a nonempty unreachable pocket must return -1.",
                   "If there are no fresh oranges, the answer is 0."
             ]
+      },
+      {
+            "name": "FloodFill",
+            "source": "../com/arvind/revision/graphs/FloodFill.java",
+            "label": "Recolor one connected region",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/flood-fill/",
+            "description": "Given an image, a starting cell, and a replacement color, recolor the starting pixel and every pixel connected to it through up, down, left, or right moves that has the starting pixel's original color.",
+            "time": "O(m × n)",
+            "space": "O(m × n)",
+            "timeWhy": "Each image cell is marked and added to the BFS queue at most once. The visited matrix and queue can each hold up to m × n cells.",
+            "structures": "Image matrix, visited matrix, BFS queue, four direction offsets",
+            "input": "image = [[1,1,1],[1,1,0],[1,0,1]], sr = 1, sc = 1, color = 2",
+            "output": "[[2,2,2],[2,2,0],[2,0,1]]",
+            "recognize": "When one starting cell identifies a connected component whose matching values must all be replaced.",
+            "visual": [
+                  [
+                        "1",
+                        "1",
+                        "1"
+                  ],
+                  [
+                        "1",
+                        "S",
+                        "0"
+                  ],
+                  [
+                        "1",
+                        "0",
+                        "1"
+                  ]
+            ],
+            "visualText": "Start at S and spread only through four-directional neighbors with the original source color. The bottom-right 1 stays unchanged because it touches the region only diagonally.",
+            "core": "Save the source pixel's original color before changing anything. Mark and recolor the source, then BFS through neighbors that are in bounds, unseen, and still equal to that original color.",
+            "bruteForce": "Repeatedly scan the whole image and recolor any matching pixel touching the growing region. This can rescan many unrelated cells.",
+            "alternates": [
+                  "Recursive DFS performs the same component traversal without an explicit queue.",
+                  "The image itself can act as visited state when the replacement color differs from the original color."
+            ],
+            "gotchas": [
+                  "Save the original source color before recoloring the source; that original value decides which neighbors belong.",
+                  "Connectivity is only up, down, left, and right. Diagonal matches are not part of the fill.",
+                  "Mark or recolor a cell when it is enqueued so multiple parents cannot enqueue it again.",
+                  "If no visited matrix is used and the replacement equals the original color, return early or traversal can cycle. This implementation is safe because it keeps separate visited state."
+            ]
       }
 ];
 
@@ -1359,6 +1404,16 @@
                   "Return the last time only when reached fresh equals total fresh; otherwise return -1."
             ],
             "skeleton": "queue all rotten cells at time 0\ncount total fresh\n\nwhile queue not empty\n  cell, time = dequeue\n  answer = time\n  for each of 4 neighbors\n    if fresh and unseen\n      mark seen\n      reachedFresh++\n      enqueue neighbor at time + 1\n\nreturn reachedFresh == totalFresh ? answer : -1"
+      },
+      "FloodFill": {
+            "prompt": "Before reading: which color decides whether a neighboring pixel belongs to the region: the original color or the replacement color?",
+            "steps": [
+                  "Save the starting pixel's original color.",
+                  "Mark and recolor the starting cell, then enqueue it.",
+                  "Inspect its four neighbors and accept only in-bounds, unseen cells matching the original color.",
+                  "Mark, recolor, and enqueue each accepted neighbor until the queue is empty."
+            ],
+            "skeleton": "original = image[sr][sc]\nmark + recolor + enqueue source\n\nwhile queue not empty\n  cell = dequeue\n  for each of 4 neighbors\n    if in bounds, unseen, and image[nr][nc] == original\n      mark + recolor + enqueue neighbor\n\nreturn image"
       }
 };
 
@@ -1369,7 +1424,8 @@
       "FindIfPathExistsInGraph": "BFS widens with a queue; DFS dives with recursion\nboth share visited state and stop at destination",
       "NumberOfProvinces": "Each unseen outer-loop city starts one new province\nDFS consumes every city belonging to that province",
       "NumberOfIslands": "Each unseen land cell starts exactly one island\nBFS marks and consumes its entire four-directional region",
-      "RottingOranges": "Seed every rotten orange at time 0\none shared BFS models all simultaneous spreading waves"
+      "RottingOranges": "Seed every rotten orange at time 0\none shared BFS models all simultaneous spreading waves",
+      "FloodFill": "Save the source's original color before changing it\nBFS only through four-neighbors that match that original"
 };
 
     const solvedOrder = [
@@ -1379,7 +1435,8 @@
       "FindIfPathExistsInGraph",
       "NumberOfProvinces",
       "NumberOfIslands",
-      "RottingOranges"
+      "RottingOranges",
+      "FloodFill"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
