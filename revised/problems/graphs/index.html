@@ -1256,6 +1256,46 @@
                   "Mark a cell when it enters the queue, not after removal, so multiple neighbors cannot enqueue it.",
                   "Current source sets the BFS start cell to visited = 0 instead of 1; keep this parked as a visited-state fix."
             ]
+      },
+      {
+            "name": "RottingOranges",
+            "source": "../com/arvind/revision/graphs/RottingOranges.java",
+            "label": "Multi-source BFS by minutes",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/rotting-oranges/",
+            "description": "Given a grid containing empty cells, fresh oranges, and rotten oranges, return the minimum minutes until every reachable fresh orange becomes rotten, or -1 if some fresh orange can never be reached.",
+            "time": "O(m × n)",
+            "space": "O(m × n)",
+            "timeWhy": "The initial scan touches every cell, and multi-source BFS enqueues each reachable fresh orange at most once.",
+            "structures": "Grid, multi-source BFS queue, visited matrix, fresh counters",
+            "input": "grid = [[2,1,1],[1,1,0],[0,1,1]]",
+            "output": "4",
+            "recognize": "When several starting cells spread simultaneously through a grid and the answer asks for the time of the last reachable cell.",
+            "visual": [
+                  [
+                        "2@0",
+                        "1@1",
+                        "1@2"
+                  ],
+                  [
+                        "1@1",
+                        "1@2",
+                        "1@3"
+                  ]
+            ],
+            "visualText": "Put every initial rotten orange into the queue at minute 0. Their waves expand together; each fresh neighbor receives parent time + 1.",
+            "core": "Seed the queue with all rotten oranges before BFS. When a fresh neighbor is first reached, mark it, count it, and enqueue it with time + 1. The last processed time is the answer only if every fresh orange was reached.",
+            "bruteForce": "Simulate one full-grid minute at a time, repeatedly scanning for fresh oranges beside rotten ones. It works but may rescan the entire grid for many minutes.",
+            "alternates": [
+                  "Level-order BFS can avoid storing time in each queue item by incrementing minutes once per queue layer.",
+                  "Mutating fresh cells to rotten when enqueued removes the need for a separate visited matrix."
+            ],
+            "gotchas": [
+                  "Enqueue every initial rotten orange before traversal; separate BFS runs would incorrectly serialize simultaneous spread.",
+                  "Mark fresh oranges when enqueued so two rotten neighbors cannot count or enqueue the same orange twice.",
+                  "Compare reached-fresh count with total-fresh count; a nonempty unreachable pocket must return -1.",
+                  "If there are no fresh oranges, the answer is 0."
+            ]
       }
 ];
 
@@ -1309,6 +1349,16 @@
                   "BFS through valid four-directional land until the whole island is consumed."
             ],
             "skeleton": "islands = 0\nfor each cell\n  if land and unseen\n    islands++\n    mark + enqueue cell\n    while queue not empty\n      cell = dequeue\n      for each of 4 neighbors\n        if in bounds, land, unseen\n          mark + enqueue neighbor\n\nreturn islands"
+      },
+      "RottingOranges": {
+            "prompt": "Before reading: why must all initially rotten oranges enter the queue before the first BFS step?",
+            "steps": [
+                  "Scan once: enqueue every rotten orange at time 0 and count all fresh oranges.",
+                  "Remove one queued cell and inspect its four neighbors.",
+                  "For each unseen fresh neighbor, mark it, count it, and enqueue it at time + 1.",
+                  "Return the last time only when reached fresh equals total fresh; otherwise return -1."
+            ],
+            "skeleton": "queue all rotten cells at time 0\ncount total fresh\n\nwhile queue not empty\n  cell, time = dequeue\n  answer = time\n  for each of 4 neighbors\n    if fresh and unseen\n      mark seen\n      reachedFresh++\n      enqueue neighbor at time + 1\n\nreturn reachedFresh == totalFresh ? answer : -1"
       }
 };
 
@@ -1318,7 +1368,8 @@
       "DFSGraph": "Mark on entry, record node, recurse into unseen neighbors\nreturn naturally resumes the remaining siblings",
       "FindIfPathExistsInGraph": "BFS widens with a queue; DFS dives with recursion\nboth share visited state and stop at destination",
       "NumberOfProvinces": "Each unseen outer-loop city starts one new province\nDFS consumes every city belonging to that province",
-      "NumberOfIslands": "Each unseen land cell starts exactly one island\nBFS marks and consumes its entire four-directional region"
+      "NumberOfIslands": "Each unseen land cell starts exactly one island\nBFS marks and consumes its entire four-directional region",
+      "RottingOranges": "Seed every rotten orange at time 0\none shared BFS models all simultaneous spreading waves"
 };
 
     const solvedOrder = [
@@ -1327,7 +1378,8 @@
       "DFSGraph",
       "FindIfPathExistsInGraph",
       "NumberOfProvinces",
-      "NumberOfIslands"
+      "NumberOfIslands",
+      "RottingOranges"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
