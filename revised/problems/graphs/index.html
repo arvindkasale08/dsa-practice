@@ -1216,6 +1216,46 @@
                   "The diagonal entries connect each city to itself; ignoring them while building the list is fine.",
                   "One DFS call covers only one province, so the outer loop over all cities is essential."
             ]
+      },
+      {
+            "name": "NumberOfIslands",
+            "source": "../com/arvind/revision/graphs/NumberOfIslands.java",
+            "label": "Count BFS flood-fill starts",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/number-of-islands/",
+            "description": "Given a grid of water ('0') and land ('1'), count the separate islands formed by land cells connected vertically or horizontally.",
+            "time": "O(m × n)",
+            "space": "O(m × n)",
+            "timeWhy": "The outer scan touches every cell, while BFS processes each land cell at most once when visited state is marked correctly.",
+            "structures": "Grid, visited matrix, BFS queue, four direction arrays",
+            "input": "grid = [[1,1,0,0,0],[1,1,0,0,0],[0,0,1,0,0],[0,0,0,1,1]]",
+            "output": "3",
+            "recognize": "When a 2D grid asks for the number of separate groups connected in four directions.",
+            "visual": [
+                  [
+                        "1",
+                        "1",
+                        "0"
+                  ],
+                  [
+                        "1",
+                        "0",
+                        "1"
+                  ]
+            ],
+            "visualText": "The first unseen 1 starts a flood fill that consumes its connected land. The isolated 1 remains unseen and later starts the next island.",
+            "core": "Scan the grid. Each unvisited land cell starts one new island; immediately mark it visited, then BFS through its valid up, right, down, and left land neighbors.",
+            "bruteForce": "For every land cell, repeatedly search whether it belongs to a previously found island. Without one shared visited state, the same regions are traversed many times.",
+            "alternates": [
+                  "Recursive DFS performs the same flood fill with a call stack instead of a queue.",
+                  "Mutate visited land from '1' to '0' to avoid allocating a separate visited matrix when modifying the input is allowed.",
+                  "Union-Find can connect adjacent land cells and count distinct roots, but is heavier for a one-time traversal."
+            ],
+            "gotchas": [
+                  "Only four-directional neighbors belong to the same island; diagonals do not count.",
+                  "Mark a cell when it enters the queue, not after removal, so multiple neighbors cannot enqueue it.",
+                  "Current source sets the BFS start cell to visited = 0 instead of 1; keep this parked as a visited-state fix."
+            ]
       }
 ];
 
@@ -1259,6 +1299,16 @@
                   "DFS from that city to consume its entire connected component."
             ],
             "skeleton": "build adjacency list from matrix\n\nprovinces = 0\nfor each city\n  if unseen\n    provinces++\n    dfs(city)\n\ndfs(city)\n  mark city visited\n  for each neighbor\n    if unseen\n      dfs(neighbor)"
+      },
+      "NumberOfIslands": {
+            "prompt": "Before reading: what event increments the island count, and what must BFS consume before scanning continues?",
+            "steps": [
+                  "Scan every grid cell in row-major order.",
+                  "On unseen land, increment the island count once.",
+                  "Mark that starting cell and enqueue it.",
+                  "BFS through valid four-directional land until the whole island is consumed."
+            ],
+            "skeleton": "islands = 0\nfor each cell\n  if land and unseen\n    islands++\n    mark + enqueue cell\n    while queue not empty\n      cell = dequeue\n      for each of 4 neighbors\n        if in bounds, land, unseen\n          mark + enqueue neighbor\n\nreturn islands"
       }
 };
 
@@ -1267,7 +1317,8 @@
       "BFSGraph": "Mark when enqueued, then process queue level by level\nouter loop restarts BFS for disconnected components",
       "DFSGraph": "Mark on entry, record node, recurse into unseen neighbors\nreturn naturally resumes the remaining siblings",
       "FindIfPathExistsInGraph": "BFS widens with a queue; DFS dives with recursion\nboth share visited state and stop at destination",
-      "NumberOfProvinces": "Each unseen outer-loop city starts one new province\nDFS consumes every city belonging to that province"
+      "NumberOfProvinces": "Each unseen outer-loop city starts one new province\nDFS consumes every city belonging to that province",
+      "NumberOfIslands": "Each unseen land cell starts exactly one island\nBFS marks and consumes its entire four-directional region"
 };
 
     const solvedOrder = [
@@ -1275,7 +1326,8 @@
       "BFSGraph",
       "DFSGraph",
       "FindIfPathExistsInGraph",
-      "NumberOfProvinces"
+      "NumberOfProvinces",
+      "NumberOfIslands"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
