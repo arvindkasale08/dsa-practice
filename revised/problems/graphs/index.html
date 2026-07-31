@@ -1461,6 +1461,64 @@
                   "Only four-directional moves count; diagonals do not reduce distance.",
                   "The local class name says nearest one, but this implementation solves distance to the nearest zero."
             ]
+      },
+      {
+            "name": "SurroundedRegions",
+            "source": "../com/arvind/revision/graphs/SurroundedRegions.java",
+            "label": "Protect border-connected O cells",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/surrounded-regions/",
+            "description": "Given a board of X and O cells, change every O region completely enclosed by X into X. Any O connected four-directionally to a border O must remain O.",
+            "time": "O(m × n)",
+            "space": "O(m × n)",
+            "timeWhy": "The border scan, shared BFS, and final board scan each touch at most every cell once. The visited matrix and queue may hold m × n cells.",
+            "structures": "Character matrix, visited matrix, multi-source BFS queue of [row, column]",
+            "input": "board = [[X,X,X,X,X],[X,O,O,X,X],[X,X,O,X,O],[X,O,X,X,O]]",
+            "output": "[[X,X,X,X,X],[X,X,X,X,X],[X,X,X,X,O],[X,O,X,X,O]]",
+            "recognize": "When enclosed regions must be changed but anything connected to the boundary is protected.",
+            "visual": [
+                  [
+                        "X",
+                        "X",
+                        "X",
+                        "X",
+                        "X"
+                  ],
+                  [
+                        "X",
+                        "O→X",
+                        "O→X",
+                        "X",
+                        "X"
+                  ],
+                  [
+                        "X",
+                        "X",
+                        "O→X",
+                        "X",
+                        "O✓"
+                  ],
+                  [
+                        "X",
+                        "O✓",
+                        "X",
+                        "X",
+                        "O✓"
+                  ]
+            ],
+            "visualText": "Start from every border O. The bottom and right-side O cells form protected escape regions; the three inner O cells cannot reach a border and are captured.",
+            "core": "Reverse the question: do not search for surrounded regions. Seed BFS with every border O and mark every connected O as safe. In the final scan, preserve safe cells and turn every other cell into X.",
+            "bruteForce": "Start a separate traversal from every unseen O region, collect its cells, and track whether that region touches a border. This works but needs more bookkeeping than marking all safe regions together.",
+            "alternates": [
+                  "Run DFS from each border O instead of using a queue; the protected-cell invariant is identical.",
+                  "Temporarily rewrite safe border-connected O cells to a marker such as #, flip remaining O cells to X, then restore # to O. This avoids a separate visited matrix."
+            ],
+            "gotchas": [
+                  "Only horizontal and vertical connections count; diagonal contact with a border O does not protect a region.",
+                  "Seed all four borders before traversal so every escape region is protected.",
+                  "Mark a cell when enqueuing it, not later, to prevent duplicate queue entries.",
+                  "During the final pass, existing X cells and unsafe O cells both become X; only marked-safe cells remain O."
+            ]
       }
 ];
 
@@ -1564,6 +1622,16 @@
                   "For each unseen 1, write distance + 1, mark it, and enqueue it."
             ],
             "skeleton": "for each cell\n  if cell == 0\n    mark + enqueue [row, col, 0]\n\nwhile queue not empty\n  row, col, distance = dequeue\n  for each of 4 neighbors\n    if in bounds and unseen\n      matrix[neighbor] = distance + 1\n      mark + enqueue [neighbor, distance + 1]\n\nreturn matrix"
+      },
+      "SurroundedRegions": {
+            "prompt": "Before reading: why is it easier to find the O cells that must survive than the O cells that must be captured?",
+            "steps": [
+                  "Scan the board and enqueue every O lying on any border.",
+                  "Mark those cells safe before the shared BFS begins.",
+                  "BFS through four-directionally connected O cells, marking the whole escape region safe.",
+                  "Scan once more: preserve safe cells as O and change every other cell to X."
+            ],
+            "skeleton": "queue = every border O\nmark each queued cell safe\n\nwhile queue not empty\n  cell = dequeue\n  for each of 4 neighbors\n    if in bounds, O, and unsafe\n      mark safe\n      enqueue neighbor\n\nfor each cell\n  board[cell] = safe ? O : X"
       }
 };
 
@@ -1578,7 +1646,8 @@
       "FloodFill": "Save the source's original color before changing it\nBFS only through four-neighbors that match that original",
       "CycleInUndirectedGraphBFS": "Carry [node, parent] through BFS\nvisited neighbor != parent means a second route closed a cycle",
       "CycleInUndirectedGraphDFS": "Pass parent into every DFS call\nvisited neighbor != parent closes a cycle; propagate true upward",
-      "DistanceToNearestOne": "Seed every zero at distance 0\nfirst multi-source BFS arrival gives each cell its nearest-zero distance"
+      "DistanceToNearestOne": "Seed every zero at distance 0\nfirst multi-source BFS arrival gives each cell its nearest-zero distance",
+      "SurroundedRegions": "Reverse the search: seed every border O as safe\nBFS protects all connected O cells; flip every unprotected cell to X"
 };
 
     const solvedOrder = [
@@ -1592,7 +1661,8 @@
       "FloodFill",
       "CycleInUndirectedGraphBFS",
       "CycleInUndirectedGraphDFS",
-      "DistanceToNearestOne"
+      "DistanceToNearestOne",
+      "SurroundedRegions"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

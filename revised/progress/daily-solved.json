@@ -357,6 +357,14 @@
         "graphs/DistanceToNearestOne"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-07-31",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/SurroundedRegions"
+      ],
+      "notes": ""
     }
   ]
 }
