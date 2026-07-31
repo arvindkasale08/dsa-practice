@@ -1519,6 +1519,49 @@
                   "Mark a cell when enqueuing it, not later, to prevent duplicate queue entries.",
                   "During the final pass, existing X cells and unsafe O cells both become X; only marked-safe cells remain O."
             ]
+      },
+      {
+            "name": "NumberOfEnclaves",
+            "source": "../com/arvind/revision/graphs/NumberOfEnclaves.java",
+            "label": "Erase border-reachable land",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/number-of-enclaves/",
+            "description": "Given a binary grid, count the land cells that cannot reach any boundary cell by moving up, down, left, or right through land.",
+            "time": "O(m × n)",
+            "space": "O(m × n)",
+            "timeWhy": "The border scan, shared BFS, and final count each visit at most every grid cell once. The queue can hold O(m × n) cells.",
+            "structures": "Binary grid, multi-source BFS queue of [row, column]",
+            "input": "grid = [[0,0,0,0],[1,0,1,0],[0,1,1,0],[0,0,0,0]]",
+            "output": "3",
+            "recognize": "When land connected to the boundary must be excluded and only trapped interior land should be counted.",
+            "variantLens": "Surrounded Regions preserves border-connected O cells and flips the rest. Number of Enclaves removes border-connected land and counts the rest.",
+            "visual": [
+                  [
+                        "0", "0", "0", "0"
+                  ],
+                  [
+                        "1→0", "0", "1✓", "0"
+                  ],
+                  [
+                        "0", "1✓", "1✓", "0"
+                  ],
+                  [
+                        "0", "0", "0", "0"
+                  ]
+            ],
+            "visualText": "The border land at row 1 can escape, so BFS erases it. The three connected interior 1 cells cannot reach a border and remain to be counted.",
+            "core": "Start BFS from every border land cell and erase all land reachable from those sources. Every 1 left afterward is an enclave cell, so count them.",
+            "bruteForce": "Start a separate search from every land cell to test whether it can reach a boundary. This repeats region traversals and can cost O((m × n)²).",
+            "alternates": [
+                  "Use DFS from every border land cell instead of a queue; the boundary-removal invariant is identical.",
+                  "Use a visited matrix and count unvisited land at the end instead of mutating the grid."
+            ],
+            "gotchas": [
+                  "Only four-directional movement counts; diagonal land is not connected.",
+                  "Seed every border land cell before BFS so all escape regions are removed.",
+                  "Set a cell to 0 when enqueuing it so another neighbor cannot enqueue it again.",
+                  "Count remaining land cells, not remaining connected regions."
+            ]
       }
 ];
 
@@ -1632,6 +1675,16 @@
                   "Scan once more: preserve safe cells as O and change every other cell to X."
             ],
             "skeleton": "queue = every border O\nmark each queued cell safe\n\nwhile queue not empty\n  cell = dequeue\n  for each of 4 neighbors\n    if in bounds, O, and unsafe\n      mark safe\n      enqueue neighbor\n\nfor each cell\n  board[cell] = safe ? O : X"
+      },
+      "NumberOfEnclaves": {
+            "prompt": "Before reading: why can every border-reachable land cell be discarded before counting anything?",
+            "steps": [
+                  "Scan all four boundaries and enqueue every land cell found there.",
+                  "Erase each queued cell immediately so it cannot be added twice.",
+                  "BFS through all connected land, erasing the entire escape region.",
+                  "Count the land cells that remain after boundary-connected land is gone."
+            ],
+            "skeleton": "queue = every border land cell\nerase each queued cell\n\nwhile queue not empty\n  cell = dequeue\n  for each of 4 neighbors\n    if in bounds and land\n      erase neighbor\n      enqueue neighbor\n\nreturn count of remaining land"
       }
 };
 
@@ -1647,7 +1700,8 @@
       "CycleInUndirectedGraphBFS": "Carry [node, parent] through BFS\nvisited neighbor != parent means a second route closed a cycle",
       "CycleInUndirectedGraphDFS": "Pass parent into every DFS call\nvisited neighbor != parent closes a cycle; propagate true upward",
       "DistanceToNearestOne": "Seed every zero at distance 0\nfirst multi-source BFS arrival gives each cell its nearest-zero distance",
-      "SurroundedRegions": "Reverse the search: seed every border O as safe\nBFS protects all connected O cells; flip every unprotected cell to X"
+      "SurroundedRegions": "Reverse the search: seed every border O as safe\nBFS protects all connected O cells; flip every unprotected cell to X",
+      "NumberOfEnclaves": "Erase every land cell reachable from the border\ncount only the interior 1 cells left behind"
 };
 
     const solvedOrder = [
@@ -1662,7 +1716,8 @@
       "CycleInUndirectedGraphBFS",
       "CycleInUndirectedGraphDFS",
       "DistanceToNearestOne",
-      "SurroundedRegions"
+      "SurroundedRegions",
+      "NumberOfEnclaves"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

@@ -360,9 +360,10 @@
     },
     {
       "date": "2026-07-31",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "graphs/SurroundedRegions"
+        "graphs/SurroundedRegions",
+        "graphs/NumberOfEnclaves"
       ],
       "notes": ""
     }
