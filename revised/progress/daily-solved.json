@@ -366,6 +366,14 @@
         "graphs/NumberOfEnclaves"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-01",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/WordLadder"
+      ],
+      "notes": "Synced Word Ladder recall card."
     }
   ]
 }

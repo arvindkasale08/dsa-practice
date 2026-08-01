@@ -1537,16 +1537,28 @@
             "variantLens": "Surrounded Regions preserves border-connected O cells and flips the rest. Number of Enclaves removes border-connected land and counts the rest.",
             "visual": [
                   [
-                        "0", "0", "0", "0"
+                        "0",
+                        "0",
+                        "0",
+                        "0"
                   ],
                   [
-                        "1→0", "0", "1✓", "0"
+                        "1→0",
+                        "0",
+                        "1✓",
+                        "0"
                   ],
                   [
-                        "0", "1✓", "1✓", "0"
+                        "0",
+                        "1✓",
+                        "1✓",
+                        "0"
                   ],
                   [
-                        "0", "0", "0", "0"
+                        "0",
+                        "0",
+                        "0",
+                        "0"
                   ]
             ],
             "visualText": "The border land at row 1 can escape, so BFS erases it. The three connected interior 1 cells cannot reach a border and remain to be counted.",
@@ -1561,6 +1573,44 @@
                   "Seed every border land cell before BFS so all escape regions are removed.",
                   "Set a cell to 0 when enqueuing it so another neighbor cannot enqueue it again.",
                   "Count remaining land cells, not remaining connected regions."
+            ]
+      },
+      {
+            "name": "WordLadder",
+            "source": "../com/arvind/revision/graphs/WordLadder.java",
+            "label": "Shortest word transformation",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/word-ladder/",
+            "description": "Transform beginWord into endWord by changing exactly one letter at a time. Every intermediate word must exist in wordList. Return the number of words in the shortest valid sequence, or 0 if no sequence exists.",
+            "time": "O(N² × L)",
+            "space": "O(N × L)",
+            "timeWhy": "With N dictionary words of length L, this implementation may scan almost every remaining word for each word removed by BFS, comparing up to L characters per pair. The set, queue, and stored strings use O(N × L) space.",
+            "structures": "HashSet dictionary, BFS queue of (word, level)",
+            "input": "beginWord = \"hit\", endWord = \"cog\", wordList = [hot,dot,dog,lot,log,cog]",
+            "output": "5",
+            "recognize": "When each legal one-character transformation is an unweighted edge and the question asks for the minimum number of transformations.",
+            "visual": [
+                  [
+                        "hit (1)",
+                        "hot (2)",
+                        "dot/lot (3)",
+                        "dog/log (4)",
+                        "cog (5)"
+                  ]
+            ],
+            "visualText": "Treat words as graph nodes. BFS opens the transformation graph one level at a time, so the first time cog is removed from the queue its level is the shortest sequence length.",
+            "core": "Queue beginWord at level 1. For each removed word, find every unused dictionary word differing in exactly one position, queue it at level + 1, and remove it from the dictionary immediately. Return the level when endWord is reached.",
+            "bruteForce": "Try every possible transformation path with DFS and keep the shortest successful path. Cycles and repeated exploration make this expensive and awkward for a shortest-path question.",
+            "alternates": [
+                  "For each character position, try replacing it with a through z and check the dictionary set. This gives roughly O(N × L × 26) neighbor generation instead of scanning all remaining words.",
+                  "Bidirectional BFS starts from beginWord and endWord and expands the smaller frontier, often reducing the explored search space substantially."
+            ],
+            "gotchas": [
+                  "The returned length counts words, not edges: hit → hot → dot → dog → cog is 5.",
+                  "Remove a discovered word when it is queued, not when it is later polled, so multiple parents cannot enqueue it again.",
+                  "A candidate is adjacent only when exactly one character differs; zero or two differences are invalid.",
+                  "If endWord is absent or unreachable, BFS empties and the answer is 0.",
+                  "The current helper assumes every candidate has the same length as currWord."
             ]
       }
 ];
@@ -1685,6 +1735,16 @@
                   "Count the land cells that remain after boundary-connected land is gone."
             ],
             "skeleton": "queue = every border land cell\nerase each queued cell\n\nwhile queue not empty\n  cell = dequeue\n  for each of 4 neighbors\n    if in bounds and land\n      erase neighbor\n      enqueue neighbor\n\nreturn count of remaining land"
+      },
+      "WordLadder": {
+            "prompt": "Before reading: why does the first time BFS reaches endWord guarantee the shortest transformation sequence?",
+            "steps": [
+                  "Put beginWord in the queue at level 1 and remove it from the unused dictionary.",
+                  "Poll one word and return its level immediately if it equals endWord.",
+                  "Find unused words differing in exactly one character and enqueue them at the next level.",
+                  "Remove each discovered word immediately so it is visited only once."
+            ],
+            "skeleton": "unused = set(wordList)\nqueue [beginWord, 1]\nremove beginWord from unused\n\nwhile queue not empty\n  word, level = dequeue\n  if word == endWord: return level\n  for each unused candidate\n    if exactly one character differs\n      enqueue [candidate, level + 1]\n      remove candidate from unused\n\nreturn 0"
       }
 };
 
@@ -1701,7 +1761,8 @@
       "CycleInUndirectedGraphDFS": "Pass parent into every DFS call\nvisited neighbor != parent closes a cycle; propagate true upward",
       "DistanceToNearestOne": "Seed every zero at distance 0\nfirst multi-source BFS arrival gives each cell its nearest-zero distance",
       "SurroundedRegions": "Reverse the search: seed every border O as safe\nBFS protects all connected O cells; flip every unprotected cell to X",
-      "NumberOfEnclaves": "Erase every land cell reachable from the border\ncount only the interior 1 cells left behind"
+      "NumberOfEnclaves": "Erase every land cell reachable from the border\ncount only the interior 1 cells left behind",
+      "WordLadder": "Words are nodes; one-letter changes are edges\nBFS level is sequence length\nremove a word as soon as it enters the queue"
 };
 
     const solvedOrder = [
@@ -1717,7 +1778,8 @@
       "CycleInUndirectedGraphDFS",
       "DistanceToNearestOne",
       "SurroundedRegions",
-      "NumberOfEnclaves"
+      "NumberOfEnclaves",
+      "WordLadder"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
