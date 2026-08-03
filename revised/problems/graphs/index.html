@@ -1703,6 +1703,51 @@
                   "Run DFS from every unvisited vertex because the directed graph may be disconnected.",
                   "This class uses vertex IDs 1 through V, so the adjacency list and state arrays need V + 1 slots."
             ]
+      },
+      {
+            "name": "TopoSortDFS",
+            "source": "../com/arvind/revision/graphs/TopoSortDFS.java",
+            "label": "Reverse DFS completion order",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a directed acyclic graph, return an ordering of all vertices where every edge u → v places u before v. More than one valid ordering may exist.",
+            "time": "O(V + E)",
+            "space": "O(V)",
+            "timeWhy": "DFS visits every vertex once and examines every directed edge once. Visited state, recursion depth, and the completion stack each use at most O(V) space.",
+            "structures": "Adjacency list, visited array, DFS recursion, stack",
+            "input": "V = 6, edges = [[5,0],[5,2],[4,0],[4,1],[2,3],[3,1]]",
+            "output": "[5,4,2,3,1,0] (one valid answer)",
+            "recognize": "Tasks or vertices have one-way prerequisites, and you need any ordering that respects every dependency.",
+            "visual": [
+                  [
+                        "5",
+                        "→",
+                        "2"
+                  ],
+                  [
+                        "push last",
+                        "",
+                        "↓"
+                  ],
+                  [
+                        "0 done",
+                        "←",
+                        "3 → 1"
+                  ]
+            ],
+            "visualText": "DFS finishes downstream vertices first. Push each vertex only on the way back; popping the stack reverses that completion order so prerequisites appear first.",
+            "core": "Mark a vertex, recursively finish all outgoing neighbors, then push the vertex. After every component is processed, pop the stack to build the topological order.",
+            "bruteForce": "Generate vertex permutations and check whether every edge points forward. This can require O(V! × E) work.",
+            "alternates": [
+                  "Kahn's algorithm repeatedly removes indegree-zero vertices with a queue and naturally detects cycles.",
+                  "Store postorder in a list and reverse it instead of using an explicit stack."
+            ],
+            "gotchas": [
+                  "Push after exploring all neighbors, never when first entering the vertex.",
+                  "Run DFS from every unvisited vertex so isolated and disconnected vertices are included.",
+                  "Topological orders are not unique; validate edge precedence instead of comparing one exact list.",
+                  "This implementation assumes a DAG and does not itself reject a directed cycle."
+            ]
       }
 ];
 
@@ -1856,6 +1901,16 @@
                   "After all neighbors finish safely, clear the current vertex's active-path mark."
             ],
             "skeleton": "for node = 1..V\n  if unseen and dfs(node)\n    return true\nreturn false\n\ndfs(node)\n  if active[node]: return true\n  if visited[node]: return false\n  visited[node] = true\n  active[node] = true\n  for neighbor in graph[node]\n    if dfs(neighbor): return true\n  active[node] = false\n  return false"
+      },
+      "TopoSortDFS": {
+            "prompt": "Before reading: why is a vertex pushed only after all of its outgoing neighbors finish?",
+            "steps": [
+                  "Scan all vertices and start DFS from each unvisited component root.",
+                  "Mark the current vertex before following its outgoing edges.",
+                  "Recursively finish every unvisited neighbor.",
+                  "Push the current vertex during return; pop all vertices to form the answer."
+            ],
+            "skeleton": "stack = empty\nfor each vertex\n  if unseen\n    dfs(vertex)\n\ndfs(node)\n  mark node visited\n  for neighbor in graph[node]\n    if unseen: dfs(neighbor)\n  stack.push(node)\n\nwhile stack not empty\n  answer.add(stack.pop())"
       }
 };
 
@@ -1875,7 +1930,8 @@
       "NumberOfEnclaves": "Erase every land cell reachable from the border\ncount only the interior 1 cells left behind",
       "WordLadder": "Words are nodes; one-letter changes are edges\nBFS level is sequence length\nremove a word as soon as it enters the queue",
       "IsGraphBipartite": "Color every neighbor with the opposite sign\nan edge joining equal colors is the conflict\nrestart DFS for every disconnected component",
-      "CycleInDirectedGraphDFS": "Mark on entry: visited + active path\nactive neighbor means cycle\nclear only active when DFS returns"
+      "CycleInDirectedGraphDFS": "Mark on entry: visited + active path\nactive neighbor means cycle\nclear only active when DFS returns",
+      "TopoSortDFS": "Explore every outgoing neighbor first\npush the node while returning\npop stack = dependency-safe order"
 };
 
     const solvedOrder = [
@@ -1894,7 +1950,8 @@
       "NumberOfEnclaves",
       "WordLadder",
       "IsGraphBipartite",
-      "CycleInDirectedGraphDFS"
+      "CycleInDirectedGraphDFS",
+      "TopoSortDFS"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
