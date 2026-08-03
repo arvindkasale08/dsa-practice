@@ -1658,6 +1658,51 @@
                   "Odd cycles force a same-color edge and fail; even cycles can alternate colors successfully.",
                   "The input is already an adjacency-list representation, so no graph reconstruction is needed."
             ]
+      },
+      {
+            "name": "CycleInDirectedGraphDFS",
+            "source": "../com/arvind/revision/graphs/CycleInDirectedGraphDFS.java",
+            "label": "Detect a back edge in the active path",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a directed graph, determine whether following its directed edges can bring you back to a vertex on the same traversal path. The graph may contain disconnected components.",
+            "time": "O(V + E)",
+            "space": "O(V)",
+            "timeWhy": "Each vertex is completed once and each directed edge is inspected once. The two state arrays and recursion stack use O(V) space.",
+            "structures": "Adjacency list, visited array, active-path array, DFS recursion",
+            "input": "V = 3, edges = [[1,2],[2,3],[3,1]]",
+            "output": "true",
+            "recognize": "A directed graph asks whether a dependency or one-way route eventually points back into its own unfinished chain.",
+            "visual": [
+                  [
+                        "1 active",
+                        "→",
+                        "2 active"
+                  ],
+                  [
+                        "↑ back edge",
+                        "",
+                        "↓"
+                  ],
+                  [
+                        "3 active",
+                        "←",
+                        "cycle"
+                  ]
+            ],
+            "visualText": "The recursion path behaves like a highlighted stack. Reaching any vertex that is still highlighted closes a directed cycle.",
+            "core": "Mark a vertex both visited and active when DFS enters it. If DFS reaches an active vertex, a back edge formed a cycle. Clear only the active mark when that vertex finishes.",
+            "bruteForce": "Start a fresh path search from every vertex without sharing completed-state information. It can repeatedly traverse the same subgraphs and become much slower.",
+            "alternates": [
+                  "Kahn's topological-sort algorithm detects a cycle when fewer than V vertices can be removed by indegree-zero processing.",
+                  "Use one state array: 0 = unseen, 1 = active, 2 = completely processed."
+            ],
+            "gotchas": [
+                  "A previously visited vertex is not automatically a cycle; it must still be active in the current DFS path.",
+                  "Clear pathVisited when leaving a vertex, but never clear the permanent visited mark.",
+                  "Run DFS from every unvisited vertex because the directed graph may be disconnected.",
+                  "This class uses vertex IDs 1 through V, so the adjacency list and state arrays need V + 1 slots."
+            ]
       }
 ];
 
@@ -1801,6 +1846,16 @@
                   "If a colored neighbor does not have the expected opposite color, return false and propagate it."
             ],
             "skeleton": "colors = all 0\nfor each node\n  if uncolored and !dfs(node, +1)\n    return false\nreturn true\n\ndfs(node, color)\n  if already colored\n    return colors[node] == color\n  colors[node] = color\n  for each neighbor\n    if !dfs(neighbor, -color)\n      return false\n  return true"
+      },
+      "CycleInDirectedGraphDFS": {
+            "prompt": "Before reading: why are both visited and pathVisited needed in a directed graph?",
+            "steps": [
+                  "Start DFS from each permanently unvisited component root.",
+                  "On entry, mark the vertex visited and active in the current recursion path.",
+                  "Follow every outgoing edge; reaching an active vertex immediately proves a cycle.",
+                  "After all neighbors finish safely, clear the current vertex's active-path mark."
+            ],
+            "skeleton": "for node = 1..V\n  if unseen and dfs(node)\n    return true\nreturn false\n\ndfs(node)\n  if active[node]: return true\n  if visited[node]: return false\n  visited[node] = true\n  active[node] = true\n  for neighbor in graph[node]\n    if dfs(neighbor): return true\n  active[node] = false\n  return false"
       }
 };
 
@@ -1819,7 +1874,8 @@
       "SurroundedRegions": "Reverse the search: seed every border O as safe\nBFS protects all connected O cells; flip every unprotected cell to X",
       "NumberOfEnclaves": "Erase every land cell reachable from the border\ncount only the interior 1 cells left behind",
       "WordLadder": "Words are nodes; one-letter changes are edges\nBFS level is sequence length\nremove a word as soon as it enters the queue",
-      "IsGraphBipartite": "Color every neighbor with the opposite sign\nan edge joining equal colors is the conflict\nrestart DFS for every disconnected component"
+      "IsGraphBipartite": "Color every neighbor with the opposite sign\nan edge joining equal colors is the conflict\nrestart DFS for every disconnected component",
+      "CycleInDirectedGraphDFS": "Mark on entry: visited + active path\nactive neighbor means cycle\nclear only active when DFS returns"
 };
 
     const solvedOrder = [
@@ -1837,7 +1893,8 @@
       "SurroundedRegions",
       "NumberOfEnclaves",
       "WordLadder",
-      "IsGraphBipartite"
+      "IsGraphBipartite",
+      "CycleInDirectedGraphDFS"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

@@ -377,11 +377,12 @@
     },
     {
       "date": "2026-08-03",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "graphs/IsGraphBipartite"
+        "graphs/IsGraphBipartite",
+        "graphs/CycleInDirectedGraphDFS"
       ],
-      "notes": "Synced Is Graph Bipartite recall card."
+      "notes": "Synced Is Graph Bipartite recall card. Synced directed graph DFS cycle-detection recall card."
     }
   ]
 }
