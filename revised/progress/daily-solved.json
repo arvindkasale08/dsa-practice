@@ -374,6 +374,14 @@
         "graphs/WordLadder"
       ],
       "notes": "Synced Word Ladder recall card."
+    },
+    {
+      "date": "2026-08-03",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/IsGraphBipartite"
+      ],
+      "notes": "Synced Is Graph Bipartite recall card."
     }
   ]
 }

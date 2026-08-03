@@ -1612,6 +1612,52 @@
                   "If endWord is absent or unreachable, BFS empties and the answer is 0.",
                   "The current helper assumes every candidate has the same length as currWord."
             ]
+      },
+      {
+            "name": "IsGraphBipartite",
+            "source": "../com/arvind/revision/graphs/IsGraphBipartite.java",
+            "label": "Two-color every component",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/is-graph-bipartite/",
+            "description": "Given an undirected graph as adjacency lists, decide whether its vertices can be split into two groups so that every edge connects vertices from opposite groups.",
+            "time": "O(V + E)",
+            "space": "O(V)",
+            "timeWhy": "Each vertex is colored once and every adjacency entry is inspected once. The color array and recursive DFS stack can each hold O(V) state.",
+            "structures": "Adjacency lists, three-state color array, DFS recursion",
+            "input": "graph = [[1,3],[0,2],[1,3],[0,2]]",
+            "output": "true",
+            "recognize": "The problem asks whether connected or conflicting entities can be divided into two groups, or whether an undirected graph is two-colorable.",
+            "visual": [
+                  [
+                        "0 (+1)",
+                        "—",
+                        "1 (-1)"
+                  ],
+                  [
+                        "|",
+                        "",
+                        "|"
+                  ],
+                  [
+                        "3 (-1)",
+                        "—",
+                        "2 (+1)"
+                  ]
+            ],
+            "visualText": "Colors alternate around an even cycle. The moment an edge joins two vertices with the same color, the split is impossible.",
+            "core": "Seed an uncolored component with +1. DFS gives every neighbor the opposite color. If an already-colored neighbor is not the expected opposite color, return false and propagate the conflict.",
+            "bruteForce": "Try all 2^V assignments of vertices to two groups and validate every edge. This directly models the requirement but is exponentially slow.",
+            "alternates": [
+                  "Use BFS instead of DFS while carrying or reading each node's color.",
+                  "Equivalent graph fact: a graph is bipartite exactly when it contains no odd-length cycle."
+            ],
+            "gotchas": [
+                  "The graph may be disconnected, so the outer loop must start coloring every still-uncolored component.",
+                  "Use 0 for uncolored and +1/-1 for the two groups; the next color is simply the opposite sign.",
+                  "An already-colored neighbor must have the expected opposite color, not merely any nonzero color.",
+                  "Odd cycles force a same-color edge and fail; even cycles can alternate colors successfully.",
+                  "The input is already an adjacency-list representation, so no graph reconstruction is needed."
+            ]
       }
 ];
 
@@ -1745,6 +1791,16 @@
                   "Remove each discovered word immediately so it is visited only once."
             ],
             "skeleton": "unused = set(wordList)\nqueue [beginWord, 1]\nremove beginWord from unused\n\nwhile queue not empty\n  word, level = dequeue\n  if word == endWord: return level\n  for each unused candidate\n    if exactly one character differs\n      enqueue [candidate, level + 1]\n      remove candidate from unused\n\nreturn 0"
+      },
+      "IsGraphBipartite": {
+            "prompt": "Before reading: what exact condition proves that the graph cannot be two-colored?",
+            "steps": [
+                  "Scan every vertex; when one is uncolored, start its component with color +1.",
+                  "Record the current color and derive the neighbor color by flipping its sign.",
+                  "Recursively assign that opposite color to each uncolored neighbor.",
+                  "If a colored neighbor does not have the expected opposite color, return false and propagate it."
+            ],
+            "skeleton": "colors = all 0\nfor each node\n  if uncolored and !dfs(node, +1)\n    return false\nreturn true\n\ndfs(node, color)\n  if already colored\n    return colors[node] == color\n  colors[node] = color\n  for each neighbor\n    if !dfs(neighbor, -color)\n      return false\n  return true"
       }
 };
 
@@ -1762,7 +1818,8 @@
       "DistanceToNearestOne": "Seed every zero at distance 0\nfirst multi-source BFS arrival gives each cell its nearest-zero distance",
       "SurroundedRegions": "Reverse the search: seed every border O as safe\nBFS protects all connected O cells; flip every unprotected cell to X",
       "NumberOfEnclaves": "Erase every land cell reachable from the border\ncount only the interior 1 cells left behind",
-      "WordLadder": "Words are nodes; one-letter changes are edges\nBFS level is sequence length\nremove a word as soon as it enters the queue"
+      "WordLadder": "Words are nodes; one-letter changes are edges\nBFS level is sequence length\nremove a word as soon as it enters the queue",
+      "IsGraphBipartite": "Color every neighbor with the opposite sign\nan edge joining equal colors is the conflict\nrestart DFS for every disconnected component"
 };
 
     const solvedOrder = [
@@ -1779,7 +1836,8 @@
       "DistanceToNearestOne",
       "SurroundedRegions",
       "NumberOfEnclaves",
-      "WordLadder"
+      "WordLadder",
+      "IsGraphBipartite"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
