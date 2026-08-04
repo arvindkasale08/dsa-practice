@@ -384,6 +384,14 @@
         "graphs/TopoSortDFS"
       ],
       "notes": "Synced Is Graph Bipartite recall card. Synced directed graph DFS cycle-detection recall card. Synced DFS topological-sort recall card."
+    },
+    {
+      "date": "2026-08-04",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/MaxAreaOfIsland"
+      ],
+      "notes": ""
     }
   ]
 }

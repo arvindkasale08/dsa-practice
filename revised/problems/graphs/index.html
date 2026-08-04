@@ -1748,6 +1748,51 @@
                   "Topological orders are not unique; validate edge precedence instead of comparing one exact list.",
                   "This implementation assumes a DAG and does not itself reject a directed cycle."
             ]
+      },
+      {
+            "name": "MaxAreaOfIsland",
+            "source": "../com/arvind/revision/graphs/MaxAreaOfIsland.java",
+            "label": "Connected-component area",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/max-area-of-island/",
+            "description": "Given a binary grid, find the largest number of 1-cells in any island. Cells belong to the same island only when they touch vertically or horizontally; diagonal contact does not connect them.",
+            "time": "O(m × n)",
+            "space": "O(m × n)",
+            "timeWhy": "The outer scan sees every cell once, and BFS enqueues each land cell at most once. The visited matrix is m × n; in the worst case the queue can also hold O(m × n) cells.",
+            "structures": "Visited matrix, queue of [row, col], four-direction arrays",
+            "input": "grid = [[0,0,1,0,0,0,0,1,0,0,0,0,0], ...]",
+            "output": "6",
+            "recognize": "A grid asks for the size of the largest four-directionally connected region rather than the total number of regions.",
+            "visual": [
+                  [
+                        "1",
+                        "1",
+                        "0"
+                  ],
+                  [
+                        "0",
+                        "1",
+                        "1"
+                  ],
+                  [
+                        "scan",
+                        "BFS = 4",
+                        "max = 4"
+                  ]
+            ],
+            "visualText": "Every unseen 1 starts one flood. BFS consumes that entire island and returns its area; compare that area with the largest one seen so far.",
+            "core": "Scan every cell. When unseen land is found, mark it before enqueueing, run BFS through its four land neighbors, count each dequeued cell, and update the maximum with the completed island area.",
+            "bruteForce": "Start a fresh search from every land cell without sharing visited state. The same island is counted repeatedly, potentially costing O((m × n)²).",
+            "alternates": [
+                  "Recursive DFS can return 1 plus the areas of its valid unseen land neighbors; it has the same O(m × n) complexity but uses the call stack.",
+                  "The input grid itself can be changed from 1 to 0 when visited, removing the separate visited matrix at the cost of mutating the input."
+            ],
+            "gotchas": [
+                  "Mark a cell visited when enqueueing it, not when dequeuing it, or multiple neighbors can add it more than once.",
+                  "Use only four directions; diagonal 1-cells belong to different islands.",
+                  "An all-water grid must return 0.",
+                  "Reset the area counter for every newly discovered island."
+            ]
       }
 ];
 
@@ -1911,6 +1956,16 @@
                   "Push the current vertex during return; pop all vertices to form the answer."
             ],
             "skeleton": "stack = empty\nfor each vertex\n  if unseen\n    dfs(vertex)\n\ndfs(node)\n  mark node visited\n  for neighbor in graph[node]\n    if unseen: dfs(neighbor)\n  stack.push(node)\n\nwhile stack not empty\n  answer.add(stack.pop())"
+      },
+      "MaxAreaOfIsland": {
+            "prompt": "Before reading: what event starts a new area count, and exactly when should a land cell become visited?",
+            "steps": [
+                  "Scan until an unseen land cell is found; this begins one new island.",
+                  "Mark and enqueue that starting cell before BFS begins.",
+                  "Dequeue cells, increment the current area, and enqueue each unseen four-directional land neighbor.",
+                  "When the queue empties, compare the completed area with the global maximum."
+            ],
+            "skeleton": "maxArea = 0\nfor each cell\n  if land and unseen\n    mark + enqueue cell\n    area = 0\n    while queue not empty\n      cell = dequeue\n      area++\n      for each of 4 neighbors\n        if in bounds, land, unseen\n          mark + enqueue neighbor\n    maxArea = max(maxArea, area)\n\nreturn maxArea"
       }
 };
 
@@ -1931,7 +1986,8 @@
       "WordLadder": "Words are nodes; one-letter changes are edges\nBFS level is sequence length\nremove a word as soon as it enters the queue",
       "IsGraphBipartite": "Color every neighbor with the opposite sign\nan edge joining equal colors is the conflict\nrestart DFS for every disconnected component",
       "CycleInDirectedGraphDFS": "Mark on entry: visited + active path\nactive neighbor means cycle\nclear only active when DFS returns",
-      "TopoSortDFS": "Explore every outgoing neighbor first\npush the node while returning\npop stack = dependency-safe order"
+      "TopoSortDFS": "Explore every outgoing neighbor first\npush the node while returning\npop stack = dependency-safe order",
+      "MaxAreaOfIsland": "Each unseen 1 starts one island BFS\ncount cells as they leave the queue\nkeep the largest completed component area"
 };
 
     const solvedOrder = [
@@ -1951,7 +2007,8 @@
       "WordLadder",
       "IsGraphBipartite",
       "CycleInDirectedGraphDFS",
-      "TopoSortDFS"
+      "TopoSortDFS",
+      "MaxAreaOfIsland"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
