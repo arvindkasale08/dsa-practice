@@ -1837,6 +1837,51 @@
                   "When n is 1 and trust is empty, person 1 is the judge.",
                   "A popular person is not enough: any outgoing trust subtracts from the score and disqualifies them."
             ]
+      },
+      {
+            "name": "PacificAtlanticWaterFlow",
+            "source": "../com/arvind/revision/graphs/PacificAtlanticWaterFlow.java",
+            "label": "Reverse flow from both oceans",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/pacific-atlantic-water-flow/",
+            "description": "Given a grid of heights, return every cell whose rainwater can reach both the Pacific border (top or left) and the Atlantic border (bottom or right). Water normally flows to an equal or lower neighboring cell.",
+            "time": "O(m x n)",
+            "space": "O(m x n)",
+            "timeWhy": "Each ocean traversal marks a cell once and examines its four neighbors, so two complete traversals are still O(m x n).",
+            "structures": "Two visited matrices, multi-source BFS queue, four direction offsets",
+            "input": "heights = [[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]]",
+            "output": "[[0,4],[1,3],[1,4],[2,2],[3,0],[3,1],[4,0]]",
+            "recognize": "A grid asks which cells can reach two different borders. Searching outward from every cell repeats work; start at each destination border and reverse the movement rule.",
+            "visual": [
+                  [
+                        "Pacific: top + left",
+                        "climb to >= heights",
+                        "Pacific reachable"
+                  ],
+                  [
+                        "Atlantic: bottom + right",
+                        "climb to >= heights",
+                        "Atlantic reachable"
+                  ],
+                  [
+                        "Pacific visited",
+                        "INTERSECT",
+                        "Atlantic visited"
+                  ]
+            ],
+            "visualText": "Run water backward. From each ocean, move inland only to cells that are equal or higher. A cell in both visited maps can send water downhill to both oceans.",
+            "core": "Seed all Pacific border cells and reverse-BFS uphill. Repeat from all Atlantic border cells. Return the coordinates marked reachable by both searches.",
+            "bruteForce": "Start a fresh downhill search from every cell and check whether it reaches both oceans. Repeating a grid traversal per cell can approach O((m x n)^2).",
+            "alternates": [
+                  "Use recursive DFS from both ocean borders with the same reverse condition; it has the same O(m x n) complexity.",
+                  "A per-cell downhill DFS is conceptually direct but repeats reachability work unless heavily memoized."
+            ],
+            "gotchas": [
+                  "The reverse condition is neighborHeight >= currentHeight, the opposite of the original downhill water flow.",
+                  "Seed every cell on both relevant borders, not only the four corners.",
+                  "A result cell must be present in both visited matrices; either one alone is insufficient.",
+                  "Equal heights are valid in both the original and reversed movement rules."
+            ]
       }
 ];
 
@@ -2020,6 +2065,16 @@
                   "Return the person with score n - 1, otherwise return -1."
             ],
             "skeleton": "score = int[n + 1]\nfor [from, to] in trust\n  score[from]--\n  score[to]++\n\nfor person = 1..n\n  if score[person] == n - 1\n    return person\nreturn -1"
+      },
+      "PacificAtlanticWaterFlow": {
+            "prompt": "Before reading: why is it easier to start from both oceans and make water flow backward?",
+            "steps": [
+                  "Seed the Pacific search with every top-row and left-column cell.",
+                  "Reverse-BFS to equal or higher neighbors and mark Pacific reachability.",
+                  "Seed and repeat from the Atlantic bottom row and right column.",
+                  "Collect cells marked by both searches."
+            ],
+            "skeleton": "reverseBfs(oceanBorders, visited)\n  seed all border cells\n  while queue not empty\n    cell = dequeue\n    for each neighbor\n      if unseen and height[neighbor] >= height[cell]\n        mark + enqueue neighbor\n\npacific = reverseBfs(top + left)\natlantic = reverseBfs(bottom + right)\nreturn intersection(pacific, atlantic)"
       }
 };
 
@@ -2042,7 +2097,8 @@
       "CycleInDirectedGraphDFS": "Mark on entry: visited + active path\nactive neighbor means cycle\nclear only active when DFS returns",
       "TopoSortDFS": "Explore every outgoing neighbor first\npush the node while returning\npop stack = dependency-safe order",
       "MaxAreaOfIsland": "Each unseen 1 starts one island BFS\ncount cells as they leave the queue\nkeep the largest completed component area",
-      "FindTheTownJudge": "For every a -> b: score[a]-- and score[b]++\njudge is the only person with score n - 1"
+      "FindTheTownJudge": "For every a -> b: score[a]-- and score[b]++\njudge is the only person with score n - 1",
+      "PacificAtlanticWaterFlow": "Reverse the water: start at both oceans and climb to equal/higher cells\nanswer = Pacific reachability INTERSECT Atlantic reachability"
 };
 
     const solvedOrder = [
@@ -2064,7 +2120,8 @@
       "CycleInDirectedGraphDFS",
       "TopoSortDFS",
       "MaxAreaOfIsland",
-      "FindTheTownJudge"
+      "FindTheTownJudge",
+      "PacificAtlanticWaterFlow"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
