@@ -395,10 +395,11 @@
     },
     {
       "date": "2026-08-08",
-      "solved": 2,
+      "solved": 3,
       "cardsSynced": [
         "graphs/FindTheTownJudge",
-        "graphs/PacificAtlanticWaterFlow"
+        "graphs/PacificAtlanticWaterFlow",
+        "graphs/WallsAndGates"
       ],
       "notes": ""
     }

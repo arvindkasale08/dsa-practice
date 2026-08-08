@@ -1882,6 +1882,51 @@
                   "A result cell must be present in both visited matrices; either one alone is insufficient.",
                   "Equal heights are valid in both the original and reversed movement rules."
             ]
+      },
+      {
+            "name": "WallsAndGates",
+            "source": "../com/arvind/revision/graphs/WallsAndGates.java",
+            "label": "Multi-source BFS from every gate",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/walls-and-gates/",
+            "description": "A grid contains walls (-1), gates (0), and empty rooms (INF). Fill every reachable empty room with its shortest distance to any gate; rooms blocked from every gate stay INF.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "timeWhy": "Every cell enters the queue at most once, and processing it checks only four neighbors.",
+            "structures": "Queue of [row, column, distance], visited matrix, four direction arrays",
+            "input": "rooms = [[INF,-1,0,INF],[INF,INF,INF,-1],[INF,-1,INF,-1],[0,-1,INF,INF]]",
+            "output": "[[3,-1,0,1],[2,2,1,-1],[1,-1,2,-1],[0,-1,3,4]]",
+            "recognize": "Every cell needs the shortest distance to the nearest one of several sources in an unweighted grid.",
+            "visual": [
+                  [
+                        "all gates at distance 0",
+                        "one shared queue",
+                        "BFS waves spread together"
+                  ],
+                  [
+                        "first arrival",
+                        "shortest distance",
+                        "write room"
+                  ],
+                  [
+                        "-1 wall",
+                        "blocked",
+                        "never enqueue"
+                  ]
+            ],
+            "visualText": "Picture simultaneous distance waves leaving every gate. The first wave to reach a room must come from its nearest gate.",
+            "core": "Enqueue every gate before traversal begins. Then run one BFS, writing D + 1 into each unseen, non-wall neighbor as soon as it is enqueued.",
+            "bruteForce": "Start a separate BFS from every empty room until it finds a gate. In the worst case this repeats a grid traversal for many rooms: O((m * n)^2).",
+            "alternates": [
+                  "Use the room values themselves as visited state: enqueue all gates, and only enter cells still equal to INF.",
+                  "Starting a BFS from each gate can work with minimum updates, but revisits cells and loses the clean O(m * n) bound."
+            ],
+            "gotchas": [
+                  "Seed all gates before BFS starts; processing one gate fully first can assign a farther distance.",
+                  "Mark a room when it is enqueued, not when it is later removed, so it cannot enter the queue twice.",
+                  "Never enter a wall, and leave rooms unreachable from every gate as INF.",
+                  "The first arrival is shortest only because every move has the same cost and the queue processes distances in order."
+            ]
       }
 ];
 
@@ -2075,6 +2120,16 @@
                   "Collect cells marked by both searches."
             ],
             "skeleton": "reverseBfs(oceanBorders, visited)\n  seed all border cells\n  while queue not empty\n    cell = dequeue\n    for each neighbor\n      if unseen and height[neighbor] >= height[cell]\n        mark + enqueue neighbor\n\npacific = reverseBfs(top + left)\natlantic = reverseBfs(bottom + right)\nreturn intersection(pacific, atlantic)"
+      },
+      "WallsAndGates": {
+            "prompt": "Before reading: why must every gate enter the queue before BFS starts?",
+            "steps": [
+                  "Scan the grid and enqueue every gate at distance 0.",
+                  "Remove one cell from the shared queue and inspect four neighbors.",
+                  "For each unseen non-wall neighbor, write distance + 1, mark it, and enqueue it.",
+                  "Stop when the queue is empty; the input grid now contains nearest-gate distances."
+            ],
+            "skeleton": "queue = every gate with distance 0\nmark every gate visited\n\nwhile queue not empty\n  row, col, distance = dequeue\n  for each of 4 neighbors\n    if in bounds and unseen and not a wall\n      rooms[neighbor] = distance + 1\n      mark + enqueue neighbor"
       }
 };
 
@@ -2098,7 +2153,8 @@
       "TopoSortDFS": "Explore every outgoing neighbor first\npush the node while returning\npop stack = dependency-safe order",
       "MaxAreaOfIsland": "Each unseen 1 starts one island BFS\ncount cells as they leave the queue\nkeep the largest completed component area",
       "FindTheTownJudge": "For every a -> b: score[a]-- and score[b]++\njudge is the only person with score n - 1",
-      "PacificAtlanticWaterFlow": "Reverse the water: start at both oceans and climb to equal/higher cells\nanswer = Pacific reachability INTERSECT Atlantic reachability"
+      "PacificAtlanticWaterFlow": "Reverse the water: start at both oceans and climb to equal/higher cells\nanswer = Pacific reachability INTERSECT Atlantic reachability",
+      "WallsAndGates": "Put every gate into one queue at distance 0\nfirst BFS arrival writes the nearest-gate distance"
 };
 
     const solvedOrder = [
@@ -2121,7 +2177,8 @@
       "TopoSortDFS",
       "MaxAreaOfIsland",
       "FindTheTownJudge",
-      "PacificAtlanticWaterFlow"
+      "PacificAtlanticWaterFlow",
+      "WallsAndGates"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
