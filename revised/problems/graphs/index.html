@@ -1793,6 +1793,50 @@
                   "An all-water grid must return 0.",
                   "Reset the area counter for every newly discovered island."
             ]
+      },
+      {
+            "name": "FindTheTownJudge",
+            "source": "../com/arvind/revision/graphs/FindTheTownJudge.java",
+            "label": "Net trust score",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/find-the-town-judge/",
+            "description": "Among people numbered 1 through n, find the one person who trusts nobody while every other person trusts them. Return that person's number, or -1 when no such person exists.",
+            "time": "O(n + t)",
+            "space": "O(n)",
+            "timeWhy": "Process each of the t trust pairs once, then scan the n people once. The score array stores one integer per person.",
+            "structures": "Integer score array: incoming trust +1, outgoing trust -1",
+            "input": "n = 3, trust = [[1,3],[2,3]]",
+            "output": "3",
+            "recognize": "A directed relationship asks for one node with every possible incoming edge and no outgoing edge.",
+            "visual": [
+                  [
+                        "1 -> 3",
+                        "score[1] -1",
+                        "score[3] +1"
+                  ],
+                  [
+                        "2 -> 3",
+                        "score[2] -1",
+                        "score[3] +1"
+                  ],
+                  [
+                        "scores",
+                        "[-1, -1, 2]",
+                        "2 = n - 1"
+                  ]
+            ],
+            "visualText": "Treat trust as directed votes. A person loses one point for trusting someone and gains one when someone trusts them. The judge alone reaches n - 1.",
+            "core": "For each [a, b], decrement a's score and increment b's score. Scan people 1 through n and return the one whose score is exactly n - 1.",
+            "bruteForce": "For every person, rescan all trust pairs to separately verify that everybody else trusts them and that they trust nobody. This can cost O(n x t).",
+            "alternates": [
+                  "Keep separate indegree and outdegree arrays, then find indegree n - 1 and outdegree 0. This is more explicit but uses two arrays.",
+                  "Two-pass candidate elimination can identify a possible judge first, but the candidate still needs full verification."
+            ],
+            "gotchas": [
+                  "People are numbered 1 through n; index 0 is unused and must not be returned.",
+                  "When n is 1 and trust is empty, person 1 is the judge.",
+                  "A popular person is not enough: any outgoing trust subtracts from the score and disqualifies them."
+            ]
       }
 ];
 
@@ -1966,6 +2010,16 @@
                   "When the queue empties, compare the completed area with the global maximum."
             ],
             "skeleton": "maxArea = 0\nfor each cell\n  if land and unseen\n    mark + enqueue cell\n    area = 0\n    while queue not empty\n      cell = dequeue\n      area++\n      for each of 4 neighbors\n        if in bounds, land, unseen\n          mark + enqueue neighbor\n    maxArea = max(maxArea, area)\n\nreturn maxArea"
+      },
+      "FindTheTownJudge": {
+            "prompt": "Before reading: how can one score represent both 'trusted by everyone' and 'trusts nobody'?",
+            "steps": [
+                  "Create one score per person; an incoming trust edge adds one.",
+                  "The same edge subtracts one from the person who trusts.",
+                  "After all edges, scan only people 1 through n.",
+                  "Return the person with score n - 1, otherwise return -1."
+            ],
+            "skeleton": "score = int[n + 1]\nfor [from, to] in trust\n  score[from]--\n  score[to]++\n\nfor person = 1..n\n  if score[person] == n - 1\n    return person\nreturn -1"
       }
 };
 
@@ -1987,7 +2041,8 @@
       "IsGraphBipartite": "Color every neighbor with the opposite sign\nan edge joining equal colors is the conflict\nrestart DFS for every disconnected component",
       "CycleInDirectedGraphDFS": "Mark on entry: visited + active path\nactive neighbor means cycle\nclear only active when DFS returns",
       "TopoSortDFS": "Explore every outgoing neighbor first\npush the node while returning\npop stack = dependency-safe order",
-      "MaxAreaOfIsland": "Each unseen 1 starts one island BFS\ncount cells as they leave the queue\nkeep the largest completed component area"
+      "MaxAreaOfIsland": "Each unseen 1 starts one island BFS\ncount cells as they leave the queue\nkeep the largest completed component area",
+      "FindTheTownJudge": "For every a -> b: score[a]-- and score[b]++\njudge is the only person with score n - 1"
 };
 
     const solvedOrder = [
@@ -2008,7 +2063,8 @@
       "IsGraphBipartite",
       "CycleInDirectedGraphDFS",
       "TopoSortDFS",
-      "MaxAreaOfIsland"
+      "MaxAreaOfIsland",
+      "FindTheTownJudge"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
