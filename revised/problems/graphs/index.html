@@ -1927,6 +1927,52 @@
                   "Never enter a wall, and leave rooms unreachable from every gate as INF.",
                   "The first arrival is shortest only because every move has the same cost and the queue processes distances in order."
             ]
+      },
+      {
+            "name": "CountSubIslands",
+            "source": "../com/arvind/revision/graphs/CountSubIslands.java",
+            "label": "Validate one island against another",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/count-sub-islands/",
+            "description": "Count the islands in grid2 whose every land cell also lies on land in grid1. An island in grid2 is rejected if even one of its cells sits over water in grid1.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "timeWhy": "Each grid2 cell is visited at most once, and every visited land cell checks four neighbors.",
+            "structures": "Queue of [row, column], visited matrix, four direction arrays",
+            "input": "grid1 = [[1,1,1,0,0],[0,1,1,1,1],[0,0,0,0,0],[1,0,0,0,0],[1,1,0,1,1]]\ngrid2 = [[1,1,1,0,0],[0,0,1,1,1],[0,1,0,0,0],[1,0,1,1,0],[0,1,0,1,0]]",
+            "output": "3",
+            "recognize": "Two binary grids describe shapes, and every connected component in the second grid must be checked cell-by-cell against the first grid.",
+            "visual": [
+                  [
+                        "grid2 island",
+                        "BFS visits every cell",
+                        "compare with grid1"
+                  ],
+                  [
+                        "all cells overlap land",
+                        "flag stays true",
+                        "count + 1"
+                  ],
+                  [
+                        "one cell overlaps water",
+                        "flag becomes false",
+                        "finish island, do not count"
+                  ]
+            ],
+            "visualText": "Treat each grid2 island as one unit. BFS paints the whole shape while a single boolean records whether every painted cell is also land in grid1.",
+            "core": "Start BFS from every unseen land cell in grid2. Traverse its entire four-directional island and turn the validity flag false whenever the matching grid1 cell is water. Add one only after the complete island has been consumed and the flag is still true.",
+            "bruteForce": "For every grid2 island, collect all of its coordinates first and then scan that coordinate list against grid1. It is still O(m * n), but stores each component separately instead of validating during traversal.",
+            "alternates": [
+                  "Use recursive DFS with the same shared validity result; the graph logic is identical.",
+                  "Mutate grid2 land to 0 as the visited marker and avoid a separate visited matrix."
+            ],
+            "gotchas": [
+                  "A single mismatched cell invalidates the whole grid2 island, not just that cell.",
+                  "Do not return as soon as a mismatch appears. Finish visiting the island so its remaining cells are not mistaken for new islands later.",
+                  "Only grid2 defines the island shape; grid1 is used solely to validate that shape.",
+                  "Use four-directional adjacency. Diagonally touching land belongs to separate islands.",
+                  "Once the flag becomes false, it must never become true again during that BFS."
+            ]
       }
 ];
 
@@ -2130,6 +2176,16 @@
                   "Stop when the queue is empty; the input grid now contains nearest-gate distances."
             ],
             "skeleton": "queue = every gate with distance 0\nmark every gate visited\n\nwhile queue not empty\n  row, col, distance = dequeue\n  for each of 4 neighbors\n    if in bounds and unseen and not a wall\n      rooms[neighbor] = distance + 1\n      mark + enqueue neighbor"
+      },
+      "CountSubIslands": {
+            "prompt": "Before reading: why must BFS finish an island even after one cell proves it is not a sub-island?",
+            "steps": [
+                  "Scan grid2 until an unseen land cell starts a new candidate island.",
+                  "BFS through every four-directionally connected grid2 land cell and mark each one visited.",
+                  "If any matching grid1 cell is water, permanently mark this candidate invalid.",
+                  "After BFS consumes the full island, increment the answer only if it stayed valid."
+            ],
+            "skeleton": "count = 0\nfor each grid2 cell\n  if land and unseen\n    valid = true\n    mark + enqueue cell\n    while queue not empty\n      cell = dequeue\n      if grid1[cell] is water\n        valid = false\n      enqueue unseen grid2 land neighbors\n    if valid\n      count++\n\nreturn count"
       }
 };
 
@@ -2154,7 +2210,8 @@
       "MaxAreaOfIsland": "Each unseen 1 starts one island BFS\ncount cells as they leave the queue\nkeep the largest completed component area",
       "FindTheTownJudge": "For every a -> b: score[a]-- and score[b]++\njudge is the only person with score n - 1",
       "PacificAtlanticWaterFlow": "Reverse the water: start at both oceans and climb to equal/higher cells\nanswer = Pacific reachability INTERSECT Atlantic reachability",
-      "WallsAndGates": "Put every gate into one queue at distance 0\nfirst BFS arrival writes the nearest-gate distance"
+      "WallsAndGates": "Put every gate into one queue at distance 0\nfirst BFS arrival writes the nearest-gate distance",
+      "CountSubIslands": "grid2 defines each island\ngrid1 validates every visited cell\none mismatch rejects the island, but traversal must finish"
 };
 
     const solvedOrder = [
@@ -2178,7 +2235,8 @@
       "MaxAreaOfIsland",
       "FindTheTownJudge",
       "PacificAtlanticWaterFlow",
-      "WallsAndGates"
+      "WallsAndGates",
+      "CountSubIslands"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
