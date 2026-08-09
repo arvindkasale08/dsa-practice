@@ -406,10 +406,11 @@
     },
     {
       "date": "2026-08-09",
-      "solved": 2,
+      "solved": 3,
       "cardsSynced": [
         "graphs/NumberOfClosedIslands",
-        "graphs/IslandPerimeter"
+        "graphs/IslandPerimeter",
+        "graphs/NoOfDistinctIslands"
       ],
       "notes": "Synced Number of Closed Islands card."
     }

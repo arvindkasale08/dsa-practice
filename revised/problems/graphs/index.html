@@ -2057,6 +2057,43 @@
                   "Mark land visited before exploring neighbors or adjacent cells recurse into each other forever.",
                   "The problem guarantees one island; scanning all cells still works and avoids depending on where it begins."
             ]
+      },
+      {
+            "name": "NoOfDistinctIslands",
+            "source": "../com/arvind/revision/graphs/NoOfDistinctIslands.java",
+            "label": "Normalize island coordinates",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/number-of-distinct-islands/",
+            "description": "Given a binary grid, count how many different island shapes exist. Two islands are the same when one can be shifted to match the other; rotating or reflecting a shape does not make it equal.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "timeWhy": "Every cell is scanned once, and each land cell enters one BFS once.",
+            "structures": "visited matrix, BFS queue, HashSet of shape signatures",
+            "input": "grid = [[1,1,0,1,1],[1,0,0,0,0],[0,0,0,0,1],[1,1,0,1,1]]",
+            "output": "3",
+            "recognize": "When connected components must be grouped by shape while their absolute positions in the grid do not matter.",
+            "visual": [
+                  [
+                        "(2,3)",
+                        "(2,4)"
+                  ],
+                  [
+                        "start (3,3)",
+                        "(3,4)"
+                  ]
+            ],
+            "visualText": "Erase the absolute address: subtract the island start from every cell. A translated copy then produces the same sequence of relative coordinates.",
+            "core": "For each unseen land cell, BFS the whole island and append `(row - startRow, col - startCol)` for every visited cell. Put the resulting signature into a set.",
+            "bruteForce": "Collect every island's absolute coordinates, then compare each pair after trying to translate one onto the other. Pairwise shape comparison adds unnecessary repeated work.",
+            "alternates": [
+                  "DFS can build the same relative-coordinate signature if neighbor traversal order stays fixed.",
+                  "Store a sorted list of relative coordinate pairs instead of one string; it is more structured but needs comparable/hashable representation."
+            ],
+            "gotchas": [
+                  "Subtract the same island origin from every cell; absolute coordinates make translated copies look different.",
+                  "Use separators between row and column values so different coordinates cannot collapse into the same string.",
+                  "Only translation counts as equal here; rotations and reflections remain distinct shapes."
+            ]
       }
 ];
 
@@ -2290,6 +2327,16 @@
                   "Add the four returned values to obtain the island perimeter."
             ],
             "skeleton": "dfs(r, c)\n  if outside: return 1\n  if water: return 1\n  if visited: return 0\n  mark visited\n  return dfs(up) + dfs(right) + dfs(down) + dfs(left)\n\nscan grid\n  start dfs from unvisited land\nreturn perimeter"
+      },
+      "NoOfDistinctIslands": {
+            "prompt": "Before reading: how can two islands at different grid positions produce the same identity?",
+            "steps": [
+                  "Start BFS at the first cell of an unseen island and remember that cell as the origin.",
+                  "For each reached cell, record its row and column offset from the origin.",
+                  "Use the complete ordered offset sequence as the island's normalized signature.",
+                  "Insert the signature into a set; the set size is the number of distinct shapes."
+            ],
+            "skeleton": "signatures = set\nfor every cell\n  if land and unseen\n    origin = cell\n    signature = BFS(origin)\n      mark before enqueue\n      append (row-originRow, col-originCol)\n    signatures.add(signature)\nreturn signatures.size"
       }
 };
 
@@ -2317,7 +2364,8 @@
       "WallsAndGates": "Put every gate into one queue at distance 0\nfirst BFS arrival writes the nearest-gate distance",
       "CountSubIslands": "grid2 defines each island\ngrid1 validates every visited cell\none mismatch rejects the island, but traversal must finish",
       "NumberOfClosedIslands": "BFS consumes one complete land component\nany boundary cell makes closed = false forever\ncount only after the queue empties",
-      "IslandPerimeter": "DFS from land in four directions\noutside or water = +1 exposed side\nalready visited land = +0"
+      "IslandPerimeter": "DFS from land in four directions\noutside or water = +1 exposed side\nalready visited land = +0",
+      "NoOfDistinctIslands": "BFS one island from a fixed origin\nrecord (row-originRow, col-originCol)\nHashSet deduplicates translated copies"
 };
 
     const solvedOrder = [
@@ -2344,7 +2392,8 @@
       "WallsAndGates",
       "CountSubIslands",
       "NumberOfClosedIslands",
-      "IslandPerimeter"
+      "IslandPerimeter",
+      "NoOfDistinctIslands"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
