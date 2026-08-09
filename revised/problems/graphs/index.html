@@ -1973,6 +1973,52 @@
                   "Use four-directional adjacency. Diagonally touching land belongs to separate islands.",
                   "Once the flag becomes false, it must never become true again during that BFS."
             ]
+      },
+      {
+            "name": "NumberOfClosedIslands",
+            "source": "../com/arvind/revision/graphs/NumberOfClosedIslands.java",
+            "label": "Reject islands that leak to an edge",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/number-of-closed-islands/",
+            "description": "Count four-directionally connected land regions that are completely surrounded by water. Any island containing a boundary cell is open and must not be counted.",
+            "time": "O(m * n)",
+            "space": "O(m * n)",
+            "timeWhy": "Each cell is visited at most once, and processing a land cell checks exactly four neighboring positions.",
+            "structures": "Queue of [row, column], visited matrix, four direction arrays",
+            "input": "grid = [[1,1,1,1,1,1,1,0],[1,0,0,0,0,1,1,0],[1,0,1,0,1,1,1,0],[1,0,0,0,0,1,0,1],[1,1,1,1,1,1,1,0]]",
+            "output": "2",
+            "recognize": "A connected grid component is valid only if none of its cells reaches or occupies the outer boundary.",
+            "visual": [
+                  [
+                        "interior 0",
+                        "BFS whole component",
+                        "watch for an edge"
+                  ],
+                  [
+                        "never touches boundary",
+                        "closed = true",
+                        "count + 1"
+                  ],
+                  [
+                        "touches boundary once",
+                        "closed = false forever",
+                        "finish BFS, do not count"
+                  ]
+            ],
+            "visualText": "Imagine each land component as a blob. It is closed only when the entire blob stays inside the frame; one cell touching the frame creates a leak.",
+            "core": "Start BFS from each unseen interior land cell. Traverse its complete component while carrying a boolean flag. If any discovered land cell lies on the boundary, make the flag false. Count the component only after BFS finishes and the flag remains true.",
+            "bruteForce": "For each unvisited island, first collect all of its coordinates, then scan the collected cells for a boundary coordinate. This has the same asymptotic cost but requires a separate component collection.",
+            "alternates": [
+                  "Erase every boundary-connected land component first, then count the remaining islands.",
+                  "Use recursive DFS and return whether every branch stays away from the boundary."
+            ],
+            "gotchas": [
+                  "LeetCode uses 0 for land and 1 for water, opposite to many island problems.",
+                  "A boundary-connected island may begin at an interior cell, so starting only from interior cells does not prove it is closed.",
+                  "After detecting a boundary cell, continue traversing the component so no leftover cells are counted again.",
+                  "The closure flag is monotonic: once false, it must stay false.",
+                  "The helper name isCorner, but the check correctly means any boundary cell, not only the four literal corners."
+            ]
       }
 ];
 
@@ -2186,6 +2232,16 @@
                   "After BFS consumes the full island, increment the answer only if it stayed valid."
             ],
             "skeleton": "count = 0\nfor each grid2 cell\n  if land and unseen\n    valid = true\n    mark + enqueue cell\n    while queue not empty\n      cell = dequeue\n      if grid1[cell] is water\n        valid = false\n      enqueue unseen grid2 land neighbors\n    if valid\n      count++\n\nreturn count"
+      },
+      "NumberOfClosedIslands": {
+            "prompt": "Before reading: how can an island that starts inside the grid still be open?",
+            "steps": [
+                  "Scan interior cells and start BFS from each unseen land cell.",
+                  "Mark land when enqueued and traverse the entire connected component.",
+                  "If any discovered land lies on the outer row or column, permanently mark the component open.",
+                  "After the queue empties, count the component only if it never touched an edge."
+            ],
+            "skeleton": "count = 0\nfor each interior cell\n  if land and unseen\n    closed = true\n    mark + enqueue cell\n    while queue not empty\n      cell = dequeue\n      for each land neighbor\n        if neighbor lies on boundary\n          closed = false\n        mark + enqueue neighbor\n    if closed\n      count++\n\nreturn count"
       }
 };
 
@@ -2211,7 +2267,8 @@
       "FindTheTownJudge": "For every a -> b: score[a]-- and score[b]++\njudge is the only person with score n - 1",
       "PacificAtlanticWaterFlow": "Reverse the water: start at both oceans and climb to equal/higher cells\nanswer = Pacific reachability INTERSECT Atlantic reachability",
       "WallsAndGates": "Put every gate into one queue at distance 0\nfirst BFS arrival writes the nearest-gate distance",
-      "CountSubIslands": "grid2 defines each island\ngrid1 validates every visited cell\none mismatch rejects the island, but traversal must finish"
+      "CountSubIslands": "grid2 defines each island\ngrid1 validates every visited cell\none mismatch rejects the island, but traversal must finish",
+      "NumberOfClosedIslands": "BFS consumes one complete land component\nany boundary cell makes closed = false forever\ncount only after the queue empties"
 };
 
     const solvedOrder = [
@@ -2236,7 +2293,8 @@
       "FindTheTownJudge",
       "PacificAtlanticWaterFlow",
       "WallsAndGates",
-      "CountSubIslands"
+      "CountSubIslands",
+      "NumberOfClosedIslands"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

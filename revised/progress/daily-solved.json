@@ -403,6 +403,14 @@
         "graphs/CountSubIslands"
       ],
       "notes": "Synced Count Sub Islands card."
+    },
+    {
+      "date": "2026-08-09",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/NumberOfClosedIslands"
+      ],
+      "notes": "Synced Number of Closed Islands card."
     }
   ]
 }
