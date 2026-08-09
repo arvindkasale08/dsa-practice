@@ -2019,6 +2019,44 @@
                   "The closure flag is monotonic: once false, it must stay false.",
                   "The helper name isCorner, but the check correctly means any boundary cell, not only the four literal corners."
             ]
+      },
+      {
+            "name": "IslandPerimeter",
+            "source": "../com/arvind/revision/graphs/IslandPerimeter.java",
+            "label": "DFS counts exposed sides",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/island-perimeter/",
+            "description": "Given a binary grid containing one island, return its perimeter. Land cells connect only up, right, down, and left; each land side touching water or leaving the grid contributes one perimeter unit.",
+            "time": "O(m x n)",
+            "space": "O(m x n)",
+            "timeWhy": "The scan and DFS process each grid cell at most once.",
+            "structures": "DFS recursion, visited matrix",
+            "input": "grid = [[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]",
+            "output": "16",
+            "recognize": "When the answer is the exposed boundary of connected grid cells rather than the number or area of those cells.",
+            "visual": [
+                  [
+                        "water +1",
+                        "land",
+                        "outside +1"
+                  ],
+                  [
+                        "land",
+                        "visited +0",
+                        "water +1"
+                  ]
+            ],
+            "visualText": "Stand on each land cell and look in four directions. Water or the outside exposes one side; land continues the walk; already visited land adds nothing.",
+            "core": "DFS through the island. Return 1 when a move reaches water or leaves the grid, return 0 for visited land, and sum all four directions.",
+            "bruteForce": "For every land cell, inspect all four neighbors and count each side that touches water or the grid boundary. This is also O(m x n) and avoids recursion.",
+            "alternates": [
+                  "Count 4 per land cell, then subtract 2 for every shared edge with an adjacent land cell."
+            ],
+            "gotchas": [
+                  "Out of bounds and water each contribute 1; visited land contributes 0.",
+                  "Mark land visited before exploring neighbors or adjacent cells recurse into each other forever.",
+                  "The problem guarantees one island; scanning all cells still works and avoids depending on where it begins."
+            ]
       }
 ];
 
@@ -2242,6 +2280,16 @@
                   "After the queue empties, count the component only if it never touched an edge."
             ],
             "skeleton": "count = 0\nfor each interior cell\n  if land and unseen\n    closed = true\n    mark + enqueue cell\n    while queue not empty\n      cell = dequeue\n      for each land neighbor\n        if neighbor lies on boundary\n          closed = false\n        mark + enqueue neighbor\n    if closed\n      count++\n\nreturn count"
+      },
+      "IslandPerimeter": {
+            "prompt": "Before reading: which two DFS exits contribute one perimeter edge, and which exit contributes zero?",
+            "steps": [
+                  "From each unvisited land cell, mark it and explore four directions.",
+                  "Return 1 when the next position is outside the grid or is water.",
+                  "Return 0 when the next land cell was already visited.",
+                  "Add the four returned values to obtain the island perimeter."
+            ],
+            "skeleton": "dfs(r, c)\n  if outside: return 1\n  if water: return 1\n  if visited: return 0\n  mark visited\n  return dfs(up) + dfs(right) + dfs(down) + dfs(left)\n\nscan grid\n  start dfs from unvisited land\nreturn perimeter"
       }
 };
 
@@ -2268,7 +2316,8 @@
       "PacificAtlanticWaterFlow": "Reverse the water: start at both oceans and climb to equal/higher cells\nanswer = Pacific reachability INTERSECT Atlantic reachability",
       "WallsAndGates": "Put every gate into one queue at distance 0\nfirst BFS arrival writes the nearest-gate distance",
       "CountSubIslands": "grid2 defines each island\ngrid1 validates every visited cell\none mismatch rejects the island, but traversal must finish",
-      "NumberOfClosedIslands": "BFS consumes one complete land component\nany boundary cell makes closed = false forever\ncount only after the queue empties"
+      "NumberOfClosedIslands": "BFS consumes one complete land component\nany boundary cell makes closed = false forever\ncount only after the queue empties",
+      "IslandPerimeter": "DFS from land in four directions\noutside or water = +1 exposed side\nalready visited land = +0"
 };
 
     const solvedOrder = [
@@ -2294,7 +2343,8 @@
       "PacificAtlanticWaterFlow",
       "WallsAndGates",
       "CountSubIslands",
-      "NumberOfClosedIslands"
+      "NumberOfClosedIslands",
+      "IslandPerimeter"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
