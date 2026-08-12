@@ -413,6 +413,15 @@
         "graphs/NoOfDistinctIslands"
       ],
       "notes": "Synced Number of Closed Islands card."
+    },
+    {
+      "date": "2026-08-12",
+      "solved": 2,
+      "cardsSynced": [
+        "graphs/ToposortBFSKahnAlgo",
+        "graphs/TopoSortDAGCycleBFS"
+      ],
+      "notes": ""
     }
   ]
 }

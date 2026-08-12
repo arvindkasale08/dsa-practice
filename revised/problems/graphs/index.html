@@ -2094,6 +2094,72 @@
                   "Use separators between row and column values so different coordinates cannot collapse into the same string.",
                   "Only translation counts as equal here; rotations and reflections remain distinct shapes."
             ]
+      },
+      {
+            "name": "ToposortBFSKahnAlgo",
+            "source": "../com/arvind/revision/graphs/ToposortBFSKahnAlgo.java",
+            "label": "Kahn's topological sort",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a directed acyclic graph, return a topological ordering in which every node appears after all nodes that point to it.",
+            "time": "O(V + E)",
+            "space": "O(V)",
+            "timeWhy": "Each vertex enters the queue once and every directed edge reduces one indegree once.",
+            "structures": "indegree array, queue, result list",
+            "input": "V = 6, edges = [[5,0],[5,2],[4,0],[4,1],[2,3],[3,1]]",
+            "output": "[4,5,0,2,3,1]",
+            "recognize": "When directed dependencies must be arranged so every prerequisite comes before the node that depends on it.",
+            "visual": [
+                  [
+                        "indegree = 0",
+                        "queue",
+                        "remove edges",
+                        "new zeros"
+                  ]
+            ],
+            "visualText": "Zero indegree means no unmet prerequisite. Remove that node, then its outgoing edges may unlock more nodes.",
+            "core": "Compute every indegree, enqueue all zero-indegree vertices, then repeatedly dequeue a vertex and decrement each neighbor's indegree.",
+            "bruteForce": "Generate permutations and test whether every edge points forward in the order. This explores up to V! arrangements.",
+            "alternates": [
+                  "DFS postorder also produces a topological order by pushing a node after all descendants finish."
+            ],
+            "gotchas": [
+                  "Topological order is not unique; queue insertion order determines which valid order is returned.",
+                  "A result shorter than V means the graph contains a directed cycle."
+            ]
+      },
+      {
+            "name": "TopoSortDAGCycleBFS",
+            "source": "../com/arvind/revision/graphs/TopoSortDAGCycleBFS.java",
+            "label": "Detect cycle with Kahn's algorithm",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a directed graph, determine whether it contains a cycle by checking whether Kahn's topological process can remove every vertex.",
+            "time": "O(V + E)",
+            "space": "O(V)",
+            "timeWhy": "Every processed vertex is dequeued once and every edge reduces one indegree once.",
+            "structures": "indegree array, queue, processed-node counter",
+            "input": "V = 4, edges = [[0,1],[1,2],[2,3],[3,1]]",
+            "output": "true",
+            "recognize": "When a directed cycle must be detected using BFS or topological sorting rather than a DFS recursion-path array.",
+            "visual": [
+                  [
+                        "zero indegree",
+                        "process",
+                        "seen count",
+                        "seen < V = cycle"
+                  ]
+            ],
+            "visualText": "Vertices trapped in a directed cycle never reach indegree zero, so Kahn's queue eventually stops before processing all V vertices.",
+            "core": "Run Kahn's algorithm while counting dequeued vertices. If processed count is smaller than V, at least one cycle blocked the remaining vertices.",
+            "bruteForce": "Start a fresh path search from every node and look for a return to the start. Without careful state reuse this repeats substantial work.",
+            "alternates": [
+                  "DFS cycle detection uses visited plus an active-recursion-path marker."
+            ],
+            "gotchas": [
+                  "Compare processed-node count with V, not with the initial queue size.",
+                  "A disconnected component containing a cycle must still make the final processed count smaller than V."
+            ]
       }
 ];
 
@@ -2337,6 +2403,26 @@
                   "Insert the signature into a set; the set size is the number of distinct shapes."
             ],
             "skeleton": "signatures = set\nfor every cell\n  if land and unseen\n    origin = cell\n    signature = BFS(origin)\n      mark before enqueue\n      append (row-originRow, col-originCol)\n    signatures.add(signature)\nreturn signatures.size"
+      },
+      "ToposortBFSKahnAlgo": {
+            "prompt": "Before reading: which vertices are immediately safe to place in a topological order?",
+            "steps": [
+                  "Count incoming edges for every vertex.",
+                  "Enqueue every vertex whose indegree is zero.",
+                  "Dequeue one, append it, and remove its outgoing edges by reducing neighbor indegrees.",
+                  "Enqueue a neighbor exactly when its indegree becomes zero."
+            ],
+            "skeleton": "build indegree[]\nqueue all indegree-zero nodes\nwhile queue not empty\n  node = poll\n  result.add(node)\n  for neighbor\n    indegree[neighbor]--\n    if zero: enqueue\nreturn result"
+      },
+      "TopoSortDAGCycleBFS": {
+            "prompt": "Before reading: why can vertices inside a directed cycle never enter Kahn's queue?",
+            "steps": [
+                  "Build indegrees and enqueue all initial zero-indegree vertices.",
+                  "Count each vertex removed from the queue.",
+                  "Reduce outgoing-neighbor indegrees exactly as in topological sort.",
+                  "After BFS, processed count below V means a cycle exists."
+            ],
+            "skeleton": "build indegree[]\nqueue all zeros\nseen = 0\nwhile queue not empty\n  node = poll; seen++\n  reduce neighbor indegrees\n  enqueue newly zero neighbors\nreturn seen != V"
       }
 };
 
@@ -2365,7 +2451,9 @@
       "CountSubIslands": "grid2 defines each island\ngrid1 validates every visited cell\none mismatch rejects the island, but traversal must finish",
       "NumberOfClosedIslands": "BFS consumes one complete land component\nany boundary cell makes closed = false forever\ncount only after the queue empties",
       "IslandPerimeter": "DFS from land in four directions\noutside or water = +1 exposed side\nalready visited land = +0",
-      "NoOfDistinctIslands": "BFS one island from a fixed origin\nrecord (row-originRow, col-originCol)\nHashSet deduplicates translated copies"
+      "NoOfDistinctIslands": "BFS one island from a fixed origin\nrecord (row-originRow, col-originCol)\nHashSet deduplicates translated copies",
+      "ToposortBFSKahnAlgo": "Queue every zero-indegree vertex\nremove its outgoing edges\nnew zero indegrees become available next",
+      "TopoSortDAGCycleBFS": "Run Kahn and count processed vertices\nprocessed < V means a cycle trapped the remainder"
 };
 
     const solvedOrder = [
@@ -2393,7 +2481,9 @@
       "CountSubIslands",
       "NumberOfClosedIslands",
       "IslandPerimeter",
-      "NoOfDistinctIslands"
+      "NoOfDistinctIslands",
+      "ToposortBFSKahnAlgo",
+      "TopoSortDAGCycleBFS"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
