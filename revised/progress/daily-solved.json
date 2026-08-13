@@ -422,6 +422,14 @@
         "graphs/TopoSortDAGCycleBFS"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-13",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/CourseScheduleI"
+      ],
+      "notes": ""
     }
   ]
 }

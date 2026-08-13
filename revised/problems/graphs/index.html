@@ -2160,6 +2160,40 @@
                   "Compare processed-node count with V, not with the initial queue size.",
                   "A disconnected component containing a cycle must still make the final processed count smaller than V."
             ]
+      },
+      {
+            "name": "CourseScheduleI",
+            "source": "../com/arvind/revision/graphs/CourseScheduleI.java",
+            "label": "Directed-cycle check",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/course-schedule/",
+            "description": "There are numCourses courses and each prerequisite pair [course, prerequisite] says the first course depends on the second. Decide whether every course can eventually be completed.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "DFS enters each course once and examines each prerequisite edge once.",
+            "structures": "Adjacency list, visited array, active-path array",
+            "input": "numCourses = 2, prerequisites = [[1, 0]]",
+            "output": "true",
+            "recognize": "Prerequisites form a directed graph. Completing every course is possible exactly when that graph has no directed cycle.",
+            "visual": [
+                  [
+                        "course 1",
+                        "needs course 0",
+                        "course 0 finishes"
+                  ]
+            ],
+            "visualText": "A chain is safe when DFS eventually returns. A back-edge to a course still on the current recursion path closes a dependency loop.",
+            "core": "DFS every unvisited course. Mark it globally visited and active on the current path. Seeing an active course again means a cycle; clear only the active marker when that DFS branch finishes.",
+            "bruteForce": "For each course, repeatedly follow every prerequisite path looking for a return to the starting course. This repeats the same searches.",
+            "alternates": [
+                  "Kahn's algorithm succeeds only if it can process all courses using indegree-zero courses."
+            ],
+            "gotchas": [
+                  "Check pathVisited before visited: an active node is also globally visited, but it represents a cycle rather than a safe completed branch.",
+                  "visited remains set after return; pathVisited must be cleared when leaving the recursion branch.",
+                  "The class stores course -> prerequisite. That reversed orientation is still valid for cycle detection, although prerequisite -> course is more natural for Kahn's algorithm.",
+                  "Restart DFS from every unvisited course because the graph may be disconnected."
+            ]
       }
 ];
 
@@ -2423,6 +2457,16 @@
                   "After BFS, processed count below V means a cycle exists."
             ],
             "skeleton": "build indegree[]\nqueue all zeros\nseen = 0\nwhile queue not empty\n  node = poll; seen++\n  reduce neighbor indegrees\n  enqueue newly zero neighbors\nreturn seen != V"
+      },
+      "CourseScheduleI": {
+            "prompt": "Before reading: what is the difference between a course seen earlier and a course still active on this DFS path?",
+            "steps": [
+                  "Build a directed edge from each course to each prerequisite.",
+                  "On DFS entry, mark the course both visited and active on the current path.",
+                  "An active neighbor means this dependency chain looped back, so return false.",
+                  "After all neighbors are safe, clear the active marker and return true."
+            ],
+            "skeleton": "dfs(course)\n  if active[course]: cycle\n  if visited[course]: safe\n  visited = active = true\n  dfs every prerequisite\n  active = false\n  return safe"
       }
 };
 
@@ -2453,7 +2497,8 @@
       "IslandPerimeter": "DFS from land in four directions\noutside or water = +1 exposed side\nalready visited land = +0",
       "NoOfDistinctIslands": "BFS one island from a fixed origin\nrecord (row-originRow, col-originCol)\nHashSet deduplicates translated copies",
       "ToposortBFSKahnAlgo": "Queue every zero-indegree vertex\nremove its outgoing edges\nnew zero indegrees become available next",
-      "TopoSortDAGCycleBFS": "Run Kahn and count processed vertices\nprocessed < V means a cycle trapped the remainder"
+      "TopoSortDAGCycleBFS": "Run Kahn and count processed vertices\nprocessed < V means a cycle trapped the remainder",
+      "CourseScheduleI": "visited = seen sometime\nactive = still on this dependency path\nactive neighbor means a directed cycle"
 };
 
     const solvedOrder = [
@@ -2483,7 +2528,8 @@
       "IslandPerimeter",
       "NoOfDistinctIslands",
       "ToposortBFSKahnAlgo",
-      "TopoSortDAGCycleBFS"
+      "TopoSortDAGCycleBFS",
+      "CourseScheduleI"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
