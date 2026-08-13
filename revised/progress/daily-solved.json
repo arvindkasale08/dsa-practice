@@ -425,9 +425,10 @@
     },
     {
       "date": "2026-08-13",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "graphs/CourseScheduleI"
+        "graphs/CourseScheduleI",
+        "graphs/CourseScheduleII"
       ],
       "notes": ""
     }

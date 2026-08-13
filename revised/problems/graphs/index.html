@@ -2194,6 +2194,40 @@
                   "The class stores course -> prerequisite. That reversed orientation is still valid for cycle detection, although prerequisite -> course is more natural for Kahn's algorithm.",
                   "Restart DFS from every unvisited course because the graph may be disconnected."
             ]
+      },
+      {
+            "name": "CourseScheduleII",
+            "source": "../com/arvind/revision/graphs/CourseScheduleII.java",
+            "label": "Kahn's course order",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/course-schedule-ii/",
+            "description": "Given a number of courses and pairs [course, prerequisite], return any ordering that completes every prerequisite before its dependent course. Return an empty array if a cycle makes completion impossible.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "Each course enters the queue once and every prerequisite edge reduces one indegree once.",
+            "structures": "Adjacency list, indegree array, queue, result array",
+            "input": "numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]",
+            "output": "[0,1,2,3] or [0,2,1,3]",
+            "recognize": "You must produce a valid dependency order, not merely decide whether one exists. This is topological sorting with explicit output.",
+            "visual": [
+                  [
+                        "0 indegree",
+                        "take course",
+                        "unlock dependents"
+                  ]
+            ],
+            "visualText": "The queue contains courses currently safe to take. Removing one deletes its outgoing prerequisite edges and may unlock more courses.",
+            "core": "Build prerequisite -> course edges and count each course's prerequisites. Queue every zero-indegree course, append courses as they leave the queue, and unlock neighbors by reducing indegrees.",
+            "bruteForce": "Generate course permutations and test whether every prerequisite appears first. This can require O(V! * E) work.",
+            "alternates": [
+                  "DFS postorder can produce a topological order, but it needs an active-path marker to reject cycles."
+            ],
+            "gotchas": [
+                  "For [course, prerequisite], add prerequisite -> course and increment indegree[course].",
+                  "Multiple valid orders may exist; compare dependency validity rather than one fixed array.",
+                  "Return the built order only when coursesSeen equals numCourses; otherwise a cycle trapped the remaining courses.",
+                  "Do not confuse Course Schedule I's boolean answer with this variant's required ordering."
+            ]
       }
 ];
 
@@ -2467,6 +2501,16 @@
                   "After all neighbors are safe, clear the active marker and return true."
             ],
             "skeleton": "dfs(course)\n  if active[course]: cycle\n  if visited[course]: safe\n  visited = active = true\n  dfs every prerequisite\n  active = false\n  return safe"
+      },
+      "CourseScheduleII": {
+            "prompt": "Before reading: what does a course's indegree count, and when is that course safe to append?",
+            "steps": [
+                  "For [course, prerequisite], add prerequisite -> course and increase the course's indegree.",
+                  "Queue every course with no remaining prerequisites.",
+                  "Poll a safe course into the order and reduce each dependent course's indegree.",
+                  "Return the order only if every course was processed; otherwise return empty."
+            ],
+            "skeleton": "build graph + indegree\nqueue all indegree-zero courses\nwhile queue not empty\n  course = poll; append course\n  for dependent\n    indegree--\n    if zero: enqueue\nreturn order if seen == V else empty"
       }
 };
 
@@ -2498,7 +2542,8 @@
       "NoOfDistinctIslands": "BFS one island from a fixed origin\nrecord (row-originRow, col-originCol)\nHashSet deduplicates translated copies",
       "ToposortBFSKahnAlgo": "Queue every zero-indegree vertex\nremove its outgoing edges\nnew zero indegrees become available next",
       "TopoSortDAGCycleBFS": "Run Kahn and count processed vertices\nprocessed < V means a cycle trapped the remainder",
-      "CourseScheduleI": "visited = seen sometime\nactive = still on this dependency path\nactive neighbor means a directed cycle"
+      "CourseScheduleI": "visited = seen sometime\nactive = still on this dependency path\nactive neighbor means a directed cycle",
+      "CourseScheduleII": "prerequisite -> course; indegree = unmet prerequisites\npoll zero indegree, append it, then unlock dependents"
 };
 
     const solvedOrder = [
@@ -2529,7 +2574,8 @@
       "NoOfDistinctIslands",
       "ToposortBFSKahnAlgo",
       "TopoSortDAGCycleBFS",
-      "CourseScheduleI"
+      "CourseScheduleI",
+      "CourseScheduleII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
