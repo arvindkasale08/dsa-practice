@@ -431,6 +431,14 @@
         "graphs/CourseScheduleII"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-14",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/EventualSafeStates"
+      ],
+      "notes": ""
     }
   ]
 }

@@ -2228,6 +2228,40 @@
                   "Return the built order only when coursesSeen equals numCourses; otherwise a cycle trapped the remaining courses.",
                   "Do not confuse Course Schedule I's boolean answer with this variant's required ordering."
             ]
+      },
+      {
+            "name": "EventualSafeStates",
+            "source": "../com/arvind/revision/graphs/EventualSafeStates.java",
+            "label": "Reverse-graph Kahn peeling",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/find-eventual-safe-states/",
+            "description": "Given a directed graph, return every node from which all possible paths eventually stop at a terminal node. A node is unsafe if even one path from it can enter a cycle.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "Build the reversed graph once, then process every vertex and reversed edge at most once.",
+            "structures": "Reverse adjacency list, outdegree array, queue, result list",
+            "input": "graph = [[1,2],[2,3],[5],[0],[5],[],[]]",
+            "output": "[2,4,5,6]",
+            "recognize": "When directed nodes are safe only if every route from them eventually terminates, and cycles make nodes leading into them unsafe.",
+            "visual": [
+                  [
+                        "terminal: out=0",
+                        "reverse edge",
+                        "predecessor out--",
+                        "new safe node"
+                  ]
+            ],
+            "visualText": "Peel from the exits backward: once every outgoing choice of a predecessor leads to already-safe nodes, that predecessor becomes safe too.",
+            "core": "Treat each original outdegree as the number of unresolved exits. Reverse every edge, queue terminal nodes, and decrement each predecessor's unresolved count when a safe node is removed.",
+            "bruteForce": "Start a DFS from every node and independently search for a reachable cycle. Repeating overlapping searches can cost much more without shared state.",
+            "alternates": [
+                  "DFS with four-state coloring can mark unvisited, visiting, safe, and unsafe nodes without building a reversed graph."
+            ],
+            "gotchas": [
+                  "The counted value is the original outdegree even though traversal uses reversed edges.",
+                  "A node becomes safe only when all of its outgoing choices have been resolved as safe.",
+                  "Sort the collected nodes because Kahn's queue order is not guaranteed to match the required ascending output."
+            ]
       }
 ];
 
@@ -2511,6 +2545,16 @@
                   "Return the order only if every course was processed; otherwise return empty."
             ],
             "skeleton": "build graph + indegree\nqueue all indegree-zero courses\nwhile queue not empty\n  course = poll; append course\n  for dependent\n    indegree--\n    if zero: enqueue\nreturn order if seen == V else empty"
+      },
+      "EventualSafeStates": {
+            "prompt": "Before reading: why do terminal nodes let safety spread backward through the graph?",
+            "steps": [
+                  "Reverse every original edge so a safe node can find the nodes that point to it.",
+                  "Store each node's original outdegree and queue the terminal nodes whose outdegree is zero.",
+                  "When a safe node is removed, decrement the unresolved outdegree of each predecessor.",
+                  "A predecessor reaching zero has no route left except through safe nodes, so queue it too."
+            ],
+            "skeleton": "build reversed graph\nout[node] = original outgoing edges\nqueue every node with out == 0\nwhile queue not empty\n  safe = poll; add safe\n  for predecessor of safe\n    out[predecessor]--\n    if out[predecessor] == 0: enqueue\nsort and return safe nodes"
       }
 };
 
@@ -2543,7 +2587,8 @@
       "ToposortBFSKahnAlgo": "Queue every zero-indegree vertex\nremove its outgoing edges\nnew zero indegrees become available next",
       "TopoSortDAGCycleBFS": "Run Kahn and count processed vertices\nprocessed < V means a cycle trapped the remainder",
       "CourseScheduleI": "visited = seen sometime\nactive = still on this dependency path\nactive neighbor means a directed cycle",
-      "CourseScheduleII": "prerequisite -> course; indegree = unmet prerequisites\npoll zero indegree, append it, then unlock dependents"
+      "CourseScheduleII": "prerequisite -> course; indegree = unmet prerequisites\npoll zero indegree, append it, then unlock dependents",
+      "EventualSafeStates": "Reverse the edges and queue terminals\npeel safe nodes backward\npredecessor becomes safe when outdegree reaches 0"
 };
 
     const solvedOrder = [
@@ -2575,7 +2620,8 @@
       "ToposortBFSKahnAlgo",
       "TopoSortDAGCycleBFS",
       "CourseScheduleI",
-      "CourseScheduleII"
+      "CourseScheduleII",
+      "EventualSafeStates"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
