@@ -2262,6 +2262,39 @@
                   "A node becomes safe only when all of its outgoing choices have been resolved as safe.",
                   "Sort the collected nodes because Kahn's queue order is not guaranteed to match the required ascending output."
             ]
+      },
+      {
+            "name": "AlienDictionary",
+            "source": "../com/arvind/revision/graphs/AlienDictionary.java",
+            "label": "Build character order, then topological sort",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/alien-dictionary/",
+            "description": "The words are already sorted using an unknown alphabet. Infer a valid ordering of every character that appears, or return an empty string when the word order is impossible.",
+            "time": "O(C + E)",
+            "space": "O(U + E)",
+            "timeWhy": "C is the total number of compared characters, U is the number of unique characters, and E is the number of ordering edges processed by Kahn's algorithm.",
+            "structures": "HashMap<Character, List<Character>>, indegree map, queue",
+            "input": "words = [\"xza\", \"xzb\", \"yba\", \"ybc\", \"zca\"]",
+            "output": "one valid answer: \"axbcyz\"",
+            "recognize": "When a sorted dictionary indirectly defines precedence rules between characters and you must reconstruct one valid alphabet order.",
+            "visual": [
+                  [
+                        "x -> y -> z",
+                        "a -> b",
+                        "a -> c"
+                  ]
+            ],
+            "visualText": "Compare only neighboring words. Their first different characters create one directed edge; all later characters in that pair tell you nothing.",
+            "core": "Register every distinct character first. Build one edge from each adjacent pair's first mismatch, reject a longer word before its exact prefix, then run Kahn's topological sort and verify that every character was processed.",
+            "bruteForce": "Generate permutations of all unique characters and test whether each ordering keeps the dictionary sorted. This is factorial in the number of characters.",
+            "alternates": [
+                  "DFS topological sort also works by using unvisited, visiting, and visited states to detect a cycle."
+            ],
+            "gotchas": [
+                  "Invalid prefix: [\"abc\", \"ab\"] must return an empty string.",
+                  "Stop at the first mismatch; later mismatches do not create valid constraints.",
+                  "Register characters even when they never appear in an edge, and reject cycles by comparing processed count with the number of unique characters."
+            ]
       }
 ];
 
@@ -2555,6 +2588,16 @@
                   "A predecessor reaching zero has no route left except through safe nodes, so queue it too."
             ],
             "skeleton": "build reversed graph\nout[node] = original outgoing edges\nqueue every node with out == 0\nwhile queue not empty\n  safe = poll; add safe\n  for predecessor of safe\n    out[predecessor]--\n    if out[predecessor] == 0: enqueue\nsort and return safe nodes"
+      },
+      "AlienDictionary": {
+            "prompt": "Before reading: what does the first mismatch reveal, and when does a prefix make the dictionary invalid?",
+            "steps": [
+                  "Add every character to the graph and indegree map, including isolated characters.",
+                  "Compare each neighboring word pair and add an edge from the first differing character in the earlier word to the one in the later word.",
+                  "If no mismatch exists and the earlier word is longer, return empty because a longer word cannot precede its own prefix.",
+                  "Run Kahn's BFS; return the built order only when the processed count equals the number of unique characters."
+            ],
+            "skeleton": "register every character with indegree 0\nfor each adjacent word pair\n  find first mismatch\n  if found: earlierChar -> laterChar\n  else if earlier is longer: return empty\nqueue all zero-indegree characters\nwhile queue not empty\n  append node\n  reduce neighbors' indegrees\nreturn order only if every character was processed"
       }
 };
 
@@ -2588,7 +2631,8 @@
       "TopoSortDAGCycleBFS": "Run Kahn and count processed vertices\nprocessed < V means a cycle trapped the remainder",
       "CourseScheduleI": "visited = seen sometime\nactive = still on this dependency path\nactive neighbor means a directed cycle",
       "CourseScheduleII": "prerequisite -> course; indegree = unmet prerequisites\npoll zero indegree, append it, then unlock dependents",
-      "EventualSafeStates": "Reverse the edges and queue terminals\npeel safe nodes backward\npredecessor becomes safe when outdegree reaches 0"
+      "EventualSafeStates": "Reverse the edges and queue terminals\npeel safe nodes backward\npredecessor becomes safe when outdegree reaches 0",
+      "AlienDictionary": "First mismatch creates earlierChar -> laterChar\nlonger word before its exact prefix means invalid\nKahn order must process every distinct character"
 };
 
     const solvedOrder = [
@@ -2621,7 +2665,8 @@
       "TopoSortDAGCycleBFS",
       "CourseScheduleI",
       "CourseScheduleII",
-      "EventualSafeStates"
+      "EventualSafeStates",
+      "AlienDictionary"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

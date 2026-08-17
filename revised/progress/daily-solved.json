@@ -439,6 +439,14 @@
         "graphs/EventualSafeStates"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-17",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/AlienDictionary"
+      ],
+      "notes": ""
     }
   ]
 }
