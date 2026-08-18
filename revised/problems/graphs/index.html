@@ -2295,6 +2295,41 @@
                   "Stop at the first mismatch; later mismatches do not create valid constraints.",
                   "Register characters even when they never appear in an edge, and reject cycles by comparing processed count with the number of unique characters."
             ]
+      },
+      {
+            "name": "ShortestPathUndirectedGraph",
+            "source": "../com/arvind/revision/graphs/ShortestPathUndirectedGraph.java",
+            "label": "Unit-weight BFS distance",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given an undirected graph whose edges all have unit weight, return the shortest number of edges from a source vertex to every vertex. Keep unreachable vertices at -1.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "Building the adjacency list touches every edge, and BFS discovers every reachable vertex and scans each undirected edge at most twice.",
+            "structures": "Undirected adjacency list, queue, distance array",
+            "input": "V = 6, src = 0, edges = [[0,1],[1,2],[3,4]]",
+            "output": "[0,1,2,-1,-1,-1]",
+            "recognize": "When every edge costs exactly one and the answer is the minimum edge count from one source to all vertices.",
+            "visual": [
+                  [
+                        "source: 0",
+                        "level 1: 1",
+                        "level 2: 2",
+                        "unreachable: 3,4,5"
+                  ]
+            ],
+            "visualText": "BFS expands in distance layers. The first time a vertex is discovered is already its shortest path in a unit-weight graph.",
+            "core": "Build both directions for every edge, initialize all distances to -1, and BFS from the source. When an unseen neighbor is found, assign current distance + 1 and enqueue it.",
+            "bruteForce": "Search separately for a path to each destination. Repeating traversal work can cost O(V * (V + E)).",
+            "alternates": [
+                  "A relaxation-style BFS also works, but later improvements are unnecessary because ordinary BFS discovers vertices in nondecreasing distance order.",
+                  "Dijkstra generalizes the idea when edges have nonnegative but unequal weights."
+            ],
+            "gotchas": [
+                  "Add both u -> v and v -> u because the graph is undirected.",
+                  "Mark a neighbor's distance when it is enqueued so it cannot enter the queue repeatedly.",
+                  "Leave vertices outside the source component at -1."
+            ]
       }
 ];
 
@@ -2598,6 +2633,16 @@
                   "Run Kahn's BFS; return the built order only when the processed count equals the number of unique characters."
             ],
             "skeleton": "register every character with indegree 0\nfor each adjacent word pair\n  find first mismatch\n  if found: earlierChar -> laterChar\n  else if earlier is longer: return empty\nqueue all zero-indegree characters\nwhile queue not empty\n  append node\n  reduce neighbors' indegrees\nreturn order only if every character was processed"
+      },
+      "ShortestPathUndirectedGraph": {
+            "prompt": "Before reading: why can a unit-weight BFS finalize a vertex's distance the first time that vertex is discovered?",
+            "steps": [
+                  "Build an adjacency list and add both directions for every edge.",
+                  "Fill the distance array with -1, then set the source distance to zero and enqueue it.",
+                  "For each unseen neighbor, write current distance + 1 before enqueuing it.",
+                  "After BFS ends, every vertex still at -1 is unreachable from the source."
+            ],
+            "skeleton": "build undirected adjacency list\ndistance = -1 for every vertex\ndistance[source] = 0; enqueue source\nwhile queue not empty\n  node = dequeue\n  for neighbor\n    if distance[neighbor] == -1\n      distance[neighbor] = distance[node] + 1\n      enqueue neighbor\nreturn distance"
       }
 };
 
@@ -2632,7 +2677,8 @@
       "CourseScheduleI": "visited = seen sometime\nactive = still on this dependency path\nactive neighbor means a directed cycle",
       "CourseScheduleII": "prerequisite -> course; indegree = unmet prerequisites\npoll zero indegree, append it, then unlock dependents",
       "EventualSafeStates": "Reverse the edges and queue terminals\npeel safe nodes backward\npredecessor becomes safe when outdegree reaches 0",
-      "AlienDictionary": "First mismatch creates earlierChar -> laterChar\nlonger word before its exact prefix means invalid\nKahn order must process every distinct character"
+      "AlienDictionary": "First mismatch creates earlierChar -> laterChar\nlonger word before its exact prefix means invalid\nKahn order must process every distinct character",
+      "ShortestPathUndirectedGraph": "Build both directions\nfirst BFS discovery fixes the shortest unit-edge distance\nleave unreachable vertices at -1"
 };
 
     const solvedOrder = [
@@ -2666,7 +2712,8 @@
       "CourseScheduleI",
       "CourseScheduleII",
       "EventualSafeStates",
-      "AlienDictionary"
+      "AlienDictionary",
+      "ShortestPathUndirectedGraph"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

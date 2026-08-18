@@ -447,6 +447,14 @@
         "graphs/AlienDictionary"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-18",
+      "solved": 1,
+      "cardsSynced": [
+        "graphs/ShortestPathUndirectedGraph"
+      ],
+      "notes": ""
     }
   ]
 }
