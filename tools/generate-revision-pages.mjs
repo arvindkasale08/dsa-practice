@@ -57,12 +57,18 @@ const pageConfigs = {
     title: "Graphs Revision",
     label: "graphs",
     subtitle: "Reference notes for graph fundamentals and Java representation. Open the linked workbook notes or visual guide when revising."
+  },
+  pod: {
+    title: "Problem of the Day Revision",
+    label: "problem of the day",
+    subtitle: "Fast recall cards for completed daily problems. Revisit the constraint that shaped the solution, then check the defining move and edge cases."
   }
 };
 
 const ignoredJavaPackages = new Set(["common"]);
 const ignoredJavaClasses = new Set([
-  "greedy/RemoveDuplicateLetters"
+  "greedy/RemoveDuplicateLetters",
+  "graphs/ShortestPathDAGDFS"
 ]);
 const requestedPatterns = process.argv.slice(2);
 const patterns = requestedPatterns.length ? requestedPatterns : discoverPatterns();
@@ -233,6 +239,42 @@ function defaultCardFor(pattern, className) {
     alternates: ["Sorting can make greedy choices obvious when relative order does not matter."],
     gotchas: ["Prove the local choice cannot block a better future answer."]
   };
+
+  if (pattern === "pod" && className === "CinemaSeatAlloc") {
+    return {
+      name: className,
+      source,
+      label: "Track only rows touched by reservations",
+      difficulty: "Medium",
+      leetcode: "https://leetcode.com/problems/cinema-seat-allocation/",
+      description: "A cinema has n rows of 10 seats. Count the maximum four-person families that fit into blocks 2-5, 4-7, or 6-9 without using reserved seats.",
+      time: "O(r)",
+      space: "O(r)",
+      timeWhy: "Only the r reservations are scanned, then only affected rows are evaluated. Rows with no relevant reservation contribute two families immediately.",
+      structures: "HashMap<row, blocked block mask>, valid seat blocks",
+      input: "n = 4, reservedSeats = [[4,3],[1,4],[4,6],[1,7]]",
+      output: "4",
+      recognize: "When n can be enormous but the input lists only a small number of exceptions, represent the exceptions instead of allocating state for every row.",
+      visual: [
+        ["2 3 4 5", "4 5 6 7", "6 7 8 9"],
+        ["left block", "middle block", "right block"],
+        ["left + right", "or middle", "max 2 per row"]
+      ],
+      visualText: "Picture three candidate blocks per row. The two outer blocks can coexist; the middle block overlaps both and is useful only when the outer pair cannot both be used.",
+      core: "Start with two families for every untouched row. For each row containing a relevant reservation, record which of the left, middle, and right blocks are blocked. Add two when both outer blocks remain free; otherwise add one if any candidate block remains free.",
+      bruteForce: "Create all n rows and test all three blocks in each row. This is impossible when n is as large as 10^9.",
+      alternates: [
+        "Store a three-bit mask per affected row; bitwise checks make the overlap rules compact.",
+        "A set of reserved seat numbers per affected row is simpler but performs more membership checks."
+      ],
+      gotchas: [
+        "Never allocate arrays of size n; n can be 10^9.",
+        "The middle block overlaps both outer blocks, so all three blocks cannot be counted independently.",
+        "Seats 1 and 10 do not block any valid four-seat family block.",
+        "Input row numbers are 1-based."
+      ]
+    };
+  }
 
   if (className === "BuyTwoChocolates") {
     return {
@@ -551,6 +593,20 @@ function defaultCardFor(pattern, className) {
 }
 
 function defaultDetailsFor(pattern, className) {
+  if (pattern === "pod" && className === "CinemaSeatAlloc") {
+    return {
+      prompt: "Before reading: how can you handle up to 10^9 rows without storing every row?",
+      steps: [
+        "Assume every untouched row contributes two families.",
+        "Build state only for rows that appear in reservedSeats.",
+        "For each affected row, mark whether reservations block the left, middle, or right candidate block.",
+        "Count two if left and right are both free; otherwise count one if at least one of the three blocks is free.",
+        "Reservations at seats 1 and 10 do not block a family block."
+      ],
+      skeleton: "affectedRows = sparse map\nfor each reserved seat\n  mark blocked candidate blocks for its row\n\nanswer = 2 * (n - affectedRowCount)\nfor each affected row\n  if left and right free: answer += 2\n  else if left or middle or right free: answer += 1\nreturn answer"
+    };
+  }
+
   if (className === "BuyTwoChocolates") {
     return {
       prompt: "Before reading: what two values are enough to decide whether buying is possible?",
@@ -684,6 +740,9 @@ function defaultDetailsFor(pattern, className) {
 }
 
 function defaultDefiningMoveFor(pattern, className) {
+  if (pattern === "pod" && className === "CinemaSeatAlloc") {
+    return "Represent only affected rows\nleft + right can coexist\nmiddle is the one-family fallback";
+  }
   if (className === "BuyTwoChocolates") {
     return "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money";
   }
@@ -717,7 +776,8 @@ function defaultDefiningMoveFor(pattern, className) {
 const authoredCardOverrides = new Set([
   "greedy/MinimumAddToMakeParenthesisValid",
   "greedy/ValidPalindromeII",
-  "greedy/MaximumLengthOfPairChains"
+  "greedy/MaximumLengthOfPairChains",
+  "pod/CinemaSeatAlloc"
 ]);
 
 function makeDataBlocksForPattern(pattern, html = "") {

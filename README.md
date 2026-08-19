@@ -6,6 +6,7 @@
 - [Sliding Window](revised/problems/slidingwindow/)
 - [Greedy](revised/problems/greedy/)
 - [Graphs](revised/problems/graphs/)
+- [Problem of the Day](revised/problems/pod/)
 - [Recursion](revised/problems/recursion/)
 - [Backtracking](revised/problems/backtracking/)
 - [Stacks](revised/problems/stacks/)

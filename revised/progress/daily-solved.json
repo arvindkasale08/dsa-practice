@@ -455,6 +455,14 @@
         "graphs/ShortestPathUndirectedGraph"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-19",
+      "solved": 1,
+      "cardsSynced": [
+        "pod/CinemaSeatAlloc"
+      ],
+      "notes": "Synced Cinema Seat Allocation card"
     }
   ]
 }
