@@ -276,6 +276,42 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (pattern === "pod" && className === "DistributeInTwoArrays") {
+    return {
+      name: className,
+      source,
+      label: "Compare tails, then concatenate",
+      difficulty: "Easy",
+      leetcode: "https://leetcode.com/problems/distribute-elements-into-two-arrays-i/",
+      description: "Place the first value in arr1 and the second in arr2. For every later value, append it to the array whose last value is greater, then return arr1 followed by arr2.",
+      time: "O(n)",
+      space: "O(n)",
+      timeWhy: "Each input value is appended once, and both temporary lists are copied into the result once.",
+      structures: "Two ArrayLists, result array",
+      input: "nums = [7,4,9,2,8,6]",
+      output: "[7,9,2,4,8,6]",
+      recognize: "This is direct simulation: preserve each list's insertion order while following an exact rule based only on the two current tail values.",
+      visual: [
+        ["start", "arr1 = [7]", "arr2 = [4]"],
+        ["compare tails", "append to greater tail", "ties go to arr2"],
+        ["finish", "all of arr1", "then all of arr2"]
+      ],
+      visualText: "The two list sizes are not known in advance. Build them independently, then concatenate them; arr2 does not begin at a predetermined index such as the middle.",
+      core: "Seed the two lists with nums[0] and nums[1]. For every remaining number, compare only the last element of each list. Append left when leftLast > rightLast; otherwise append right. Copy left and then right into the answer.",
+      bruteForce: "No search is needed because the placement rule uniquely determines every operation.",
+      alternates: [
+        "Use two fixed arrays plus size counters instead of lists, but the final boundary is still discovered while processing.",
+        "Two lists are the clearest representation because each side grows dynamically."
+      ],
+      gotchas: [
+        "The comparison is strict: equal tail values send the next number to arr2.",
+        "Compare the current last elements, not list sizes, first elements, or the incoming value.",
+        "The final answer is arr1 concatenated with arr2; do not interleave them.",
+        "The problem guarantees at least two input values."
+      ]
+    };
+  }
+
   if (className === "BuyTwoChocolates") {
     return {
       name: className,
@@ -607,6 +643,20 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
+  if (pattern === "pod" && className === "DistributeInTwoArrays") {
+    return {
+      prompt: "Before reading: what state from each temporary array determines where the next value goes?",
+      steps: [
+        "Place nums[0] in arr1 and nums[1] in arr2.",
+        "For each later value, compare arr1's tail with arr2's tail.",
+        "Append to arr1 only when its tail is strictly greater; otherwise append to arr2.",
+        "After all placements, copy arr1 into the result first.",
+        "Copy arr2 immediately after arr1 and return the result."
+      ],
+      skeleton: "arr1 = [nums[0]]\narr2 = [nums[1]]\nfor each remaining value\n  if last(arr1) > last(arr2): append to arr1\n  else: append to arr2\n\nreturn concatenate(arr1, arr2)"
+    };
+  }
+
   if (className === "BuyTwoChocolates") {
     return {
       prompt: "Before reading: what two values are enough to decide whether buying is possible?",
@@ -743,6 +793,9 @@ function defaultDefiningMoveFor(pattern, className) {
   if (pattern === "pod" && className === "CinemaSeatAlloc") {
     return "Represent only affected rows\nleft + right can coexist\nmiddle is the one-family fallback";
   }
+  if (pattern === "pod" && className === "DistributeInTwoArrays") {
+    return "Seed one value per list\ncompare only the two tails\nstrict greater goes left; tie goes right\nconcatenate left then right";
+  }
   if (className === "BuyTwoChocolates") {
     return "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money";
   }
@@ -777,7 +830,8 @@ const authoredCardOverrides = new Set([
   "greedy/MinimumAddToMakeParenthesisValid",
   "greedy/ValidPalindromeII",
   "greedy/MaximumLengthOfPairChains",
-  "pod/CinemaSeatAlloc"
+  "pod/CinemaSeatAlloc",
+  "pod/DistributeInTwoArrays"
 ]);
 
 function makeDataBlocksForPattern(pattern, html = "") {

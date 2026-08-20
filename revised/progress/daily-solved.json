@@ -463,6 +463,14 @@
         "pod/CinemaSeatAlloc"
       ],
       "notes": "Synced Cinema Seat Allocation card"
+    },
+    {
+      "date": "2026-08-20",
+      "solved": 1,
+      "cardsSynced": [
+        "pod/DistributeInTwoArrays"
+      ],
+      "notes": ""
     }
   ]
 }
