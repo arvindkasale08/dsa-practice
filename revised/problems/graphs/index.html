@@ -2330,6 +2330,40 @@
                   "Mark a neighbor's distance when it is enqueued so it cannot enter the queue repeatedly.",
                   "Leave vertices outside the source component at -1."
             ]
+      },
+      {
+            "name": "ShortestPathDAGDFS",
+            "source": "../com/arvind/revision/graphs/ShortestPathDAGDFS.java",
+            "label": "Topo order, then relax once",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Find shortest distances from a source in a weighted directed acyclic graph by processing vertices in topological order.",
+            "time": "O(V + E)",
+            "space": "O(V + E)",
+            "timeWhy": "DFS visits each vertex and edge once, then relaxation scans each outgoing edge once more.",
+            "structures": "Weighted adjacency list, visited array, DFS postorder stack, distance array",
+            "input": "V=7, src=0, edges=[[0,4,2],[0,5,3],[5,4,1],[4,6,3],[4,2,1],[6,1,2],[2,3,3],[1,3,1]]",
+            "output": "Shortest distance from source 0 to every vertex",
+            "recognize": "Weighted shortest path where the graph is a DAG, so dependencies can be ordered before distance relaxation.",
+            "visual": [
+                  [
+                        "DFS postorder",
+                        "pop topo stack",
+                        "relax outgoing edges"
+                  ]
+            ],
+            "visualText": "A vertex enters the stack only after all of its descendants. Popping reverses that finish order, placing every source before the vertices it can reach.",
+            "core": "Create a topological order with DFS. Initialize the source distance to zero, then pop vertices and relax every weighted outgoing edge.",
+            "bruteForce": "Repeatedly relax every edge, as in Bellman-Ford, without using the DAG structure.",
+            "alternates": [
+                  "Kahn's algorithm can produce the topological order instead of DFS."
+            ],
+            "gotchas": [
+                  "Interpret each edge tuple consistently as source, destination, weight.",
+                  "Push a vertex only after DFS finishes all of its outgoing neighbors.",
+                  "Relax in popped stack order, not raw DFS discovery order.",
+                  "Keep the edge weight separate from the destination vertex."
+            ]
       }
 ];
 
@@ -2643,6 +2677,17 @@
                   "After BFS ends, every vertex still at -1 is unreachable from the source."
             ],
             "skeleton": "build undirected adjacency list\ndistance = -1 for every vertex\ndistance[source] = 0; enqueue source\nwhile queue not empty\n  node = dequeue\n  for neighbor\n    if distance[neighbor] == -1\n      distance[neighbor] = distance[node] + 1\n      enqueue neighbor\nreturn distance"
+      },
+      "ShortestPathDAGDFS": {
+            "prompt": "Why does topological order let every weighted edge be relaxed only once?",
+            "steps": [
+                  "Build a directed weighted adjacency list from each edge tuple.",
+                  "Run DFS from every unvisited vertex and push each vertex after its descendants.",
+                  "Initialize all distances, with the source distance set to zero.",
+                  "Pop vertices from the stack and relax each outgoing weighted edge.",
+                  "Return the completed distance array."
+            ],
+            "skeleton": "build weighted directed adjacency list\nfor each unvisited vertex\n  dfs(vertex)\n    visit outgoing neighbors\n    push vertex after descendants\n\ndistance[source] = 0\nwhile stack not empty\n  node = pop\n  for each (neighbor, weight)\n    relax distance[neighbor]\nreturn distance"
       }
 };
 
@@ -2678,7 +2723,8 @@
       "CourseScheduleII": "prerequisite -> course; indegree = unmet prerequisites\npoll zero indegree, append it, then unlock dependents",
       "EventualSafeStates": "Reverse the edges and queue terminals\npeel safe nodes backward\npredecessor becomes safe when outdegree reaches 0",
       "AlienDictionary": "First mismatch creates earlierChar -> laterChar\nlonger word before its exact prefix means invalid\nKahn order must process every distinct character",
-      "ShortestPathUndirectedGraph": "Build both directions\nfirst BFS discovery fixes the shortest unit-edge distance\nleave unreachable vertices at -1"
+      "ShortestPathUndirectedGraph": "Build both directions\nfirst BFS discovery fixes the shortest unit-edge distance\nleave unreachable vertices at -1",
+      "ShortestPathDAGDFS": "DFS postorder creates topological order\npop the stack, then relax every outgoing weighted edge\none ordered pass is enough in a DAG"
 };
 
     const solvedOrder = [
@@ -2713,7 +2759,8 @@
       "CourseScheduleII",
       "EventualSafeStates",
       "AlienDictionary",
-      "ShortestPathUndirectedGraph"
+      "ShortestPathUndirectedGraph",
+      "ShortestPathDAGDFS"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

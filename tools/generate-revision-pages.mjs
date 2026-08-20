@@ -67,8 +67,7 @@ const pageConfigs = {
 
 const ignoredJavaPackages = new Set(["common"]);
 const ignoredJavaClasses = new Set([
-  "greedy/RemoveDuplicateLetters",
-  "graphs/ShortestPathDAGDFS"
+  "greedy/RemoveDuplicateLetters"
 ]);
 const requestedPatterns = process.argv.slice(2);
 const patterns = requestedPatterns.length ? requestedPatterns : discoverPatterns();

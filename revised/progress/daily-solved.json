@@ -466,11 +466,12 @@
     },
     {
       "date": "2026-08-20",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "pod/DistributeInTwoArrays"
+        "pod/DistributeInTwoArrays",
+        "graphs/ShortestPathDAGDFS"
       ],
-      "notes": ""
+      "notes": "Synced card"
     }
   ]
 }
