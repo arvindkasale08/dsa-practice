@@ -52,23 +52,10 @@ const pageConfigs = {
     title: "Greedy Revision",
     label: "greedy",
     subtitle: "Fast recall cards for the current greedy package. Look for the local choice that locks in the best outcome, then check the sample and bug magnets before opening the Java file."
-  },
-  graphs: {
-    title: "Graphs Revision",
-    label: "graphs",
-    subtitle: "Reference notes for graph fundamentals and Java representation. Open the linked workbook notes or visual guide when revising."
-  },
-  pod: {
-    title: "Problem of the Day Revision",
-    label: "problem of the day",
-    subtitle: "Fast recall cards for completed daily problems. Revisit the constraint that shaped the solution, then check the defining move and edge cases."
   }
 };
 
 const ignoredJavaPackages = new Set(["common"]);
-const ignoredJavaClasses = new Set([
-  "greedy/RemoveDuplicateLetters"
-]);
 const requestedPatterns = process.argv.slice(2);
 const patterns = requestedPatterns.length ? requestedPatterns : discoverPatterns();
 
@@ -207,7 +194,6 @@ function javaClassesFor(pattern) {
     .readdirSync(javaDir, { withFileTypes: true })
     .filter(entry => entry.isFile() && entry.name.endsWith(".java"))
     .map(entry => entry.name.replace(/\.java$/, ""))
-    .filter(className => !ignoredJavaClasses.has(`${pattern}/${className}`))
     .sort((left, right) => {
       const leftStat = fs.statSync(path.join(javaDir, `${left}.java`));
       const rightStat = fs.statSync(path.join(javaDir, `${right}.java`));
@@ -238,113 +224,6 @@ function defaultCardFor(pattern, className) {
     alternates: ["Sorting can make greedy choices obvious when relative order does not matter."],
     gotchas: ["Prove the local choice cannot block a better future answer."]
   };
-
-  if (pattern === "pod" && className === "CinemaSeatAlloc") {
-    return {
-      name: className,
-      source,
-      label: "Track only rows touched by reservations",
-      difficulty: "Medium",
-      leetcode: "https://leetcode.com/problems/cinema-seat-allocation/",
-      description: "A cinema has n rows of 10 seats. Count the maximum four-person families that fit into blocks 2-5, 4-7, or 6-9 without using reserved seats.",
-      time: "O(r)",
-      space: "O(r)",
-      timeWhy: "Only the r reservations are scanned, then only affected rows are evaluated. Rows with no relevant reservation contribute two families immediately.",
-      structures: "HashMap<row, blocked block mask>, valid seat blocks",
-      input: "n = 4, reservedSeats = [[4,3],[1,4],[4,6],[1,7]]",
-      output: "4",
-      recognize: "When n can be enormous but the input lists only a small number of exceptions, represent the exceptions instead of allocating state for every row.",
-      visual: [
-        ["2 3 4 5", "4 5 6 7", "6 7 8 9"],
-        ["left block", "middle block", "right block"],
-        ["left + right", "or middle", "max 2 per row"]
-      ],
-      visualText: "Picture three candidate blocks per row. The two outer blocks can coexist; the middle block overlaps both and is useful only when the outer pair cannot both be used.",
-      core: "Start with two families for every untouched row. For each row containing a relevant reservation, record which of the left, middle, and right blocks are blocked. Add two when both outer blocks remain free; otherwise add one if any candidate block remains free.",
-      bruteForce: "Create all n rows and test all three blocks in each row. This is impossible when n is as large as 10^9.",
-      alternates: [
-        "Store a three-bit mask per affected row; bitwise checks make the overlap rules compact.",
-        "A set of reserved seat numbers per affected row is simpler but performs more membership checks."
-      ],
-      gotchas: [
-        "Never allocate arrays of size n; n can be 10^9.",
-        "The middle block overlaps both outer blocks, so all three blocks cannot be counted independently.",
-        "Seats 1 and 10 do not block any valid four-seat family block.",
-        "Input row numbers are 1-based."
-      ]
-    };
-  }
-
-  if (pattern === "pod" && className === "DistributeInTwoArrays") {
-    return {
-      name: className,
-      source,
-      label: "Compare tails, then concatenate",
-      difficulty: "Easy",
-      leetcode: "https://leetcode.com/problems/distribute-elements-into-two-arrays-i/",
-      description: "Place the first value in arr1 and the second in arr2. For every later value, append it to the array whose last value is greater, then return arr1 followed by arr2.",
-      time: "O(n)",
-      space: "O(n)",
-      timeWhy: "Each input value is appended once, and both temporary lists are copied into the result once.",
-      structures: "Two ArrayLists, result array",
-      input: "nums = [7,4,9,2,8,6]",
-      output: "[7,9,2,4,8,6]",
-      recognize: "This is direct simulation: preserve each list's insertion order while following an exact rule based only on the two current tail values.",
-      visual: [
-        ["start", "arr1 = [7]", "arr2 = [4]"],
-        ["compare tails", "append to greater tail", "ties go to arr2"],
-        ["finish", "all of arr1", "then all of arr2"]
-      ],
-      visualText: "The two list sizes are not known in advance. Build them independently, then concatenate them; arr2 does not begin at a predetermined index such as the middle.",
-      core: "Seed the two lists with nums[0] and nums[1]. For every remaining number, compare only the last element of each list. Append left when leftLast > rightLast; otherwise append right. Copy left and then right into the answer.",
-      bruteForce: "No search is needed because the placement rule uniquely determines every operation.",
-      alternates: [
-        "Use two fixed arrays plus size counters instead of lists, but the final boundary is still discovered while processing.",
-        "Two lists are the clearest representation because each side grows dynamically."
-      ],
-      gotchas: [
-        "The comparison is strict: equal tail values send the next number to arr2.",
-        "Compare the current last elements, not list sizes, first elements, or the incoming value.",
-        "The final answer is arr1 concatenated with arr2; do not interleave them.",
-        "The problem guarantees at least two input values."
-      ]
-    };
-  }
-
-  if (pattern === "pod" && className === "CheckDivBySumProd") {
-    return {
-      name: className,
-      source,
-      label: "Reuse one digit scan for sum and product",
-      difficulty: "Easy",
-      leetcode: "https://leetcode.com/problems/check-divisibility-by-digit-sum-and-product/",
-      description: "Given a positive integer n, add its digits and multiply its digits. Return whether n is divisible by the sum of those two results.",
-      time: "O(d)",
-      space: "O(1)",
-      timeWhy: "The loop visits each of the d decimal digits once and keeps only the running sum and product.",
-      structures: "digit extraction, sum accumulator, product accumulator",
-      input: "n = 99",
-      output: "true",
-      recognize: "When a number property depends independently on every decimal digit, peel digits with modulo 10 and integer division.",
-      visual: [
-        ["99", "digit 9", "sum 9 / product 9"],
-        ["9", "digit 9", "sum 18 / product 81"],
-        ["18 + 81 = 99", "99 % 99", "0"]
-      ],
-      visualText: "Keep the original number safe while a working copy loses its last digit on every step. The same extracted digit updates both accumulators.",
-      core: "Save the original number. Start sum at 0 and product at 1, peel every digit from the working copy, then test original % (sum + product) == 0.",
-      bruteForce: "Convert the number to a string, parse every character, and compute the same sum and product. It is still O(d) but creates extra string state.",
-      alternates: [
-        "A string scan can be easier to read when digit parsing is already part of the surrounding code.",
-        "Arithmetic extraction avoids allocation and directly matches the numeric operation."
-      ],
-      gotchas: [
-        "Initialize product to 1; starting at 0 destroys every multiplication.",
-        "Save the original number before repeatedly dividing the working copy.",
-        "A zero digit makes the product zero, but the digit sum still determines a positive divisor for positive n."
-      ]
-    };
-  }
 
   if (className === "BuyTwoChocolates") {
     return {
@@ -519,41 +398,6 @@ function defaultCardFor(pattern, className) {
     };
   }
 
-  if (className === "MinimumAddToMakeParenthesisValid") {
-    return {
-      name: className,
-      source,
-      label: "Pay for unmatched brackets",
-      difficulty: "Medium",
-      leetcode: "https://leetcode.com/problems/minimum-add-to-make-parentheses-valid/",
-      description: "Given a parentheses string, return the minimum number of parentheses you must add so every closing bracket has a matching earlier opening bracket and every opening bracket is eventually closed.",
-      time: "O(n)",
-      space: "O(1)",
-      timeWhy: "Each character is scanned once and only two counters are updated.",
-      structures: "open counter, additions counter",
-      input: "s = \"))((\"",
-      output: "4",
-      recognize: "When the question asks how many brackets are missing, not whether the string can be rearranged or deleted.",
-      visual: [
-        [")", "no open", "add '('"],
-        ["(", "open++", "wait"],
-        [")", "match open", "open--"]
-      ],
-      visualText: "Picture unmatched ')' as immediate bills you must pay, while unmatched '(' are pending doors that need closers at the end.",
-      core: "Scan left to right. Count unmatched '(' as open. When ')' appears, consume one open if possible; otherwise count one required added '('. After the scan, every remaining open needs one added ')'.",
-      bruteForce: "Try inserting parentheses in different positions until the string becomes valid. That proves the meaning but is far more work than counting exactly what is missing.",
-      alternates: [
-        "Use a stack and push unmatched parentheses, then return stack size; simple but uses O(n) space.",
-        "This is a smaller sibling of wildcard parentheses problems because there is no '*' flexibility."
-      ],
-      gotchas: [
-        "An unmatched ')' must be counted immediately; a later '(' cannot fix an earlier close.",
-        "Do not forget to add leftover open count after the scan.",
-        "This is add-to-valid, not remove-to-valid; the answer is a count, not a rebuilt string."
-      ]
-    };
-  }
-
   if (className === "ValidPalindromeII") {
     return {
       name: className,
@@ -585,41 +429,6 @@ function defaultCardFor(pattern, className) {
         "Do not choose the skip side only from the next immediate character; try both sides.",
         "Only one mismatch can spend the deletion. The helper check should be a plain palindrome check.",
         "Use indexes for the helper so no new string is needed."
-      ]
-    };
-  }
-
-  if (className === "MaximumLengthOfPairChains") {
-    return {
-      name: className,
-      source,
-      label: "Finish earliest interval",
-      difficulty: "Medium",
-      leetcode: "https://leetcode.com/problems/maximum-length-of-pair-chain/",
-      description: "Given pairs [left, right], choose the longest chain where each next pair must start after the previous pair ends. You can reorder pairs and do not need to use all of them.",
-      time: "O(n log n)",
-      space: "O(1)",
-      timeWhy: "Sorting by right endpoint dominates. After sorting, one scan decides whether to take or skip each pair.",
-      structures: "sorted intervals, last selected end",
-      input: "pairs = [[1, 2], [2, 3], [3, 4]]",
-      output: "2",
-      recognize: "When you need the maximum number of non-overlapping intervals and the only thing that matters for the future is how early the current choice ends.",
-      visual: [
-        ["[1,2]", "ends early", "take"],
-        ["[2,3]", "2 is not > 2", "skip"],
-        ["[3,4]", "3 > 2", "take"]
-      ],
-      visualText: "Picture each pair as a meeting slot. Taking the meeting that ends earliest leaves the most room for whatever comes next.",
-      core: "Sort pairs by their right value. Keep the right value of the last selected pair. For each pair, take it only if its left value is greater than the last selected right value, then update the last right.",
-      bruteForce: "Try every subset/order of pairs and check valid chains. That explodes because each pair can be chosen or skipped in many orders.",
-      alternates: [
-        "Dynamic programming after sorting by start or end can compute the longest chain, but it is O(n^2) and unnecessary here.",
-        "This is the same shape as activity selection: choose the interval that frees the timeline earliest."
-      ],
-      gotchas: [
-        "The rule is strict: next left must be greater than previous right, not greater than or equal.",
-        "Sort by end, not start. Early start can block a shorter interval that ends sooner.",
-        "Initialize lastRight below every possible value so the first selected pair is allowed."
       ]
     };
   }
@@ -663,47 +472,6 @@ function defaultCardFor(pattern, className) {
 }
 
 function defaultDetailsFor(pattern, className) {
-  if (pattern === "pod" && className === "CinemaSeatAlloc") {
-    return {
-      prompt: "Before reading: how can you handle up to 10^9 rows without storing every row?",
-      steps: [
-        "Assume every untouched row contributes two families.",
-        "Build state only for rows that appear in reservedSeats.",
-        "For each affected row, mark whether reservations block the left, middle, or right candidate block.",
-        "Count two if left and right are both free; otherwise count one if at least one of the three blocks is free.",
-        "Reservations at seats 1 and 10 do not block a family block."
-      ],
-      skeleton: "affectedRows = sparse map\nfor each reserved seat\n  mark blocked candidate blocks for its row\n\nanswer = 2 * (n - affectedRowCount)\nfor each affected row\n  if left and right free: answer += 2\n  else if left or middle or right free: answer += 1\nreturn answer"
-    };
-  }
-
-  if (pattern === "pod" && className === "DistributeInTwoArrays") {
-    return {
-      prompt: "Before reading: what state from each temporary array determines where the next value goes?",
-      steps: [
-        "Place nums[0] in arr1 and nums[1] in arr2.",
-        "For each later value, compare arr1's tail with arr2's tail.",
-        "Append to arr1 only when its tail is strictly greater; otherwise append to arr2.",
-        "After all placements, copy arr1 into the result first.",
-        "Copy arr2 immediately after arr1 and return the result."
-      ],
-      skeleton: "arr1 = [nums[0]]\narr2 = [nums[1]]\nfor each remaining value\n  if last(arr1) > last(arr2): append to arr1\n  else: append to arr2\n\nreturn concatenate(arr1, arr2)"
-    };
-  }
-  if (pattern === "pod" && className === "CheckDivBySumProd") {
-    return {
-      prompt: "Before reading: which two accumulators must the same extracted digit update?",
-      steps: [
-        "Save n because the digit loop consumes its working copy.",
-        "Initialize digit sum to 0 and digit product to 1.",
-        "Peel the last digit with modulo 10 and update both accumulators.",
-        "Drop the last digit with integer division by 10.",
-        "Check whether the original number divides evenly by sum + product."
-      ],
-      skeleton: "original = n\nsum = 0, product = 1\nwhile n > 0\n  digit = n % 10\n  sum += digit\n  product *= digit\n  n /= 10\nreturn original % (sum + product) == 0"
-    };
-  }
-
   if (className === "BuyTwoChocolates") {
     return {
       prompt: "Before reading: what two values are enough to decide whether buying is possible?",
@@ -769,20 +537,6 @@ function defaultDetailsFor(pattern, className) {
     };
   }
 
-  if (className === "MinimumAddToMakeParenthesisValid") {
-    return {
-      prompt: "Before reading: which invalid bracket must be paid for immediately, and which can wait until the end?",
-      steps: [
-        "Carry open = unmatched '(' waiting for closers.",
-        "For '(', increase open.",
-        "For ')', consume open if one exists.",
-        "If ')' has no open to consume, add one missing '(' to the answer.",
-        "After the scan, add all leftover open because each needs a ')'."
-      ],
-      skeleton: "open = 0, add = 0\nfor char in s\n  if char is '(':\n    open++\n  else if open > 0:\n    open--\n  else:\n    add++\nreturn add + open"
-    };
-  }
-
   if (className === "ValidPalindromeII") {
     return {
       prompt: "Before reading: when the two ends mismatch, which side are you allowed to delete?",
@@ -794,20 +548,6 @@ function defaultDetailsFor(pattern, className) {
         "If either check succeeds, the original string can be saved."
       ],
       skeleton: "left = 0, right = n - 1\nwhile left < right\n  if chars match: move both inward\n  else:\n    return isPalindrome(left + 1, right) OR isPalindrome(left, right - 1)\nreturn true"
-    };
-  }
-
-  if (className === "MaximumLengthOfPairChains") {
-    return {
-      prompt: "Before reading: why is the pair that ends earliest the safest one to keep?",
-      steps: [
-        "Sort all pairs by their right endpoint.",
-        "Keep the right endpoint of the last pair you accepted.",
-        "If the next pair starts after that endpoint, accept it.",
-        "If it overlaps or just touches, skip it because it would not extend the chain.",
-        "Count accepted pairs."
-      ],
-      skeleton: "sort pairs by end\nlastRight = very small\ncount = 0\nfor pair in sorted pairs\n  if pair.left > lastRight\n    count++\n    lastRight = pair.right\nreturn count"
     };
   }
 
@@ -837,15 +577,6 @@ function defaultDetailsFor(pattern, className) {
 }
 
 function defaultDefiningMoveFor(pattern, className) {
-  if (pattern === "pod" && className === "CinemaSeatAlloc") {
-    return "Represent only affected rows\nleft + right can coexist\nmiddle is the one-family fallback";
-  }
-  if (pattern === "pod" && className === "DistributeInTwoArrays") {
-    return "Seed one value per list\ncompare only the two tails\nstrict greater goes left; tie goes right\nconcatenate left then right";
-  }
-  if (pattern === "pod" && className === "CheckDivBySumProd") {
-    return "Peel each digit once\nadd it to sum and multiply it into product\ntest original % (sum + product)";
-  }
   if (className === "BuyTwoChocolates") {
     return "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money";
   }
@@ -861,14 +592,8 @@ function defaultDefiningMoveFor(pattern, className) {
   if (className === "CanPlaceFlowers") {
     return "Check left-current-right window\nplant immediately when all empty\nwrite 1 so next plot is blocked";
   }
-  if (className === "MinimumAddToMakeParenthesisValid") {
-    return "Unmatched ')' adds one immediately\nunmatched '(' stays as open\nanswer is additions + leftover open";
-  }
   if (className === "ValidPalindromeII") {
     return "At first mismatch, branch only once\nskip left OR skip right\nremaining range must be a clean palindrome";
-  }
-  if (className === "MaximumLengthOfPairChains") {
-    return "Sort by smallest right endpoint\ntake pair only when left > lastRight\nending early leaves maximum room";
   }
   if (className === "Candy") {
     return "Left pass fixes left-neighbor rises\nright pass fixes right-neighbor rises\nmerge with max";
@@ -877,12 +602,7 @@ function defaultDefiningMoveFor(pattern, className) {
 }
 
 const authoredCardOverrides = new Set([
-  "greedy/MinimumAddToMakeParenthesisValid",
-  "greedy/ValidPalindromeII",
-  "greedy/MaximumLengthOfPairChains",
-  "pod/CinemaSeatAlloc",
-  "pod/DistributeInTwoArrays",
-  "pod/CheckDivBySumProd"
+  "greedy/ValidPalindromeII"
 ]);
 
 function makeDataBlocksForPattern(pattern, html = "") {

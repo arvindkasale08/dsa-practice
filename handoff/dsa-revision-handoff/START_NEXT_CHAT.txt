@@ -1,0 +1,10 @@
+We are continuing my DSA revision workspace at:
+/Users/arvindkasale/arvind/work/dsa-practice
+
+First read these files:
+/Users/arvindkasale/arvind/work/dsa-practice/handoff/dsa-revision-handoff/NEW_CHAT_HANDOFF.md
+/Users/arvindkasale/arvind/work/dsa-practice/handoff/dsa-revision-handoff/skills/dsa-visual-revision-SKILL.md
+/Users/arvindkasale/arvind/work/dsa-practice/handoff/dsa-revision-handoff/skills/dsa-topic-sheet-builder-SKILL.md
+
+Treat them as the workflow contract. Inspect the repository before changing anything and briefly report the current state. Preserve user changes, do not pull Git before syncing cards, and do not commit or push unless I explicitly ask. Then continue with my newest request.
+

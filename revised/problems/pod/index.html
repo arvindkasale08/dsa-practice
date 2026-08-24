@@ -1120,6 +1120,50 @@
                   "The final answer is arr1 concatenated with arr2; do not interleave them.",
                   "The problem guarantees at least two input values."
             ]
+      },
+      {
+            "name": "CheckDivBySumProd",
+            "source": "../com/arvind/revision/pod/CheckDivBySumProd.java",
+            "label": "Reuse one digit scan for sum and product",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/check-divisibility-by-digit-sum-and-product/",
+            "description": "Given a positive integer n, add its digits and multiply its digits. Return whether n is divisible by the sum of those two results.",
+            "time": "O(d)",
+            "space": "O(1)",
+            "timeWhy": "The loop visits each of the d decimal digits once and keeps only the running sum and product.",
+            "structures": "digit extraction, sum accumulator, product accumulator",
+            "input": "n = 99",
+            "output": "true",
+            "recognize": "When a number property depends independently on every decimal digit, peel digits with modulo 10 and integer division.",
+            "visual": [
+                  [
+                        "99",
+                        "digit 9",
+                        "sum 9 / product 9"
+                  ],
+                  [
+                        "9",
+                        "digit 9",
+                        "sum 18 / product 81"
+                  ],
+                  [
+                        "18 + 81 = 99",
+                        "99 % 99",
+                        "0"
+                  ]
+            ],
+            "visualText": "Keep the original number safe while a working copy loses its last digit on every step. The same extracted digit updates both accumulators.",
+            "core": "Save the original number. Start sum at 0 and product at 1, peel every digit from the working copy, then test original % (sum + product) == 0.",
+            "bruteForce": "Convert the number to a string, parse every character, and compute the same sum and product. It is still O(d) but creates extra string state.",
+            "alternates": [
+                  "A string scan can be easier to read when digit parsing is already part of the surrounding code.",
+                  "Arithmetic extraction avoids allocation and directly matches the numeric operation."
+            ],
+            "gotchas": [
+                  "Initialize product to 1; starting at 0 destroys every multiplication.",
+                  "Save the original number before repeatedly dividing the working copy.",
+                  "A zero digit makes the product zero, but the digit sum still determines a positive divisor for positive n."
+            ]
       }
 ];
 
@@ -1145,17 +1189,30 @@
                   "Copy arr2 immediately after arr1 and return the result."
             ],
             "skeleton": "arr1 = [nums[0]]\narr2 = [nums[1]]\nfor each remaining value\n  if last(arr1) > last(arr2): append to arr1\n  else: append to arr2\n\nreturn concatenate(arr1, arr2)"
+      },
+      "CheckDivBySumProd": {
+            "prompt": "Before reading: which two accumulators must the same extracted digit update?",
+            "steps": [
+                  "Save n because the digit loop consumes its working copy.",
+                  "Initialize digit sum to 0 and digit product to 1.",
+                  "Peel the last digit with modulo 10 and update both accumulators.",
+                  "Drop the last digit with integer division by 10.",
+                  "Check whether the original number divides evenly by sum + product."
+            ],
+            "skeleton": "original = n\nsum = 0, product = 1\nwhile n > 0\n  digit = n % 10\n  sum += digit\n  product *= digit\n  n /= 10\nreturn original % (sum + product) == 0"
       }
 };
 
     const definingMoves = {
       "CinemaSeatAlloc": "Represent only affected rows\nleft + right can coexist\nmiddle is the one-family fallback",
-      "DistributeInTwoArrays": "Seed one value per list\ncompare only the two tails\nstrict greater goes left; tie goes right\nconcatenate left then right"
+      "DistributeInTwoArrays": "Seed one value per list\ncompare only the two tails\nstrict greater goes left; tie goes right\nconcatenate left then right",
+      "CheckDivBySumProd": "Peel each digit once\nadd it to sum and multiply it into product\ntest original % (sum + product)"
 };
 
     const solvedOrder = [
       "CinemaSeatAlloc",
-      "DistributeInTwoArrays"
+      "DistributeInTwoArrays",
+      "CheckDivBySumProd"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

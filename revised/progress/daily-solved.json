@@ -472,6 +472,14 @@
         "graphs/ShortestPathDAGDFS"
       ],
       "notes": "Synced card"
+    },
+    {
+      "date": "2026-08-24",
+      "solved": 1,
+      "cardsSynced": [
+        "pod/CheckDivBySumProd"
+      ],
+      "notes": ""
     }
   ]
 }

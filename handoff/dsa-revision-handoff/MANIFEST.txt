@@ -1,0 +1,20 @@
+DSA revision new-chat handoff
+
+NEW_CHAT_HANDOFF.md
+  Full workflow, paths, exclusions, tracker conventions, and current direction.
+
+START_NEXT_CHAT.txt
+  Ready-to-paste opening prompt for the next Codex chat.
+
+skills/dsa-visual-revision-SKILL.md
+  Packaged copy of the card generation workflow.
+
+skills/dsa-topic-sheet-builder-SKILL.md
+  Packaged copy of the topic tracker workflow.
+
+references/graph-theory-notes.txt
+  User-provided graph theory notes.
+
+references/graph-theory-visual.png
+  User-provided graph representation and traversal visual guide.
+

@@ -1068,6 +1068,54 @@
             "previewImage": "graph-representation-traversal-guide.png"
       },
       {
+            "name": "GraphDistancesAndTopoSort",
+            "source": "graph-distance-topo-reference",
+            "label": "Algorithm selection guide",
+            "difficulty": "Theory",
+            "leetcode": "",
+            "comparisonOnly": true,
+            "description": "Choose the algorithm from three facts: edge weights, whether cycles are possible, and whether you need distances from one source or between every pair.",
+            "prompt": "Before coding: are edges unit, 0/1, non-negative, negative, or is the graph a DAG?",
+            "decisionLadder": [
+                  "Unit or unweighted edges -> BFS",
+                  "Only 0 and 1 weights -> 0-1 BFS",
+                  "Weighted DAG -> topological order, then relax",
+                  "Non-negative weights -> Dijkstra",
+                  "Negative edges -> Bellman-Ford",
+                  "All-pairs distances on a small graph -> Floyd-Warshall"
+            ],
+            "tables": [
+                  {
+                        "title": "Ways to find shortest distances",
+                        "headers": ["Method", "Use when", "Core order / structure", "Time", "Does not fit"],
+                        "rows": [
+                              ["BFS", "Unweighted or every edge has equal weight", "Queue; first discovery fixes the shortest edge count", "O(V + E)", "Different edge weights"],
+                              ["0-1 BFS", "Every edge weight is exactly 0 or 1", "Deque; weight 0 goes to front, weight 1 to back", "O(V + E)", "Weights outside 0 and 1"],
+                              ["DAG relaxation", "Weighted directed acyclic graph; negative edges are allowed", "Topological order; relax outgoing edges once", "O(V + E)", "Any directed cycle"],
+                              ["Dijkstra", "Single-source shortest paths with non-negative weights", "Min-heap; expand the smallest known distance", "O((V + E) log V)", "Negative edge weights"],
+                              ["Bellman-Ford", "Negative edges may exist; detect a reachable negative cycle", "Relax every edge V - 1 times; one extra pass detects a cycle", "O(VE)", "Large graphs when a faster valid method applies"],
+                              ["Floyd-Warshall", "All-pairs distances; graph is small enough for a matrix", "DP over each vertex as an allowed intermediate", "O(V^3)", "Large sparse graphs; negative cycles invalidate finite shortest paths"]
+                        ]
+                  },
+                  {
+                        "title": "Topological sort choices",
+                        "headers": ["Method", "State transition", "Result construction", "Cycle signal"],
+                        "rows": [
+                              ["DFS postorder", "Visit every unvisited neighbor before finishing the current node", "Push on exit; popping or reversing finish order gives topo order", "Use a recursion-path / 3-state marker"],
+                              ["Kahn's BFS", "Take a zero-indegree node, then decrement each neighbor's indegree", "Queue removal order is the topo order", "Processed nodes < V"],
+                              ["All topo orders", "Choose each currently available zero-indegree node, recurse, then restore indegrees", "Each complete path is one valid ordering", "No available node before using all vertices"]
+                        ]
+                  }
+            ],
+            "notes": [
+                  "Topological order exists only for a directed acyclic graph (DAG).",
+                  "Topological order is not necessarily unique.",
+                  "BFS first discovery is final only when all edges have equal weight.",
+                  "Dijkstra can work on directed or undirected graphs, but all weights must be non-negative.",
+                  "An undirected negative edge creates an immediate negative cycle by traversing it in both directions."
+            ]
+      },
+      {
             "name": "BFSGraph",
             "source": "../com/arvind/revision/graphs/BFSGraph.java",
             "label": "Traverse level by level",
@@ -2729,6 +2777,7 @@
 
     const solvedOrder = [
       "GraphTheoryReference",
+      "GraphDistancesAndTopoSort",
       "BFSGraph",
       "DFSGraph",
       "FindIfPathExistsInGraph",
