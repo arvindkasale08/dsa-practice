@@ -9,6 +9,7 @@
 - [Problem of the Day](revised/problems/pod/)
 - [Recursion](revised/problems/recursion/)
 - [Backtracking](revised/problems/backtracking/)
+- [Dynamic Programming](revised/problems/dynamicprogramming/)
 - [Stacks](revised/problems/stacks/)
 - [Hashing](revised/problems/hashing/)
 

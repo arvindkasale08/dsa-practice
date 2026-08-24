@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Warmup Revision</title>
+  <title>Dynamic Programming Revision</title>
   <style>
     :root {
       --ink: #18221e;
@@ -1062,7 +1062,7 @@
     <header>
       <div>
         <div class="title-row">
-          <h1>Warmup Revision</h1>
+          <h1>Dynamic Programming Revision</h1>
           <span id="totalCount" class="count-pill"></span>
           <div class="page-revision-controls">
             <button id="incrementAll" class="revision-button" type="button">+1 All</button>
@@ -1071,429 +1071,197 @@
         </div>
       </div>
       <div class="tools">
-        <input id="search" class="search" type="search" placeholder="Search warmup cards">
+        <input id="search" class="search" type="search" placeholder="Search dynamic programming cards">
         <button id="quickMode" class="mode-button active" type="button">Card Review</button>
         <button id="exportPdf" class="pdf-button" type="button">Export PDF</button>
       </div>
     </header>
-    <p class="subtitle">Fast recall cards for the completed warmup package. Read the problem name, picture the hook, then check the sample and bug magnets before opening the Java file.</p>
+    <p class="subtitle">Build each recurrence in three stages: recursion, memoization, then tabulation. Use Quick Review to recall the state, base cases, and transition.</p>
 
     <section id="cards" class="cards"></section>
-    <div id="empty" class="empty">No matching warmup cards.</div>
+    <div id="empty" class="empty">No matching dynamic programming cards.</div>
   </main>
 
   <script>
     const cards = [
       {
-        name: "CheckIfStringsEquivalent",
-        source: "../com/arvind/revision/warmup/CheckIfStringsEquivalent.java",
-        label: "Chunked strings",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/check-if-two-string-arrays-are-equivalent/",
-        description: "Given two arrays of string chunks, decide whether joining all chunks in each array creates the same final string.",
-        time: "O(total chars)",
-        space: "O(total chars)",
-        structures: "StringBuilder x 2",
-        input: 'word1 = ["ab", "c"]\nword2 = ["a", "bc"]',
-        output: "true",
-        recognize: "When two string arrays are really just two broken-up versions of a final string.",
-        visual: [["ab", "c"], ["a", "bc"]],
-        visualText: "Mentally flatten both rows into one line: [ab][c] -> abc and [a][bc] -> abc.",
-        core: "Append all pieces of word1 into one StringBuilder, append all pieces of word2 into another, then compare the final text.",
-        gotchas: ["Use content comparison, not reference comparison.", "If this becomes huge, compare character streams instead of building both full strings."]
+            "name": "ClimbingStairs",
+            "source": "../com/arvind/revision/dynamicprogramming/ClimbingStairs.java",
+            "label": "Count paths from the current stair",
+            "difficulty": "Easy",
+            "leetcode": "",
+            "description": "Given a staircase with n steps, count the distinct ordered ways to reach exactly the top when every move may climb 1, 2, or 3 steps.",
+            "time": "Rec O(3^n) · Memo/Tab O(n)",
+            "space": "O(n) stack · Tab O(n)",
+            "timeWhy": "Plain recursion repeats the same remaining-stair states. Memoization computes each state once; tabulation fills each stair once.",
+            "structures": "recursion stack, memo array, DP array",
+            "input": "n = 4",
+            "output": "7",
+            "recognize": "When the answer at one position is the sum of the answers after every allowed next move.",
+            "visual": [
+                  [
+                        "i",
+                        "i + 1",
+                        "i + 2",
+                        "i + 3"
+                  ],
+                  [
+                        "ways(i)",
+                        "=",
+                        "three child answers"
+                  ]
+            ],
+            "visualText": "Stand on stair i and branch to the three legal next positions. Landing exactly on n contributes one way; jumping past n contributes zero.",
+            "core": "Use the current stair as the state: ways(i) = ways(i + 1) + ways(i + 2) + ways(i + 3). Cache by i or fill the same relation from the top downward.",
+            "bruteForce": "The implemented recursion explores every ordered step sequence and repeats identical states, giving exponential time.",
+            "alternates": [
+                  "Space-optimize tabulation by retaining only the next three DP values."
+            ],
+            "gotchas": [
+                  "This variant allows 1, 2, or 3 steps; LeetCode 70 allows only 1 or 2.",
+                  "Return 1 only when the position equals n; return 0 after overshooting.",
+                  "The current table writes dp[1], dp[2], and dp[3] directly, so handle n < 3 before those assignments.",
+                  "Large n values such as 49 overflow Java int for this three-step sequence; use long when the required range exceeds int."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "ways(i): paths from stair i to n",
+                        "base": "i == n → 1; i > n → 0",
+                        "transition": "ways(i) = ways(i+1) + ways(i+2) + ways(i+3)",
+                        "time": "O(3^n) upper bound",
+                        "space": "O(n) call stack",
+                        "skeleton": "ways(i)\n  if i == n: return 1\n  if i > n: return 0\n  return ways(i+1) + ways(i+2) + ways(i+3)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "Same i state, cached once",
+                        "base": "i == n → 1; i > n → 0",
+                        "transition": "Return dp[i] when known; otherwise cache the three-child sum",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "ways(i, dp)\n  handle exact/overshoot bases\n  if dp[i] known: return it\n  dp[i] = ways(i+1) + ways(i+2) + ways(i+3)\n  return dp[i]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i]: ways to climb exactly i stairs",
+                        "base": "dp[1]=1; dp[2]=2; dp[3]=4",
+                        "transition": "Fill forward: dp[i] = dp[i-1] + dp[i-2] + dp[i-3]",
+                        "time": "O(n)",
+                        "space": "O(n), reducible to O(1)",
+                        "skeleton": "handle n below 3\ndp[1]=1, dp[2]=2, dp[3]=4\nfor i from 4 through n\n  dp[i] = dp[i-1] + dp[i-2] + dp[i-3]\nreturn dp[n]"
+                  }
+            ]
       },
       {
-        name: "ClosestToZero",
-        source: "../com/arvind/revision/warmup/ClosestToZero.java",
-        label: "Best-so-far scan",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/find-closest-number-to-zero/",
-        description: "Given an integer array, return the number closest to zero. If negative and positive values are equally close, return the positive one.",
-        time: "O(n)",
-        space: "O(1)",
-        structures: "Best-so-far variable",
-        input: "nums = [2, -1, 1]",
-        output: "1",
-        recognize: "When the answer is one best element and each number can be judged independently.",
-        visual: [["2", "-1", "1"]],
-        visualText: "Draw a number line around zero. Distance decides first; if distance ties, choose the right-side positive number.",
-        core: "Track the current closest number. Replace it when absolute value is smaller, or when absolute value ties and the new value is larger.",
-        gotchas: ["Tie rule is the entire trick: prefer +x over -x.", "Initialize from the array if possible; sentinel values can make tie logic feel weird."]
-      },
-      {
-        name: "ContainsDuplicate",
-        source: "../com/arvind/revision/warmup/ContainsDuplicate.java",
-        label: "Seen set",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/contains-duplicate/",
-        description: "Given an integer array, return true if any value appears at least twice. Return false only when every value is unique.",
-        time: "O(n)",
-        space: "O(n)",
-        structures: "HashSet",
-        input: "nums = [1, 2, 3, 4, 4]",
-        output: "Result: true",
-        recognize: "When the question asks whether anything repeats and you do not need the repeated positions.",
-        visual: [["1", "2", "3", "4", "4"]],
-        visualText: "Imagine dropping every number into a seen bucket. If it is already in the bucket, stop.",
-        core: "Scan left to right. If seen already contains the number, return true; otherwise add it and continue.",
-        gotchas: ["Return immediately when a duplicate appears.", "A set keeps this linear; sorting is extra work and mutates order."]
-      },
-      {
-        name: "FindNumbersWithEvenDigits",
-        source: "../com/arvind/revision/warmup/FindNumbersWithEvenDigits.java",
-        label: "Digit count",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/find-numbers-with-even-number-of-digits/",
-        description: "Given an array of integers, count how many numbers have an even number of decimal digits.",
-        time: "O(total digits)",
-        space: "O(1)",
-        structures: "Digit counter",
-        input: "nums = [12, 345, 2, 6, 7896]",
-        output: "2",
-        recognize: "When the value itself does not matter, only the length of its decimal representation.",
-        visual: [["12", "345", "2", "6", "7896"]],
-        visualText: "Read each number as text blocks: 12 has two blocks, 345 has three, 7896 has four.",
-        core: "Turn each number into text and count its length, or divide by 10 repeatedly. Add one when the count is even.",
-        gotchas: ["If using math, remember 0 has one digit.", "String conversion is perfectly fine for this warmup problem."]
-      },
-      {
-        name: "FlippingImage",
-        source: "../com/arvind/revision/warmup/FlippingImage.java",
-        label: "Mirror and invert",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/flipping-an-image/",
-        description: "Given a binary matrix, flip each row horizontally, then invert every bit so 0 becomes 1 and 1 becomes 0.",
-        time: "O(rows * cols)",
-        space: "O(1)",
-        structures: "In-place matrix, two pointers",
-        input: "image = [[1,1,0,0], [1,0,0,1], [0,1,1,1], [1,0,1,0]]",
-        output: "[[1,1,0,0], [0,1,1,0], [0,0,0,1], [1,0,1,0]]",
-        recognize: "When each row must be mirrored and each binary value must be toggled.",
-        visual: [["1", "1", "0", "0"], ["1", "1", "0", "0"]],
-        visualText: "Treat every row like a mirror. Left receives inverted right; right receives inverted old left.",
-        core: "For each row, keep left and right pointers. Put invert(right) on the left and invert(old left) on the right.",
-        gotchas: ["When left meets right, still invert the middle cell.", "Use a saved temp before overwriting the left value."]
-      },
-      {
-        name: "GoodPair",
-        source: "../com/arvind/revision/warmup/GoodPair.java",
-        label: "Frequency creates pairs",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/number-of-good-pairs/",
-        description: "Given an integer array, count pairs of indices i and j where i is before j and both positions contain the same value.",
-        time: "O(n)",
-        space: "O(k)",
-        structures: "Frequency HashMap",
-        input: "nums = [1, 2, 3, 1, 1, 3]",
-        output: "4",
-        recognize: "When every new duplicate can pair with all earlier copies of the same number.",
-        visual: [["1", "2", "3", "1", "1", "3"]],
-        visualText: "Think handshake count: the new 1 shakes hands with every previous 1.",
-        core: "Keep a frequency map. For each number, add its current frequency to the answer, then increment that frequency.",
-        gotchas: ["Add before incrementing, because the current item only pairs with previous items.", "This is easier than computing nC2 at the end."]
-      },
-      {
-        name: "IsSubsequence",
-        source: "../com/arvind/revision/warmup/IsSubsequence.java",
-        label: "Order check",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/is-subsequence/",
-        description: "Given strings s and t, check whether s can be formed by deleting characters from t without changing the order of the remaining characters.",
-        time: "O(|t|)",
-        space: "O(1)",
-        structures: "Two pointers",
-        input: 's = "abc"\nt = "ahbgdc"',
-        output: "true",
-        recognize: "When one string only needs to appear in order inside another string, not contiguously.",
-        visual: [["a", "b", "c"], ["a", "h", "b", "g", "d", "c"]],
-        visualText: "Keep a finger on s. Sweep across t and move the s finger only when the current needed char appears.",
-        core: "Scan t with one pointer. When t matches the current char of s, advance the s pointer. Success means all of s was consumed.",
-        gotchas: ["Empty s should return true.", "Guard `s.charAt(i)` when i reaches s.length(); otherwise empty or fully matched s can crash."]
-      },
-      {
-        name: "MajorityElement",
-        source: "../com/arvind/revision/warmup/MajorityElement.java",
-        label: "Vote cancellation",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/majority-element/",
-        description: "Given an array where one value appears more than half the time, return that majority value.",
-        time: "O(n)",
-        space: "O(1)",
-        structures: "Candidate + vote count",
-        input: "nums = [2, 2, 1, 1, 1, 2, 2]",
-        output: "2",
-        recognize: "When the problem guarantees one value appears more than half the array.",
-        visual: [["2", "2", "1", "1", "1", "2", "2"]],
-        visualText: "Picture values fighting in pairs. Different values cancel; the true majority has extra copies left.",
-        core: "Keep a candidate and count. Same value increments count, different value decrements. When count hits zero, choose a new candidate.",
-        gotchas: ["This works without verification only when the majority is guaranteed.", "The idea is cancellation, not counting exact frequencies."]
-      },
-      {
-        name: "MergeStringsAlternately",
-        source: "../com/arvind/revision/warmup/MergeStringsAlternately.java",
-        label: "Alternating append",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/merge-strings-alternately/",
-        description: "Given two strings, create a new string by alternating characters from each one, then append any leftover tail from the longer string.",
-        time: "O(n + m)",
-        space: "O(n + m)",
-        structures: "StringBuilder, two indexes",
-        input: 'word1 = "abcd"\nword2 = "pq"',
-        output: "apbqcd",
-        recognize: "When the output is formed by weaving two strings character by character.",
-        visual: [["a", "b", "c", "d"], ["p", "q"], ["a", "p", "b", "q", "c", "d"]],
-        visualText: "Zip the two rows together: top, bottom, top, bottom; then drag the leftover tail to the end.",
-        core: "Use two indexes and a StringBuilder. Append word1[i], word2[j] while both are in range, then append remaining substrings.",
-        gotchas: ["Do not forget leftovers from the longer string.", "StringBuilder avoids repeated string concatenation."]
-      },
-      {
-        name: "MoveZeroes",
-        source: "../com/arvind/revision/warmup/MoveZeroes.java",
-        label: "Stable compaction",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/move-zeroes/",
-        description: "Given an integer array, move all zeroes to the end while keeping the non-zero values in their original relative order.",
-        time: "O(n)",
-        space: "O(1)",
-        structures: "Write pointer",
-        input: "nums = [0, 1, 3, 0, 12]",
-        output: "[1, 3, 12, 0, 0]",
-        recognize: "When unwanted values move to the end but the wanted values must keep their order.",
-        visual: [["0", "1", "3", "0", "12"], ["1", "3", "12", "0", "0"]],
-        visualText: "Imagine a write slot moving forward only when a non-zero is copied into it. Everything behind write is compacted.",
-        core: "Use a write pointer for the next non-zero slot. Scan all values, copy non-zero values to write, then fill the rest with zero.",
-        gotchas: ["This is not a sorting problem.", "The generic template should scan from index 0 so the first element is handled cleanly."]
-      },
-      {
-        name: "Pangram",
-        source: "../com/arvind/revision/warmup/Pangram.java",
-        label: "Alphabet checklist",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/check-if-the-sentence-is-pangram/",
-        description: "Given a sentence, check whether it contains every English alphabet letter at least once.",
-        time: "O(n)",
-        space: "O(1)",
-        structures: "Boolean[26] checklist",
-        input: '"This is not a pangram"\n"TheQuickBrownFoxJumpsOverTheLazyDog"',
-        output: "false\ntrue",
-        recognize: "When the task is presence of all alphabet letters, not order or frequency.",
-        visual: [["a", "b", "c", "...", "z"]],
-        visualText: "Picture 26 boxes from a to z. Every seen character checks one box; all boxes must be checked.",
-        core: "Normalize each character, map a-z to indexes 0-25, mark/count each letter, then ensure none are missing.",
-        gotchas: ["Ignore characters outside a-z if input can contain spaces or punctuation.", "You can early-return once all 26 letters have been seen."]
-      },
-      {
-        name: "ReverseVowels",
-        source: "../com/arvind/revision/warmup/ReverseVowels.java",
-        label: "Vowel swap",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/reverse-vowels-of-a-string/",
-        description: "Given a string, reverse only its vowels. Every consonant, digit, symbol, and space stays in its original position.",
-        time: "O(n)",
-        space: "O(n)",
-        structures: "char array, two pointers, vowel lookup",
-        input: '"hello"\n"DesignGUrus"',
-        output: "holle\nDusUgnGires",
-        recognize: "When only one character class moves and all other characters stay anchored.",
-        visual: [["h", "e", "l", "l", "o"], ["h", "o", "l", "l", "e"]],
-        visualText: "Two magnets search inward for vowels. When both magnets catch vowels, swap them.",
-        core: "Use two pointers. Skip non-vowels on each side. When both sides are vowels, swap and move inward.",
-        gotchas: ["Include uppercase vowels by normalizing before lookup.", "After a swap, move both pointers or you can keep revisiting the same vowels."]
-      },
-      {
-        name: "ShortestWordDistance",
-        source: "../com/arvind/revision/warmup/ShortestWordDistance.java",
-        label: "Last seen positions",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/shortest-word-distance/",
-        description: "Given a list of words and two target words, return the smallest distance between any occurrence of the two targets.",
-        time: "O(n)",
-        space: "O(1)",
-        structures: "Last seen indexes",
-        input: 'words = ["the","quick","brown","fox","jumps","over","the","lazy","dog"]\nword1 = "fox", word2 = "dog"',
-        output: "5",
-        recognize: "When distance depends only on the latest seen positions of two target words.",
-        visual: [["the", "quick", "brown", "fox", "...", "dog"]],
-        visualText: "Drop pins on the latest word1 and word2 positions. Every new pin gives a fresh distance candidate.",
-        core: "During one scan, update idx1 or idx2 when you see either word. Once both exist, update the minimum absolute difference.",
-        gotchas: ["Single pass is simpler than storing every index.", "If word1 and word2 can be the same word, that is a different variant."]
-      },
-      {
-        name: "Sqrt",
-        source: "../com/arvind/revision/warmup/Sqrt.java",
-        label: "Binary answer search",
-        difficulty: "Medium",
-        leetcode: "https://leetcode.com/problems/sqrtx/",
-        description: "Given a non-negative integer x, return the floor of its square root without using a built-in square-root operation.",
-        time: "O(log x)",
-        space: "O(1)",
-        structures: "Binary search bounds",
-        input: "x = 2147395600",
-        output: "46340",
-        recognize: "When the answer is a number in a range and you can test whether a guess is too small or too large.",
-        visual: [["0", "...", "mid", "...", "x/2"]],
-        visualText: "Put mid on the number line. mid squared tells which half of possible roots can be discarded.",
-        core: "Binary search candidate roots. If mid*mid is less than x, move left up. If greater, move right down. Return right after crossing.",
-        gotchas: ["Use long for mid * mid to avoid overflow.", "Return right at the end because left has moved to the first too-large value."]
-      },
-      {
-        name: "ValidAnagram",
-        source: "../com/arvind/revision/warmup/ValidAnagram.java",
-        label: "Frequency balance",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/valid-anagram/",
-        description: "Given two strings, check whether they contain exactly the same characters with exactly the same counts.",
-        time: "O(n)",
-        space: "O(1)",
-        structures: "int[26] frequency array",
-        input: 's = "listen"\nt = "silent"',
-        output: "true",
-        recognize: "When order does not matter, but exact character counts do.",
-        visual: [["l:+1", "i:+1", "s:+1"], ["s:-1", "i:-1", "l:-1"]],
-        visualText: "Use a balance scale per letter: first string adds weight, second string removes it. All scales must end at zero.",
-        core: "Check lengths first. Increment counts for s, decrement counts for t, then verify every count is zero.",
-        gotchas: ["Array size 26 assumes lowercase English letters.", "For Unicode or mixed characters, use a map instead."]
-      },
-      {
-        name: "ValidPalindrome",
-        source: "../com/arvind/revision/warmup/ValidPalindrome.java",
-        label: "Clean two-pointer compare",
-        difficulty: "Easy",
-        leetcode: "https://leetcode.com/problems/valid-palindrome/",
-        description: "Given a string, check whether it reads the same forward and backward after ignoring non-alphanumeric characters and case.",
-        time: "O(n)",
-        space: "O(1)",
-        structures: "Two pointers",
-        input: '"A man, a plan, a canal, Panama!"\n"Was it a car or a cat I saw?"\n"123321"',
-        output: "true\ntrue\ntrue",
-        recognize: "When you compare a string from both ends while ignoring non-essential characters.",
-        visual: [["A", ",", "m", "...", "a"]],
-        visualText: "Two pointers walk inward. Each pointer skips noise until both point at real comparable characters.",
-        core: "Move left and right inward. If a side is not alphanumeric, skip it. Once both are valid, compare lowercase characters.",
-        gotchas: ["Do the skip before compare.", "Only move both pointers after you have compared two valid characters."]
+            "name": "FibonacciNumber",
+            "source": "../com/arvind/revision/dynamicprogramming/FibonacciNumber.java",
+            "label": "Reuse the previous two Fibonacci states",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/fibonacci-number/",
+            "description": "Given n, return the nth Fibonacci number, where F(0) = 0, F(1) = 1, and every later value is the sum of the previous two.",
+            "time": "Rec O(2^n) · Memo/Tab O(n)",
+            "space": "Rec/Memo O(n) · Best tab O(1)",
+            "timeWhy": "Plain recursion rebuilds overlapping subtrees. Memoization and tabulation compute each index once; the optimized table keeps only two prior values.",
+            "structures": "recursion stack, memo array, rolling variables",
+            "input": "n = 4",
+            "output": "3",
+            "recognize": "When every state depends only on the two immediately smaller states and those subproblems overlap.",
+            "visual": [
+                  [
+                        "F(4)",
+                        "F(3) + F(2)"
+                  ],
+                  [
+                        "F(3)",
+                        "F(2) + F(1)"
+                  ],
+                  [
+                        "reuse F(2)",
+                        "cache or table"
+                  ]
+            ],
+            "visualText": "The recursive tree asks for the same Fibonacci index repeatedly. Memoization stores each node; tabulation turns the tree into a left-to-right row.",
+            "core": "Keep F(n) = F(n-1) + F(n-2) and the bases F(0)=0, F(1)=1. Move from recursion to caching, then to a forward table or two rolling values.",
+            "bruteForce": "The implemented recursive version mirrors the definition but recomputes the same indexes exponentially.",
+            "alternates": [
+                  "Matrix exponentiation reaches O(log n) time but is unnecessary for the given constraints."
+            ],
+            "gotchas": [
+                  "Return n directly for n <= 1.",
+                  "Initialize memo entries to -1 before using -1 as the unknown marker.",
+                  "In rolling tabulation, update left only after computing the new answer."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "fib(n)",
+                        "base": "n == 0 or n == 1 → n",
+                        "transition": "fib(n) = fib(n-1) + fib(n-2)",
+                        "time": "O(2^n)",
+                        "space": "O(n) call stack",
+                        "skeleton": "fib(n)\n  if n <= 1: return n\n  return fib(n-1) + fib(n-2)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "fib(n) cached in dp[n]",
+                        "base": "n <= 1 → n",
+                        "transition": "Cache fib(n-1) + fib(n-2) before returning",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "fib(n, dp)\n  if n <= 1: return n\n  if dp[n] known: return dp[n]\n  dp[n] = fib(n-1, dp) + fib(n-2, dp)\n  return dp[n]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i], or rolling left/right",
+                        "base": "dp[0]=0; dp[1]=1",
+                        "transition": "dp[i] = dp[i-1] + dp[i-2]",
+                        "time": "O(n)",
+                        "space": "O(n) table or O(1) rolling",
+                        "skeleton": "left = 0, right = 1\nfor i from 2 through n\n  next = left + right\n  left = right\n  right = next\nreturn right"
+                  }
+            ]
       }
-    ];
+];
 
     const recallDetails = {
-      CheckIfStringsEquivalent: {
-        prompt: "Before reading: what final string does each array form?",
-        steps: ["Flatten word1 chunks in order.", "Flatten word2 chunks in order.", "Compare the final strings."],
-        skeleton: "StringBuilder a, b\nfor part in word1: a.append(part)\nfor part in word2: b.append(part)\nreturn a.toString().equals(b.toString())"
+      "ClimbingStairs": {
+            "prompt": "Before reading: what does ways(i) mean, and what should exact landing versus overshooting return?",
+            "steps": [
+                  "Define the current stair i as the state.",
+                  "Exact landing contributes one complete path; overshooting contributes none.",
+                  "Add the answers from i+1, i+2, and i+3.",
+                  "Cache each i or fill the same states backward."
+            ],
+            "skeleton": "ways(i) = ways(i+1) + ways(i+2) + ways(i+3)\nbase: i == n → 1, i > n → 0\nthen memoize i or fill dp from n down to 0"
       },
-      ClosestToZero: {
-        prompt: "Before reading: what value is closest on the number line, and what happens on a tie?",
-        steps: ["Track one best number.", "Compare absolute distance to zero.", "If tied, keep the larger value."],
-        skeleton: "best = nums[0]\nfor n in nums:\n  if abs(n) < abs(best): best = n\n  else if abs(n) == abs(best): best = max(best, n)"
-      },
-      ContainsDuplicate: {
-        prompt: "Before reading: what data structure tells you a value was already seen?",
-        steps: ["Start with an empty seen set.", "For each number, check before adding.", "If already seen, return true immediately."],
-        skeleton: "seen = new HashSet()\nfor n in nums:\n  if seen.contains(n): return true\n  seen.add(n)\nreturn false"
-      },
-      FindNumbersWithEvenDigits: {
-        prompt: "Before reading: are you solving with number value or digit length?",
-        steps: ["Convert each number to a digit count.", "Check count parity.", "Increment answer for even counts."],
-        skeleton: "ans = 0\nfor num in nums:\n  digits = String.valueOf(num).length()\n  if digits % 2 == 0: ans++"
-      },
-      FlippingImage: {
-        prompt: "Before reading: how can one left/right pass both reverse and invert a row?",
-        steps: ["For each row, put pointers at both ends.", "Swap mirrored cells while writing inverted values.", "When pointers meet, invert the middle too."],
-        skeleton: "for row in image:\n  l = 0; r = row.length - 1\n  while l <= r:\n    temp = row[l]\n    row[l] = invert(row[r])\n    row[r] = invert(temp)\n    l++; r--"
-      },
-      GoodPair: {
-        prompt: "Before reading: when a duplicate arrives, how many new pairs does it create?",
-        steps: ["Keep frequency of values already seen.", "A new value forms frequency[value] pairs.", "Then increment its frequency."],
-        skeleton: "pairs = 0\nfreq = new HashMap()\nfor n in nums:\n  pairs += freq.getOrDefault(n, 0)\n  freq[n]++"
-      },
-      IsSubsequence: {
-        prompt: "Before reading: which pointer only moves on a successful match?",
-        steps: ["Keep one pointer on s.", "Sweep t from left to right.", "Advance s only when current needed char appears."],
-        skeleton: "i = 0\nfor ch in t:\n  if i < s.length && s.charAt(i) == ch:\n    i++\nreturn i == s.length"
-      },
-      MajorityElement: {
-        prompt: "Before reading: how does the majority survive cancellation?",
-        steps: ["Hold a candidate and vote count.", "Same value adds a vote.", "Different value cancels a vote; reset when count hits zero."],
-        skeleton: "candidate = nums[0]; count = 0\nfor n in nums:\n  if count == 0: candidate = n\n  count += (n == candidate) ? 1 : -1\nreturn candidate"
-      },
-      MergeStringsAlternately: {
-        prompt: "Before reading: what happens after one string runs out?",
-        steps: ["Append one char from word1.", "Append one char from word2.", "Append the leftover suffix from the longer string."],
-        skeleton: "while i < word1.length && j < word2.length:\n  sb.append(word1[i++])\n  sb.append(word2[j++])\nsb.append(word1.substring(i))\nsb.append(word2.substring(j))"
-      },
-      MoveZeroes: {
-        prompt: "Before reading: where is the next non-zero allowed to be written?",
-        steps: ["write points to next non-zero slot.", "Scan all numbers and copy non-zero values forward.", "Fill everything from write to end with zero."],
-        skeleton: "write = 0\nfor n in nums:\n  if n != 0: nums[write++] = n\nwhile write < nums.length:\n  nums[write++] = 0"
-      },
-      Pangram: {
-        prompt: "Before reading: how do you know all 26 letters appeared?",
-        steps: ["Map each letter to a box 0..25.", "Mark the box when seen.", "All boxes must be marked."],
-        skeleton: "seen = boolean[26]\nfor c in sentence:\n  if 'a' <= lower(c) <= 'z': seen[c-'a'] = true\nreturn all seen values are true"
-      },
-      ReverseVowels: {
-        prompt: "Before reading: which characters are allowed to move?",
-        steps: ["Move left until it finds a vowel.", "Move right until it finds a vowel.", "Swap vowels and move both inward."],
-        skeleton: "l = 0; r = n - 1\nwhile l < r:\n  while l < r && !isVowel(chars[l]): l++\n  while l < r && !isVowel(chars[r]): r--\n  swap(chars, l++, r--)"
-      },
-      ShortestWordDistance: {
-        prompt: "Before reading: what are the latest two pins you need to remember?",
-        steps: ["Scan words once.", "Update latest index for word1 or word2.", "When both are known, update minimum gap."],
-        skeleton: "idx1 = idx2 = -1; best = INF\nfor i in range(words):\n  if words[i] == word1: idx1 = i\n  if words[i] == word2: idx2 = i\n  if idx1 != -1 && idx2 != -1: best = min(best, abs(idx1-idx2))"
-      },
-      Sqrt: {
-        prompt: "Before reading: what does mid squared tell you to discard?",
-        steps: ["Search possible roots, not array indexes.", "mid^2 too small means answer is to the right.", "mid^2 too large means answer is to the left; return right after crossing."],
-        skeleton: "left = 0; right = x / 2\nwhile left <= right:\n  mid = left + (right-left)/2\n  square = (long) mid * mid\n  if square < x: left = mid + 1\n  else if square > x: right = mid - 1\n  else return mid\nreturn right"
-      },
-      ValidAnagram: {
-        prompt: "Before reading: why does order not matter here?",
-        steps: ["Reject if lengths differ.", "Add counts from first string.", "Subtract counts from second string; all counts must end zero."],
-        skeleton: "if s.length != t.length: return false\ncount = int[26]\nfor c in s: count[c-'a']++\nfor c in t: count[c-'a']--\nreturn every count == 0"
-      },
-      ValidPalindrome: {
-        prompt: "Before reading: what must each pointer skip before comparing?",
-        steps: ["Move left/right inward.", "Skip non-alphanumeric chars first.", "Compare lowercase real chars, then move both."],
-        skeleton: "l = 0; r = s.length - 1\nwhile l < r:\n  if !isAlphaNum(s[l]): l++; continue\n  if !isAlphaNum(s[r]): r--; continue\n  if lower(s[l]) != lower(s[r]): return false\n  l++; r--\nreturn true"
+      "FibonacciNumber": {
+            "prompt": "Before reading: which repeated states turn the Fibonacci recursion tree into DP?",
+            "steps": [
+                  "Use n as the state.",
+                  "Stop at 0 and 1.",
+                  "Combine n-1 and n-2.",
+                  "Cache each n, then replace the recursion tree with a forward table or two rolling values."
+            ],
+            "skeleton": "F(0)=0, F(1)=1\nF(n)=F(n-1)+F(n-2)\nrecursion → memo[n] → table → rolling two values"
       }
-    };
+};
 
     const definingMoves = {
-      "CheckIfStringsEquivalent": "join(word1) == join(word2)",
-      "ClosestToZero": "replace best when |n| is smaller\non tie, keep the larger value",
-      "ContainsDuplicate": "if !seen.add(n): return true",
-      "FindNumbersWithEvenDigits": "if digitCount(num) % 2 == 0: answer++",
-      "FlippingImage": "swap + invert mirrored cells",
-      "GoodPair": "pairs += frequency[n]\nfrequency[n]++",
-      "IsSubsequence": "if s[i] == current: i++",
-      "MajorityElement": "count += n == candidate ? 1 : -1\nif count == 0: choose new candidate",
-      "MergeStringsAlternately": "append word1[i], then word2[i]\nappend whichever tail remains",
-      "MoveZeroes": "write each non-zero at nums[write++]\nfill remaining slots with 0",
-      "Pangram": "mark seen[c - 'a']\nall 26 boxes must be marked",
-      "ReverseVowels": "skip non-vowels at both ends\nswap the two vowels",
-      "ShortestWordDistance": "update latest positions\nbest = min(best, |idx1 - idx2|)",
-      "Sqrt": "binary-search the largest mid where mid² <= x",
-      "ValidAnagram": "increment counts for s\ndecrement counts for t",
-      "ValidPalindrome": "skip non-alphanumeric ends\ncompare lowercase characters"
-    };
+      "ClimbingStairs": "State = current stair i\nexact n → 1, past n → 0\nadd i+1, i+2, i+3\ncache i or fill backward",
+      "FibonacciNumber": "State = Fibonacci index n\nF(n) = F(n-1) + F(n-2)\ncache repeated n values\nthen roll two previous values"
+};
 
     const solvedOrder = [
-      "ContainsDuplicate",
-      "Pangram",
-      "ReverseVowels",
-      "ValidPalindrome",
-      "ValidAnagram",
-      "ShortestWordDistance",
-      "GoodPair",
-      "Sqrt",
-      "ClosestToZero",
-      "MergeStringsAlternately",
-      "CheckIfStringsEquivalent",
-      "IsSubsequence",
-      "MoveZeroes",
-      "FlippingImage",
-      "MajorityElement",
-      "FindNumbersWithEvenDigits"
-    ];
+      "ClimbingStairs",
+      "FibonacciNumber"
+];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
     cards.forEach(card => Object.assign(card, recallDetails[card.name], {
@@ -1540,7 +1308,7 @@
     }
 
     function storageKey(cardName) {
-      return `dsa-revision:warmup:${cardName}`;
+      return `dsa-revision:dynamicprogramming:${cardName}`;
     }
 
     function readRevision(cardName) {
@@ -1938,7 +1706,7 @@
       render();
     });
     resetAllEl.addEventListener("click", () => {
-      if (!window.confirm("Reset revision counts and dates for all warmup problems?")) return;
+      if (!window.confirm("Reset revision counts and dates for all dynamic programming problems?")) return;
       cards.forEach(card => writeRevision(card.name, { count: 0, last: "" }));
       render();
     });

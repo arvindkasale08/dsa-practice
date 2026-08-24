@@ -36,7 +36,7 @@ When Arvind says **sync cards**:
 6. Report the number of newly synced problem cards and the updated daily count.
 7. Do not generate PDFs or upload to Drive during routine syncing.
 8. Do not pull from Git before syncing.
-9. Do not commit or push unless Arvind explicitly asks.
+9. Commit the intended sync changes and push the current branch after validation; `sync cards` itself is standing authorization for this Git step.
 10. Do not alter Java solution logic as part of card syncing.
 
 The user expects this full workflow from the short command and should not need to repeat package names.
@@ -56,6 +56,7 @@ When asked to validate a class that has no online judge equivalent:
 - Compressed cards should be minimal and recall-first.
 - Expanded cards should contain the meaningful detail.
 - Backtracking cards must emphasize the base condition and each state transition, including undo/backtrack behavior.
+- Dynamic Programming cards must follow the user's three-stage learning sequence: recursion, memoization, then tabulation. Show each stage's recurrence/transition, base cases, time and space complexity, and recall-level pseudocode. If the Java source omits memoization or tabulation, summarize the missing applicable stage in the card without changing the solution code; clearly label what was implemented versus card-supplied.
 - Call out subtle edge cases and implementation nuances.
 - Theory cards should be visually distinct from problem cards.
 - Related variants need a concise variant lens, such as Combination Sum I vs II or House Robber I vs II.
@@ -115,7 +116,8 @@ The graph theory page should expose these as straightforward links from a simple
 
 - The worktree may contain user changes. Never revert unrelated modifications.
 - Do not pull before syncing cards.
-- Do not commit or push unless explicitly requested.
+- `sync cards` includes authorization to commit the intended sync changes and push the current branch after validation.
+- For non-sync work, do not commit or push unless explicitly requested.
 - When pushing is requested, inspect status and include only intended changes.
 - Generated `.class` files should not be treated as source artifacts.
 
@@ -130,4 +132,3 @@ Recent work has focused on graphs, including BFS/DFS, cycle detection, topologic
 3. Check whether port 8771 is serving the revision root; restart it only if needed.
 4. Preserve all parked-work and no-auto-Git rules.
 5. Continue from Arvind's newest request rather than redoing old work.
-

@@ -48,6 +48,11 @@ const pageConfigs = {
     label: "backtracking",
     subtitle: "Fast recall cards for the current backtracking package. Picture the choice, the smaller recursive call, and the undo step before opening the Java file."
   },
+  dynamicprogramming: {
+    title: "Dynamic Programming Revision",
+    label: "dynamic programming",
+    subtitle: "Build each recurrence in three stages: recursion, memoization, then tabulation. Use Quick Review to recall the state, base cases, and transition."
+  },
   greedy: {
     title: "Greedy Revision",
     label: "greedy",
@@ -238,6 +243,64 @@ function defaultCardFor(pattern, className) {
     alternates: ["Sorting can make greedy choices obvious when relative order does not matter."],
     gotchas: ["Prove the local choice cannot block a better future answer."]
   };
+
+  if (pattern === "dynamicprogramming" && className === "ClimbingStairs") {
+    return {
+      name: className,
+      source,
+      label: "Count paths from the current stair",
+      difficulty: "Easy",
+      leetcode: "",
+      description: "Given a staircase with n steps, count the distinct ordered ways to reach exactly the top when every move may climb 1, 2, or 3 steps.",
+      time: "Rec O(3^n) · Memo/Tab O(n)",
+      space: "O(n) stack · Tab O(n)",
+      timeWhy: "Plain recursion repeats the same remaining-stair states. Memoization computes each state once; tabulation fills each stair once.",
+      structures: "recursion stack, memo array, DP array",
+      input: "n = 4",
+      output: "7",
+      recognize: "When the answer at one position is the sum of the answers after every allowed next move.",
+      visual: [["i", "i + 1", "i + 2", "i + 3"], ["ways(i)", "=", "three child answers"]],
+      visualText: "Stand on stair i and branch to the three legal next positions. Landing exactly on n contributes one way; jumping past n contributes zero.",
+      core: "Use the current stair as the state: ways(i) = ways(i + 1) + ways(i + 2) + ways(i + 3). Cache by i or fill the same relation from the top downward.",
+      bruteForce: "The implemented recursion explores every ordered step sequence and repeats identical states, giving exponential time.",
+      alternates: ["Space-optimize tabulation by retaining only the next three DP values."],
+      gotchas: ["This variant allows 1, 2, or 3 steps; LeetCode 70 allows only 1 or 2.", "Return 1 only when the position equals n; return 0 after overshooting.", "The current table writes dp[1], dp[2], and dp[3] directly, so handle n < 3 before those assignments.", "Large n values such as 49 overflow Java int for this three-step sequence; use long when the required range exceeds int."],
+      dpStages: [
+        { name: "Recursion", status: "Implemented", state: "ways(i): paths from stair i to n", base: "i == n → 1; i > n → 0", transition: "ways(i) = ways(i+1) + ways(i+2) + ways(i+3)", time: "O(3^n) upper bound", space: "O(n) call stack", skeleton: "ways(i)\n  if i == n: return 1\n  if i > n: return 0\n  return ways(i+1) + ways(i+2) + ways(i+3)" },
+        { name: "Memoization", status: "Implemented", state: "Same i state, cached once", base: "i == n → 1; i > n → 0", transition: "Return dp[i] when known; otherwise cache the three-child sum", time: "O(n)", space: "O(n) memo + O(n) stack", skeleton: "ways(i, dp)\n  handle exact/overshoot bases\n  if dp[i] known: return it\n  dp[i] = ways(i+1) + ways(i+2) + ways(i+3)\n  return dp[i]" },
+        { name: "Tabulation", status: "Implemented", state: "dp[i]: ways to climb exactly i stairs", base: "dp[1]=1; dp[2]=2; dp[3]=4", transition: "Fill forward: dp[i] = dp[i-1] + dp[i-2] + dp[i-3]", time: "O(n)", space: "O(n), reducible to O(1)", skeleton: "handle n below 3\ndp[1]=1, dp[2]=2, dp[3]=4\nfor i from 4 through n\n  dp[i] = dp[i-1] + dp[i-2] + dp[i-3]\nreturn dp[n]" }
+      ]
+    };
+  }
+
+  if (pattern === "dynamicprogramming" && className === "FibonacciNumber") {
+    return {
+      name: className,
+      source,
+      label: "Reuse the previous two Fibonacci states",
+      difficulty: "Easy",
+      leetcode: "https://leetcode.com/problems/fibonacci-number/",
+      description: "Given n, return the nth Fibonacci number, where F(0) = 0, F(1) = 1, and every later value is the sum of the previous two.",
+      time: "Rec O(2^n) · Memo/Tab O(n)",
+      space: "Rec/Memo O(n) · Best tab O(1)",
+      timeWhy: "Plain recursion rebuilds overlapping subtrees. Memoization and tabulation compute each index once; the optimized table keeps only two prior values.",
+      structures: "recursion stack, memo array, rolling variables",
+      input: "n = 4",
+      output: "3",
+      recognize: "When every state depends only on the two immediately smaller states and those subproblems overlap.",
+      visual: [["F(4)", "F(3) + F(2)"], ["F(3)", "F(2) + F(1)"], ["reuse F(2)", "cache or table"]],
+      visualText: "The recursive tree asks for the same Fibonacci index repeatedly. Memoization stores each node; tabulation turns the tree into a left-to-right row.",
+      core: "Keep F(n) = F(n-1) + F(n-2) and the bases F(0)=0, F(1)=1. Move from recursion to caching, then to a forward table or two rolling values.",
+      bruteForce: "The implemented recursive version mirrors the definition but recomputes the same indexes exponentially.",
+      alternates: ["Matrix exponentiation reaches O(log n) time but is unnecessary for the given constraints."],
+      gotchas: ["Return n directly for n <= 1.", "Initialize memo entries to -1 before using -1 as the unknown marker.", "In rolling tabulation, update left only after computing the new answer."],
+      dpStages: [
+        { name: "Recursion", status: "Implemented", state: "fib(n)", base: "n == 0 or n == 1 → n", transition: "fib(n) = fib(n-1) + fib(n-2)", time: "O(2^n)", space: "O(n) call stack", skeleton: "fib(n)\n  if n <= 1: return n\n  return fib(n-1) + fib(n-2)" },
+        { name: "Memoization", status: "Implemented", state: "fib(n) cached in dp[n]", base: "n <= 1 → n", transition: "Cache fib(n-1) + fib(n-2) before returning", time: "O(n)", space: "O(n) memo + O(n) stack", skeleton: "fib(n, dp)\n  if n <= 1: return n\n  if dp[n] known: return dp[n]\n  dp[n] = fib(n-1, dp) + fib(n-2, dp)\n  return dp[n]" },
+        { name: "Tabulation", status: "Implemented", state: "dp[i], or rolling left/right", base: "dp[0]=0; dp[1]=1", transition: "dp[i] = dp[i-1] + dp[i-2]", time: "O(n)", space: "O(n) table or O(1) rolling", skeleton: "left = 0, right = 1\nfor i from 2 through n\n  next = left + right\n  left = right\n  right = next\nreturn right" }
+      ]
+    };
+  }
 
   if (pattern === "pod" && className === "CinemaSeatAlloc") {
     return {
@@ -663,6 +726,20 @@ function defaultCardFor(pattern, className) {
 }
 
 function defaultDetailsFor(pattern, className) {
+  if (pattern === "dynamicprogramming" && className === "ClimbingStairs") {
+    return {
+      prompt: "Before reading: what does ways(i) mean, and what should exact landing versus overshooting return?",
+      steps: ["Define the current stair i as the state.", "Exact landing contributes one complete path; overshooting contributes none.", "Add the answers from i+1, i+2, and i+3.", "Cache each i or fill the same states backward."],
+      skeleton: "ways(i) = ways(i+1) + ways(i+2) + ways(i+3)\nbase: i == n → 1, i > n → 0\nthen memoize i or fill dp from n down to 0"
+    };
+  }
+  if (pattern === "dynamicprogramming" && className === "FibonacciNumber") {
+    return {
+      prompt: "Before reading: which repeated states turn the Fibonacci recursion tree into DP?",
+      steps: ["Use n as the state.", "Stop at 0 and 1.", "Combine n-1 and n-2.", "Cache each n, then replace the recursion tree with a forward table or two rolling values."],
+      skeleton: "F(0)=0, F(1)=1\nF(n)=F(n-1)+F(n-2)\nrecursion → memo[n] → table → rolling two values"
+    };
+  }
   if (pattern === "pod" && className === "CinemaSeatAlloc") {
     return {
       prompt: "Before reading: how can you handle up to 10^9 rows without storing every row?",
@@ -837,6 +914,12 @@ function defaultDetailsFor(pattern, className) {
 }
 
 function defaultDefiningMoveFor(pattern, className) {
+  if (pattern === "dynamicprogramming" && className === "ClimbingStairs") {
+    return "State = current stair i\nexact n → 1, past n → 0\nadd i+1, i+2, i+3\ncache i or fill backward";
+  }
+  if (pattern === "dynamicprogramming" && className === "FibonacciNumber") {
+    return "State = Fibonacci index n\nF(n) = F(n-1) + F(n-2)\ncache repeated n values\nthen roll two previous values";
+  }
   if (pattern === "pod" && className === "CinemaSeatAlloc") {
     return "Represent only affected rows\nleft + right can coexist\nmiddle is the one-family fallback";
   }
@@ -877,6 +960,8 @@ function defaultDefiningMoveFor(pattern, className) {
 }
 
 const authoredCardOverrides = new Set([
+  "dynamicprogramming/ClimbingStairs",
+  "dynamicprogramming/FibonacciNumber",
   "greedy/MinimumAddToMakeParenthesisValid",
   "greedy/ValidPalindromeII",
   "greedy/MaximumLengthOfPairChains",

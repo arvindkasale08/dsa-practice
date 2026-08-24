@@ -600,6 +600,58 @@
       font-weight: 700;
     }
 
+    .dp-stages {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .dp-stage {
+      min-height: auto;
+      border-color: #bfd3e1;
+      border-top: 4px solid var(--blue);
+      background: #f7fbff;
+    }
+
+    .dp-stage-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .dp-stage-head b {
+      margin: 0;
+    }
+
+    .dp-status {
+      border: 1px solid #bad9ca;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 2px 7px;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .dp-status.card-supplied {
+      border-color: #e6cf9b;
+      background: var(--gold-soft);
+      color: #67480b;
+    }
+
+    .dp-fact {
+      display: block;
+      margin: 5px 0;
+    }
+
+    .dp-fact strong {
+      color: #3c4d43;
+    }
+
     .theory-layout {
       display: grid;
       grid-template-columns: 1.05fr .95fr;
@@ -914,7 +966,8 @@
       .sample,
       .cost-strip,
       .section-grid,
-      .theory-layout {
+      .theory-layout,
+      .dp-stages {
         grid-template-columns: 1fr;
       }
 
@@ -2300,6 +2353,20 @@
                 <b>Code skeleton</b>
                 <code>${escapeHtml(card.skeleton)}</code>
               </div>
+              ${card.dpStages ? `<div class="dp-stages">${card.dpStages.map(stage => `
+                <div class="section dp-stage">
+                  <div class="dp-stage-head">
+                    <b>${escapeHtml(stage.name)}</b>
+                    <span class="dp-status ${stage.status === "Card-supplied" ? "card-supplied" : ""}">${escapeHtml(stage.status)}</span>
+                  </div>
+                  <span class="dp-fact"><strong>State:</strong> ${escapeHtml(stage.state)}</span>
+                  <span class="dp-fact"><strong>Base:</strong> ${escapeHtml(stage.base)}</span>
+                  <span class="dp-fact"><strong>Transition:</strong> ${escapeHtml(stage.transition)}</span>
+                  <span class="dp-fact"><strong>Time:</strong> ${escapeHtml(stage.time)}</span>
+                  <span class="dp-fact"><strong>Space:</strong> ${escapeHtml(stage.space)}</span>
+                  <code>${escapeHtml(stage.skeleton)}</code>
+                </div>
+              `).join("")}</div>` : ""}
               <div class="section brute-force">
                 <b>Brute force / baseline</b>
                 ${escapeHtml(bruteForce)}

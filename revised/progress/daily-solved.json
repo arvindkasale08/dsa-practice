@@ -475,9 +475,11 @@
     },
     {
       "date": "2026-08-24",
-      "solved": 1,
+      "solved": 3,
       "cardsSynced": [
-        "pod/CheckDivBySumProd"
+        "pod/CheckDivBySumProd",
+        "dynamicprogramming/ClimbingStairs",
+        "dynamicprogramming/FibonacciNumber"
       ],
       "notes": ""
     }

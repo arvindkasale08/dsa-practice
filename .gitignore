@@ -69,6 +69,8 @@ gradle-app.setting
 .env
 .env.*
 !.env.example
+.chrome-profile/
+tools/python_lib/
 
 # Test and coverage output
 .coverage

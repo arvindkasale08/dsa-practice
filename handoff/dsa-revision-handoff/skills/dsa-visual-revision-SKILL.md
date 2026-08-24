@@ -100,13 +100,9 @@ Use the repository generator whenever it exists:
 tools/generate-revision-pages.mjs
 ```
 
-Before every normal `sync cards` run, fetch the latest committed work from GitHub first:
+Do not pull from Git before a `sync cards` run. Scan and preserve the current local worktree as the authoritative source for that sync.
 
-```sh
-git pull --rebase
-```
-
-Do this before scanning Java files or regenerating pages so Java classes solved from another computer are included. If `git pull --rebase` is blocked by local uncommitted changes, inspect `git status --short`, preserve user work, and either commit the relevant local sync work first or report the blocker clearly. Never discard or reset local changes just to pull.
+The command `sync cards` is standing authorization to commit the intended Java/card/index/progress/workflow changes from that sync and push the current branch after validation. Inspect `git status`, exclude machine-local or unrelated artifacts, and never discard user work. For non-sync tasks, do not commit or push unless the user explicitly asks.
 
 The generator uses the stacks page as the canonical visual template and preserves each pattern page's authored data blocks: `cards`, `recallDetails`, `definingMoves`, and `solvedOrder`. This prevents new packages from drifting in layout, button styling, Quick Review behavior, sticky navigation, and revision-counter behavior.
 
@@ -194,6 +190,13 @@ Use easy recall language:
 - Keep full-card `Code skeleton` and Quick Review `Defining move` separate: the skeleton shows the overall flow, while the defining move is the algorithm's most memorable decision or state transition.
 - Explain brute force as a useful correctness baseline, then name its cost. Alternate approaches should teach meaningful tradeoffs.
 - Make explanations direct enough to read in 10-20 seconds.
+- For Dynamic Programming problems only, structure the expanded card around three solution stages: `Recursion`, `Memoization`, and `Tabulation`.
+  - Treat this as the user's intended learning sequence, not as optional alternate approaches.
+  - For each stage, show the state/recurrence or transition, base cases, time complexity, space complexity, and the smallest implementation-shape pseudocode needed for recall.
+  - Inspect the Java source and clearly distinguish stages the user implemented from stages supplied only as a card summary.
+  - When memoization or tabulation is absent from the source, still summarize the missing stage wherever it is applicable. Do not modify the Java solution merely to add that version.
+  - If tabulation genuinely does not apply or would not be useful, say so briefly instead of forcing it.
+  - Make the Quick Review defining move show the DP state and transition; do not reduce a DP card to only the final optimized approach.
 - For backtracking-style problems, emphasize the exact base condition and state transitions. The `Core move`, `Code skeleton`, and `Defining move` should make these parts obvious:
   - `Base condition`: when to save/add/return.
   - `State carried`: for example `idx`, `path`, `open`, `closed`, `last char`, `remaining`, `visited`.
