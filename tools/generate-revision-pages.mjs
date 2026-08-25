@@ -409,6 +409,37 @@ function defaultCardFor(pattern, className) {
     };
   }
 
+  if (pattern === "pod" && className === "SmallestMissingMultipleOfK") {
+    return {
+      name: className,
+      source,
+      label: "Probe positive multiples through a seen set",
+      difficulty: "Easy",
+      leetcode: "https://leetcode.com/problems/smallest-missing-multiple-of-k/",
+      description: "Given an integer array and a positive integer k, return the smallest positive multiple of k that does not appear in the array.",
+      time: "O(n)",
+      space: "O(n)",
+      timeWhy: "All n values are inserted into a HashSet once. Then positive multiples k, 2k, 3k, ... are checked until the first missing one; at most the present relevant values can delay the answer.",
+      structures: "HashSet, increasing multiple candidate",
+      input: "nums = [1,4,5,7,10,15], k = 5",
+      output: "20",
+      recognize: "When you need the first missing value from a simple generated sequence and fast membership checks matter more than input order.",
+      visual: [["bank", "5", "10", "15"], ["probe", "5 ✓", "10 ✓", "15 ✓", "20 ✗"], ["first miss", "20"]],
+      visualText: "Put every input value into a seen bucket, then walk only along the k-multiple number line. Stop at the first empty slot.",
+      core: "Build a HashSet from nums. Start candidate at k and repeatedly add k while the candidate exists in the set. Return the first candidate not found.",
+      bruteForce: "For each candidate multiple, scan the entire array to see whether it exists. Repeating that scan can take O(n²) in the worst relevant range.",
+      alternates: [
+        "Sort nums and scan for the expected multiples, but sorting costs O(n log n) and duplicate handling is less direct.",
+        "Store only positive values divisible by k to reduce the set's practical size while keeping the same asymptotic bound."
+      ],
+      gotchas: [
+        "Start at k because the answer must be a positive multiple; zero is not a candidate.",
+        "Increase by k, not by 1, so non-multiples are never tested.",
+        "Duplicates and input order do not matter once values are in the set."
+      ]
+    };
+  }
+
   if (className === "BuyTwoChocolates") {
     return {
       name: className,
@@ -780,6 +811,18 @@ function defaultDetailsFor(pattern, className) {
       skeleton: "original = n\nsum = 0, product = 1\nwhile n > 0\n  digit = n % 10\n  sum += digit\n  product *= digit\n  n /= 10\nreturn original % (sum + product) == 0"
     };
   }
+  if (pattern === "pod" && className === "SmallestMissingMultipleOfK") {
+    return {
+      prompt: "Before reading: which candidate sequence should you probe instead of scanning every positive integer?",
+      steps: [
+        "Insert every array value into a HashSet.",
+        "Start the candidate at the first positive multiple, k.",
+        "If the candidate is present, advance by exactly k.",
+        "Return immediately when a candidate is absent."
+      ],
+      skeleton: "seen = set(nums)\ncandidate = k\nwhile candidate is in seen\n  candidate += k\nreturn candidate"
+    };
+  }
 
   if (className === "BuyTwoChocolates") {
     return {
@@ -929,6 +972,9 @@ function defaultDefiningMoveFor(pattern, className) {
   if (pattern === "pod" && className === "CheckDivBySumProd") {
     return "Peel each digit once\nadd it to sum and multiply it into product\ntest original % (sum + product)";
   }
+  if (pattern === "pod" && className === "SmallestMissingMultipleOfK") {
+    return "Put nums in a seen set\nprobe k, 2k, 3k, ...\nfirst absent multiple is the answer";
+  }
   if (className === "BuyTwoChocolates") {
     return "Track min1 and min2 in one scan\nnew min1 shifts old min1 to min2\nbuy only if min1 + min2 <= money";
   }
@@ -967,7 +1013,8 @@ const authoredCardOverrides = new Set([
   "greedy/MaximumLengthOfPairChains",
   "pod/CinemaSeatAlloc",
   "pod/DistributeInTwoArrays",
-  "pod/CheckDivBySumProd"
+  "pod/CheckDivBySumProd",
+  "pod/SmallestMissingMultipleOfK"
 ]);
 
 function makeDataBlocksForPattern(pattern, html = "") {

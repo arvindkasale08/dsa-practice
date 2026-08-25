@@ -482,6 +482,14 @@
         "dynamicprogramming/FibonacciNumber"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-25",
+      "solved": 1,
+      "cardsSynced": [
+        "pod/SmallestMissingMultipleOfK"
+      ],
+      "notes": ""
     }
   ]
 }
