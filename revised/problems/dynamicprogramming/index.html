@@ -1227,6 +1227,78 @@
                         "skeleton": "left = 0, right = 1\nfor i from 2 through n\n  next = left + right\n  left = right\n  right = next\nreturn right"
                   }
             ]
+      },
+      {
+            "name": "FrogJump",
+            "source": "../com/arvind/revision/dynamicprogramming/FrogJump.java",
+            "label": "Pay the cheaper one-step or two-step path",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given the height of every stair, reach the final stair using jumps of one or two positions. A jump from i to j costs |height[i] - height[j]|; return the minimum total energy.",
+            "time": "Rec O(2^n) · Memo/Tab O(n)",
+            "space": "Memo allocates O(n²) · Tab O(n)",
+            "timeWhy": "Plain recursion repeats the same remaining-stair choices. The implemented 2D memo distinguishes the incoming edge, while tabulation stores the minimum cost to reach each stair once.",
+            "structures": "recursion stack, int[][] memo, DP array",
+            "input": "heights = [7, 5, 1, 2, 6]",
+            "output": "9",
+            "recognize": "When reaching index i has a cost and the final answer is the minimum of arriving from one step back or two steps back.",
+            "visual": [
+                  [
+                        "i-2",
+                        "i-1",
+                        "i"
+                  ],
+                  [
+                        "dp[i-2] + jump₂",
+                        "dp[i-1] + jump₁",
+                        "take min"
+                  ]
+            ],
+            "visualText": "At every stair, draw two incoming arrows: one from i-1 and one from i-2. Add each jump's height difference to its earlier best cost, then keep the smaller total.",
+            "core": "Minimum energy at i = min(cost to reach i-1 + |h[i]-h[i-1]|, cost to reach i-2 + |h[i]-h[i-2]|).",
+            "bruteForce": "The implemented recursion explores both jump choices from every position. It is correct but rebuilds overlapping subtrees, so its time grows exponentially.",
+            "alternates": [
+                  "A one-dimensional memo keyed by the current stair is sufficient when it stores only the remaining cost from that stair.",
+                  "Space-optimize tabulation to O(1) by keeping only the previous two DP costs."
+            ],
+            "gotchas": [
+                  "An out-of-range jump must return a large safe sentinel, not zero.",
+                  "Do not add Integer.MAX_VALUE to an energy cost because int overflow can make it negative.",
+                  "If memoizing an answer that includes from→to energy, the cache key must include both from and to.",
+                  "For a single stair, return zero before starting with jumps to index 1 or 2."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "cost(from, to): take the pending jump from from to to, then finish",
+                        "base": "to outside → safe INF; to at last stair → |h[to]-h[from]|",
+                        "transition": "edgeEnergy + min(cost(to,to+1), cost(to,to+2))",
+                        "time": "O(2^n)",
+                        "space": "O(n) call stack",
+                        "skeleton": "cost(from, to)\n  if to outside: return INF\n  edge = |h[to] - h[from]|\n  if to is last: return edge\n  return edge + min(cost(to,to+1), cost(to,to+2))"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented (2D state)",
+                        "state": "dp[to][from]: cached cost for this exact incoming edge and remaining path",
+                        "base": "Same outside and final-stair bases as recursion",
+                        "transition": "Cache edgeEnergy + minimum of the next one-step and two-step states",
+                        "time": "O(n) reachable states",
+                        "space": "O(n²) allocated memo + O(n) stack",
+                        "skeleton": "cost(from, to, dp)\n  handle outside/final bases\n  if dp[to][from] known: return it\n  dp[to][from] = edge + min(next one, next two)\n  return dp[to][from]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i]: minimum energy needed to reach stair i",
+                        "base": "dp[0] = 0; dp[1] = |h[1]-h[0]|",
+                        "transition": "dp[i] = min(dp[i-1] + |h[i]-h[i-1]|, dp[i-2] + |h[i]-h[i-2]|)",
+                        "time": "O(n)",
+                        "space": "O(n), reducible to O(1)",
+                        "skeleton": "dp[0] = 0\ndp[1] = |h[1]-h[0]|\nfor i from 2 to n-1\n  one = dp[i-1] + |h[i]-h[i-1]|\n  two = dp[i-2] + |h[i]-h[i-2]|\n  dp[i] = min(one, two)\nreturn dp[n-1]"
+                  }
+            ]
       }
 ];
 
@@ -1250,17 +1322,29 @@
                   "Cache each n, then replace the recursion tree with a forward table or two rolling values."
             ],
             "skeleton": "F(0)=0, F(1)=1\nF(n)=F(n-1)+F(n-2)\nrecursion → memo[n] → table → rolling two values"
+      },
+      "FrogJump": {
+            "prompt": "Before reading: what does the DP state store, and which two previous stairs can reach the current stair?",
+            "steps": [
+                  "Recursion tries the next one-step and two-step jumps.",
+                  "The implemented memo caches the exact from/to state.",
+                  "Tabulation reverses the view: store the cheapest cost to arrive at each stair.",
+                  "For each i, add the proper height difference before taking the minimum."
+            ],
+            "skeleton": "dp[0] = 0\ndp[1] = |h[1]-h[0]|\ndp[i] = min(\n  dp[i-1] + |h[i]-h[i-1]|,\n  dp[i-2] + |h[i]-h[i-2]|\n)"
       }
 };
 
     const definingMoves = {
       "ClimbingStairs": "State = current stair i\nexact n → 1, past n → 0\nadd i+1, i+2, i+3\ncache i or fill backward",
-      "FibonacciNumber": "State = Fibonacci index n\nF(n) = F(n-1) + F(n-2)\ncache repeated n values\nthen roll two previous values"
+      "FibonacciNumber": "State = Fibonacci index n\nF(n) = F(n-1) + F(n-2)\ncache repeated n values\nthen roll two previous values",
+      "FrogJump": "State = minimum energy at stair i\narrive from i-1 or i-2\nadd that jump's height difference\nkeep the cheaper total"
 };
 
     const solvedOrder = [
       "ClimbingStairs",
-      "FibonacciNumber"
+      "FibonacciNumber",
+      "FrogJump"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

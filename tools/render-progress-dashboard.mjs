@@ -233,7 +233,9 @@ const html = `<!doctype html>
     const filter = document.getElementById("filter");
     const tbody = document.getElementById("rows");
     let sortKey = "date";
-    let sortDir = -1;
+    // sortRows toggles an already-selected key, so seed the opposite value
+    // to make the initial date sort newest-first.
+    let sortDir = 1;
 
     function apply() {
       const q = filter.value.trim().toLowerCase();

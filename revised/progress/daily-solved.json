@@ -485,9 +485,10 @@
     },
     {
       "date": "2026-08-25",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "pod/SmallestMissingMultipleOfK"
+        "pod/SmallestMissingMultipleOfK",
+        "dynamicprogramming/FrogJump"
       ],
       "notes": ""
     }
