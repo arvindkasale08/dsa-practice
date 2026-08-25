@@ -1236,9 +1236,9 @@
             "leetcode": "",
             "description": "Given the height of every stair, reach the final stair using jumps of one or two positions. A jump from i to j costs |height[i] - height[j]|; return the minimum total energy.",
             "time": "Rec O(2^n) · Memo/Tab O(n)",
-            "space": "Memo allocates O(n²) · Tab O(n)",
-            "timeWhy": "Plain recursion repeats the same remaining-stair choices. The implemented 2D memo distinguishes the incoming edge, while tabulation stores the minimum cost to reach each stair once.",
-            "structures": "recursion stack, int[][] memo, DP array",
+            "space": "Memo allocates O(n²) · Tab O(1)",
+            "timeWhy": "Plain recursion repeats the same remaining-stair choices. The implemented 2D memo distinguishes the incoming edge; the implemented tabulation computes each stair once and keeps only the previous two costs.",
+            "structures": "recursion stack, int[][] memo, rolling DP variables",
             "input": "heights = [7, 5, 1, 2, 6]",
             "output": "9",
             "recognize": "When reaching index i has a cost and the final answer is the minimum of arriving from one step back or two steps back.",
@@ -1259,7 +1259,7 @@
             "bruteForce": "The implemented recursion explores both jump choices from every position. It is correct but rebuilds overlapping subtrees, so its time grows exponentially.",
             "alternates": [
                   "A one-dimensional memo keyed by the current stair is sufficient when it stores only the remaining cost from that stair.",
-                  "Space-optimize tabulation to O(1) by keeping only the previous two DP costs."
+                  "Use a full dp[] table when retaining every intermediate minimum makes debugging or reconstruction easier."
             ],
             "gotchas": [
                   "An out-of-range jump must return a large safe sentinel, not zero.",
@@ -1290,13 +1290,13 @@
                   },
                   {
                         "name": "Tabulation",
-                        "status": "Card-supplied; not yet implemented",
-                        "state": "dp[i]: minimum energy needed to reach stair i",
-                        "base": "dp[0] = 0; dp[1] = |h[1]-h[0]|",
-                        "transition": "dp[i] = min(dp[i-1] + |h[i]-h[i-1]|, dp[i-2] + |h[i]-h[i-2]|)",
+                        "status": "Implemented (space-optimized)",
+                        "state": "first = dp[i-2], second = dp[i-1], third = dp[i]",
+                        "base": "first = 0; second = |h[1]-h[0]|; a single stair returns 0",
+                        "transition": "third = min(first + |h[i]-h[i-2]|, second + |h[i]-h[i-1]|), then shift",
                         "time": "O(n)",
-                        "space": "O(n), reducible to O(1)",
-                        "skeleton": "dp[0] = 0\ndp[1] = |h[1]-h[0]|\nfor i from 2 to n-1\n  one = dp[i-1] + |h[i]-h[i-1]|\n  two = dp[i-2] + |h[i]-h[i-2]|\n  dp[i] = min(one, two)\nreturn dp[n-1]"
+                        "space": "O(1)",
+                        "skeleton": "first = 0\nsecond = |h[1]-h[0]|\nfor i from 2 to n-1\n  third = min(\n    first + |h[i]-h[i-2]|,\n    second + |h[i]-h[i-1]|\n  )\n  first = second\n  second = third\nreturn second"
                   }
             ]
       }

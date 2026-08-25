@@ -5,13 +5,28 @@ import java.util.Arrays;
 public class FrogJump {
 
     private int solve(int[] height) {
-        if (height.length <= 1) return 0;
+        /*if (height.length <= 1) return 0;
         int[][] dp = new int[height.length][height.length];
         for (int[] d : dp) {
             Arrays.fill(d, -1);
         }
         //return Math.min(solveRecur(0, 1, height), solveRecur(0, 2, height));
-        return Math.min(solveMemo(0, 1, dp, height), solveMemo(0, 2, dp, height));
+        return Math.min(solveMemo(0, 1, dp, height), solveMemo(0, 2, dp, height));*/
+        return solveTab(height);
+    }
+
+    private int solveTab(int[] height) {
+        if (height.length <= 1) return 0;
+        int first = 0;
+        int second = Math.abs(height[0]- height[1]);
+        int third = second;
+
+        for (int i=2; i<height.length; i++) {
+            third = Math.min(first + Math.abs(height[i] - height[i-2]), second + Math.abs(height[i] - height[i-1]));
+            first = second;
+            second = third;
+        }
+        return third;
     }
 
     private int solveMemo(int from, int to, int[][] dp, int[] heights) {
