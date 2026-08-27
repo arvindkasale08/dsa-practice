@@ -491,6 +491,14 @@
         "dynamicprogramming/FrogJump"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-27",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/FrogJumpWithKSteps"
+      ],
+      "notes": ""
     }
   ]
 }

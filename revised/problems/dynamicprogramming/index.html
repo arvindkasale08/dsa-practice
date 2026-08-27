@@ -1299,6 +1299,82 @@
                         "skeleton": "first = 0\nsecond = |h[1]-h[0]|\nfor i from 2 to n-1\n  third = min(\n    first + |h[i]-h[i-2]|,\n    second + |h[i]-h[i-1]|\n  )\n  first = second\n  second = third\nreturn second"
                   }
             ]
+      },
+      {
+            "name": "FrogJumpWithKSteps",
+            "source": "../com/arvind/revision/dynamicprogramming/FrogJumpWithKSteps.java",
+            "label": "Try every jump length from 1 through k",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given stair heights and an integer k, reach the final stair by jumping forward between 1 and k positions. Each jump costs the absolute height difference; return the minimum total energy.",
+            "time": "Rec O(k^n) · Current memo O(nk²) · Tab O(nk)",
+            "space": "Current memo O(n²) · Tab O(n)",
+            "timeWhy": "Recursion rebuilds the same future choices. The current 2D memo caches each incoming edge state but still scans k next jumps per edge; standard tabulation computes one minimum per stair across at most k predecessors.",
+            "structures": "recursion stack, int[][] memo, DP array",
+            "input": "heights = [15, 4, 12, 11, 15], k = 3",
+            "output": "6",
+            "recognize": "When each position may be reached from any of the previous k positions and every candidate arrival has its own transition cost.",
+            "variantLens": "Frog Jump uses only 1- or 2-step moves; this variant expands the same minimum-energy transition to every jump length from 1 through k.",
+            "visual": [
+                  [
+                        "i-k",
+                        "…",
+                        "i-2",
+                        "i-1",
+                        "i"
+                  ],
+                  [
+                        "candidate",
+                        "…",
+                        "candidate",
+                        "candidate",
+                        "take min"
+                  ]
+            ],
+            "visualText": "At stair i, look back through the window of at most k earlier stairs. Add each earlier best cost to that jump's height difference, then keep the smallest candidate.",
+            "core": "For every allowed jump j, compare the earlier cost plus |height[i] - height[i-j]| and retain the minimum.",
+            "bruteForce": "Toggle off the memo lookup/write and recursively try all 1…k next jumps. This enumerates an exponential jump tree and triggers the included stress case.",
+            "alternates": [
+                  "Use one-dimensional memoization keyed by the current stair when the state stores only the remaining cost from that stair.",
+                  "Use bottom-up dp[i] to remove recursion and achieve the standard O(nk) transition scan."
+            ],
+            "gotchas": [
+                  "An out-of-range jump must contribute a safe INF, not zero.",
+                  "The current cached value includes from→to energy, so both from and to belong in its memo key.",
+                  "Require k >= 1; otherwise no transition replaces Integer.MAX_VALUE."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented shape; toggle by bypassing memo lookup/write",
+                        "state": "cost(from, to): take this incoming jump, then choose one of the next k jumps",
+                        "base": "to outside → safe INF; to at final stair → |h[to]-h[from]|",
+                        "transition": "edgeEnergy + min(cost(to,to+j)) for j = 1…k",
+                        "time": "O(k^n) upper bound",
+                        "space": "O(n) call stack",
+                        "skeleton": "cost(from, to)\n  handle outside/final bases\n  best = INF\n  for jump from 1 through k\n    best = min(best, cost(to, to+jump))\n  return edgeEnergy + best"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented (2D edge state)",
+                        "state": "dp[from][to]: cached cost for this incoming edge and all remaining jumps",
+                        "base": "Same outside and final-stair bases as recursion",
+                        "transition": "Return cached edge state; otherwise scan the k next destinations and store edgeEnergy + best",
+                        "time": "O(nk²) with O(nk) reachable edge states",
+                        "space": "O(n²) allocated memo + O(n) stack",
+                        "skeleton": "cost(from, to, dp)\n  handle bases\n  if dp[from][to] known: return it\n  best = min over jump 1…k of cost(to,to+jump)\n  dp[from][to] = edgeEnergy + best\n  return dp[from][to]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i]: minimum energy needed to reach stair i",
+                        "base": "dp[0] = 0",
+                        "transition": "dp[i] = min(dp[i-j] + |h[i]-h[i-j]|) for every valid j from 1…k",
+                        "time": "O(nk)",
+                        "space": "O(n)",
+                        "skeleton": "dp[0] = 0\nfor i from 1 to n-1\n  dp[i] = INF\n  for jump from 1 through k\n    if i-jump >= 0\n      dp[i] = min(dp[i], dp[i-jump] + |h[i]-h[i-jump]|)\nreturn dp[n-1]"
+                  }
+            ]
       }
 ];
 
@@ -1332,19 +1408,31 @@
                   "For each i, add the proper height difference before taking the minimum."
             ],
             "skeleton": "dp[0] = 0\ndp[1] = |h[1]-h[0]|\ndp[i] = min(\n  dp[i-1] + |h[i]-h[i-1]|,\n  dp[i-2] + |h[i]-h[i-2]|\n)"
+      },
+      "FrogJumpWithKSteps": {
+            "prompt": "Before reading: which earlier states can reach stair i, and what cost must be added to each candidate?",
+            "steps": [
+                  "Recursion branches to every next jump length from 1 through k.",
+                  "Memoization caches the current from/to edge state.",
+                  "Tabulation looks backward through at most k predecessor stairs.",
+                  "Add the matching absolute height difference before taking the minimum."
+            ],
+            "skeleton": "dp[0] = 0\nfor each stair i\n  dp[i] = min over valid j in 1…k of\n    dp[i-j] + |h[i]-h[i-j]|"
       }
 };
 
     const definingMoves = {
       "ClimbingStairs": "State = current stair i\nexact n → 1, past n → 0\nadd i+1, i+2, i+3\ncache i or fill backward",
       "FibonacciNumber": "State = Fibonacci index n\nF(n) = F(n-1) + F(n-2)\ncache repeated n values\nthen roll two previous values",
-      "FrogJump": "State = minimum energy at stair i\narrive from i-1 or i-2\nadd that jump's height difference\nkeep the cheaper total"
+      "FrogJump": "State = minimum energy at stair i\narrive from i-1 or i-2\nadd that jump's height difference\nkeep the cheaper total",
+      "FrogJumpWithKSteps": "State = minimum energy at stair i\nlook back through up to k predecessors\nadd each jump's height difference\nkeep the cheapest candidate"
 };
 
     const solvedOrder = [
       "ClimbingStairs",
       "FibonacciNumber",
-      "FrogJump"
+      "FrogJump",
+      "FrogJumpWithKSteps"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
