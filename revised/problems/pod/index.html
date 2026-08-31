@@ -1263,6 +1263,50 @@
                   "Increase by k, not by 1, so non-multiples are never tested.",
                   "Duplicates and input order do not matter once values are in the set."
             ]
+      },
+      {
+            "name": "RemovingMinMaxFromArray",
+            "source": "../com/arvind/revision/pod/RemovingMinMaxFromArray.java",
+            "label": "Compare three ways to remove both extremes",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/removing-minimum-and-maximum-from-array/",
+            "description": "Given an array of distinct integers, remove both its minimum and maximum values using deletions only from the front or back. Return the minimum number of deletions required.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "timeWhy": "One scan finds the minimum and maximum indices; the answer is the smallest of the three possible end-deletion strategies.",
+            "structures": "two index variables, three cost calculations",
+            "input": "nums = [2, 10, 7, 5, 4, 1, 8, 6]",
+            "output": "5",
+            "recognize": "When two target positions must both be removed and operations are allowed only from the two ends of the array.",
+            "visual": [
+                  [
+                        "0",
+                        "max @ 1",
+                        "…",
+                        "min @ 5",
+                        "7"
+                  ],
+                  [
+                        "both left",
+                        "both right",
+                        "left + right",
+                        "compare",
+                        "minimum"
+                  ]
+            ],
+            "visualText": "Mark the earlier and later extreme positions. Either sweep through both from the left, sweep through both from the right, or remove the earlier one from the left and the later one from the right.",
+            "core": "After locating min and max, compute maxIndex+1, n-minIndex, and minIndex+1 + n-maxIndex using the ordered positions; return the smallest.",
+            "bruteForce": "Recursively delete from the left or right until both extreme values disappear, then keep the shortest sequence. It explores many equivalent deletion orders.",
+            "alternates": [
+                  "Find min and max values first, then scan again for their indices; this stays O(n) but needs two passes.",
+                  "Sort value/index pairs to find the extremes, but that raises time to O(n log n) without improving the decision step."
+            ],
+            "gotchas": [
+                  "Front deletions include the target index, so add 1.",
+                  "Back deletions cost n - index, not n - index - 1.",
+                  "Order the two extreme indices before calculating the split left-plus-right strategy.",
+                  "A one-element array needs exactly one deletion."
+            ]
       }
 ];
 
@@ -1309,6 +1353,16 @@
                   "Return immediately when a candidate is absent."
             ],
             "skeleton": "seen = set(nums)\ncandidate = k\nwhile candidate is in seen\n  candidate += k\nreturn candidate"
+      },
+      "RemovingMinMaxFromArray": {
+            "prompt": "Before reading: what are the only three meaningful ways to delete both marked positions from the array ends?",
+            "steps": [
+                  "Scan once to locate the minimum and maximum indices.",
+                  "Let left be the earlier extreme and right be the later extreme.",
+                  "Compute both-from-left, both-from-right, and split-end deletion counts.",
+                  "Return the smallest of those three counts."
+            ],
+            "skeleton": "find minIdx and maxIdx\nleft = min(minIdx, maxIdx)\nright = max(minIdx, maxIdx)\n\nbothLeft = right + 1\nbothRight = n - left\nsplit = left + 1 + n - right\nreturn min(bothLeft, bothRight, split)"
       }
 };
 
@@ -1316,14 +1370,16 @@
       "CinemaSeatAlloc": "Represent only affected rows\nleft + right can coexist\nmiddle is the one-family fallback",
       "DistributeInTwoArrays": "Seed one value per list\ncompare only the two tails\nstrict greater goes left; tie goes right\nconcatenate left then right",
       "CheckDivBySumProd": "Peel each digit once\nadd it to sum and multiply it into product\ntest original % (sum + product)",
-      "SmallestMissingMultipleOfK": "Put nums in a seen set\nprobe k, 2k, 3k, ...\nfirst absent multiple is the answer"
+      "SmallestMissingMultipleOfK": "Put nums in a seen set\nprobe k, 2k, 3k, ...\nfirst absent multiple is the answer",
+      "RemovingMinMaxFromArray": "Mark min and max indices\ntry both-left, both-right, and split ends\nreturn the smallest deletion count"
 };
 
     const solvedOrder = [
       "CinemaSeatAlloc",
       "DistributeInTwoArrays",
       "CheckDivBySumProd",
-      "SmallestMissingMultipleOfK"
+      "SmallestMissingMultipleOfK",
+      "RemovingMinMaxFromArray"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

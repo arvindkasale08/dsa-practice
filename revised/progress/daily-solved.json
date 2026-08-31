@@ -499,6 +499,14 @@
         "dynamicprogramming/FrogJumpWithKSteps"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-08-31",
+      "solved": 1,
+      "cardsSynced": [
+        "pod/RemovingMinMaxFromArray"
+      ],
+      "notes": ""
     }
   ]
 }
