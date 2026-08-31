@@ -1375,6 +1375,77 @@
                         "skeleton": "dp[0] = 0\nfor i from 1 to n-1\n  dp[i] = INF\n  for jump from 1 through k\n    if i-jump >= 0\n      dp[i] = min(dp[i], dp[i-jump] + |h[i]-h[i-jump]|)\nreturn dp[n-1]"
                   }
             ]
+      },
+      {
+            "name": "HouseRobberI",
+            "source": "../com/arvind/revision/dynamicprogramming/HouseRobberI.java",
+            "label": "Choose this house or skip it",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/house-robber/",
+            "description": "Given a row of houses containing non-negative amounts, return the maximum money you can rob without robbing two adjacent houses.",
+            "time": "Rec O(2^n) · Memo/Tab O(n)",
+            "space": "Memo O(n) + stack O(n) · Tab O(n)",
+            "timeWhy": "Plain recursion repeats the same suffix states. Memoization computes each starting index once; tabulation computes each house once.",
+            "structures": "recursion stack, memo array, DP array",
+            "input": "nums = [2, 7, 9, 3, 1]",
+            "output": "12",
+            "recognize": "When selecting one array value blocks its immediate neighbor and you need the maximum total over valid selections.",
+            "variantLens": "House Robber I is a linear row. House Robber II makes the row circular, so the first and last houses cannot both be selected.",
+            "visual": [
+                  [
+                        "i",
+                        "i + 1",
+                        "i + 2"
+                  ],
+                  [
+                        "pick → +nums[i]",
+                        "skip →",
+                        "next allowed"
+                  ]
+            ],
+            "visualText": "At house i, either take its money and jump over i+1, or leave it and move to i+1. Keep the better total.",
+            "core": "Define rob(i) as the best amount from index i onward: max(nums[i] + rob(i+2), rob(i+1)).",
+            "bruteForce": "The implemented recursive method explores both pick and skip at every house. It is correct but rebuilds overlapping suffixes exponentially.",
+            "alternates": [
+                  "Space-optimize tabulation with two rolling values because each state needs only the previous two results."
+            ],
+            "gotchas": [
+                  "After picking i, recurse to i+2—not i+1.",
+                  "The memo unknown marker -1 is safe because house values and valid answers are non-negative.",
+                  "This is not a greedy choice: compare both branches before keeping the maximum."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "rob(i): maximum money available from index i onward",
+                        "base": "i >= nums.length → 0",
+                        "transition": "rob(i) = max(nums[i] + rob(i+2), rob(i+1))",
+                        "time": "O(2^n)",
+                        "space": "O(n) call stack",
+                        "skeleton": "rob(i)\n  if i outside: return 0\n  pick = nums[i] + rob(i+2)\n  skip = rob(i+1)\n  return max(pick, skip)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i]: cached answer for suffix starting at i",
+                        "base": "i >= nums.length → 0",
+                        "transition": "Return dp[i] when known; otherwise cache max of pick and skip",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "rob(i, dp)\n  if i outside: return 0\n  if dp[i] known: return dp[i]\n  dp[i] = max(nums[i] + rob(i+2), rob(i+1))\n  return dp[i]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i]: maximum money obtainable from houses 0 through i",
+                        "base": "dp[0] = nums[0]",
+                        "transition": "dp[i] = max(nums[i] + (i > 1 ? dp[i-2] : 0), dp[i-1])",
+                        "time": "O(n)",
+                        "space": "O(n), reducible to O(1)",
+                        "skeleton": "dp[0] = nums[0]\nfor i from 1 to n-1\n  pick = nums[i] + (i > 1 ? dp[i-2] : 0)\n  dp[i] = max(pick, dp[i-1])\nreturn dp[n-1]"
+                  }
+            ]
       }
 ];
 
@@ -1418,6 +1489,16 @@
                   "Add the matching absolute height difference before taking the minimum."
             ],
             "skeleton": "dp[0] = 0\nfor each stair i\n  dp[i] = min over valid j in 1…k of\n    dp[i-j] + |h[i]-h[i-j]|"
+      },
+      "HouseRobberI": {
+            "prompt": "Before reading: if rob(i) means the best answer from i onward, where do pick and skip move next?",
+            "steps": [
+                  "Use the current house index i as the state.",
+                  "Picking i adds nums[i] and moves to i+2.",
+                  "Skipping i moves to i+1.",
+                  "Cache the better suffix answer; tabulation reverses the same decision."
+            ],
+            "skeleton": "rob(i) = max(nums[i] + rob(i+2), rob(i+1))\nbase: i >= n → 0\ncache by i, or fill dp left to right"
       }
 };
 
@@ -1425,14 +1506,16 @@
       "ClimbingStairs": "State = current stair i\nexact n → 1, past n → 0\nadd i+1, i+2, i+3\ncache i or fill backward",
       "FibonacciNumber": "State = Fibonacci index n\nF(n) = F(n-1) + F(n-2)\ncache repeated n values\nthen roll two previous values",
       "FrogJump": "State = minimum energy at stair i\narrive from i-1 or i-2\nadd that jump's height difference\nkeep the cheaper total",
-      "FrogJumpWithKSteps": "State = minimum energy at stair i\nlook back through up to k predecessors\nadd each jump's height difference\nkeep the cheapest candidate"
+      "FrogJumpWithKSteps": "State = minimum energy at stair i\nlook back through up to k predecessors\nadd each jump's height difference\nkeep the cheapest candidate",
+      "HouseRobberI": "State = best amount from index i onward\npick: nums[i] + rob(i+2)\nskip: rob(i+1)\ncache the larger answer"
 };
 
     const solvedOrder = [
       "ClimbingStairs",
       "FibonacciNumber",
       "FrogJump",
-      "FrogJumpWithKSteps"
+      "FrogJumpWithKSteps",
+      "HouseRobberI"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

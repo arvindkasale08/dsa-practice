@@ -502,9 +502,10 @@
     },
     {
       "date": "2026-08-31",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "pod/RemovingMinMaxFromArray"
+        "pod/RemovingMinMaxFromArray",
+        "dynamicprogramming/HouseRobberI"
       ],
       "notes": ""
     }
