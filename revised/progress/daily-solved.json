@@ -508,6 +508,14 @@
         "dynamicprogramming/HouseRobberI"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-09-02",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/HouseRobberII"
+      ],
+      "notes": ""
     }
   ]
 }

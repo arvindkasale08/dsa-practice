@@ -1446,6 +1446,80 @@
                         "skeleton": "dp[0] = nums[0]\nfor i from 1 to n-1\n  pick = nums[i] + (i > 1 ? dp[i-2] : 0)\n  dp[i] = max(pick, dp[i-1])\nreturn dp[n-1]"
                   }
             ]
+      },
+      {
+            "name": "HouseRobberII",
+            "source": "../com/arvind/revision/dynamicprogramming/HouseRobberII.java",
+            "label": "Break the circle into two linear runs",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/house-robber-ii/",
+            "description": "Given money in houses arranged in a circle, return the maximum amount you can rob without choosing adjacent houses. The first and last houses are also adjacent.",
+            "time": "Rec O(2^n) · Memo/Tab O(n)",
+            "space": "Current tab O(n) arrays",
+            "timeWhy": "Split the circle into two linear ranges, then solve each range once. The implemented method copies both ranges and fills one DP array per run.",
+            "structures": "two range arrays, DP array",
+            "input": "nums = [1, 2, 3, 1]",
+            "output": "4",
+            "recognize": "When the usual non-adjacent maximum-sum problem is circular, making the first and last choices conflict.",
+            "variantLens": "House Robber I is linear. House Robber II is circular, so solve once without the first house and once without the last house.",
+            "visual": [
+                  [
+                        "0",
+                        "1",
+                        "…",
+                        "n-2",
+                        "n-1"
+                  ],
+                  [
+                        "exclude last",
+                        "← linear run →",
+                        "exclude first"
+                  ]
+            ],
+            "visualText": "Cut the circular edge in two possible ways: keep houses 0…n-2 or keep houses 1…n-1. Run House Robber I on both lines and take the larger answer.",
+            "core": "Return max(robLinear(0, n-2), robLinear(1, n-1)); special-case the single-house input before creating the ranges.",
+            "bruteForce": "Enumerate every subset, reject adjacent selections including the first/last pair, and keep the largest sum. This takes exponential time.",
+            "alternates": [
+                  "Pass start/end bounds into the linear solver instead of copying two subarrays, reducing auxiliary space.",
+                  "Use two rolling values inside each range for O(1) DP space."
+            ],
+            "gotchas": [
+                  "Handle n == 1 before splitting; both ranges would otherwise be empty.",
+                  "Do not solve the complete array once—the first and last houses would incorrectly be treated as non-adjacent.",
+                  "The two valid ranges are [0, n-2] and [1, n-1]."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Card-supplied; not implemented in this class",
+                        "state": "rob(i, end): best amount from i through the chosen linear range",
+                        "base": "i > end → 0; n == 1 → nums[0]",
+                        "transition": "max(nums[i] + rob(i+2,end), rob(i+1,end)); run for both circle cuts",
+                        "time": "O(2^n)",
+                        "space": "O(n) call stack",
+                        "skeleton": "if n == 1: return nums[0]\na = robRange(0, n-2)\nb = robRange(1, n-1)\nreturn max(a, b)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Card-supplied; not implemented in this class",
+                        "state": "dp[i]: cached answer within one chosen linear range",
+                        "base": "i > end → 0; n == 1 → nums[0]",
+                        "transition": "Cache the larger of pick i and skip i; use a fresh memo for each range",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "memoRange(start, end, dp)\n  cache max(nums[i] + solve(i+2), solve(i+1))\nreturn max(run 0…n-2, run 1…n-1)"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i]: best amount through index i of one copied linear range",
+                        "base": "n == 1 → nums[0]; within a range dp[0] = range[0]",
+                        "transition": "dp[i] = max(range[i] + (i>1 ? dp[i-2] : 0), dp[i-1])",
+                        "time": "O(n)",
+                        "space": "O(n) range copies + O(n) DP",
+                        "skeleton": "leftCut = nums[1…n-1]\nrightCut = nums[0…n-2]\nrobLinear(range):\n  dp[0] = range[0]\n  fill pick-versus-skip\nreturn max(robLinear(leftCut), robLinear(rightCut))"
+                  }
+            ]
       }
 ];
 
@@ -1499,6 +1573,16 @@
                   "Cache the better suffix answer; tabulation reverses the same decision."
             ],
             "skeleton": "rob(i) = max(nums[i] + rob(i+2), rob(i+1))\nbase: i >= n → 0\ncache by i, or fill dp left to right"
+      },
+      "HouseRobberII": {
+            "prompt": "Before reading: which two linear ranges remove the first/last adjacency conflict?",
+            "steps": [
+                  "Special-case one house.",
+                  "Exclude the first house and solve indices 1…n-1.",
+                  "Exclude the last house and solve indices 0…n-2.",
+                  "Return the larger House Robber I result."
+            ],
+            "skeleton": "if n == 1: return nums[0]\nwithoutFirst = robLinear(1, n-1)\nwithoutLast = robLinear(0, n-2)\nreturn max(withoutFirst, withoutLast)"
       }
 };
 
@@ -1507,7 +1591,8 @@
       "FibonacciNumber": "State = Fibonacci index n\nF(n) = F(n-1) + F(n-2)\ncache repeated n values\nthen roll two previous values",
       "FrogJump": "State = minimum energy at stair i\narrive from i-1 or i-2\nadd that jump's height difference\nkeep the cheaper total",
       "FrogJumpWithKSteps": "State = minimum energy at stair i\nlook back through up to k predecessors\nadd each jump's height difference\nkeep the cheapest candidate",
-      "HouseRobberI": "State = best amount from index i onward\npick: nums[i] + rob(i+2)\nskip: rob(i+1)\ncache the larger answer"
+      "HouseRobberI": "State = best amount from index i onward\npick: nums[i] + rob(i+2)\nskip: rob(i+1)\ncache the larger answer",
+      "HouseRobberII": "Circle means first and last conflict\nsolve houses 0…n-2\nsolve houses 1…n-1\nreturn the larger result"
 };
 
     const solvedOrder = [
@@ -1515,7 +1600,8 @@
       "FibonacciNumber",
       "FrogJump",
       "FrogJumpWithKSteps",
-      "HouseRobberI"
+      "HouseRobberI",
+      "HouseRobberII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
