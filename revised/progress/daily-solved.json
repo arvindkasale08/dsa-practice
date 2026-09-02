@@ -511,10 +511,11 @@
     },
     {
       "date": "2026-09-02",
-      "solved": 2,
+      "solved": 3,
       "cardsSynced": [
         "dynamicprogramming/HouseRobberII",
-        "dynamicprogramming/NumberFactors"
+        "dynamicprogramming/NumberFactors",
+        "dynamicprogramming/MinimumJumpsReachEnd"
       ],
       "notes": ""
     }

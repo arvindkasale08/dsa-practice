@@ -1593,6 +1593,79 @@
                         "skeleton": "seed totals 0 through 4\nfor i from 5 through n\n  dp[i] = dp[i-1] + dp[i-3] + dp[i-4]\nreturn dp[n]"
                   }
             ]
+      },
+      {
+            "name": "MinimumJumpsReachEnd",
+            "source": "../com/arvind/revision/dynamicprogramming/MinimumJumpsReachEnd.java",
+            "label": "Try every reachable next index",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/jump-game-ii/",
+            "description": "Given an array where jumps[i] is the maximum forward distance from index i, return the minimum jumps needed to reach the final index. A zero before the end may make the destination unreachable.",
+            "time": "Rec exponential · Memo/Tab O(n²) · Greedy O(n)",
+            "space": "Memo/Tab O(n) · Greedy O(1)",
+            "timeWhy": "Recursion explores overlapping routes. Memoization computes each index once but may scan O(n) destinations from it; greedy scans each index once by reachability layers.",
+            "structures": "recursion stack, memo array, DP array, greedy range boundaries",
+            "input": "jumps = [1, 1, 3, 6, 9, 3, 0, 1, 3]",
+            "output": "4",
+            "recognize": "When each array value defines a forward reach and the objective is the fewest moves to the last index.",
+            "variantLens": "This matches Jump Game II, except the local version explicitly handles unreachable arrays while LeetCode 45 guarantees the end is reachable.",
+            "visual": [
+                  [
+                        "i",
+                        "i+1",
+                        "…",
+                        "i+jumps[i]"
+                  ],
+                  [
+                        "current state",
+                        "candidate landings",
+                        "take minimum"
+                  ]
+            ],
+            "visualText": "From index i, draw an arrow to every legal landing from i+1 through i+jumps[i]. Each arrow costs one jump; keep the child requiring the fewest remaining jumps.",
+            "core": "minJumps(i) = 1 + min(minJumps(i+jump)) for every jump from 1 through jumps[i]. Reaching the end costs zero more jumps; a zero before it is unreachable.",
+            "bruteForce": "The implemented recursion tries every legal jump path and keeps the shortest. It repeats the same destination states and grows exponentially.",
+            "alternates": [
+                  "Greedy treats each reachable interval as a BFS level: scan the current interval, extend the farthest next boundary, then count one jump.",
+                  "Bottom-up DP propagates dp[i]+1 to every index reachable from i in O(n²) worst-case time."
+            ],
+            "gotchas": [
+                  "Reaching the last index returns 0 additional jumps, not 1.",
+                  "Check the destination base before treating jumps[i] == 0 as blocked; zero is valid at the last index.",
+                  "Use a safe unreachable sentinel and do not let adding one overflow it."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "minJumps(i): minimum additional jumps from index i to the end",
+                        "base": "i >= n-1 → 0; jumps[i] == 0 before the end → INF",
+                        "transition": "minJumps(i) = min(1 + minJumps(i+jump)) for jump = 1…jumps[i]",
+                        "time": "Exponential",
+                        "space": "O(n) call stack",
+                        "skeleton": "solve(i)\n  if i reaches end: return 0\n  if jumps[i] == 0: return INF\n  best = INF\n  for jump from 1 through jumps[i]\n    best = min(best, 1 + solve(i+jump))\n  return best"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i]: cached minimum additional jumps from i",
+                        "base": "i >= n-1 → 0; blocked zero → INF",
+                        "transition": "Return dp[i] when known; otherwise scan every legal landing and cache the minimum",
+                        "time": "O(n²) worst case",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "solve(i, dp)\n  handle end/blocked bases\n  if dp[i] known: return it\n  dp[i] = min over legal jump of 1 + solve(i+jump)\n  return dp[i]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i]: minimum jumps needed to reach index i from index 0",
+                        "base": "dp[0] = 0; every other state starts as INF",
+                        "transition": "For each reachable i, relax dp[i+jump] with dp[i]+1 for all legal jumps",
+                        "time": "O(n²) worst case",
+                        "space": "O(n)",
+                        "skeleton": "dp[0] = 0; others = INF\nfor i from 0 to n-1\n  if i is reachable\n    for jump from 1 through jumps[i]\n      relax dp[i+jump] with dp[i]+1\nreturn dp[n-1]"
+                  }
+            ]
       }
 ];
 
@@ -1666,6 +1739,16 @@
                   "Cache each remainder or fill the same recurrence from small totals upward."
             ],
             "skeleton": "ways(n) = ways(n-1) + ways(n-3) + ways(n-4)\nbase: ways(0)=1, ways(negative)=0\nthen cache n or fill dp upward"
+      },
+      "MinimumJumpsReachEnd": {
+            "prompt": "Before reading: what does minJumps(i) store, and why does reaching the last index return zero?",
+            "steps": [
+                  "Use the current index as the state.",
+                  "Try every landing from i+1 through i+jumps[i].",
+                  "Add one for the current jump and retain the smallest child answer.",
+                  "Cache by index; tabulation reverses the same relaxation."
+            ],
+            "skeleton": "minJumps(i) = 1 + min(minJumps(i+j))\nfor j in 1…jumps[i]\nbase: at end → 0, blocked zero → INF\ncache i or relax reachable destinations"
       }
 };
 
@@ -1676,7 +1759,8 @@
       "FrogJumpWithKSteps": "State = minimum energy at stair i\nlook back through up to k predecessors\nadd each jump's height difference\nkeep the cheapest candidate",
       "HouseRobberI": "State = best amount from index i onward\npick: nums[i] + rob(i+2)\nskip: rob(i+1)\ncache the larger answer",
       "HouseRobberII": "Circle means first and last conflict\nsolve houses 0…n-2\nsolve houses 1…n-1\nreturn the larger result",
-      "NumberFactors": "State = ways to complete remainder n\nchoose 1, 3, or 4 next\nadd ways(n-1), ways(n-3), ways(n-4)"
+      "NumberFactors": "State = ways to complete remainder n\nchoose 1, 3, or 4 next\nadd ways(n-1), ways(n-3), ways(n-4)",
+      "MinimumJumpsReachEnd": "State = minimum jumps remaining from i\ntry every landing i+1…i+jumps[i]\nadd one and cache the smallest result"
 };
 
     const solvedOrder = [
@@ -1686,7 +1770,8 @@
       "FrogJumpWithKSteps",
       "HouseRobberI",
       "HouseRobberII",
-      "NumberFactors"
+      "NumberFactors",
+      "MinimumJumpsReachEnd"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
