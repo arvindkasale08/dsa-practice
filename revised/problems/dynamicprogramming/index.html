@@ -1739,6 +1739,79 @@
                         "skeleton": "dp[0] = 0; others = INF\nfor i from 0 to n-1\n  for jump from 1 through 3\n    next = min(i+jump, n)\n    dp[next] = min(dp[next], dp[i] + fee[i])\nreturn dp[n]"
                   }
             ]
+      },
+      {
+            "name": "PaintHouse",
+            "source": "../com/arvind/revision/dynamicprogramming/PaintHouse.java",
+            "label": "Carry the previous color",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/paint-house/",
+            "description": "Given an n×3 cost matrix for painting each house red, blue, or green, paint every house for minimum total cost while ensuring adjacent houses use different colors.",
+            "time": "Rec O(2^n) · Memo/Tab O(n)",
+            "space": "Memo O(n) + stack O(n) · Tab O(n)",
+            "timeWhy": "After the first house, recursion has two valid colors per row and repeats states. Memoization computes each house/previous-color pair once; tabulation fills three states per house.",
+            "structures": "recursion stack, int[n][4] memo, DP color states",
+            "input": "costs = [[17,2,17],[16,16,5],[14,3,19]]",
+            "output": "10",
+            "recognize": "When each row requires one of a few choices, consecutive rows cannot repeat the same choice, and the total cost must be minimized.",
+            "variantLens": "This shares Ninja Training's previous-choice state, but Paint House minimizes costs while Ninja Training maximizes merit points.",
+            "visual": [
+                  [
+                        "house i",
+                        "red",
+                        "blue",
+                        "green"
+                  ],
+                  [
+                        "last color",
+                        "block same",
+                        "take cheapest allowed"
+                  ]
+            ],
+            "visualText": "At each house, cross out the color used by the previous house. Add each remaining color's cost to its future answer and keep the cheaper path.",
+            "core": "State = (house index, previous color). Try every color except the previous one, add its painting cost, and retain the minimum.",
+            "bruteForce": "The implemented recursion tries every valid color sequence. It is correct but revisits the same house/previous-color states exponentially.",
+            "alternates": [
+                  "Bottom-up DP stores the cheapest total ending in red, blue, and green for each house.",
+                  "Roll only three previous color costs for O(1) extra space."
+            ],
+            "gotchas": [
+                  "Skip the previous color; comparing only the cheapest current color is not safe.",
+                  "The initial no-color state uses sentinel color 3, so the memo needs four columns.",
+                  "Paint House minimizes; the analogous Ninja Training transition maximizes."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "minCost(i, lastColor): minimum cost from house i onward",
+                        "base": "i >= number of houses → 0",
+                        "transition": "Try each color != lastColor; take min(costs[i][color] + solve(i+1,color))",
+                        "time": "O(2^n)",
+                        "space": "O(n) call stack",
+                        "skeleton": "solve(i, last)\n  if i == n: return 0\n  best = INF\n  for color in 0…2\n    if color != last\n      best = min(best, cost[i][color] + solve(i+1,color))\n  return best"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][lastColor]: cached minimum for this house and previous color",
+                        "base": "i >= number of houses → 0; initial lastColor = 3",
+                        "transition": "Return cached state; otherwise try all colors except lastColor and store the minimum",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "solve(i, last, dp)\n  handle end base\n  if cached: return dp[i][last]\n  dp[i][last] = min over color != last of cost + solve(next,color)\n  return dp[i][last]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i][color]: minimum cost through house i when i uses color",
+                        "base": "dp[0][color] = costs[0][color]",
+                        "transition": "dp[i][color] = costs[i][color] + min(dp[i-1][other two colors])",
+                        "time": "O(n)",
+                        "space": "O(n), reducible to O(1)",
+                        "skeleton": "seed three costs for house 0\nfor each later house i\n  for each color\n    dp[i][color] = cost[i][color] + min(previous other colors)\nreturn min(last row's three values)"
+                  }
+            ]
       }
 ];
 
@@ -1832,6 +1905,16 @@
                   "Cache by i or propagate each paid cost forward to dp[n]."
             ],
             "skeleton": "minFee(i) = fee[i] + min(next 1, next 2, next 3)\nbase: i >= n → 0\nmemoize i, or relax forward until dp[n]"
+      },
+      "PaintHouse": {
+            "prompt": "Before reading: why must the previous color be part of the state, and which colors may transition next?",
+            "steps": [
+                  "Carry the house index and previous color.",
+                  "Try all three colors except the previous one.",
+                  "Add the current painting cost before taking the minimum.",
+                  "Cache the two-dimensional state; tabulation stores totals ending in each color."
+            ],
+            "skeleton": "solve(i,last) = min over color != last of\n  costs[i][color] + solve(i+1,color)\nbase: i == n → 0\ncache (i,last), or fill three colors per row"
       }
 };
 
@@ -1844,7 +1927,8 @@
       "HouseRobberII": "Circle means first and last conflict\nsolve houses 0…n-2\nsolve houses 1…n-1\nreturn the larger result",
       "NumberFactors": "State = ways to complete remainder n\nchoose 1, 3, or 4 next\nadd ways(n-1), ways(n-3), ways(n-4)",
       "MinimumJumpsReachEnd": "State = minimum jumps remaining from i\ntry every landing i+1…i+jumps[i]\nadd one and cache the smallest result",
-      "MinimumJumpsWithFee": "State = minimum fee remaining from stair i\npay fee[i] once\nchoose the cheapest of i+1, i+2, i+3\ndestination is beyond the array"
+      "MinimumJumpsWithFee": "State = minimum fee remaining from stair i\npay fee[i] once\nchoose the cheapest of i+1, i+2, i+3\ndestination is beyond the array",
+      "PaintHouse": "State = house index + previous color\nskip the previous color\nadd each allowed cost\nkeep the minimum path"
 };
 
     const solvedOrder = [
@@ -1856,7 +1940,8 @@
       "HouseRobberII",
       "NumberFactors",
       "MinimumJumpsReachEnd",
-      "MinimumJumpsWithFee"
+      "MinimumJumpsWithFee",
+      "PaintHouse"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
