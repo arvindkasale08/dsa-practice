@@ -1520,6 +1520,79 @@
                         "skeleton": "leftCut = nums[1…n-1]\nrightCut = nums[0…n-2]\nrobLinear(range):\n  dp[0] = range[0]\n  fill pick-versus-skip\nreturn max(robLinear(leftCut), robLinear(rightCut))"
                   }
             ]
+      },
+      {
+            "name": "NumberFactors",
+            "source": "../com/arvind/revision/dynamicprogramming/NumberFactors.java",
+            "label": "Count ordered sums using 1, 3, and 4",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given n, count the ordered ways to write it as a sum using 1, 3, and 4 any number of times. Different orders, such as 1+3 and 3+1, count separately.",
+            "time": "Rec O(3^n) · Memo/Tab O(n)",
+            "space": "Rec/Memo O(n) · Tab O(n)",
+            "timeWhy": "Plain recursion branches on the next factor and repeats remaining totals. Memoization computes each remainder once; tabulation fills every total once.",
+            "structures": "recursion stack, memo array, DP array",
+            "input": "n = 5",
+            "output": "6",
+            "recognize": "When a total can be reached by appending one of a fixed set of allowed values and the order of choices matters.",
+            "variantLens": "This is Combination Sum IV with fixed candidates [1,3,4], though there is no exact dedicated LeetCode problem.",
+            "visual": [
+                  [
+                        "n",
+                        "n-1",
+                        "n-3",
+                        "n-4"
+                  ],
+                  [
+                        "ways(n)",
+                        "three smaller totals",
+                        "add answers"
+                  ]
+            ],
+            "visualText": "Choose the final contribution: if it is 1, 3, or 4, the earlier part must form n-1, n-3, or n-4. Add those three counts.",
+            "core": "ways(n) = ways(n-1) + ways(n-3) + ways(n-4), with exact remainder zero contributing one completed way and negative remainder contributing zero.",
+            "bruteForce": "The implemented recursive version builds every ordered choice sequence. It is correct but recomputes the same remaining totals exponentially.",
+            "alternates": [
+                  "Space-optimize tabulation to O(1) by retaining only the last four states.",
+                  "Generalize the three branches into a loop over an allowed-values array, as in Combination Sum IV."
+            ],
+            "gotchas": [
+                  "Return 1 for remainder zero because it represents one completed construction.",
+                  "Return 0 for a negative remainder so overshoots do not count.",
+                  "Order matters: 1+3 and 3+1 are different ways."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "ways(rem): ordered constructions that complete the remaining total",
+                        "base": "rem == 0 → 1; rem < 0 → 0",
+                        "transition": "ways(rem) = ways(rem-1) + ways(rem-3) + ways(rem-4)",
+                        "time": "O(3^n) upper bound",
+                        "space": "O(n) call stack",
+                        "skeleton": "ways(rem)\n  if rem == 0: return 1\n  if rem < 0: return 0\n  return ways(rem-1) + ways(rem-3) + ways(rem-4)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[rem]: cached number of ways for this remainder",
+                        "base": "rem == 0 → 1; rem < 0 → 0",
+                        "transition": "Return dp[rem] when known; otherwise cache the three-child sum",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "ways(rem, dp)\n  handle zero/negative bases\n  if dp[rem] known: return it\n  dp[rem] = ways(rem-1) + ways(rem-3) + ways(rem-4)\n  return dp[rem]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i]: ordered ways to form total i",
+                        "base": "dp[0]=1, dp[1]=1, dp[2]=1, dp[3]=2, dp[4]=4",
+                        "transition": "dp[i] = dp[i-1] + dp[i-3] + dp[i-4]",
+                        "time": "O(n)",
+                        "space": "O(n)",
+                        "skeleton": "seed totals 0 through 4\nfor i from 5 through n\n  dp[i] = dp[i-1] + dp[i-3] + dp[i-4]\nreturn dp[n]"
+                  }
+            ]
       }
 ];
 
@@ -1583,6 +1656,16 @@
                   "Return the larger House Robber I result."
             ],
             "skeleton": "if n == 1: return nums[0]\nwithoutFirst = robLinear(1, n-1)\nwithoutLast = robLinear(0, n-2)\nreturn max(withoutFirst, withoutLast)"
+      },
+      "NumberFactors": {
+            "prompt": "Before reading: what do the n-1, n-3, and n-4 states represent, and why are their counts added?",
+            "steps": [
+                  "Use the remaining total as the state.",
+                  "Choose 1, 3, or 4 as the next contribution.",
+                  "Exact zero completes one way; a negative remainder completes none.",
+                  "Cache each remainder or fill the same recurrence from small totals upward."
+            ],
+            "skeleton": "ways(n) = ways(n-1) + ways(n-3) + ways(n-4)\nbase: ways(0)=1, ways(negative)=0\nthen cache n or fill dp upward"
       }
 };
 
@@ -1592,7 +1675,8 @@
       "FrogJump": "State = minimum energy at stair i\narrive from i-1 or i-2\nadd that jump's height difference\nkeep the cheaper total",
       "FrogJumpWithKSteps": "State = minimum energy at stair i\nlook back through up to k predecessors\nadd each jump's height difference\nkeep the cheapest candidate",
       "HouseRobberI": "State = best amount from index i onward\npick: nums[i] + rob(i+2)\nskip: rob(i+1)\ncache the larger answer",
-      "HouseRobberII": "Circle means first and last conflict\nsolve houses 0…n-2\nsolve houses 1…n-1\nreturn the larger result"
+      "HouseRobberII": "Circle means first and last conflict\nsolve houses 0…n-2\nsolve houses 1…n-1\nreturn the larger result",
+      "NumberFactors": "State = ways to complete remainder n\nchoose 1, 3, or 4 next\nadd ways(n-1), ways(n-3), ways(n-4)"
 };
 
     const solvedOrder = [
@@ -1601,7 +1685,8 @@
       "FrogJump",
       "FrogJumpWithKSteps",
       "HouseRobberI",
-      "HouseRobberII"
+      "HouseRobberII",
+      "NumberFactors"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
