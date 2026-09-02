@@ -1666,6 +1666,79 @@
                         "skeleton": "dp[0] = 0; others = INF\nfor i from 0 to n-1\n  if i is reachable\n    for jump from 1 through jumps[i]\n      relax dp[i+jump] with dp[i]+1\nreturn dp[n-1]"
                   }
             ]
+      },
+      {
+            "name": "MinimumJumpsWithFee",
+            "source": "../com/arvind/revision/dynamicprogramming/MinimumJumpsWithFee.java",
+            "label": "Pay here, then choose 1, 2, or 3 steps",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given a fee for every stair, start at index 0 and move forward by 1, 2, or 3 stairs after paying the fee at the current stair. Return the minimum total fee needed to move beyond the staircase.",
+            "time": "Rec O(3^n) · Memo/Tab O(n)",
+            "space": "Rec/Memo O(n) · Tab O(n)",
+            "timeWhy": "Recursion repeats the same remaining suffixes. Memoization computes each stair once; tabulation propagates three constant-size transitions from each stair.",
+            "structures": "recursion stack, memo array, DP array",
+            "input": "fee = [2, 3, 4, 5]",
+            "output": "5",
+            "recognize": "When each position has a cost, every move can advance by one of a few fixed lengths, and the goal lies just beyond the array.",
+            "variantLens": "Unlike Min Cost Climbing Stairs, this version starts at index 0 and permits jumps of 1, 2, or 3 after paying the current stair.",
+            "visual": [
+                  [
+                        "i",
+                        "i+1",
+                        "i+2",
+                        "i+3"
+                  ],
+                  [
+                        "+ fee[i]",
+                        "choose cheapest suffix",
+                        "beyond n"
+                  ]
+            ],
+            "visualText": "Pay fee[i] once at the current stair, then draw three arrows to i+1, i+2, and i+3. Continue through the arrow with the cheapest remaining cost.",
+            "core": "minFee(i) = fee[i] + min(minFee(i+1), minFee(i+2), minFee(i+3)); reaching or crossing n costs zero more.",
+            "bruteForce": "The implemented recursion explores every sequence of 1-, 2-, and 3-step moves. It is correct but rebuilds overlapping suffix states exponentially.",
+            "alternates": [
+                  "Space-optimize tabulation with a rolling window because only three nearby states matter.",
+                  "A backward table can store minimum remaining fee directly, mirroring the recursive recurrence."
+            ],
+            "gotchas": [
+                  "Add fee[i] once before comparing the three next states.",
+                  "The tabulation destination is dp[n], beyond the final stair—not dp[n-1].",
+                  "When a jump crosses the end, cap its destination at n so it contributes a valid completion."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "minFee(i): minimum fee from stair i until moving beyond the array",
+                        "base": "i >= fee.length → 0",
+                        "transition": "fee[i] + min(minFee(i+1), minFee(i+2), minFee(i+3))",
+                        "time": "O(3^n)",
+                        "space": "O(n) call stack",
+                        "skeleton": "solve(i)\n  if i >= n: return 0\n  return fee[i] + min(solve(i+1), solve(i+2), solve(i+3))"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i]: cached minimum fee from stair i onward",
+                        "base": "i >= fee.length → 0",
+                        "transition": "Return dp[i] when known; otherwise cache fee[i] plus the cheapest child",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) stack",
+                        "skeleton": "solve(i, dp)\n  if i >= n: return 0\n  if dp[i] known: return it\n  dp[i] = fee[i] + min(next 1, next 2, next 3)\n  return dp[i]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i]: minimum fee paid to arrive at position i; dp[n] is beyond the stairs",
+                        "base": "dp[0] = 0; all other positions start as INF",
+                        "transition": "From i, relax each capped destination min(i+j,n) with dp[i] + fee[i] for j=1…3",
+                        "time": "O(n)",
+                        "space": "O(n)",
+                        "skeleton": "dp[0] = 0; others = INF\nfor i from 0 to n-1\n  for jump from 1 through 3\n    next = min(i+jump, n)\n    dp[next] = min(dp[next], dp[i] + fee[i])\nreturn dp[n]"
+                  }
+            ]
       }
 ];
 
@@ -1749,6 +1822,16 @@
                   "Cache by index; tabulation reverses the same relaxation."
             ],
             "skeleton": "minJumps(i) = 1 + min(minJumps(i+j))\nfor j in 1…jumps[i]\nbase: at end → 0, blocked zero → INF\ncache i or relax reachable destinations"
+      },
+      "MinimumJumpsWithFee": {
+            "prompt": "Before reading: when is fee[i] paid, and why is the tabulation destination dp[n] rather than dp[n-1]?",
+            "steps": [
+                  "Use the current stair as the recursive state.",
+                  "Pay fee[i] once, then try jumps of one, two, and three.",
+                  "Reaching or crossing the array end adds no further fee.",
+                  "Cache by i or propagate each paid cost forward to dp[n]."
+            ],
+            "skeleton": "minFee(i) = fee[i] + min(next 1, next 2, next 3)\nbase: i >= n → 0\nmemoize i, or relax forward until dp[n]"
       }
 };
 
@@ -1760,7 +1843,8 @@
       "HouseRobberI": "State = best amount from index i onward\npick: nums[i] + rob(i+2)\nskip: rob(i+1)\ncache the larger answer",
       "HouseRobberII": "Circle means first and last conflict\nsolve houses 0…n-2\nsolve houses 1…n-1\nreturn the larger result",
       "NumberFactors": "State = ways to complete remainder n\nchoose 1, 3, or 4 next\nadd ways(n-1), ways(n-3), ways(n-4)",
-      "MinimumJumpsReachEnd": "State = minimum jumps remaining from i\ntry every landing i+1…i+jumps[i]\nadd one and cache the smallest result"
+      "MinimumJumpsReachEnd": "State = minimum jumps remaining from i\ntry every landing i+1…i+jumps[i]\nadd one and cache the smallest result",
+      "MinimumJumpsWithFee": "State = minimum fee remaining from stair i\npay fee[i] once\nchoose the cheapest of i+1, i+2, i+3\ndestination is beyond the array"
 };
 
     const solvedOrder = [
@@ -1771,7 +1855,8 @@
       "HouseRobberI",
       "HouseRobberII",
       "NumberFactors",
-      "MinimumJumpsReachEnd"
+      "MinimumJumpsReachEnd",
+      "MinimumJumpsWithFee"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
