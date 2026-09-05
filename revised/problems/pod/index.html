@@ -1307,6 +1307,44 @@
                   "Order the two extreme indices before calculating the split left-plus-right strategy.",
                   "A one-element array needs exactly one deletion."
             ]
+      },
+      {
+            "name": "SmallestStableIndexII",
+            "source": "../com/arvind/revision/pod/SmallestStableIndexII.java",
+            "label": "Pair prefix maximum with suffix minimum",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/smallest-stable-index-ii/",
+            "description": "For every index i, define instability as the maximum value in nums[0…i] minus the minimum value in nums[i…n-1]. Return the smallest index whose instability is at most k, or -1 if none exists.",
+            "time": "O(n)",
+            "space": "O(n)",
+            "timeWhy": "One backward pass builds every suffix minimum, then one forward pass maintains the prefix maximum and checks each index once.",
+            "structures": "suffix-minimum array, running prefix maximum",
+            "input": "nums = [5, 0, 1, 4], k = 3",
+            "output": "3",
+            "recognize": "When each index combines an aggregate from its entire prefix with a different aggregate from its entire suffix.",
+            "visual": [
+                  [
+                        "0 … i",
+                        "i … n-1"
+                  ],
+                  [
+                        "prefix max",
+                        "suffix min",
+                        "difference ≤ k?"
+                  ]
+            ],
+            "visualText": "At index i, look left through a running maximum and right through a precomputed minimum. Their difference is the instability score for exactly that index.",
+            "core": "Build suffixMin[i] from right to left. Scan left to right while updating prefixMax, and return the first i where prefixMax - suffixMin[i] <= k.",
+            "bruteForce": "For each index, rescan its prefix for the maximum and its suffix for the minimum. This is straightforward but costs O(n²).",
+            "alternates": [
+                  "A range-min structure can answer suffix queries while scanning prefixes, but it raises complexity to O(n log n) and adds machinery.",
+                  "Store prefix maxima as well as suffix minima when every instability score must be retained, not just the first valid index."
+            ],
+            "gotchas": [
+                  "Both ranges include index i.",
+                  "Return immediately on the first valid index to preserve the smallest-index requirement.",
+                  "Initializing prefix maximum to 0 relies on the constraint nums[i] >= 0."
+            ]
       }
 ];
 
@@ -1363,6 +1401,16 @@
                   "Return the smallest of those three counts."
             ],
             "skeleton": "find minIdx and maxIdx\nleft = min(minIdx, maxIdx)\nright = max(minIdx, maxIdx)\n\nbothLeft = right + 1\nbothRight = n - left\nsplit = left + 1 + n - right\nreturn min(bothLeft, bothRight, split)"
+      },
+      "SmallestStableIndexII": {
+            "prompt": "Before reading: which prefix and suffix aggregates form the instability score at index i?",
+            "steps": [
+                  "Build suffixMin from right to left.",
+                  "Scan left to right while carrying prefixMax.",
+                  "At i, compare prefixMax - suffixMin[i] with k.",
+                  "Return the first passing index; otherwise return -1."
+            ],
+            "skeleton": "suffixMin[n-1] = nums[n-1]\nfill suffixMin backward\nprefixMax = 0\nfor i from 0 to n-1\n  prefixMax = max(prefixMax, nums[i])\n  if prefixMax - suffixMin[i] <= k: return i\nreturn -1"
       }
 };
 
@@ -1371,7 +1419,8 @@
       "DistributeInTwoArrays": "Seed one value per list\ncompare only the two tails\nstrict greater goes left; tie goes right\nconcatenate left then right",
       "CheckDivBySumProd": "Peel each digit once\nadd it to sum and multiply it into product\ntest original % (sum + product)",
       "SmallestMissingMultipleOfK": "Put nums in a seen set\nprobe k, 2k, 3k, ...\nfirst absent multiple is the answer",
-      "RemovingMinMaxFromArray": "Mark min and max indices\ntry both-left, both-right, and split ends\nreturn the smallest deletion count"
+      "RemovingMinMaxFromArray": "Mark min and max indices\ntry both-left, both-right, and split ends\nreturn the smallest deletion count",
+      "SmallestStableIndexII": "Precompute suffix minimums\ncarry the prefix maximum forward\nfirst prefixMax - suffixMin[i] ≤ k is the answer"
 };
 
     const solvedOrder = [
@@ -1379,7 +1428,8 @@
       "DistributeInTwoArrays",
       "CheckDivBySumProd",
       "SmallestMissingMultipleOfK",
-      "RemovingMinMaxFromArray"
+      "RemovingMinMaxFromArray",
+      "SmallestStableIndexII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

@@ -520,6 +520,14 @@
         "dynamicprogramming/PaintHouse"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-09-05",
+      "solved": 1,
+      "cardsSynced": [
+        "pod/SmallestStableIndexII"
+      ],
+      "notes": ""
     }
   ]
 }
