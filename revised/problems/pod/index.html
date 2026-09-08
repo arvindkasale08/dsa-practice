@@ -1345,6 +1345,45 @@
                   "Return immediately on the first valid index to preserve the smallest-index requirement.",
                   "Initializing prefix maximum to 0 relies on the constraint nums[i] >= 0."
             ]
+      },
+      {
+            "name": "CountCommasInRange",
+            "source": "../com/arvind/revision/pod/CountCommasInRange.java",
+            "label": "Count every integer from 1,000 onward",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/count-commas-in-range/",
+            "description": "Given n, return the total number of commas used when all integers from 1 through n are written with standard thousands separators. Under the constraints, every value from 1,000 onward contributes exactly one comma.",
+            "time": "O(1)",
+            "space": "O(1)",
+            "timeWhy": "The answer is a direct count of integers in the inclusive interval [1000,n], so no iteration or formatting is needed.",
+            "structures": "integer arithmetic",
+            "input": "n = 1002",
+            "output": "3",
+            "recognize": "When the constraints stop before seven-digit numbers, so every qualifying formatted value contributes the same one comma.",
+            "variantLens": "Count Commas in Range II extends the limit beyond 999,999, where some numbers contribute more than one comma.",
+            "visual": [
+                  [
+                        "1 … 999",
+                        "1,000 … n"
+                  ],
+                  [
+                        "0 commas each",
+                        "1 comma each",
+                        "count interval"
+                  ]
+            ],
+            "visualText": "Place a boundary before 1,000. Everything on the left contributes zero; every integer from 1,000 through n contributes one.",
+            "core": "If n < 1000 return 0; otherwise the inclusive interval size is n - 1000 + 1.",
+            "bruteForce": "Format every integer from 1 through n and count comma characters. This works but costs O(n log n) character work.",
+            "alternates": [
+                  "Loop from 1000 through n and increment once per number; simpler to discover, but O(n).",
+                  "For larger constraints, count contributions at each threshold 10³, 10⁶, 10⁹, and so on."
+            ],
+            "gotchas": [
+                  "The range includes both 1 and n.",
+                  "At n = 1000, the answer is one—not zero.",
+                  "The one-comma shortcut relies on n <= 100,000."
+            ]
       }
 ];
 
@@ -1411,6 +1450,16 @@
                   "Return the first passing index; otherwise return -1."
             ],
             "skeleton": "suffixMin[n-1] = nums[n-1]\nfill suffixMin backward\nprefixMax = 0\nfor i from 0 to n-1\n  prefixMax = max(prefixMax, nums[i])\n  if prefixMax - suffixMin[i] <= k: return i\nreturn -1"
+      },
+      "CountCommasInRange": {
+            "prompt": "Before reading: which values contribute a comma, and how many integers are in that inclusive interval?",
+            "steps": [
+                  "Values below 1,000 contribute no commas.",
+                  "Every allowed value from 1,000 onward contributes exactly one.",
+                  "Count the inclusive interval [1000,n].",
+                  "Return zero when that interval is empty."
+            ],
+            "skeleton": "if n < 1000: return 0\nreturn n - 1000 + 1"
       }
 };
 
@@ -1420,7 +1469,8 @@
       "CheckDivBySumProd": "Peel each digit once\nadd it to sum and multiply it into product\ntest original % (sum + product)",
       "SmallestMissingMultipleOfK": "Put nums in a seen set\nprobe k, 2k, 3k, ...\nfirst absent multiple is the answer",
       "RemovingMinMaxFromArray": "Mark min and max indices\ntry both-left, both-right, and split ends\nreturn the smallest deletion count",
-      "SmallestStableIndexII": "Precompute suffix minimums\ncarry the prefix maximum forward\nfirst prefixMax - suffixMin[i] ≤ k is the answer"
+      "SmallestStableIndexII": "Precompute suffix minimums\ncarry the prefix maximum forward\nfirst prefixMax - suffixMin[i] ≤ k is the answer",
+      "CountCommasInRange": "Below 1,000 → zero commas\n1,000 through n → one each\nanswer = n - 999"
 };
 
     const solvedOrder = [
@@ -1429,7 +1479,8 @@
       "CheckDivBySumProd",
       "SmallestMissingMultipleOfK",
       "RemovingMinMaxFromArray",
-      "SmallestStableIndexII"
+      "SmallestStableIndexII",
+      "CountCommasInRange"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
