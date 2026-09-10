@@ -1881,6 +1881,81 @@
                         "skeleton": "fill first row and first column with 1\nfor i from 1 to m-1\n  for j from 1 to n-1\n    dp[i][j] = dp[i-1][j] + dp[i][j-1]\nreturn dp[m-1][n-1]"
                   }
             ]
+      },
+      {
+            "name": "UniquePathsII",
+            "source": "../com/arvind/revision/dynamicprogramming/UniquePathsII.java",
+            "label": "Blocked cells contribute zero paths",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/unique-paths-ii/",
+            "description": "Count paths from the top-left to the bottom-right while moving only right or down, with obstacle cells that cannot be entered.",
+            "time": "Rec O(2^(m+n)) · Memo/Tab O(mn)",
+            "space": "Memo/Tab O(mn) · Rec stack O(m+n)",
+            "timeWhy": "Recursion repeats the same reachable cells; memoization computes each cell once, and tabulation visits every grid cell once.",
+            "structures": "recursion stack, obstacle grid, 2D memo, 2D DP table",
+            "input": "grid = [[0,0,0],[0,1,0],[0,0,0]]",
+            "output": "2",
+            "recognize": "It is Unique Paths with forbidden cells: a blocked state has zero ways, while an open state combines the two permitted directions.",
+            "visual": [
+                  [
+                        "start →",
+                        "open",
+                        "open"
+                  ],
+                  [
+                        "open",
+                        "■ blocked",
+                        "open"
+                  ],
+                  [
+                        "open",
+                        "open",
+                        "→ finish"
+                  ]
+            ],
+            "visualText": "Paths flow around the blocked center. An obstacle receives zero paths, so it passes nothing to its right or below.",
+            "core": "For an open cell, add paths from above and left. For an obstacle, store zero. This automatically prevents every route through that cell.",
+            "bruteForce": "The implemented recursion tries right and down from each open cell and returns zero for obstacles or out-of-bounds states, but repeats overlapping suffix grids.",
+            "alternates": [
+                  "Compress the table to one row: set dp[j] to zero at an obstacle; otherwise add dp[j-1]."
+            ],
+            "gotchas": [
+                  "If the starting cell is blocked, the answer is zero.",
+                  "Do not reset later first-row or first-column cells to one after an obstacle; copy the previous reachable count.",
+                  "Check the obstacle before accepting the destination as a completed path."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "paths(i,j): paths from cell (i,j) to the destination",
+                        "base": "Out of bounds or obstacle → 0; destination → 1",
+                        "transition": "paths(i,j) = paths(i+1,j) + paths(i,j+1)",
+                        "time": "O(2^(m+n))",
+                        "space": "O(m+n) call stack",
+                        "skeleton": "paths(i,j)\n  if outside or blocked: return 0\n  if destination: return 1\n  return paths(i+1,j) + paths(i,j+1)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][j]: cached paths from open cell (i,j)",
+                        "base": "Out of bounds or obstacle → 0; destination → 1",
+                        "transition": "Return cached value; otherwise cache down paths plus right paths",
+                        "time": "O(mn)",
+                        "space": "O(mn) memo + O(m+n) stack",
+                        "skeleton": "paths(i,j,dp)\n  handle blocked/outside/destination\n  if cached: return dp[i][j]\n  dp[i][j] = paths(i+1,j) + paths(i,j+1)"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i][j]: paths from the start to cell (i,j)",
+                        "base": "dp[0][0] = 1 only when the start is open; propagate the first row and column",
+                        "transition": "Obstacle → 0; otherwise dp[i][j] = dp[i-1][j] + dp[i][j-1]",
+                        "time": "O(mn)",
+                        "space": "O(mn), reducible to O(n)",
+                        "skeleton": "seed start\npropagate first row and column\nfor each interior cell\n  if blocked: dp[i][j] = 0\n  else: dp[i][j] = above + left\nreturn dp[m-1][n-1]"
+                  }
+            ]
       }
 ];
 
@@ -1994,6 +2069,16 @@
                   "Tabulation fills each cell from above plus left."
             ],
             "skeleton": "paths(i,j) = paths(i+1,j) + paths(i,j+1)\nreverse for table: dp[i][j] = above + left\nseed first row and first column with 1"
+      },
+      "UniquePathsII": {
+            "prompt": "Before reading: what value should an obstacle contribute, and how does that affect cells after it?",
+            "steps": [
+                  "Use row and column as the state.",
+                  "Return or store zero whenever the current cell is blocked.",
+                  "For an open cell, combine the two legal neighboring states.",
+                  "Seed boundaries from reachability instead of assuming every boundary cell has one path."
+            ],
+            "skeleton": "if blocked: ways = 0\nelse ways(i,j) = ways(i+1,j) + ways(i,j+1)\ntable view: obstacle ? 0 : above + left"
       }
 };
 
@@ -2008,7 +2093,8 @@
       "MinimumJumpsReachEnd": "State = minimum jumps remaining from i\ntry every landing i+1…i+jumps[i]\nadd one and cache the smallest result",
       "MinimumJumpsWithFee": "State = minimum fee remaining from stair i\npay fee[i] once\nchoose the cheapest of i+1, i+2, i+3\ndestination is beyond the array",
       "PaintHouse": "State = house index + previous color\nskip the previous color\nadd each allowed cost\nkeep the minimum path",
-      "UniquePaths": "State = paths at grid cell (i,j)\nrecursion goes down + right\ntabulation adds above + left"
+      "UniquePaths": "State = paths at grid cell (i,j)\nrecursion goes down + right\ntabulation adds above + left",
+      "UniquePathsII": "State = paths at open cell (i,j)\nobstacle → 0 paths\nrecursion goes down + right\ntabulation adds above + left"
 };
 
     const solvedOrder = [
@@ -2022,7 +2108,8 @@
       "MinimumJumpsReachEnd",
       "MinimumJumpsWithFee",
       "PaintHouse",
-      "UniquePaths"
+      "UniquePaths",
+      "UniquePathsII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
