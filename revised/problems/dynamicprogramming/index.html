@@ -1812,6 +1812,75 @@
                         "skeleton": "seed three costs for house 0\nfor each later house i\n  for each color\n    dp[i][color] = cost[i][color] + min(previous other colors)\nreturn min(last row's three values)"
                   }
             ]
+      },
+      {
+            "name": "UniquePaths",
+            "source": "../com/arvind/revision/dynamicprogramming/UniquePaths.java",
+            "label": "Add paths from above and left",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/unique-paths/",
+            "description": "Given an m×n grid, count the distinct paths from the top-left cell to the bottom-right cell when each move goes only right or down.",
+            "time": "Rec O(2^(m+n)) · Memo/Tab O(mn)",
+            "space": "Memo/Tab O(mn) · Rec stack O(m+n)",
+            "timeWhy": "Plain recursion rebuilds the same grid cells. Memoization computes each (row,column) state once; tabulation fills every cell once.",
+            "structures": "recursion stack, 2D memo, 2D DP table",
+            "input": "m = 3, n = 7",
+            "output": "28",
+            "recognize": "When movement is restricted to right and down, so every cell can be reached only from its top or left neighbor.",
+            "visual": [
+                  [
+                        "↑ from above",
+                        "cell (i,j)"
+                  ],
+                  [
+                        "← from left",
+                        "add both path counts"
+                  ]
+            ],
+            "visualText": "Every interior cell has two doors into it: one from above and one from the left. Add the path counts behind those doors.",
+            "core": "Recursive view: paths(i,j) = paths(i+1,j) + paths(i,j+1). Tabulation reverses it: dp[i][j] = dp[i-1][j] + dp[i][j-1].",
+            "bruteForce": "The implemented recursion branches right and down from every cell. It is correct but repeats overlapping suffix grids exponentially.",
+            "alternates": [
+                  "Use one row of DP for O(n) auxiliary space.",
+                  "Use the binomial coefficient C(m+n-2,m-1), taking care to avoid overflow during multiplication."
+            ],
+            "gotchas": [
+                  "The first row and first column each contain exactly one path.",
+                  "Do not mix the source's 1-based recursive coordinates with the table's 0-based indices.",
+                  "The source treats reaching the final row as one remaining all-right path; keep the out-of-bounds checks consistent with that base."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "paths(i,j): paths from the current 1-based cell to the destination",
+                        "base": "i == m → 1; i > m or j > n → 0",
+                        "transition": "paths(i,j) = paths(i+1,j) + paths(i,j+1)",
+                        "time": "O(2^(m+n))",
+                        "space": "O(m+n) call stack",
+                        "skeleton": "paths(i,j)\n  if i == m: return 1\n  if i > m or j > n: return 0\n  return paths(i+1,j) + paths(i,j+1)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][j]: cached paths from the 1-based cell (i,j)",
+                        "base": "Same final-row and out-of-bounds bases as recursion",
+                        "transition": "Return cached state; otherwise store down paths plus right paths",
+                        "time": "O(mn)",
+                        "space": "O(mn) memo + O(m+n) stack",
+                        "skeleton": "paths(i,j,dp)\n  handle bases\n  if dp[i][j] known: return it\n  dp[i][j] = paths(i+1,j) + paths(i,j+1)\n  return dp[i][j]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Implemented",
+                        "state": "dp[i][j]: paths from the top-left cell to 0-based cell (i,j)",
+                        "base": "Fill the first row and first column with 1",
+                        "transition": "dp[i][j] = dp[i-1][j] + dp[i][j-1]",
+                        "time": "O(mn)",
+                        "space": "O(mn), reducible to O(n)",
+                        "skeleton": "fill first row and first column with 1\nfor i from 1 to m-1\n  for j from 1 to n-1\n    dp[i][j] = dp[i-1][j] + dp[i][j-1]\nreturn dp[m-1][n-1]"
+                  }
+            ]
       }
 ];
 
@@ -1915,6 +1984,16 @@
                   "Cache the two-dimensional state; tabulation stores totals ending in each color."
             ],
             "skeleton": "solve(i,last) = min over color != last of\n  costs[i][color] + solve(i+1,color)\nbase: i == n → 0\ncache (i,last), or fill three colors per row"
+      },
+      "UniquePaths": {
+            "prompt": "Before reading: which two neighboring states contribute paths to an interior cell?",
+            "steps": [
+                  "Use row and column as the state.",
+                  "Recursion branches down and right.",
+                  "Memoize each cell to remove repeated suffix grids.",
+                  "Tabulation fills each cell from above plus left."
+            ],
+            "skeleton": "paths(i,j) = paths(i+1,j) + paths(i,j+1)\nreverse for table: dp[i][j] = above + left\nseed first row and first column with 1"
       }
 };
 
@@ -1928,7 +2007,8 @@
       "NumberFactors": "State = ways to complete remainder n\nchoose 1, 3, or 4 next\nadd ways(n-1), ways(n-3), ways(n-4)",
       "MinimumJumpsReachEnd": "State = minimum jumps remaining from i\ntry every landing i+1…i+jumps[i]\nadd one and cache the smallest result",
       "MinimumJumpsWithFee": "State = minimum fee remaining from stair i\npay fee[i] once\nchoose the cheapest of i+1, i+2, i+3\ndestination is beyond the array",
-      "PaintHouse": "State = house index + previous color\nskip the previous color\nadd each allowed cost\nkeep the minimum path"
+      "PaintHouse": "State = house index + previous color\nskip the previous color\nadd each allowed cost\nkeep the minimum path",
+      "UniquePaths": "State = paths at grid cell (i,j)\nrecursion goes down + right\ntabulation adds above + left"
 };
 
     const solvedOrder = [
@@ -1941,7 +2021,8 @@
       "NumberFactors",
       "MinimumJumpsReachEnd",
       "MinimumJumpsWithFee",
-      "PaintHouse"
+      "PaintHouse",
+      "UniquePaths"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
