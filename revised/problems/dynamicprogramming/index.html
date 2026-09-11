@@ -2107,6 +2107,82 @@
                         "skeleton": "copy bottom row\nfor row from m-2 down to 0\n  for col from 0 through row\n    dp[row][col] = value + min(below,below-right)\nreturn dp[0][0]"
                   }
             ]
+      },
+      {
+            "name": "CherryPickUpII",
+            "source": "../com/arvind/revision/dynamicprogramming/CherryPickUpII.java",
+            "label": "Try all nine paired moves",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/cherry-pickup-ii/",
+            "description": "Two robots start at opposite corners of the top row. Each moves one row down and may shift left, stay, or shift right. Return the maximum cherries collected by the time both reach the bottom, counting a shared cell only once.",
+            "time": "Rec O(9^rows) · Memo/Tab O(rows·cols²·9)",
+            "space": "Memo/Tab O(rows·cols²) · Rec stack O(rows)",
+            "timeWhy": "Each recursive state tries 3 moves for each robot, producing nine pairs. Memoization and tabulation solve each (row,col1,col2) state once and scan the same nine transitions.",
+            "structures": "recursion stack, Integer[][][] memo, 3D DP table",
+            "input": "grid = [[1,0,0,0,0,0,1],[2,0,0,0,0,3,0],[2,0,9,0,0,0,0],[0,3,0,5,4,0,0],[1,0,2,3,0,0,6]]",
+            "output": "28",
+            "recognize": "When two agents advance through the same rows simultaneously and their choices interact because occupying one cell must not double-count its reward.",
+            "visual": [
+                  [
+                        "robot 1 @ c1",
+                        "row",
+                        "robot 2 @ c2"
+                  ],
+                  [
+                        "↙ ↓ ↘",
+                        "3 × 3",
+                        "↙ ↓ ↘"
+                  ],
+                  [
+                        "next c1",
+                        "9 pairs",
+                        "next c2"
+                  ]
+            ],
+            "visualText": "Both robots share one row. From columns c1 and c2, independently choose shifts -1, 0, or +1, producing nine paired next states.",
+            "core": "State = (row,c1,c2). Collect one cell if c1 == c2, otherwise collect both, then add the maximum result across all nine valid next-column pairs.",
+            "bruteForce": "The implemented recursion explores every paired movement sequence. Its branching factor is up to nine for each remaining row, so it grows as O(9^rows).",
+            "alternates": [
+                  "Bottom-up 3D tabulation fills rows from bottom to top and removes recursion.",
+                  "Keep only the next and current cols×cols layers to reduce tabulation space to O(cols²)."
+            ],
+            "gotchas": [
+                  "Use two nested three-move loops; applying the same shift to both robots explores only three of nine combinations.",
+                  "When c1 == c2, add that cell's cherries once—not twice and not zero.",
+                  "Add the current row's cherries once after selecting the best child; do not add them during every max update."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "The source carries (i1,j1,i2,j2); because i1 == i2, the essential state is (row,c1,c2)",
+                        "base": "Either column outside the grid → negative INF; final row → current cherries",
+                        "transition": "Current cherries + max over move1,move2 in {-1,0,+1} of the next-row state",
+                        "time": "O(9^rows)",
+                        "space": "O(rows) call stack",
+                        "skeleton": "solve(row,c1,c2)\n  reject invalid columns\n  cherries = one cell if c1==c2 else both\n  if last row: return cherries\n  best = max over 9 paired shifts\n  return cherries + best"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[row][c1][c2]: maximum cherries from this paired robot position to the bottom",
+                        "base": "Invalid column → negative INF; final row → current cherries",
+                        "transition": "Return cached state; otherwise cache current cherries plus the best of nine child states",
+                        "time": "O(rows·cols²·9), commonly written O(rows·cols²)",
+                        "space": "O(rows·cols²) memo + O(rows) stack",
+                        "skeleton": "solve(row,c1,c2,dp)\n  handle invalid/final bases\n  if cached: return dp[row][c1][c2]\n  dp[row][c1][c2] = cherries + max(nine children)"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; intentionally not implemented",
+                        "state": "dp[row][c1][c2]: maximum cherries collectible from this row and column pair to the bottom",
+                        "base": "For every c1,c2 on the last row, store one cell when equal, otherwise the sum of both cells",
+                        "transition": "For rows bottom-1 upward, add current cherries to the maximum valid dp[row+1][nextC1][nextC2] across nine shift pairs",
+                        "time": "O(rows·cols²·9), commonly written O(rows·cols²)",
+                        "space": "O(rows·cols²), reducible to O(cols²)",
+                        "skeleton": "initialize every (c1,c2) in last row\nfor row from rows-2 down to 0\n  for c1 and c2\n    cherries = one-or-two current cells\n    best = -INF\n    for d1 in -1..1\n      for d2 in -1..1\n        if next columns valid\n          best = max(best, dp[row+1][c1+d1][c2+d2])\n    dp[row][c1][c2] = cherries + best\nreturn dp[0][0][cols-1]"
+                  }
+            ]
       }
 ];
 
@@ -2250,6 +2326,16 @@
                   "Cache by cell, or start from the bottom row and fold upward."
             ],
             "skeleton": "cost(row,col) = value(row,col) + min(\n  cost(row+1,col),\n  cost(row+1,col+1)\n)"
+      },
+      "CherryPickUpII": {
+            "prompt": "Before reading: why is (row,c1,c2) sufficient, and how many paired transitions leave each state?",
+            "steps": [
+                  "Both robots always occupy the same row, so carry one row and two columns.",
+                  "Count the current cell once when their columns match; otherwise count both.",
+                  "Try each robot's three shifts independently for nine pairs.",
+                  "Cache the best suffix for every column pair, or fill the same states upward from the last row."
+            ],
+            "skeleton": "cherries(row,c1,c2) + max over d1,d2 in {-1,0,1} of\n  solve(row+1,c1+d1,c2+d2)"
       }
 };
 
@@ -2267,7 +2353,8 @@
       "UniquePaths": "State = paths at grid cell (i,j)\nrecursion goes down + right\ntabulation adds above + left",
       "UniquePathsII": "State = paths at open cell (i,j)\nobstacle → 0 paths\nrecursion goes down + right\ntabulation adds above + left",
       "MinimumPathSum": "State = minimum suffix cost from (i,j)\ncurrent cell + min(down, right)\ncache only by row and column",
-      "Triangle": "State = minimum suffix from (row,col)\nchoose next-row col or col+1\ncurrent value + cheaper child"
+      "Triangle": "State = minimum suffix from (row,col)\nchoose next-row col or col+1\ncurrent value + cheaper child",
+      "CherryPickUpII": "State = row + both robot columns\ncollect one cell if columns meet\ntry all 3 × 3 next-move pairs\ncache the best suffix"
 };
 
     const solvedOrder = [
@@ -2284,7 +2371,8 @@
       "UniquePaths",
       "UniquePathsII",
       "MinimumPathSum",
-      "Triangle"
+      "Triangle",
+      "CherryPickUpII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

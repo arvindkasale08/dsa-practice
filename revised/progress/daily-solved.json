@@ -548,10 +548,11 @@
     },
     {
       "date": "2026-09-11",
-      "solved": 2,
+      "solved": 3,
       "cardsSynced": [
         "dynamicprogramming/MinimumPathSum",
-        "dynamicprogramming/Triangle"
+        "dynamicprogramming/Triangle",
+        "dynamicprogramming/CherryPickUpII"
       ],
       "notes": ""
     }
