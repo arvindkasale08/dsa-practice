@@ -2033,6 +2033,80 @@
                         "skeleton": "seed top-left\nfill first row and column cumulatively\nfor each interior cell\n  dp[i][j] = grid[i][j] + min(above,left)\nreturn dp[m-1][n-1]"
                   }
             ]
+      },
+      {
+            "name": "Triangle",
+            "source": "../com/arvind/revision/dynamicprogramming/Triangle.java",
+            "label": "Choose down or down-right",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/triangle/",
+            "description": "Given a number triangle, start at its top and move to either the same column or the next column in each following row. Return the minimum sum from top to bottom.",
+            "time": "Rec O(2^m) · Memo/Tab O(m²)",
+            "space": "Memo O(m²) + O(m) stack · Tab O(m²)",
+            "timeWhy": "Recursion branches twice per row and repeats overlapping cells. Memoization or tabulation computes each of the triangle's O(m²) cells once.",
+            "structures": "List<List<Integer>>, recursion stack, 2D memo, 2D DP table",
+            "input": "triangle = [[2],[3,4],[6,5,7],[4,1,8,3]]",
+            "output": "11",
+            "recognize": "When each row offers exactly two adjacent descendants and the answer is the cheapest top-to-bottom path.",
+            "variantLens": "Unlike Minimum Path Sum's right/down rectangle, Triangle always moves to the next row: (row+1,col) or (row+1,col+1).",
+            "visual": [
+                  [
+                        "2"
+                  ],
+                  [
+                        "↙ 3",
+                        "4 ↘"
+                  ],
+                  [
+                        "6",
+                        "5",
+                        "7"
+                  ]
+            ],
+            "visualText": "From (row,col), draw two arrows into the next row: straight down to col and diagonally down-right to col+1. Add the current number to the cheaper suffix.",
+            "core": "minTotal(row,col) = triangle[row][col] + min(minTotal(row+1,col), minTotal(row+1,col+1)).",
+            "bruteForce": "The implemented recursion explores both descendants at every row. It is correct but rebuilds the same interior-cell suffixes exponentially.",
+            "alternates": [
+                  "Bottom-up tabulation can start from the last row and fold upward without special boundary sentinels.",
+                  "Reuse one array initialized from the last row for O(m) auxiliary space."
+            ],
+            "gotchas": [
+                  "The two children are (row+1,col) and (row+1,col+1), not left/right in the same row.",
+                  "Using -1 as the unknown memo marker fails to cache states whose valid minimum is -1; use Integer[][] null or a visited array when negatives are allowed.",
+                  "Choosing the smaller immediate child greedily is unsafe because its remaining suffix may be more expensive."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "minTotal(row,col): minimum sum from this triangle cell to the bottom",
+                        "base": "row >= number of rows → 0; the source also guards an invalid column with INF",
+                        "transition": "Current value + min(next row same column, next row next column)",
+                        "time": "O(2^m)",
+                        "space": "O(m) call stack",
+                        "skeleton": "solve(row,col)\n  if row == m: return 0\n  down = solve(row+1,col)\n  diagonal = solve(row+1,col+1)\n  return value(row,col) + min(down,diagonal)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented; -1 sentinel caveat",
+                        "state": "dp[row][col]: cached minimum sum from this cell to the bottom",
+                        "base": "row >= m → 0; invalid column → INF",
+                        "transition": "Return cached value; otherwise store current value plus the cheaper child",
+                        "time": "O(m²) when every valid value is distinguishable from the unknown marker",
+                        "space": "O(m²) memo + O(m) stack",
+                        "skeleton": "solve(row,col,dp)\n  if past bottom: return 0\n  if cached: return dp[row][col]\n  dp[row][col] = value + min(down,diagonal)\n  return dp[row][col]"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[row][col]: minimum sum from this cell to the bottom",
+                        "base": "Copy the triangle's final row into dp",
+                        "transition": "dp[row][col] = value + min(dp[row+1][col], dp[row+1][col+1])",
+                        "time": "O(m²)",
+                        "space": "O(m²), reducible to O(m)",
+                        "skeleton": "copy bottom row\nfor row from m-2 down to 0\n  for col from 0 through row\n    dp[row][col] = value + min(below,below-right)\nreturn dp[0][0]"
+                  }
+            ]
       }
 ];
 
@@ -2166,6 +2240,16 @@
                   "Add the current cost to the minimum of down and right."
             ],
             "skeleton": "cost(i,j) = grid[i][j] + min(cost(i+1,j), cost(i,j+1))\ndestination = its cell cost\noutside = INF"
+      },
+      "Triangle": {
+            "prompt": "Before reading: which two cells can follow (row,col), and what should the memo state return?",
+            "steps": [
+                  "Use row and column as the state.",
+                  "Move only to the same or next column of the following row.",
+                  "Add the current value to the cheaper complete suffix.",
+                  "Cache by cell, or start from the bottom row and fold upward."
+            ],
+            "skeleton": "cost(row,col) = value(row,col) + min(\n  cost(row+1,col),\n  cost(row+1,col+1)\n)"
       }
 };
 
@@ -2182,7 +2266,8 @@
       "PaintHouse": "State = house index + previous color\nskip the previous color\nadd each allowed cost\nkeep the minimum path",
       "UniquePaths": "State = paths at grid cell (i,j)\nrecursion goes down + right\ntabulation adds above + left",
       "UniquePathsII": "State = paths at open cell (i,j)\nobstacle → 0 paths\nrecursion goes down + right\ntabulation adds above + left",
-      "MinimumPathSum": "State = minimum suffix cost from (i,j)\ncurrent cell + min(down, right)\ncache only by row and column"
+      "MinimumPathSum": "State = minimum suffix cost from (i,j)\ncurrent cell + min(down, right)\ncache only by row and column",
+      "Triangle": "State = minimum suffix from (row,col)\nchoose next-row col or col+1\ncurrent value + cheaper child"
 };
 
     const solvedOrder = [
@@ -2198,7 +2283,8 @@
       "PaintHouse",
       "UniquePaths",
       "UniquePathsII",
-      "MinimumPathSum"
+      "MinimumPathSum",
+      "Triangle"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
