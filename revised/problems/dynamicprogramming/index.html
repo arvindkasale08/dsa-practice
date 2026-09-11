@@ -1956,6 +1956,83 @@
                         "skeleton": "seed start\npropagate first row and column\nfor each interior cell\n  if blocked: dp[i][j] = 0\n  else: dp[i][j] = above + left\nreturn dp[m-1][n-1]"
                   }
             ]
+      },
+      {
+            "name": "MinimumPathSum",
+            "source": "../com/arvind/revision/dynamicprogramming/MinimumPathSum.java",
+            "label": "Add this cell to the cheaper suffix",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/minimum-path-sum/",
+            "description": "Given a grid of non-negative costs, move only right or down from the top-left to the bottom-right and return the smallest possible sum of visited cells.",
+            "time": "Rec O(2^(m+n)) · Memo/Tab O(mn)",
+            "space": "Memo/Tab O(mn) · Rec stack O(m+n)",
+            "timeWhy": "Plain recursion recomputes suffixes from the same cells. Memoization solves each cell once; tabulation would also fill each cell once.",
+            "structures": "recursion stack, 2D memo, 2D DP table",
+            "input": "grid = [[1,3,1],[1,5,1],[4,2,1]]",
+            "output": "7",
+            "recognize": "When a grid path is restricted to right/down and every visited cell contributes a cost that must be minimized.",
+            "variantLens": "Unlike Unique Paths, this variant minimizes a weighted path sum instead of counting paths: replace addition of path counts with current cost plus the cheaper neighbor.",
+            "visual": [
+                  [
+                        "1",
+                        "3",
+                        "1"
+                  ],
+                  [
+                        "↓ 1",
+                        "5",
+                        "↓ 1"
+                  ],
+                  [
+                        "4",
+                        "→ 2",
+                        "→ 1"
+                  ]
+            ],
+            "visualText": "The cheapest route is 1 → 1 → 5 → 1 → 1 = 9? Look farther: 1 → 3 → 1 → 1 → 1 = 7. A locally smaller next cell is not enough; compare complete suffix costs.",
+            "core": "Let minCost(i,j) mean the cheapest sum from this cell to the finish. Add grid[i][j] once, then choose the cheaper of moving down or right.",
+            "bruteForce": "The implemented recursion explores every right/down path and keeps the minimum, but repeats the answer for the same cells exponentially.",
+            "alternates": [
+                  "Bottom-up tabulation avoids recursion and can reuse the input grid if mutation is allowed.",
+                  "A one-row DP reduces auxiliary space from O(mn) to O(n)."
+            ],
+            "gotchas": [
+                  "Do not include an accumulated sum in the memoized function unless it is also part of the cache key.",
+                  "An out-of-bounds branch must return a large value so min never selects it.",
+                  "The destination returns its own cell value, not zero."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "The source carries (i,j,sum); conceptually, choose the cheaper complete path from the current cell",
+                        "base": "Outside grid → large sentinel; destination → accumulated sum including destination",
+                        "transition": "Pass sum + grid[i][j] to the down and right branches; return their minimum",
+                        "time": "O(2^(m+n))",
+                        "space": "O(m+n) call stack",
+                        "skeleton": "walk(i,j,sum)\n  if outside: return INF\n  sum += grid[i][j]\n  if destination: return sum\n  return min(walk(down,sum), walk(right,sum))"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][j]: minimum cost from cell (i,j) to the destination",
+                        "base": "Outside grid → large sentinel; destination → grid[i][j]",
+                        "transition": "dp[i][j] = grid[i][j] + min(cost below, cost right)",
+                        "time": "O(mn)",
+                        "space": "O(mn) memo + O(m+n) stack",
+                        "skeleton": "cost(i,j)\n  if outside: return INF\n  if destination: return grid[i][j]\n  if cached: return dp[i][j]\n  dp[i][j] = grid[i][j] + min(cost(i+1,j), cost(i,j+1))"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i][j]: minimum cost from the start to cell (i,j)",
+                        "base": "dp[0][0] = grid[0][0]; initialize first row and column as cumulative sums",
+                        "transition": "dp[i][j] = grid[i][j] + min(dp[i-1][j], dp[i][j-1])",
+                        "time": "O(mn)",
+                        "space": "O(mn), reducible to O(n)",
+                        "skeleton": "seed top-left\nfill first row and column cumulatively\nfor each interior cell\n  dp[i][j] = grid[i][j] + min(above,left)\nreturn dp[m-1][n-1]"
+                  }
+            ]
       }
 ];
 
@@ -2079,6 +2156,16 @@
                   "Seed boundaries from reachability instead of assuming every boundary cell has one path."
             ],
             "skeleton": "if blocked: ways = 0\nelse ways(i,j) = ways(i+1,j) + ways(i,j+1)\ntable view: obstacle ? 0 : above + left"
+      },
+      "MinimumPathSum": {
+            "prompt": "Before reading: what must minCost(i,j) return so that (i,j) alone is a valid memo key?",
+            "steps": [
+                  "Define the memoized state as the minimum suffix cost from (i,j).",
+                  "Return a large sentinel for an invalid branch.",
+                  "At the destination, return that cell's cost.",
+                  "Add the current cost to the minimum of down and right."
+            ],
+            "skeleton": "cost(i,j) = grid[i][j] + min(cost(i+1,j), cost(i,j+1))\ndestination = its cell cost\noutside = INF"
       }
 };
 
@@ -2094,7 +2181,8 @@
       "MinimumJumpsWithFee": "State = minimum fee remaining from stair i\npay fee[i] once\nchoose the cheapest of i+1, i+2, i+3\ndestination is beyond the array",
       "PaintHouse": "State = house index + previous color\nskip the previous color\nadd each allowed cost\nkeep the minimum path",
       "UniquePaths": "State = paths at grid cell (i,j)\nrecursion goes down + right\ntabulation adds above + left",
-      "UniquePathsII": "State = paths at open cell (i,j)\nobstacle → 0 paths\nrecursion goes down + right\ntabulation adds above + left"
+      "UniquePathsII": "State = paths at open cell (i,j)\nobstacle → 0 paths\nrecursion goes down + right\ntabulation adds above + left",
+      "MinimumPathSum": "State = minimum suffix cost from (i,j)\ncurrent cell + min(down, right)\ncache only by row and column"
 };
 
     const solvedOrder = [
@@ -2109,7 +2197,8 @@
       "MinimumJumpsWithFee",
       "PaintHouse",
       "UniquePaths",
-      "UniquePathsII"
+      "UniquePathsII",
+      "MinimumPathSum"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));

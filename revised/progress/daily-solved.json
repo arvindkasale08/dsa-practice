@@ -545,6 +545,14 @@
         "dynamicprogramming/UniquePathsII"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-09-11",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/MinimumPathSum"
+      ],
+      "notes": ""
     }
   ]
 }
