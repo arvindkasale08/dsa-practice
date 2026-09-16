@@ -2183,6 +2183,44 @@
                         "skeleton": "initialize every (c1,c2) in last row\nfor row from rows-2 down to 0\n  for c1 and c2\n    cherries = one-or-two current cells\n    best = -INF\n    for d1 in -1..1\n      for d2 in -1..1\n        if next columns valid\n          best = max(best, dp[row+1][c1+d1][c2+d2])\n    dp[row][c1][c2] = cherries + best\nreturn dp[0][0][cols-1]"
                   }
             ]
+      },
+      {
+            "name": "BestTimeToBuySellStocks",
+            "source": "../com/arvind/revision/dynamicprogramming/BestTimeToBuySellStocks.java",
+            "label": "Sell against the cheapest earlier price",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+            "description": "Given a stock price for each day, choose one day to buy and a later day to sell. Return the maximum possible profit, or zero when no profitable transaction exists.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "timeWhy": "Each price is visited once. The scan retains only the cheapest earlier price and the best profit seen so far.",
+            "structures": "running minimum, running maximum profit",
+            "input": "prices = [7,1,5,3,6,4]",
+            "output": "5",
+            "recognize": "When exactly one ordered buy-before-sell pair is allowed and you need the largest later value minus an earlier value.",
+            "variantLens": "Stock I permits one transaction, so a running minimum is enough. Later stock variants need transaction/holding states and may genuinely require DP.",
+            "visual": [
+                  [
+                        "7",
+                        "1 ← minimum",
+                        "5",
+                        "3",
+                        "6 ← sell",
+                        "4"
+                  ]
+            ],
+            "visualText": "As each possible selling day arrives, compare its price with the cheapest buying price already seen. For the sample, buy at 1 and sell later at 6 for profit 5.",
+            "core": "For each price, update bestProfit with price - minSoFar, then preserve the smallest price for future selling days.",
+            "bruteForce": "Try every buy day with every later sell day and retain the largest positive difference. This is correct but takes O(n²) time.",
+            "alternates": [
+                  "A prefix-minimum array makes the same decision in O(n) time but uses O(n) space.",
+                  "This can be described as space-optimized state tracking, but recursion, memoization, and a DP table add no benefit for the one-transaction variant."
+            ],
+            "gotchas": [
+                  "The buy must occur before the sell; do not independently take the global minimum and maximum.",
+                  "Keep profit initialized to zero so a decreasing array returns zero.",
+                  "Do not sum multiple profitable rises—only one transaction is allowed."
+            ]
       }
 ];
 
@@ -2336,6 +2374,16 @@
                   "Cache the best suffix for every column pair, or fill the same states upward from the last row."
             ],
             "skeleton": "cherries(row,c1,c2) + max over d1,d2 in {-1,0,1} of\n  solve(row+1,c1+d1,c2+d2)"
+      },
+      "BestTimeToBuySellStocks": {
+            "prompt": "Before reading: for today as the selling day, what single fact about all earlier days is sufficient?",
+            "steps": [
+                  "Treat the current price as a possible selling price.",
+                  "Compare it with the cheapest price seen on an earlier day.",
+                  "Keep the largest resulting profit.",
+                  "Update the running minimum for later selling days."
+            ],
+            "skeleton": "minSoFar = prices[0]\nbest = 0\nfor each later price\n  best = max(best, price - minSoFar)\n  minSoFar = min(minSoFar, price)\nreturn best"
       }
 };
 
@@ -2354,7 +2402,8 @@
       "UniquePathsII": "State = paths at open cell (i,j)\nobstacle → 0 paths\nrecursion goes down + right\ntabulation adds above + left",
       "MinimumPathSum": "State = minimum suffix cost from (i,j)\ncurrent cell + min(down, right)\ncache only by row and column",
       "Triangle": "State = minimum suffix from (row,col)\nchoose next-row col or col+1\ncurrent value + cheaper child",
-      "CherryPickUpII": "State = row + both robot columns\ncollect one cell if columns meet\ntry all 3 × 3 next-move pairs\ncache the best suffix"
+      "CherryPickUpII": "State = row + both robot columns\ncollect one cell if columns meet\ntry all 3 × 3 next-move pairs\ncache the best suffix",
+      "BestTimeToBuySellStocks": "For each selling day\nsubtract the cheapest earlier price\nkeep the best single-transaction profit"
 };
 
     const solvedOrder = [
@@ -2372,7 +2421,8 @@
       "UniquePathsII",
       "MinimumPathSum",
       "Triangle",
-      "CherryPickUpII"
+      "CherryPickUpII",
+      "BestTimeToBuySellStocks"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
