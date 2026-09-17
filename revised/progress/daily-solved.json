@@ -566,12 +566,13 @@
     },
     {
       "date": "2026-09-17",
-      "solved": 4,
+      "solved": 5,
       "cardsSynced": [
         "dynamicprogramming/BestTimeToBuyAndSellStockII",
         "dynamicprogramming/BestTimeToBuyAndSellStockIII",
         "dynamicprogramming/BestTimeToBuyAndSellStockIV",
-        "dynamicprogramming/BestTimeToBuySellCooldown"
+        "dynamicprogramming/BestTimeToBuySellCooldown",
+        "dynamicprogramming/BestTimeToBuyAndSellWithFee"
       ],
       "notes": ""
     }
