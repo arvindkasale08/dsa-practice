@@ -2365,6 +2365,140 @@
                         "skeleton": "for i from n-1 down to 0\n  for count from 1 down to 0\n    dp[i][1][count] = max(-price[i] + dp[i+1][0][count], dp[i+1][1][count])\n    dp[i][0][count] = max(price[i] + dp[i+1][1][count+1], dp[i+1][0][count])\nreturn dp[0][1][0]"
                   }
             ]
+      },
+      {
+            "name": "BestTimeToBuyAndSellStockIV",
+            "source": "../com/arvind/revision/dynamicprogramming/BestTimeToBuyAndSellStockIV.java",
+            "label": "Add k to the capped-transaction stock state",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/",
+            "description": "Given daily stock prices and an integer k, return the maximum profit from at most k complete buy-sell transactions. Only one share may be held at a time.",
+            "time": "Rec exponential · Memo/Tab O(n·k)",
+            "space": "Memo/Tab O(n·k) · Rec stack O(n)",
+            "timeWhy": "There are n days, two holding states, and k relevant completed-sale counts; each state performs constant work.",
+            "structures": "recursion stack, int[n][2][k+1] memo, 3D DP table",
+            "input": "k = 2, prices = [3,2,6,5,0,3]",
+            "output": "7",
+            "recognize": "When stock profit allows a variable maximum number of transactions, so the state must remember how many sales are already complete.",
+            "variantLens": "Stock III fixes the limit at two transactions. Stock IV receives k as input, so every count dimension and loop bound must be derived from k.",
+            "visual": [
+                  [
+                        "day i",
+                        "can buy / holding",
+                        "sales 0…k"
+                  ]
+            ],
+            "visualText": "Move one day forward after every choice. Buying keeps the sale count; selling completes one transaction and advances the count.",
+            "core": "State = (day, canBuy, completedSales). Compare acting with waiting, and stop when completedSales reaches k.",
+            "bruteForce": "Recursively try buy, sell, and wait sequences. It is correct but repeats the same day/holding/count states exponentially.",
+            "alternates": [
+                  "If k >= n/2, the transaction cap cannot bind; use the unlimited-transactions Stock II solution in O(n).",
+                  "Use remaining capacity instead of completed sales and decrement it on sell."
+            ],
+            "gotchas": [
+                  "Allocate the count dimension as k + 1, not a fixed size of 3; the current Java memo table fails when k > 2.",
+                  "Increment the count only on sell, because that is when a transaction completes."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "profit(i,canBuy,count): best future profit after count completed sales",
+                        "base": "count == k or i >= n → 0",
+                        "transition": "Buy or wait when empty-handed; sell or wait when holding",
+                        "time": "Exponential",
+                        "space": "O(n) call stack",
+                        "skeleton": "profit(i,canBuy,count)\n  if count == k or end: return 0\n  buy → -price + profit(i+1,holding,count)\n  sell → +price + profit(i+1,canBuy,count+1)\n  return max(valid action,wait)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented (table sizing needs k + 1)",
+                        "state": "dp[i][canBuy][count]",
+                        "base": "count >= k or i >= n → 0",
+                        "transition": "Cache the maximum of the valid action and waiting",
+                        "time": "O(n·2·k) = O(nk)",
+                        "space": "O(n·2·(k+1)) + O(n) stack",
+                        "skeleton": "memo = int[n][2][k+1]\nprofit(i,canBuy,count)\n  handle bases; return cache if present\n  cache max(action,wait)"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i][canBuy][count]: best profit from day i onward",
+                        "base": "dp[n][*][*] = 0 and dp[*][*][k] = 0",
+                        "transition": "Fill days backward and count from k-1 down to 0",
+                        "time": "O(n·2·k)",
+                        "space": "O(n·2·(k+1)), reducible to O(k)",
+                        "skeleton": "for i from n-1 down to 0\n  for count from k-1 down to 0\n    dp[i][1][count] = max(-price[i]+dp[i+1][0][count], dp[i+1][1][count])\n    dp[i][0][count] = max(price[i]+dp[i+1][1][count+1], dp[i+1][0][count])"
+                  }
+            ]
+      },
+      {
+            "name": "BestTimeToBuySellCooldown",
+            "source": "../com/arvind/revision/dynamicprogramming/BestTimeToBuySellCooldown.java",
+            "label": "After selling, skip the next day",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/",
+            "description": "Given daily stock prices, maximize profit with unlimited transactions, but after selling you must wait one full day before buying again. Only one share may be held at a time.",
+            "time": "Rec exponential · Memo/Tab O(n)",
+            "space": "Memo/Tab O(n) · Rec stack O(n)",
+            "timeWhy": "Only day and holding state change, giving 2n memo states with constant work per state.",
+            "structures": "recursion stack, int[n][2] memo, 2-state DP",
+            "input": "prices = [1,2,3,0,2]",
+            "output": "3",
+            "recognize": "When selling creates a mandatory one-day lockout before the next purchase.",
+            "variantLens": "Stock II also permits unlimited transactions, but Cooldown changes the sell transition from day i+1 to day i+2.",
+            "visual": [
+                  [
+                        "buy",
+                        "hold / wait",
+                        "sell",
+                        "cooldown",
+                        "buy again"
+                  ]
+            ],
+            "visualText": "Buying and waiting move one day. Selling jumps two days because the immediately following day is unavailable.",
+            "core": "State = (day, canBuy). The distinctive transition is sell → profit(i+2, canBuy), while every other choice moves to i+1.",
+            "bruteForce": "Try every legal buy, sell, and wait sequence while skipping the cooldown day after each sale. Repeated states make it exponential.",
+            "alternates": [
+                  "Track three iterative states—hold, sold, and rest—for O(1) extra space.",
+                  "Use bottom-up day/canBuy DP with two extra terminal rows so i+2 is always safe."
+            ],
+            "gotchas": [
+                  "After selling recurse to i + 2, not i + 1.",
+                  "Use i >= prices.length as the base because selling can jump past the last index."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "profit(i,canBuy): maximum future profit from day i",
+                        "base": "i >= n → 0",
+                        "transition": "Buy or wait; when holding, sell and jump to i+2 or wait",
+                        "time": "Exponential",
+                        "space": "O(n) call stack",
+                        "skeleton": "canBuy → max(-price[i]+profit(i+1,holding), profit(i+1,canBuy))\nholding → max(price[i]+profit(i+2,canBuy), profit(i+1,holding))"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][canBuy]",
+                        "base": "i >= n → 0",
+                        "transition": "Cache the same buy/wait or sell-with-cooldown/wait recurrence",
+                        "time": "O(n·2) = O(n)",
+                        "space": "O(n·2) memo + O(n) stack",
+                        "skeleton": "if end: return 0\nif cached: return dp[i][canBuy]\ncache max(valid action,wait)"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i][canBuy]: best profit from day i",
+                        "base": "dp[n][*] = dp[n+1][*] = 0",
+                        "transition": "Fill days backward; selling reads day i+2",
+                        "time": "O(n)",
+                        "space": "O(n), reducible to O(1)",
+                        "skeleton": "for i from n-1 down to 0\n  dp[i][1] = max(-price[i]+dp[i+1][0], dp[i+1][1])\n  dp[i][0] = max(price[i]+dp[i+2][1], dp[i+1][0])\nreturn dp[0][1]"
+                  }
+            ]
       }
 ];
 
@@ -2548,6 +2682,26 @@
                   "Stop once two sales are complete, and compare every action with waiting."
             ],
             "skeleton": "state = (i,canBuy,count)\nbuy → (i+1,holding,count)\nsell → (i+1,canBuy,count+1)\nwait → (i+1,same,count)"
+      },
+      "BestTimeToBuyAndSellStockIV": {
+            "prompt": "Before reading: which three state values change, and which one is bounded by k?",
+            "steps": [
+                  "Carry the day, holding state, and completed-sale count.",
+                  "Buying subtracts price without changing count.",
+                  "Selling adds price and advances count.",
+                  "Stop at k sales; size the count dimension from k."
+            ],
+            "skeleton": "state = (i,canBuy,count)\nbuy → (i+1,holding,count)\nsell → (i+1,canBuy,count+1)\nstop when count == k"
+      },
+      "BestTimeToBuySellCooldown": {
+            "prompt": "Before reading: which transition must skip an extra day?",
+            "steps": [
+                  "Carry only the day and whether buying is allowed.",
+                  "Buying moves to the next day while holding.",
+                  "Selling realizes profit and skips the cooldown day.",
+                  "Compare each action with waiting."
+            ],
+            "skeleton": "canBuy → max(-price + nextHolding, wait)\nholding → max(+price + state at i+2, wait)"
       }
 };
 
@@ -2569,7 +2723,9 @@
       "CherryPickUpII": "State = row + both robot columns\ncollect one cell if columns meet\ntry all 3 × 3 next-move pairs\ncache the best suffix",
       "BestTimeToBuySellStocks": "For each selling day\nsubtract the cheapest earlier price\nkeep the best single-transaction profit",
       "BestTimeToBuyAndSellStockII": "State = day + canBuy/holding\nbuy subtracts price; sell adds price\nalways compare with waiting",
-      "BestTimeToBuyAndSellStockIII": "State = day + canBuy + completed sales\nbuy keeps count; sell increments it\nstop after two sales"
+      "BestTimeToBuyAndSellStockIII": "State = day + canBuy + completed sales\nbuy keeps count; sell increments it\nstop after two sales",
+      "BestTimeToBuyAndSellStockIV": "State = day + canBuy + sales up to k\nbuy keeps count; sell increments it\nstop when count reaches k",
+      "BestTimeToBuySellCooldown": "State = day + canBuy/holding\nbuy and wait move to i+1\nsell moves to i+2 for cooldown"
 };
 
     const solvedOrder = [
@@ -2590,7 +2746,9 @@
       "CherryPickUpII",
       "BestTimeToBuySellStocks",
       "BestTimeToBuyAndSellStockII",
-      "BestTimeToBuyAndSellStockIII"
+      "BestTimeToBuyAndSellStockIII",
+      "BestTimeToBuyAndSellStockIV",
+      "BestTimeToBuySellCooldown"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
