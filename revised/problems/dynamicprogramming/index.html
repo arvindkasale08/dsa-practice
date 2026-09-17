@@ -2293,6 +2293,78 @@
                         "skeleton": "dp[n][0] = dp[n][1] = 0\nfor i from n-1 down to 0\n  dp[i][1] = max(-price[i] + dp[i+1][0], dp[i+1][1])\n  dp[i][0] = max(price[i] + dp[i+1][1], dp[i+1][0])\nreturn dp[0][1]"
                   }
             ]
+      },
+      {
+            "name": "BestTimeToBuyAndSellStockIII",
+            "source": "../com/arvind/revision/dynamicprogramming/BestTimeToBuyAndSellStockIII.java",
+            "label": "Track day, holding state, and completed sales",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/",
+            "description": "Given daily stock prices, return the maximum profit using at most two transactions. You may hold only one share at a time, so each new purchase must follow the previous sale.",
+            "time": "Rec exponential · Memo/Tab O(n·2·3)",
+            "space": "Memo/Tab O(n·2·3) · Rec stack O(n)",
+            "timeWhy": "The future depends only on the day, whether buying is allowed, and how many sales are complete. Memoization computes each of these constant-multiple states once.",
+            "structures": "recursion stack, int[n][2][3] memo, 3D DP table",
+            "input": "prices = [2,1,4,5,2,9,7]",
+            "output": "11",
+            "recognize": "When stock transactions are capped, so the holding state alone is insufficient and the number of completed transactions must also be carried.",
+            "variantLens": "Stock II has unlimited transactions and uses (day,canBuy). Stock III caps completed sales at two, adding count as a third state dimension.",
+            "visual": [
+                  [
+                        "day i",
+                        "canBuy / holding",
+                        "sales: 0, 1, 2"
+                  ],
+                  [
+                        "buy: count same",
+                        "wait: count same",
+                        "sell: count + 1"
+                  ]
+            ],
+            "visualText": "Move through days while switching between empty-handed and holding. Only a sale completes a transaction, so increment count on sell—not on buy or wait.",
+            "core": "State = (day,canBuy,count). Buy subtracts price without changing count; sell adds price and increments count; wait preserves both state flags.",
+            "bruteForce": "The implemented recursion explores buy/sell/wait sequences until two sales are complete. It repeats identical day/state/count subproblems exponentially.",
+            "alternates": [
+                  "Use transaction capacity remaining instead of completed count; decrement capacity on each sale.",
+                  "Space-optimize tabulation to two 2×3 layers because each day depends only on day i+1."
+            ],
+            "gotchas": [
+                  "Use count + 1 when selling; count++ passes the old value and mutates the sibling wait branch.",
+                  "Increment the transaction count only on sell, because a transaction completes at sale.",
+                  "Memoize all three changing variables: day, canBuy, and completed-transaction count."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "profit(i,canBuy,count): maximum future profit with count completed sales",
+                        "base": "count == 2 or i >= prices.length → 0",
+                        "transition": "If canBuy, compare buy with wait; otherwise compare sell with wait",
+                        "time": "Exponential",
+                        "space": "O(n) call stack",
+                        "skeleton": "profit(i,canBuy,count)\n  if count == 2 or end: return 0\n  buy: -price + next holding, same count\n  sell: +price + next canBuy, count+1\n  wait: next day, same state\n  return max(valid choices)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][canBuy][count]: cached maximum future profit",
+                        "base": "count >= 2 or i >= prices.length → 0",
+                        "transition": "Return cached state; otherwise store the maximum valid act-or-wait choice",
+                        "time": "O(n·2·3) = O(n)",
+                        "space": "O(n·2·3) memo + O(n) stack",
+                        "skeleton": "profit(i,canBuy,count,dp)\n  handle limit/end bases\n  if cached: return state\n  if canBuy: max(buy,wait)\n  else: max(sell with count+1,wait)\n  cache result"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i][canBuy][count]: maximum profit from day i onward",
+                        "base": "All states at day n are zero; every state with count == 2 is zero",
+                        "transition": "Fill days backward, both holding states, and counts 1 down to 0 using the recursive choices",
+                        "time": "O(n·2·2) = O(n)",
+                        "space": "O(n·2·3), reducible to O(2·3)",
+                        "skeleton": "for i from n-1 down to 0\n  for count from 1 down to 0\n    dp[i][1][count] = max(-price[i] + dp[i+1][0][count], dp[i+1][1][count])\n    dp[i][0][count] = max(price[i] + dp[i+1][1][count+1], dp[i+1][0][count])\nreturn dp[0][1][0]"
+                  }
+            ]
       }
 ];
 
@@ -2466,6 +2538,16 @@
                   "At every state, compare acting with waiting."
             ],
             "skeleton": "canBuy → max(-price + nextHolding, nextCanBuy)\nholding → max(+price + nextCanBuy, nextHolding)"
+      },
+      "BestTimeToBuyAndSellStockIII": {
+            "prompt": "Before reading: which three changing values completely determine all future choices?",
+            "steps": [
+                  "Carry the day, canBuy/holding flag, and completed-sale count.",
+                  "Buying subtracts price and leaves count unchanged.",
+                  "Selling adds price and increments count.",
+                  "Stop once two sales are complete, and compare every action with waiting."
+            ],
+            "skeleton": "state = (i,canBuy,count)\nbuy → (i+1,holding,count)\nsell → (i+1,canBuy,count+1)\nwait → (i+1,same,count)"
       }
 };
 
@@ -2486,7 +2568,8 @@
       "Triangle": "State = minimum suffix from (row,col)\nchoose next-row col or col+1\ncurrent value + cheaper child",
       "CherryPickUpII": "State = row + both robot columns\ncollect one cell if columns meet\ntry all 3 × 3 next-move pairs\ncache the best suffix",
       "BestTimeToBuySellStocks": "For each selling day\nsubtract the cheapest earlier price\nkeep the best single-transaction profit",
-      "BestTimeToBuyAndSellStockII": "State = day + canBuy/holding\nbuy subtracts price; sell adds price\nalways compare with waiting"
+      "BestTimeToBuyAndSellStockII": "State = day + canBuy/holding\nbuy subtracts price; sell adds price\nalways compare with waiting",
+      "BestTimeToBuyAndSellStockIII": "State = day + canBuy + completed sales\nbuy keeps count; sell increments it\nstop after two sales"
 };
 
     const solvedOrder = [
@@ -2506,7 +2589,8 @@
       "Triangle",
       "CherryPickUpII",
       "BestTimeToBuySellStocks",
-      "BestTimeToBuyAndSellStockII"
+      "BestTimeToBuyAndSellStockII",
+      "BestTimeToBuyAndSellStockIII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
