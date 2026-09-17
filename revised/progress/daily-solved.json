@@ -563,6 +563,14 @@
         "dynamicprogramming/BestTimeToBuySellStocks"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-09-17",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/BestTimeToBuyAndSellStockII"
+      ],
+      "notes": ""
     }
   ]
 }

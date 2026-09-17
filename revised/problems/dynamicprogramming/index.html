@@ -2221,6 +2221,78 @@
                   "Keep profit initialized to zero so a decreasing array returns zero.",
                   "Do not sum multiple profitable rises—only one transaction is allowed."
             ]
+      },
+      {
+            "name": "BestTimeToBuyAndSellStockII",
+            "source": "../com/arvind/revision/dynamicprogramming/BestTimeToBuyAndSellStockII.java",
+            "label": "Choose buy, sell, or wait",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/",
+            "description": "Given daily stock prices, complete as many transactions as useful while holding at most one share at a time. Return the maximum total profit.",
+            "time": "Rec exponential · Memo/Tab O(n)",
+            "space": "Memo/Tab O(n) · Rec stack O(n)",
+            "timeWhy": "For each day there are only two meaningful holding states. Memoization or tabulation computes both states once instead of rebuilding the buy/sell decision tree.",
+            "structures": "recursion stack, int[n][2] memo, two-state DP",
+            "input": "prices = [7,1,5,3,6,4]",
+            "output": "7",
+            "recognize": "When unlimited transactions are allowed but a new buy is permitted only after the currently held stock is sold.",
+            "variantLens": "Stock I allows one transaction and needs only a running minimum. Stock II allows unlimited transactions, so the DP state tracks whether buying is currently allowed.",
+            "visual": [
+                  [
+                        "day i",
+                        "can buy",
+                        "holding"
+                  ],
+                  [
+                        "wait → i+1",
+                        "buy: -price",
+                        "sell: +price"
+                  ]
+            ],
+            "visualText": "At each day, your state is either empty-handed or holding one stock. From either state, act or wait, then advance one day.",
+            "core": "State = (day,canBuy). Buying subtracts today's price and switches to holding; selling adds today's price and switches back to can-buy; waiting preserves the state.",
+            "bruteForce": "The implemented recursion explores every valid sequence of buy, sell, and wait decisions. It is correct but repeats the same day/holding situations exponentially.",
+            "alternates": [
+                  "Greedy can sum every positive adjacent rise in O(n) time and O(1) space because unlimited transactions let each rising segment be captured independently.",
+                  "Space-optimize tabulation to two values: nextCanBuy and nextHolding."
+            ],
+            "gotchas": [
+                  "Do not memoize the purchase-day index in an n×n table; whether you hold a stock is the only needed second state.",
+                  "Buying subtracts the price and selling adds it, which removes the need to remember the purchase price.",
+                  "After buying, you cannot buy again until selling; after selling, you cannot sell again until buying."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented with purchase-index state",
+                        "state": "solve(i,bought): maximum future profit where bought is -1 or the held stock's purchase index",
+                        "base": "i >= prices.length → 0",
+                        "transition": "When empty, buy or wait; when holding, sell or wait",
+                        "time": "Exponential",
+                        "space": "O(n) call stack",
+                        "skeleton": "solve(i,bought)\n  if end: return 0\n  if empty: try buy\n  else: try sell\n  always try wait\n  return max(valid choices)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented with compressed state",
+                        "state": "dp[i][canBuy]: maximum future profit on day i when canBuy is 1 or 0",
+                        "base": "i >= prices.length → 0",
+                        "transition": "canBuy: max(-price + hold-state, wait); holding: max(+price + can-buy-state, wait)",
+                        "time": "O(n)",
+                        "space": "O(n) memo + O(n) recursion stack",
+                        "skeleton": "profit(i,canBuy)\n  if end: return 0\n  if cached: return dp[i][canBuy]\n  if canBuy: best = max(-price[i] + profit(i+1,0), profit(i+1,1))\n  else: best = max(price[i] + profit(i+1,1), profit(i+1,0))\n  cache best"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i][canBuy]: maximum profit obtainable from day i onward",
+                        "base": "dp[n][0] = dp[n][1] = 0",
+                        "transition": "Fill days backward using the same buy/sell/wait choices",
+                        "time": "O(n)",
+                        "space": "O(n), reducible to O(1)",
+                        "skeleton": "dp[n][0] = dp[n][1] = 0\nfor i from n-1 down to 0\n  dp[i][1] = max(-price[i] + dp[i+1][0], dp[i+1][1])\n  dp[i][0] = max(price[i] + dp[i+1][1], dp[i+1][0])\nreturn dp[0][1]"
+                  }
+            ]
       }
 ];
 
@@ -2384,6 +2456,16 @@
                   "Update the running minimum for later selling days."
             ],
             "skeleton": "minSoFar = prices[0]\nbest = 0\nfor each later price\n  best = max(best, price - minSoFar)\n  minSoFar = min(minSoFar, price)\nreturn best"
+      },
+      "BestTimeToBuyAndSellStockII": {
+            "prompt": "Before reading: why does canBuy replace the exact purchase-day index in the memo state?",
+            "steps": [
+                  "Use the day and whether buying is allowed as the complete state.",
+                  "Buying records its cost by subtracting today's price.",
+                  "Selling realizes value by adding today's price.",
+                  "At every state, compare acting with waiting."
+            ],
+            "skeleton": "canBuy → max(-price + nextHolding, nextCanBuy)\nholding → max(+price + nextCanBuy, nextHolding)"
       }
 };
 
@@ -2403,7 +2485,8 @@
       "MinimumPathSum": "State = minimum suffix cost from (i,j)\ncurrent cell + min(down, right)\ncache only by row and column",
       "Triangle": "State = minimum suffix from (row,col)\nchoose next-row col or col+1\ncurrent value + cheaper child",
       "CherryPickUpII": "State = row + both robot columns\ncollect one cell if columns meet\ntry all 3 × 3 next-move pairs\ncache the best suffix",
-      "BestTimeToBuySellStocks": "For each selling day\nsubtract the cheapest earlier price\nkeep the best single-transaction profit"
+      "BestTimeToBuySellStocks": "For each selling day\nsubtract the cheapest earlier price\nkeep the best single-transaction profit",
+      "BestTimeToBuyAndSellStockII": "State = day + canBuy/holding\nbuy subtracts price; sell adds price\nalways compare with waiting"
 };
 
     const solvedOrder = [
@@ -2422,7 +2505,8 @@
       "MinimumPathSum",
       "Triangle",
       "CherryPickUpII",
-      "BestTimeToBuySellStocks"
+      "BestTimeToBuySellStocks",
+      "BestTimeToBuyAndSellStockII"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
