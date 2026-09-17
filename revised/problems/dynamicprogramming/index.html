@@ -2566,6 +2566,140 @@
                         "skeleton": "for i from n-1 down to 0\n  dp[i][1] = max(-price[i]+dp[i+1][0], dp[i+1][1])\n  dp[i][0] = max(price[i]-fee+dp[i+1][1], dp[i+1][0])\nreturn dp[0][1]"
                   }
             ]
+      },
+      {
+            "name": "SubsetSumEqualsTarget",
+            "source": "../com/arvind/revision/dynamicprogramming/SubsetSumEqualsTarget.java",
+            "label": "Pick or skip each value against the remaining target",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given positive integers and a target k, return whether some subset of the elements sums exactly to k. Selected elements need not be contiguous, and their order does not affect the sum.",
+            "time": "Rec O(2ⁿ) · Memo/Tab O(nk)",
+            "space": "Memo/Tab O(nk) · Rec stack O(n)",
+            "timeWhy": "The memo state contains an index and remaining target, producing at most n·(k+1) distinct states.",
+            "structures": "recursion stack, Boolean[n][k+1] memo, boolean DP table",
+            "input": "arr = [1,2,7,1,5], k = 10",
+            "output": "true",
+            "recognize": "When each positive value may be used at most once and the question asks whether any selection reaches one exact sum.",
+            "variantLens": "This is the general target form. Partition Equal Subset Sum first checks that the total is even, then uses total/2 as this target.",
+            "visual": [
+                  [
+                        "i",
+                        "skip → k",
+                        "pick → k−arr[i]",
+                        "target 0 ✓"
+                  ]
+            ],
+            "visualText": "At each index branch into skipping the value or taking it once. Reaching remaining target zero means a valid subset has been formed.",
+            "core": "State = (index, remainingTarget). Return skip OR pick, and cache that boolean result.",
+            "bruteForce": "Enumerate all 2ⁿ subsets through pick/skip recursion and test whether one sums to k. The stress test demonstrates this repeated work.",
+            "alternates": [
+                  "Use a one-dimensional boolean table updated from k downward for O(k) space.",
+                  "A HashSet of reachable sums is useful when the target range is sparse or values are not limited to small positives."
+            ],
+            "gotchas": [
+                  "The memo target dimension needs k + 1 slots for indices 0 through k.",
+                  "Update one-dimensional tabulation from right to left so one array value is not reused in the same iteration."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "possible(i,k): can indices i onward form remaining target k?",
+                        "base": "k == 0 → true; k < 0 or i == n → false",
+                        "transition": "Skip arr[i], or pick it once and reduce k",
+                        "time": "O(2ⁿ)",
+                        "space": "O(n) call stack",
+                        "skeleton": "possible(i,k)\n  if k == 0: true\n  if k < 0 or end: false\n  return possible(i+1,k) OR possible(i+1,k-arr[i])"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][k]: cached answer for index i and remaining target k",
+                        "base": "Same recursion bases, checked before memo access",
+                        "transition": "Cache skip OR pick",
+                        "time": "O(nk)",
+                        "space": "O(nk) memo + O(n) stack",
+                        "skeleton": "if base: return result\nif dp[i][k] known: return it\ndp[i][k] = skip OR pick"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[i][target]: whether the first i values can form target",
+                        "base": "dp[i][0] = true for every i",
+                        "transition": "Without current value use dp[i-1][target]; with it use dp[i-1][target-arr[i-1]]",
+                        "time": "O(nk)",
+                        "space": "O(nk), reducible to O(k)",
+                        "skeleton": "dp[0][0] = true\nfor i from 1 to n\n  dp[i][0] = true\n  for target from 1 to k\n    dp[i][target] = dp[i-1][target] OR (value <= target AND dp[i-1][target-value])\nreturn dp[n][k]"
+                  }
+            ]
+      },
+      {
+            "name": "PartitionEqualSubsetSum",
+            "source": "../com/arvind/revision/dynamicprogramming/PartitionEqualSubsetSum.java",
+            "label": "Reduce equal partition to subset target total/2",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/partition-equal-subset-sum/",
+            "description": "Given positive integers, return whether they can be divided into two subsets having equal sums. Every element must belong to exactly one of the two subsets.",
+            "time": "Rec O(2ⁿ) · Memo/Tab O(n·sum)",
+            "space": "Memo/Tab O(n·sum) · Rec stack O(n)",
+            "timeWhy": "After rejecting an odd total, the problem becomes subset sum with target total/2 and at most n·target states.",
+            "structures": "stream sum, recursion stack, Boolean memo, boolean DP table",
+            "input": "nums = [1,5,11,5]",
+            "output": "true",
+            "recognize": "When all numbers must be split into two groups with equal totals; one group summing to half automatically leaves the other half.",
+            "variantLens": "Unlike general Subset Sum, the target is not provided: compute total/2, and immediately reject an odd total.",
+            "visual": [
+                  [
+                        "total",
+                        "odd → false",
+                        "even → target total/2",
+                        "subset found ✓"
+                  ]
+            ],
+            "visualText": "Two equal buckets can exist only for an even total. Finding one half is sufficient because every unchosen value forms the other half.",
+            "core": "If total is even, run the same pick/skip subset-sum recurrence for target total/2.",
+            "bruteForce": "Assign every number to the left or right subset and compare totals. This examines up to 2ⁿ assignments.",
+            "alternates": [
+                  "Use one-dimensional right-to-left boolean DP for O(total/2) space.",
+                  "A bitset can shift all reachable sums efficiently when the language offers compact bit operations."
+            ],
+            "gotchas": [
+                  "Reject an odd total before creating or exploring the target states.",
+                  "The memo only needs target + 1 columns; allocating sum + 1 works but uses about twice the required space."
+            ],
+            "dpStages": [
+                  {
+                        "name": "Recursion",
+                        "status": "Implemented",
+                        "state": "possible(i,k), where k starts at total/2",
+                        "base": "k == 0 → true; k < 0 or i == n → false",
+                        "transition": "Skip nums[i] OR pick it and reduce k",
+                        "time": "O(2ⁿ)",
+                        "space": "O(n) stack",
+                        "skeleton": "if total odd: false\nreturn possible(0,total/2)"
+                  },
+                  {
+                        "name": "Memoization",
+                        "status": "Implemented",
+                        "state": "dp[i][k]",
+                        "base": "Same recursion bases",
+                        "transition": "Cache skip OR pick for each index/remaining-target pair",
+                        "time": "O(n·total/2) = O(n·sum)",
+                        "space": "Current code O(n·sum); O(n·sum/2) is sufficient, plus stack",
+                        "skeleton": "target = total/2\nmemoize possible(i,target)"
+                  },
+                  {
+                        "name": "Tabulation",
+                        "status": "Card-supplied; not yet implemented",
+                        "state": "dp[target]: whether processed values can form target",
+                        "base": "dp[0] = true",
+                        "transition": "For each value, update targets downward to prevent reuse",
+                        "time": "O(n·total/2)",
+                        "space": "O(total/2)",
+                        "skeleton": "dp[0] = true\nfor value in nums\n  for target from half down to value\n    dp[target] |= dp[target-value]\nreturn dp[half]"
+                  }
+            ]
       }
 ];
 
@@ -2779,6 +2913,26 @@
                   "Compare every action with waiting."
             ],
             "skeleton": "canBuy → max(-price + nextHolding, wait)\nholding → max(price - fee + nextCanBuy, wait)"
+      },
+      "SubsetSumEqualsTarget": {
+            "prompt": "Before reading: what do i and remaining target represent, and what are the two branches?",
+            "steps": [
+                  "Carry the current index and remaining target.",
+                  "Skip the value without changing the target.",
+                  "Pick the value once and subtract it from the target.",
+                  "Return true as soon as the remaining target reaches zero."
+            ],
+            "skeleton": "possible(i,k) = possible(i+1,k) OR possible(i+1,k-arr[i])\nbase: k == 0 → true"
+      },
+      "PartitionEqualSubsetSum": {
+            "prompt": "Before reading: why does finding a subset worth total/2 prove an equal partition exists?",
+            "steps": [
+                  "Add all values and reject an odd total.",
+                  "Set the subset-sum target to total/2.",
+                  "Use the same pick-or-skip recurrence.",
+                  "A found half leaves the unchosen values as the other half."
+            ],
+            "skeleton": "if total is odd: false\nhalf = total / 2\nreturn subsetSum(nums,half)"
       }
 };
 
@@ -2803,7 +2957,9 @@
       "BestTimeToBuyAndSellStockIII": "State = day + canBuy + completed sales\nbuy keeps count; sell increments it\nstop after two sales",
       "BestTimeToBuyAndSellStockIV": "State = day + canBuy + sales up to k\nbuy keeps count; sell increments it\nstop when count reaches k",
       "BestTimeToBuySellCooldown": "State = day + canBuy/holding\nbuy and wait move to i+1\nsell moves to i+2 for cooldown",
-      "BestTimeToBuyAndSellWithFee": "State = day + canBuy/holding\nbuy subtracts price\nsell adds price minus one fee\ncompare both with waiting"
+      "BestTimeToBuyAndSellWithFee": "State = day + canBuy/holding\nbuy subtracts price\nsell adds price minus one fee\ncompare both with waiting",
+      "SubsetSumEqualsTarget": "State = index + remaining target\nskip keeps target\npick subtracts arr[i]\ncombine with OR",
+      "PartitionEqualSubsetSum": "Odd total → impossible\neven total → target total/2\nrun pick-or-skip subset sum"
 };
 
     const solvedOrder = [
@@ -2827,7 +2983,9 @@
       "BestTimeToBuyAndSellStockIII",
       "BestTimeToBuyAndSellStockIV",
       "BestTimeToBuySellCooldown",
-      "BestTimeToBuyAndSellWithFee"
+      "BestTimeToBuyAndSellWithFee",
+      "SubsetSumEqualsTarget",
+      "PartitionEqualSubsetSum"
 ];
 
     cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
