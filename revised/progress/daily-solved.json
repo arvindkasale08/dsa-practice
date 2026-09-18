@@ -577,6 +577,14 @@
         "dynamicprogramming/PartitionEqualSubsetSum"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-09-18",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/OIKnapsack"
+      ],
+      "notes": ""
     }
   ]
 }

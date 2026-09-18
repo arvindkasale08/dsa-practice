@@ -2700,6 +2700,87 @@
                         "skeleton": "dp[0] = true\nfor value in nums\n  for target from half down to value\n    dp[target] |= dp[target-value]\nreturn dp[half]"
                   }
             ]
+      },
+      {
+            "name": "ZeroOneKnapsackTheory",
+            "source": "https://www.designgurus.io/course-play/grokking-the-coding-interview/doc/introduction-to-01-knapsack-pattern",
+            "label": "Take each item once or leave it",
+            "difficulty": "Theory",
+            "leetcode": "",
+            "description": "0/1 Knapsack gives every item exactly two choices: take it once if it fits, or skip it. The goal is to maximize total value without exceeding capacity. For capacity 8 with weights [2,3,4,5] and values [4,5,6,10], the best load is B + D with weight 8 and value 15.",
+            "time": "Rec O(2ⁿ) · Memo/Tab O(n·capacity)",
+            "space": "Memo/Tab O(n·capacity) · Rec stack O(n)",
+            "timeWhy": "The reusable DP state is the current item index plus remaining capacity. Each state compares only take and skip.",
+            "structures": "recursion stack, 2D memo, DP table",
+            "input": "capacity 8; items A(2,4), B(3,5), C(4,6), D(5,10)",
+            "output": "B + D, total value 15",
+            "recognize": "When each item can be used at most once, each item has a cost or weight, and you must maximize value under a fixed capacity.",
+            "visual": [
+                  [
+                        "item i",
+                        "skip → same capacity"
+                  ],
+                  [
+                        "take if it fits",
+                        "value + next smaller capacity"
+                  ],
+                  [
+                        "answer",
+                        "max(skip, take)"
+                  ]
+            ],
+            "visualText": "Picture a bag with eight empty weight slots. At every item, either place that one item into the remaining slots or walk past it forever.",
+            "core": "State = (item index, remaining capacity). Skip keeps capacity unchanged; take adds value and reduces capacity. Keep the better branch.",
+            "bruteForce": "The raw decision tree explores take and skip for every item, producing up to 2ⁿ subsets.",
+            "alternates": [
+                  "Memoization caches repeated index/capacity states; tabulation fills the same grid bottom-up.",
+                  "A one-dimensional table updated from high capacity to low reduces space to O(capacity)."
+            ],
+            "gotchas": [
+                  "Greedy by highest value or best value/weight ratio is not generally safe for 0/1 Knapsack.",
+                  "Update one-dimensional tabulation downward; upward iteration turns it into unbounded knapsack."
+            ]
+      },
+      {
+            "name": "OIKnapsack",
+            "source": "../com/arvind/revision/dynamicprogramming/OIKnapsack.java",
+            "label": "Pick once or skip",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "description": "Given one profit and weight for each item, choose a subset whose total weight does not exceed capacity and whose total profit is as large as possible. Every item may be used at most once.",
+            "time": "Rec O(2ⁿ) · Memo O(n·capacity) · Tab O(n·capacity)",
+            "space": "Memo O(n·capacity) + O(n) stack · Tab O(n·capacity)",
+            "timeWhy": "The source implements recursion and memoization over (item index, remaining capacity). Tabulation is summarized in the card.",
+            "structures": "recursion stack, int[n][capacity+1] memo, DP table",
+            "input": "profits=[1,6,10,16], weights=[1,2,3,5], capacity=6",
+            "output": "17",
+            "recognize": "When each item has a weight and value, can be chosen at most once, and the goal is maximum value under a capacity.",
+            "visual": [
+                  [
+                        "item i",
+                        "skip → same capacity"
+                  ],
+                  [
+                        "item fits",
+                        "pick → add profit, reduce capacity"
+                  ],
+                  [
+                        "answer",
+                        "max(pick, skip)"
+                  ]
+            ],
+            "visualText": "At each item, close one of two doors forever: leave it behind, or place that single item in the remaining bag space.",
+            "core": "State = (i, capacity). Skip moves to i+1 unchanged. If the item fits, pick adds profits[i] and moves to i+1 with reduced capacity. Keep the larger result.",
+            "bruteForce": "Implemented recursion explores both pick and skip for every item, so it can visit about 2ⁿ branches.",
+            "alternates": [
+                  "Implemented memoization caches dp[i][capacity], reducing the repeated work to O(n·capacity).",
+                  "Card-supplied tabulation: fill dp from the last item upward; for each capacity, store max(skip, profit + remaining-capacity answer)."
+            ],
+            "gotchas": [
+                  "Advance to i+1 after picking so an item cannot be reused.",
+                  "Only evaluate the pick branch when weights[i] <= capacity.",
+                  "For 1D tabulation, iterate capacity downward; upward iteration changes it into unbounded knapsack."
+            ]
       }
 ];
 
@@ -2933,6 +3014,26 @@
                   "A found half leaves the unchosen values as the other half."
             ],
             "skeleton": "if total is odd: false\nhalf = total / 2\nreturn subsetSum(nums,half)"
+      },
+      "ZeroOneKnapsackTheory": {
+            "prompt": "Before reading: what two choices exist for each item, and which state value changes only when the item is taken?",
+            "steps": [
+                  "Carry the item index and remaining capacity.",
+                  "Skip the current item and preserve capacity.",
+                  "Take it once only when its weight fits, then reduce capacity.",
+                  "Keep the branch with greater total value."
+            ],
+            "skeleton": "best(i,capacity) = max(\n  best(i+1,capacity),\n  value[i] + best(i+1,capacity-weight[i]) if it fits\n)"
+      },
+      "OIKnapsack": {
+            "prompt": "Before reading: what do i and capacity mean, and where do the pick and skip branches move?",
+            "steps": [
+                  "Recursion: from (i, capacity), branch to skip and to pick when the item fits.",
+                  "Memoization: cache the maximum profit for every repeated (i, capacity) state.",
+                  "Tabulation: initialize the no-items row to zero and fill item/capacity states bottom-up.",
+                  "Return the larger of the pick and skip totals."
+            ],
+            "skeleton": "best(i,c) = best(i+1,c)\nif weight[i] <= c\n  best = max(best, profit[i] + best(i+1,c-weight[i]))\ncache (i,c) or fill the same table bottom-up"
       }
 };
 
@@ -2959,7 +3060,9 @@
       "BestTimeToBuySellCooldown": "State = day + canBuy/holding\nbuy and wait move to i+1\nsell moves to i+2 for cooldown",
       "BestTimeToBuyAndSellWithFee": "State = day + canBuy/holding\nbuy subtracts price\nsell adds price minus one fee\ncompare both with waiting",
       "SubsetSumEqualsTarget": "State = index + remaining target\nskip keeps target\npick subtracts arr[i]\ncombine with OR",
-      "PartitionEqualSubsetSum": "Odd total → impossible\neven total → target total/2\nrun pick-or-skip subset sum"
+      "PartitionEqualSubsetSum": "Odd total → impossible\neven total → target total/2\nrun pick-or-skip subset sum",
+      "ZeroOneKnapsackTheory": "State = item index + remaining capacity\nskip keeps capacity\ntake once reduces capacity\nkeep the larger value",
+      "OIKnapsack": "State = item index + remaining capacity\nskip keeps capacity\npick once adds profit and reduces capacity\ncache max(pick, skip)"
 };
 
     const solvedOrder = [
@@ -2985,15 +3088,21 @@
       "BestTimeToBuySellCooldown",
       "BestTimeToBuyAndSellWithFee",
       "SubsetSumEqualsTarget",
-      "PartitionEqualSubsetSum"
+      "PartitionEqualSubsetSum",
+      "ZeroOneKnapsackTheory",
+      "OIKnapsack"
 ];
 
-    cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
+    const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
+    cards.sort((a, b) => {
+      const theoryDifference = Number(isTheoryCard(b)) - Number(isTheoryCard(a));
+      return theoryDifference || solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name);
+    });
     cards.forEach(card => Object.assign(card, recallDetails[card.name], {
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
-      card.isTheory = card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
+      card.isTheory = isTheoryCard(card);
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
     });

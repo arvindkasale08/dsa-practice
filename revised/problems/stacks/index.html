@@ -2575,12 +2575,16 @@
       "RemoveKDigits"
     ];
 
-    cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
+    const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
+    cards.sort((a, b) => {
+      const theoryDifference = Number(isTheoryCard(b)) - Number(isTheoryCard(a));
+      return theoryDifference || solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name);
+    });
     cards.forEach(card => Object.assign(card, recallDetails[card.name], {
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
-      card.isTheory = card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
+      card.isTheory = isTheoryCard(card);
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
     });
