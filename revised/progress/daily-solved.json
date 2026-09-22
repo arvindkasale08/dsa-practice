@@ -585,6 +585,14 @@
         "dynamicprogramming/OIKnapsack"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-09-22",
+      "solved": 1,
+      "cardsSynced": [
+        "pod/ReverseDegreeOfString"
+      ],
+      "notes": ""
     }
   ]
 }

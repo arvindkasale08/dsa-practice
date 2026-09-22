@@ -1384,6 +1384,45 @@
                   "At n = 1000, the answer is one—not zero.",
                   "The one-comma shortcut relies on n <= 100,000."
             ]
+      },
+      {
+            "name": "ReverseDegreeOfString",
+            "source": "../com/arvind/revision/pod/ReverseDegreeOfString.java",
+            "label": "Multiply reverse-alphabet rank by string position",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/reverse-degree-of-a-string/",
+            "description": "For a lowercase string, give each letter its position in the reversed alphabet (a=26 through z=1). Multiply that by its one-based position in the string and return the sum.",
+            "time": "O(n)",
+            "space": "O(1)",
+            "timeWhy": "One pass visits each character once and uses only a running total.",
+            "structures": "String, integer accumulator",
+            "input": "s = \"abc\"",
+            "output": "148",
+            "recognize": "When every character contributes independently according to its letter rank and index.",
+            "visual": [
+                  [
+                        "a",
+                        "26 × 1 = 26"
+                  ],
+                  [
+                        "b",
+                        "25 × 2 = 50"
+                  ],
+                  [
+                        "c",
+                        "24 × 3 = 72"
+                  ]
+            ],
+            "visualText": "Read each letter through a reversed alphabet ruler, then scale its rank by its place in the string.",
+            "core": "At zero-based index i, reverse rank is 'z' - s[i] + 1 (equivalently 123 - s[i] in the Java source); add rank × (i+1).",
+            "bruteForce": "Build or look up a reversed alphabet table for each letter, then multiply by each position. This is still O(n), but the direct character arithmetic is simpler.",
+            "alternates": [
+                  "A 26-entry lookup table can replace the character arithmetic, with O(1) fixed extra space."
+            ],
+            "gotchas": [
+                  "Both the reversed alphabet rank and string position are one-based.",
+                  "The source assumes lowercase English letters, matching the problem constraints."
+            ]
       }
 ];
 
@@ -1460,6 +1499,16 @@
                   "Return zero when that interval is empty."
             ],
             "skeleton": "if n < 1000: return 0\nreturn n - 1000 + 1"
+      },
+      "ReverseDegreeOfString": {
+            "prompt": "Before reading: how do you get a letter's reversed rank without building another alphabet?",
+            "steps": [
+                  "Scan the string left to right.",
+                  "Convert each lowercase letter to reversed rank: 'z' - c + 1.",
+                  "Multiply by its one-based string position i+1.",
+                  "Add the contribution to the running total."
+            ],
+            "skeleton": "sum = 0\nfor i from 0 to n-1\n  rank = 'z' - s[i] + 1\n  sum += rank * (i+1)\nreturn sum"
       }
 };
 
@@ -1470,7 +1519,8 @@
       "SmallestMissingMultipleOfK": "Put nums in a seen set\nprobe k, 2k, 3k, ...\nfirst absent multiple is the answer",
       "RemovingMinMaxFromArray": "Mark min and max indices\ntry both-left, both-right, and split ends\nreturn the smallest deletion count",
       "SmallestStableIndexII": "Precompute suffix minimums\ncarry the prefix maximum forward\nfirst prefixMax - suffixMin[i] ≤ k is the answer",
-      "CountCommasInRange": "Below 1,000 → zero commas\n1,000 through n → one each\nanswer = n - 999"
+      "CountCommasInRange": "Below 1,000 → zero commas\n1,000 through n → one each\nanswer = n - 999",
+      "ReverseDegreeOfString": "At index i, rank = 'z' - s[i] + 1\nadd rank × (i+1) to the total"
 };
 
     const solvedOrder = [
@@ -1480,15 +1530,20 @@
       "SmallestMissingMultipleOfK",
       "RemovingMinMaxFromArray",
       "SmallestStableIndexII",
-      "CountCommasInRange"
+      "CountCommasInRange",
+      "ReverseDegreeOfString"
 ];
 
-    cards.sort((a, b) => solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name));
+    const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
+    cards.sort((a, b) => {
+      const theoryDifference = Number(isTheoryCard(b)) - Number(isTheoryCard(a));
+      return theoryDifference || solvedOrder.indexOf(a.name) - solvedOrder.indexOf(b.name);
+    });
     cards.forEach(card => Object.assign(card, recallDetails[card.name], {
       definingMove: definingMoves[card.name]
     }));
     cards.forEach((card, index) => {
-      card.isTheory = card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
+      card.isTheory = isTheoryCard(card);
       card.problemNo = index + 1;
       card.problemLabel = `#${String(index + 1).padStart(2, "0")}`;
     });
