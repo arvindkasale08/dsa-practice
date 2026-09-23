@@ -2781,6 +2781,48 @@
                   "Only evaluate the pick branch when weights[i] <= capacity.",
                   "For 1D tabulation, iterate capacity downward; upward iteration changes it into unbounded knapsack."
             ]
+      },
+      {
+            "name": "PartitionToTwoArrayMinDiff",
+            "source": "../com/arvind/revision/dynamicprogramming/PartitionToTwoArrayMinDiff.java",
+            "label": "Choose each value for one side or the other",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "variantLens": "This version allows the two subsets to have different sizes. LeetCode 2035 additionally requires exactly n values in each half and allows negative numbers.",
+            "description": "Split the positive numbers into two subsets so the absolute difference between their sums is as small as possible. Return that minimum difference.",
+            "time": "Rec O(2ⁿ) · Memo/Tab O(n·total)",
+            "space": "Memo O(n·total) + O(n) stack · Tab O(total)",
+            "timeWhy": "The implemented memoization caches each reachable (index, chosen sum) state. Tabulation is supplied in the card.",
+            "structures": "recursion stack, Integer[n][total] memo, boolean subset-sum table",
+            "input": "nums = [1,2,7,1,5]",
+            "output": "0",
+            "recognize": "When every value must belong to one of two groups and the objective depends only on how close one group sum is to half the total.",
+            "visual": [
+                  [
+                        "pick nums[i]",
+                        "chosen sum + nums[i]"
+                  ],
+                  [
+                        "skip nums[i]",
+                        "chosen sum unchanged"
+                  ],
+                  [
+                        "end",
+                        "|chosen − (total−chosen)|"
+                  ]
+            ],
+            "visualText": "Build only the first subset. Everything you skip automatically belongs to the second subset.",
+            "core": "State = (i, chosenSum). At the end, the other subset is total−chosenSum, so return |chosenSum−(total−chosenSum)|. Each parent keeps the smaller result from pick and skip.",
+            "bruteForce": "Implemented recursion assigns every value to the chosen subset or its complement, exploring 2ⁿ assignments.",
+            "alternates": [
+                  "Implemented memoization caches (i, chosenSum), reducing repeated work to O(n·total). The method is named minimumDifferenceTab, but it is top-down memoization.",
+                  "Card-supplied tabulation marks reachable subset sums, then checks the reachable sum closest to total/2."
+            ],
+            "gotchas": [
+                  "Every recursive call must return a difference; do not return a subset sum at the base case.",
+                  "The second subset sum is total−chosenSum, so the difference is |total−2×chosenSum|.",
+                  "For a general positive-input implementation, allocate total+1 sum columns; the current total-sized memo relies on reaching sum==total only at the terminal state."
+            ]
       }
 ];
 
@@ -3034,6 +3076,16 @@
                   "Return the larger of the pick and skip totals."
             ],
             "skeleton": "best(i,c) = best(i+1,c)\nif weight[i] <= c\n  best = max(best, profit[i] + best(i+1,c-weight[i]))\ncache (i,c) or fill the same table bottom-up"
+      },
+      "PartitionToTwoArrayMinDiff": {
+            "prompt": "Before reading: if one subset currently sums to chosenSum, how do you derive the other subset at the base case?",
+            "steps": [
+                  "Recursion: pick nums[i] into the tracked subset or skip it into the complement.",
+                  "Base case: return |chosenSum − (total−chosenSum)|.",
+                  "Memoization: cache the minimum difference for each (i, chosenSum) state.",
+                  "Tabulation: mark reachable sums, then choose the reachable value nearest total/2."
+            ],
+            "skeleton": "diff(i,sum)\n  if i == n: return abs(total - 2*sum)\n  pick = diff(i+1,sum+nums[i])\n  skip = diff(i+1,sum)\n  return cache(i,sum,min(pick,skip))\n\ntab: mark reachable sums; minimize abs(total-2*sum)"
       }
 };
 
@@ -3062,7 +3114,8 @@
       "SubsetSumEqualsTarget": "State = index + remaining target\nskip keeps target\npick subtracts arr[i]\ncombine with OR",
       "PartitionEqualSubsetSum": "Odd total → impossible\neven total → target total/2\nrun pick-or-skip subset sum",
       "ZeroOneKnapsackTheory": "State = item index + remaining capacity\nskip keeps capacity\ntake once reduces capacity\nkeep the larger value",
-      "OIKnapsack": "State = item index + remaining capacity\nskip keeps capacity\npick once adds profit and reduces capacity\ncache max(pick, skip)"
+      "OIKnapsack": "State = item index + remaining capacity\nskip keeps capacity\npick once adds profit and reduces capacity\ncache max(pick, skip)",
+      "PartitionToTwoArrayMinDiff": "State = index + one subset's sum\npick adds nums[i]; skip leaves sum unchanged\nbase returns |total − 2×sum|\ncache the smaller branch"
 };
 
     const solvedOrder = [
@@ -3090,7 +3143,8 @@
       "SubsetSumEqualsTarget",
       "PartitionEqualSubsetSum",
       "ZeroOneKnapsackTheory",
-      "OIKnapsack"
+      "OIKnapsack",
+      "PartitionToTwoArrayMinDiff"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
