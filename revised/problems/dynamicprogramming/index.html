@@ -2823,6 +2823,48 @@
                   "The second subset sum is total−chosenSum, so the difference is |total−2×chosenSum|.",
                   "For a general positive-input implementation, allocate total+1 sum columns; the current total-sized memo relies on reaching sum==total only at the terminal state."
             ]
+      },
+      {
+            "name": "CountSubsetWithSumK",
+            "source": "../com/arvind/revision/dynamicprogramming/CountSubsetWithSumK.java",
+            "label": "Add the counts from pick and skip",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "variantLens": "Unlike LeetCode 494 Target Sum, this problem picks a subset whose values sum to K; it does not assign + or − to every element.",
+            "description": "Given an array of non-negative integers and a target K, count the index-distinct subsets whose elements sum exactly to K. Equal values at different indices represent different choices.",
+            "time": "Rec O(2ⁿ) · Memo/Tab O(n·K)",
+            "space": "Memo O(n·K) + O(n) stack · Tab O(n·K)",
+            "timeWhy": "The implemented memoization evaluates each (index, remaining target) state once. Tabulation is supplied in the card.",
+            "structures": "recursion stack, int[n][K+1] memo, count DP table",
+            "input": "arr=[2,3,5,16,8,10], K=10",
+            "output": "3",
+            "recognize": "When the question asks how many subsets reach an exact target—not merely whether one exists.",
+            "visual": [
+                  [
+                        "skip arr[i]",
+                        "count(i+1, remaining)"
+                  ],
+                  [
+                        "pick arr[i]",
+                        "count(i+1, remaining-arr[i])"
+                  ],
+                  [
+                        "answer",
+                        "skip count + pick count"
+                  ]
+            ],
+            "visualText": "Every leaf in the pick/skip tree that finishes with remaining target zero contributes one way.",
+            "core": "State = (i, remaining). At the end return 1 only when remaining is zero. Otherwise add the number of solutions from skipping and picking the current value.",
+            "bruteForce": "Implemented recursion explores all 2ⁿ index subsets and counts the leaves whose sum equals K.",
+            "alternates": [
+                  "Implemented memoization caches count(i,remaining), reducing repeated work to O(n·K).",
+                  "Card-supplied tabulation stores how many ways the first i values can form every target from 0 through K."
+            ],
+            "gotchas": [
+                  "Do not return early when remaining becomes zero; later zeros can still be picked or skipped and create additional subsets.",
+                  "Duplicate values at different indices are separate choices: four 2s contain six two-index subsets summing to 4.",
+                  "The empty subset contributes one way when K is zero."
+            ]
       }
 ];
 
@@ -3086,6 +3128,16 @@
                   "Tabulation: mark reachable sums, then choose the reachable value nearest total/2."
             ],
             "skeleton": "diff(i,sum)\n  if i == n: return abs(total - 2*sum)\n  pick = diff(i+1,sum+nums[i])\n  skip = diff(i+1,sum)\n  return cache(i,sum,min(pick,skip))\n\ntab: mark reachable sums; minimize abs(total-2*sum)"
+      },
+      "CountSubsetWithSumK": {
+            "prompt": "Before reading: why are the pick and skip results added rather than compared with min or max?",
+            "steps": [
+                  "Recursion: skip arr[i] or pick it and reduce the remaining target.",
+                  "Base case: after all values, return one exactly when remaining is zero.",
+                  "Memoization: cache each (i, remaining) count.",
+                  "Tabulation: carry skip counts forward and add pick counts from the smaller target."
+            ],
+            "skeleton": "ways(i,k)\n  if i == n: return k == 0 ? 1 : 0\n  if k < 0: return 0\n  skip = ways(i+1,k)\n  pick = ways(i+1,k-arr[i])\n  return cache(i,k,skip+pick)\n\ntab[i][target] = skipCount + pickCount"
       }
 };
 
@@ -3115,7 +3167,8 @@
       "PartitionEqualSubsetSum": "Odd total → impossible\neven total → target total/2\nrun pick-or-skip subset sum",
       "ZeroOneKnapsackTheory": "State = item index + remaining capacity\nskip keeps capacity\ntake once reduces capacity\nkeep the larger value",
       "OIKnapsack": "State = item index + remaining capacity\nskip keeps capacity\npick once adds profit and reduces capacity\ncache max(pick, skip)",
-      "PartitionToTwoArrayMinDiff": "State = index + one subset's sum\npick adds nums[i]; skip leaves sum unchanged\nbase returns |total − 2×sum|\ncache the smaller branch"
+      "PartitionToTwoArrayMinDiff": "State = index + one subset's sum\npick adds nums[i]; skip leaves sum unchanged\nbase returns |total − 2×sum|\ncache the smaller branch",
+      "CountSubsetWithSumK": "State = index + remaining target\nskip keeps target; pick subtracts arr[i]\nadd both branch counts\nbase contributes 1 only when remaining == 0"
 };
 
     const solvedOrder = [
@@ -3144,7 +3197,8 @@
       "PartitionEqualSubsetSum",
       "ZeroOneKnapsackTheory",
       "OIKnapsack",
-      "PartitionToTwoArrayMinDiff"
+      "PartitionToTwoArrayMinDiff",
+      "CountSubsetWithSumK"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
