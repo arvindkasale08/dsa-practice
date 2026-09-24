@@ -3033,6 +3033,48 @@
                   "Only pick when wt[i] <= remaining capacity.",
                   "Unused capacity is allowed, so exhausted items or zero capacity returns value zero."
             ]
+      },
+      {
+            "name": "RodCuttingProblem",
+            "source": "../com/arvind/revision/dynamicprogramming/RodCuttingProblem.java",
+            "label": "Choose where the next rod piece ends",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "variantLens": "This is Unbounded Knapsack with rod length as capacity: a piece length is its weight, its selling price is its value, and each length may be reused.",
+            "description": "Given a rod of length n and price[i] for a piece of length i+1, cut the rod into any number of pieces (or do not cut it) and return the maximum total selling price.",
+            "time": "Rec O(2^n) · Memo/Tab O(n²)",
+            "space": "Memo O(n²) + O(n) stack · Tab O(n²) or O(n)",
+            "timeWhy": "The implemented recursion makes a cut-or-continue decision at each rod position. Memoization caches (position, current piece length); standard tabulation evaluates every piece length against every remaining rod length.",
+            "structures": "recursion stack, int[n+1][n+1] memo, revenue DP array",
+            "input": "price=[1,5,8,9], n=4",
+            "output": "10",
+            "recognize": "When every possible piece length has a price, the full rod must be consumed, and the same piece length may be sold repeatedly.",
+            "visual": [
+                  [
+                        "cut here",
+                        "price[current length] + restart length 1"
+                  ],
+                  [
+                        "continue",
+                        "extend the current piece by 1"
+                  ],
+                  [
+                        "answer",
+                        "larger total revenue"
+                  ]
+            ],
+            "visualText": "Walk across the rod one unit at a time. Either close the current piece and collect its price, or let that piece grow by one more unit.",
+            "core": "Implemented state = (consumed position i, current uncut length). Cutting adds price[length-1] and resets length to 1; continuing increments length. Cache the greater revenue.",
+            "bruteForce": "Implemented recursion explores every placement of cuts. It is correct for the usual invariant price.length == n, but repeats the same (position, current length) states exponentially.",
+            "alternates": [
+                  "Implemented memoization caches the current source's (position, current piece length) state in a 2D array.",
+                  "Card-supplied tabulation uses the standard unbounded-knapsack view: dp[len] = max(price[piece-1] + dp[len-piece]) for every fitting piece length."
+            ],
+            "gotchas": [
+                  "The current source assumes n == price.length; n is used for memo width but not as the recursion boundary.",
+                  "A piece of length L uses price[L-1].",
+                  "In the unbounded-knapsack formulation, taking a piece may reuse the same length again."
+            ]
       }
 ];
 
@@ -3346,6 +3388,16 @@
                   "Tabulation (card-supplied): process each item with capacities increasing from wt[i] to W, allowing repeated use."
             ],
             "skeleton": "best(i,W)\n  if W == 0 or i == n: return 0\n  skip = best(i+1,W)\n  pick = 0\n  if wt[i] <= W\n    pick = val[i] + best(i,W-wt[i])\n  return cache(i,W,max(pick,skip))\n\nfor each item i\n  for capacity from wt[i] upward to W\n    dp[capacity] = max(dp[capacity], val[i]+dp[capacity-wt[i]])"
+      },
+      "RodCuttingProblem": {
+            "prompt": "Before reading: how is rod cutting just Unbounded Knapsack with piece length as weight?",
+            "steps": [
+                  "Recursion (implemented): at each consumed position, either price the current piece and reset its length, or extend it by one unit.",
+                  "Base case (implemented): after price.length positions are consumed, return zero additional revenue; positive prices make the final-position cut the useful branch.",
+                  "Memoization (implemented): cache (position i, current piece length); this reduces repeated work to O(n²).",
+                  "Tabulation (card-supplied): for each rod length, try every fitting piece and maximize price[piece-1] + dp[length-piece]."
+            ],
+            "skeleton": "revenue(i,length)\n  if i == n: return 0\n  cut = price[length-1] + revenue(i+1,1)\n  extend = revenue(i+1,length+1)\n  return cache(i,length,max(cut,extend))\n\ndp[0]=0\nfor len=1..n\n  for piece=1..len\n    dp[len]=max(dp[len],price[piece-1]+dp[len-piece])"
       }
 };
 
@@ -3380,7 +3432,8 @@
       "TargetSum": "State = index + remaining target\n+num subtracts from remaining; −num adds to it\nadd both assignment counts\nbase succeeds only at remaining == 0",
       "CoinChange": "State = coin index + remaining amount\npick stays at i and subtracts the coin\nskip advances to i+1\ncache min(1+pick, skip)",
       "CoinChangeII": "State = coin index + remaining amount\nuse stays at i; skip advances to i+1\nadd both counts\ncoin-first order avoids permutation duplicates",
-      "UnboundedKnapsack": "State = item index + remaining capacity\npick stays at i and adds value\nskip advances to i+1\ncache max(pick, skip)"
+      "UnboundedKnapsack": "State = item index + remaining capacity\npick stays at i and adds value\nskip advances to i+1\ncache max(pick, skip)",
+      "RodCuttingProblem": "State = consumed position + current piece length\ncut adds price[length-1] and resets length\ncontinue grows the piece\ncache the larger revenue"
 };
 
     const solvedOrder = [
@@ -3414,7 +3467,8 @@
       "TargetSum",
       "CoinChange",
       "CoinChangeII",
-      "UnboundedKnapsack"
+      "UnboundedKnapsack",
+      "RodCuttingProblem"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
