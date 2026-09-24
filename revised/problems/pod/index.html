@@ -1423,6 +1423,46 @@
                   "Both the reversed alphabet rank and string position are one-based.",
                   "The source assumes lowercase English letters, matching the problem constraints."
             ]
+      },
+      {
+            "name": "SmallestWithDigitSum",
+            "source": "../com/arvind/revision/pod/SmallestWithDigitSum.java",
+            "label": "Return the first index matching its digit sum",
+            "difficulty": "Easy",
+            "leetcode": "https://leetcode.com/problems/smallest-index-with-digit-sum-equal-to-index/",
+            "description": "Given an integer array, return the smallest index i whose value has a digit sum equal to i. Return -1 when no index satisfies the condition.",
+            "time": "O(n·d)",
+            "space": "O(1)",
+            "timeWhy": "Each value is visited once and each of its d decimal digits is peeled once.",
+            "structures": "index scan, integer digit accumulator",
+            "input": "nums=[123,10,11]",
+            "output": "1",
+            "recognize": "When each index can be checked independently and the first passing index is automatically the smallest answer.",
+            "visual": [
+                  [
+                        "nums[i]",
+                        "peel digits with % 10"
+                  ],
+                  [
+                        "digit sum",
+                        "compare with i"
+                  ],
+                  [
+                        "first match",
+                        "return i"
+                  ]
+            ],
+            "visualText": "Scan indices from left to right; turn each number into a small pile of digits and add that pile before comparing.",
+            "core": "For each i, repeatedly add value % 10 and divide value by 10. Return immediately when the sum equals i, because the scan order guarantees the smallest index.",
+            "bruteForce": "Convert every value to a string, add its digit characters, collect every matching index, then take the minimum. This remains O(n·d) but allocates unnecessary strings and result storage.",
+            "alternates": [
+                  "Convert the number to a string and sum c-'0'; it is readable but uses temporary string storage."
+            ],
+            "gotchas": [
+                  "Compare the digit sum with the index, not with nums[i].",
+                  "Return the first match while scanning left to right; continuing is unnecessary.",
+                  "For value 0 the digit loop does not run, correctly leaving its digit sum as 0."
+            ]
       }
 ];
 
@@ -1509,6 +1549,16 @@
                   "Add the contribution to the running total."
             ],
             "skeleton": "sum = 0\nfor i from 0 to n-1\n  rank = 'z' - s[i] + 1\n  sum += rank * (i+1)\nreturn sum"
+      },
+      "SmallestWithDigitSum": {
+            "prompt": "Before reading: why can you return immediately when an index matches its value's digit sum?",
+            "steps": [
+                  "Scan indices from zero toward the end.",
+                  "Copy nums[i], peel its digits with % 10, and add them.",
+                  "Compare that digit sum with i.",
+                  "Return the first match; return -1 if the scan finishes."
+            ],
+            "skeleton": "for i from 0 to n-1\n  value = nums[i]\n  digitSum = 0\n  while value > 0\n    digitSum += value % 10\n    value /= 10\n  if digitSum == i: return i\nreturn -1"
       }
 };
 
@@ -1520,7 +1570,8 @@
       "RemovingMinMaxFromArray": "Mark min and max indices\ntry both-left, both-right, and split ends\nreturn the smallest deletion count",
       "SmallestStableIndexII": "Precompute suffix minimums\ncarry the prefix maximum forward\nfirst prefixMax - suffixMin[i] ≤ k is the answer",
       "CountCommasInRange": "Below 1,000 → zero commas\n1,000 through n → one each\nanswer = n - 999",
-      "ReverseDegreeOfString": "At index i, rank = 'z' - s[i] + 1\nadd rank × (i+1) to the total"
+      "ReverseDegreeOfString": "At index i, rank = 'z' - s[i] + 1\nadd rank × (i+1) to the total",
+      "SmallestWithDigitSum": "Scan indices left to right\npeel and add every digit of nums[i]\nfirst digitSum == i is the smallest answer"
 };
 
     const solvedOrder = [
@@ -1531,7 +1582,8 @@
       "RemovingMinMaxFromArray",
       "SmallestStableIndexII",
       "CountCommasInRange",
-      "ReverseDegreeOfString"
+      "ReverseDegreeOfString",
+      "SmallestWithDigitSum"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");

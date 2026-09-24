@@ -605,9 +605,10 @@
     },
     {
       "date": "2026-09-24",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "dynamicprogramming/TargetSum"
+        "dynamicprogramming/TargetSum",
+        "pod/SmallestWithDigitSum"
       ],
       "notes": ""
     }
