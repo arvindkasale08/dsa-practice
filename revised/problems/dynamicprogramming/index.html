@@ -2907,6 +2907,48 @@
                   "Running sums can be negative, so array memoization needs an offset of S.",
                   "Zeros double the number of assignments because +0 and −0 are distinct choices."
             ]
+      },
+      {
+            "name": "CoinChange",
+            "source": "../com/arvind/revision/dynamicprogramming/CoinChange.java",
+            "label": "Reuse a picked coin or skip its denomination",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/coin-change/",
+            "variantLens": "This is unbounded coin change: picking coins[i] stays at i so that denomination may be reused. A 0/1 variant would advance after picking.",
+            "description": "Given coin denominations and a target amount, return the minimum number of coins needed to make that amount. Each denomination may be used any number of times; return -1 if it is impossible.",
+            "time": "Rec exponential · Memo/Tab O(n·amount)",
+            "space": "Memo O(n·amount) + stack · Tab O(amount)",
+            "timeWhy": "The implemented memoization solves each (coin index, remaining amount) once. A one-dimensional tabulation considers every coin for each amount.",
+            "structures": "recursion stack, int[n+1][amount+1] memo, minimum-count DP array",
+            "input": "coins=[1,2,5], amount=11",
+            "output": "3",
+            "recognize": "When choices can be reused without limit and the goal is the fewest items that exactly reach a target.",
+            "visual": [
+                  [
+                        "pick coins[i]",
+                        "1 + solve(i, amount-coins[i])"
+                  ],
+                  [
+                        "skip coins[i]",
+                        "solve(i+1, amount)"
+                  ],
+                  [
+                        "answer",
+                        "min(pick, skip)"
+                  ]
+            ],
+            "visualText": "Picking spends one coin and reduces the amount without leaving the denomination; skipping moves to the next denomination.",
+            "core": "State = (i, remaining amount). Pick keeps i and adds one coin; skip advances i. Return the smaller result, using a safe impossible sentinel.",
+            "bruteForce": "Implemented recursion explores every pick/skip construction. Repeated remaining-amount states make it exponential without caching.",
+            "alternates": [
+                  "Implemented memoization caches every (i, amount) minimum in a 2D array.",
+                  "Card-supplied tabulation sets dp[0]=0 and builds each amount from smaller reachable amounts in O(n·amount) time and O(amount) space."
+            ],
+            "gotchas": [
+                  "After picking, recurse with the same i because coins may be reused.",
+                  "Impossible branches must return a large safe sentinel, not zero.",
+                  "Convert the final sentinel to -1; amount zero needs zero coins."
+            ]
       }
 ];
 
@@ -3190,6 +3232,16 @@
                   "Tabulation (card-supplied): use sums −S…S with offset S, carrying each count to sum+num and sum−num."
             ],
             "skeleton": "ways(i,remaining)\n  if i == n: return remaining == 0 ? 1 : 0\n  positive = ways(i+1,remaining-nums[i])\n  negative = ways(i+1,remaining+nums[i])\n  return cache(i,remaining,positive+negative)\n\ntab[nextSum + S] += tab[currentSum + S]"
+      },
+      "CoinChange": {
+            "prompt": "Before reading: why does the pick branch keep the same coin index while the skip branch advances it?",
+            "steps": [
+                  "Recursion (implemented): pick the current coin and stay at i, or skip it and move to i+1; keep the smaller count.",
+                  "Base cases: amount zero returns 0; negative amount or no denominations left returns INF.",
+                  "Memoization (implemented): cache the minimum for every (i, remaining amount) state.",
+                  "Tabulation (card-supplied): dp[0]=0; for each amount, try every coin and take 1+dp[amount-coin]."
+            ],
+            "skeleton": "fewest(i,amount)\n  if amount == 0: return 0\n  if amount < 0 or i == n: return INF\n  pick = 1 + fewest(i,amount-coins[i])\n  skip = fewest(i+1,amount)\n  return cache(i,amount,min(pick,skip))\n\ndp[0]=0\nfor a=1..amount: dp[a]=min(1+dp[a-coin])"
       }
 };
 
@@ -3221,7 +3273,8 @@
       "OIKnapsack": "State = item index + remaining capacity\nskip keeps capacity\npick once adds profit and reduces capacity\ncache max(pick, skip)",
       "PartitionToTwoArrayMinDiff": "State = index + one subset's sum\npick adds nums[i]; skip leaves sum unchanged\nbase returns |total − 2×sum|\ncache the smaller branch",
       "CountSubsetWithSumK": "State = index + remaining target\nskip keeps target; pick subtracts arr[i]\nadd both branch counts\nbase contributes 1 only when remaining == 0",
-      "TargetSum": "State = index + remaining target\n+num subtracts from remaining; −num adds to it\nadd both assignment counts\nbase succeeds only at remaining == 0"
+      "TargetSum": "State = index + remaining target\n+num subtracts from remaining; −num adds to it\nadd both assignment counts\nbase succeeds only at remaining == 0",
+      "CoinChange": "State = coin index + remaining amount\npick stays at i and subtracts the coin\nskip advances to i+1\ncache min(1+pick, skip)"
 };
 
     const solvedOrder = [
@@ -3252,7 +3305,8 @@
       "OIKnapsack",
       "PartitionToTwoArrayMinDiff",
       "CountSubsetWithSumK",
-      "TargetSum"
+      "TargetSum",
+      "CoinChange"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
