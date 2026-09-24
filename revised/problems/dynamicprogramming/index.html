@@ -2865,6 +2865,48 @@
                   "Duplicate values at different indices are separate choices: four 2s contain six two-index subsets summing to 4.",
                   "The empty subset contributes one way when K is zero."
             ]
+      },
+      {
+            "name": "TargetSum",
+            "source": "../com/arvind/revision/dynamicprogramming/TargetSum.java",
+            "label": "Assign + or − and add both counts",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/target-sum/",
+            "variantLens": "Every number must receive either + or −. Unlike subset-sum counting, no element may be skipped.",
+            "description": "Given non-negative integers and a target, assign either + or − before every number and count how many resulting expressions evaluate to the target.",
+            "time": "Rec O(2ⁿ) · Memo/Tab O(n·S)",
+            "space": "Memo O(n·S) + O(n) stack · Tab O(S)",
+            "timeWhy": "The implemented memoization computes each (index, remaining target) state once; S is the total absolute sum. Direct tabulation uses shifted sums from −S through +S.",
+            "structures": "recursion stack, HashMap<(index,target), count>, shifted sum table",
+            "input": "nums=[1,1,1,1,1], target=3",
+            "output": "5",
+            "recognize": "When every value must independently receive one of two signs and the question asks for the number of assignments reaching an exact result.",
+            "visual": [
+                  [
+                        "+nums[i]",
+                        "ways(i+1, remaining-nums[i])"
+                  ],
+                  [
+                        "−nums[i]",
+                        "ways(i+1, remaining+nums[i])"
+                  ],
+                  [
+                        "answer",
+                        "positive branch + negative branch"
+                  ]
+            ],
+            "visualText": "Each level consumes exactly one number; both sign branches continue to the next index.",
+            "core": "State = (i, remaining target). Assigning +nums[i] reduces what remains; assigning −nums[i] increases what remains. Add both branch counts.",
+            "bruteForce": "Implemented recursion builds all 2ⁿ sign assignments and counts the leaves whose remaining target becomes zero.",
+            "alternates": [
+                  "Implemented memoization stores repeated (index, remaining target) states in a HashMap.",
+                  "Card-supplied tabulation shifts sums by S so negative sums become valid array indices; a subset-count transformation is another option."
+            ],
+            "gotchas": [
+                  "Do not skip an element: every number must receive exactly one sign.",
+                  "Running sums can be negative, so array memoization needs an offset of S.",
+                  "Zeros double the number of assignments because +0 and −0 are distinct choices."
+            ]
       }
 ];
 
@@ -3138,6 +3180,16 @@
                   "Tabulation: carry skip counts forward and add pick counts from the smaller target."
             ],
             "skeleton": "ways(i,k)\n  if i == n: return k == 0 ? 1 : 0\n  if k < 0: return 0\n  skip = ways(i+1,k)\n  pick = ways(i+1,k-arr[i])\n  return cache(i,k,skip+pick)\n\ntab[i][target] = skipCount + pickCount"
+      },
+      "TargetSum": {
+            "prompt": "Before reading: why does choosing + subtract from the remaining target while choosing − adds to it?",
+            "steps": [
+                  "Recursion (implemented): assign + or − to nums[i], advance i, and add both counts.",
+                  "Base case: after consuming every number, contribute one way only when the remaining target is zero.",
+                  "Memoization (implemented): cache each (i, remaining target) result in a HashMap.",
+                  "Tabulation (card-supplied): use sums −S…S with offset S, carrying each count to sum+num and sum−num."
+            ],
+            "skeleton": "ways(i,remaining)\n  if i == n: return remaining == 0 ? 1 : 0\n  positive = ways(i+1,remaining-nums[i])\n  negative = ways(i+1,remaining+nums[i])\n  return cache(i,remaining,positive+negative)\n\ntab[nextSum + S] += tab[currentSum + S]"
       }
 };
 
@@ -3168,7 +3220,8 @@
       "ZeroOneKnapsackTheory": "State = item index + remaining capacity\nskip keeps capacity\ntake once reduces capacity\nkeep the larger value",
       "OIKnapsack": "State = item index + remaining capacity\nskip keeps capacity\npick once adds profit and reduces capacity\ncache max(pick, skip)",
       "PartitionToTwoArrayMinDiff": "State = index + one subset's sum\npick adds nums[i]; skip leaves sum unchanged\nbase returns |total − 2×sum|\ncache the smaller branch",
-      "CountSubsetWithSumK": "State = index + remaining target\nskip keeps target; pick subtracts arr[i]\nadd both branch counts\nbase contributes 1 only when remaining == 0"
+      "CountSubsetWithSumK": "State = index + remaining target\nskip keeps target; pick subtracts arr[i]\nadd both branch counts\nbase contributes 1 only when remaining == 0",
+      "TargetSum": "State = index + remaining target\n+num subtracts from remaining; −num adds to it\nadd both assignment counts\nbase succeeds only at remaining == 0"
 };
 
     const solvedOrder = [
@@ -3198,7 +3251,8 @@
       "ZeroOneKnapsackTheory",
       "OIKnapsack",
       "PartitionToTwoArrayMinDiff",
-      "CountSubsetWithSumK"
+      "CountSubsetWithSumK",
+      "TargetSum"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");

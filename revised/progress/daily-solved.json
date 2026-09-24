@@ -602,6 +602,14 @@
         "dynamicprogramming/CountSubsetWithSumK"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-09-24",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/TargetSum"
+      ],
+      "notes": ""
     }
   ]
 }
