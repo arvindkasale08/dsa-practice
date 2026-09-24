@@ -2949,6 +2949,48 @@
                   "Impossible branches must return a large safe sentinel, not zero.",
                   "Convert the final sentinel to -1; amount zero needs zero coins."
             ]
+      },
+      {
+            "name": "CoinChangeII",
+            "source": "../com/arvind/revision/dynamicprogramming/CoinChangeII.java",
+            "label": "Add reuse and skip combination counts",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/coin-change-ii/",
+            "variantLens": "Coin Change I minimizes the number of coins; Coin Change II counts unordered combinations. Both permit unlimited reuse.",
+            "description": "Given distinct coin denominations and an amount, count how many combinations make the amount. Each coin may be reused any number of times, and different orders of the same coins count once.",
+            "time": "Rec exponential · Memo/Tab O(n·amount)",
+            "space": "Memo O(n·amount) + stack · Tab O(amount)",
+            "timeWhy": "The implemented memoization solves each (coin index, remaining amount) state once. One-dimensional tabulation updates each amount for each denomination.",
+            "structures": "recursion stack, int[n+1][amount+1] memo, combination-count DP array",
+            "input": "coins=[1,2,5], amount=5",
+            "output": "4",
+            "recognize": "When reusable choices must form an exact target and the question asks for combinations rather than the minimum count or ordered sequences.",
+            "visual": [
+                  [
+                        "use coins[i]",
+                        "ways(i, amount-coins[i])"
+                  ],
+                  [
+                        "skip coins[i]",
+                        "ways(i+1, amount)"
+                  ],
+                  [
+                        "answer",
+                        "use count + skip count"
+                  ]
+            ],
+            "visualText": "Staying at i allows another copy of the same coin; moving forward permanently excludes that denomination from the rest of the combination.",
+            "core": "State = (i, remaining amount). Use the current coin and stay at i, or skip it and advance. Add both counts; denomination order prevents permutation duplicates.",
+            "bruteForce": "Implemented recursion explores every count of each denomination. Repeated (i, amount) states make the raw tree exponential.",
+            "alternates": [
+                  "Implemented memoization caches every (i, remaining amount) combination count.",
+                  "Card-supplied 1D tabulation processes coins outside and amounts upward inside, giving O(n·amount) time and O(amount) space."
+            ],
+            "gotchas": [
+                  "The use-current-coin branch stays at i because reuse is unlimited.",
+                  "Process denominations as the outer tabulation loop; reversing the loops counts permutations instead of combinations.",
+                  "Remaining amount zero contributes one completed combination, including the empty combination for target zero."
+            ]
       }
 ];
 
@@ -3242,6 +3284,16 @@
                   "Tabulation (card-supplied): dp[0]=0; for each amount, try every coin and take 1+dp[amount-coin]."
             ],
             "skeleton": "fewest(i,amount)\n  if amount == 0: return 0\n  if amount < 0 or i == n: return INF\n  pick = 1 + fewest(i,amount-coins[i])\n  skip = fewest(i+1,amount)\n  return cache(i,amount,min(pick,skip))\n\ndp[0]=0\nfor a=1..amount: dp[a]=min(1+dp[a-coin])"
+      },
+      "CoinChangeII": {
+            "prompt": "Before reading: how does carrying the coin index ensure [1,2,2] is not counted again as [2,1,2]?",
+            "steps": [
+                  "Recursion (implemented): use the current coin and stay at i, or skip it and advance to i+1; add both counts.",
+                  "Base cases: amount zero returns 1; negative amount or no denominations left returns 0.",
+                  "Memoization (implemented): cache every (i, remaining amount) count.",
+                  "Tabulation (card-supplied): dp[0]=1; for each coin, update amounts upward with dp[a] += dp[a-coin]."
+            ],
+            "skeleton": "ways(i,amount)\n  if amount == 0: return 1\n  if amount < 0 or i == n: return 0\n  use = ways(i,amount-coins[i])\n  skip = ways(i+1,amount)\n  return cache(i,amount,use+skip)\n\ndp[0]=1\nfor coin in coins\n  for a from coin to amount\n    dp[a] += dp[a-coin]"
       }
 };
 
@@ -3274,7 +3326,8 @@
       "PartitionToTwoArrayMinDiff": "State = index + one subset's sum\npick adds nums[i]; skip leaves sum unchanged\nbase returns |total − 2×sum|\ncache the smaller branch",
       "CountSubsetWithSumK": "State = index + remaining target\nskip keeps target; pick subtracts arr[i]\nadd both branch counts\nbase contributes 1 only when remaining == 0",
       "TargetSum": "State = index + remaining target\n+num subtracts from remaining; −num adds to it\nadd both assignment counts\nbase succeeds only at remaining == 0",
-      "CoinChange": "State = coin index + remaining amount\npick stays at i and subtracts the coin\nskip advances to i+1\ncache min(1+pick, skip)"
+      "CoinChange": "State = coin index + remaining amount\npick stays at i and subtracts the coin\nskip advances to i+1\ncache min(1+pick, skip)",
+      "CoinChangeII": "State = coin index + remaining amount\nuse stays at i; skip advances to i+1\nadd both counts\ncoin-first order avoids permutation duplicates"
 };
 
     const solvedOrder = [
@@ -3306,7 +3359,8 @@
       "PartitionToTwoArrayMinDiff",
       "CountSubsetWithSumK",
       "TargetSum",
-      "CoinChange"
+      "CoinChange",
+      "CoinChangeII"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");

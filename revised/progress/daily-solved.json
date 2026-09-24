@@ -605,11 +605,12 @@
     },
     {
       "date": "2026-09-24",
-      "solved": 3,
+      "solved": 4,
       "cardsSynced": [
         "dynamicprogramming/TargetSum",
         "pod/SmallestWithDigitSum",
-        "dynamicprogramming/CoinChange"
+        "dynamicprogramming/CoinChange",
+        "dynamicprogramming/CoinChangeII"
       ],
       "notes": ""
     }
