@@ -2991,6 +2991,48 @@
                   "Process denominations as the outer tabulation loop; reversing the loops counts permutations instead of combinations.",
                   "Remaining amount zero contributes one completed combination, including the empty combination for target zero."
             ]
+      },
+      {
+            "name": "UnboundedKnapsack",
+            "source": "../com/arvind/revision/dynamicprogramming/UnboundedKnapsack.java",
+            "label": "Reuse a picked item or leave its type behind",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "variantLens": "Unlike 0/1 Knapsack, picking item i keeps the same index because that item type has unlimited copies.",
+            "description": "Given item weights, matching values, and a capacity, return the maximum total value that fits. Every item type has an unlimited supply, and unused capacity is allowed.",
+            "time": "Rec exponential · Memo/Tab O(n·W)",
+            "space": "Memo O(n·W) + stack · Tab O(W)",
+            "timeWhy": "The implemented memoization evaluates each (item index, remaining capacity) state once. Space-optimized tabulation stores the best value for each capacity.",
+            "structures": "recursion stack, int[n+1][W+1] memo, maximum-value DP array",
+            "input": "wt=[1,3,4,5], val=[10,40,50,70], W=8",
+            "output": "110",
+            "recognize": "When every item type may be selected repeatedly and the goal is maximum value without exceeding a capacity.",
+            "visual": [
+                  [
+                        "pick item i",
+                        "val[i] + best(i, W-wt[i])"
+                  ],
+                  [
+                        "skip item i",
+                        "best(i+1, W)"
+                  ],
+                  [
+                        "answer",
+                        "max(pick, skip)"
+                  ]
+            ],
+            "visualText": "Picking spends capacity but stays on the same shelf of unlimited items; skipping moves permanently to the next shelf.",
+            "core": "State = (i, remaining capacity). Pick adds val[i], reduces capacity, and keeps i; skip advances i. Cache the larger result.",
+            "bruteForce": "Implemented recursion tries all repeated-item and skip choices. The same capacity states recur many times, making it exponential without caching.",
+            "alternates": [
+                  "Implemented memoization caches the best value for every (i, remaining capacity).",
+                  "Card-supplied tabulation updates capacities upward for each item so the same item can contribute repeatedly; it can be compressed to O(W) space."
+            ],
+            "gotchas": [
+                  "The pick branch stays at i; advancing would incorrectly turn this into 0/1 Knapsack.",
+                  "Only pick when wt[i] <= remaining capacity.",
+                  "Unused capacity is allowed, so exhausted items or zero capacity returns value zero."
+            ]
       }
 ];
 
@@ -3294,6 +3336,16 @@
                   "Tabulation (card-supplied): dp[0]=1; for each coin, update amounts upward with dp[a] += dp[a-coin]."
             ],
             "skeleton": "ways(i,amount)\n  if amount == 0: return 1\n  if amount < 0 or i == n: return 0\n  use = ways(i,amount-coins[i])\n  skip = ways(i+1,amount)\n  return cache(i,amount,use+skip)\n\ndp[0]=1\nfor coin in coins\n  for a from coin to amount\n    dp[a] += dp[a-coin]"
+      },
+      "UnboundedKnapsack": {
+            "prompt": "Before reading: which two values form the memo state, and why does picking not advance the item index?",
+            "steps": [
+                  "Recursion (implemented): pick a fitting item and stay at i, or skip it and advance; keep the greater value.",
+                  "Base cases: zero capacity or no item types left returns zero additional value.",
+                  "Memoization (implemented): cache every (i, remaining capacity) maximum; no third dimension is needed.",
+                  "Tabulation (card-supplied): process each item with capacities increasing from wt[i] to W, allowing repeated use."
+            ],
+            "skeleton": "best(i,W)\n  if W == 0 or i == n: return 0\n  skip = best(i+1,W)\n  pick = 0\n  if wt[i] <= W\n    pick = val[i] + best(i,W-wt[i])\n  return cache(i,W,max(pick,skip))\n\nfor each item i\n  for capacity from wt[i] upward to W\n    dp[capacity] = max(dp[capacity], val[i]+dp[capacity-wt[i]])"
       }
 };
 
@@ -3327,7 +3379,8 @@
       "CountSubsetWithSumK": "State = index + remaining target\nskip keeps target; pick subtracts arr[i]\nadd both branch counts\nbase contributes 1 only when remaining == 0",
       "TargetSum": "State = index + remaining target\n+num subtracts from remaining; −num adds to it\nadd both assignment counts\nbase succeeds only at remaining == 0",
       "CoinChange": "State = coin index + remaining amount\npick stays at i and subtracts the coin\nskip advances to i+1\ncache min(1+pick, skip)",
-      "CoinChangeII": "State = coin index + remaining amount\nuse stays at i; skip advances to i+1\nadd both counts\ncoin-first order avoids permutation duplicates"
+      "CoinChangeII": "State = coin index + remaining amount\nuse stays at i; skip advances to i+1\nadd both counts\ncoin-first order avoids permutation duplicates",
+      "UnboundedKnapsack": "State = item index + remaining capacity\npick stays at i and adds value\nskip advances to i+1\ncache max(pick, skip)"
 };
 
     const solvedOrder = [
@@ -3360,7 +3413,8 @@
       "CountSubsetWithSumK",
       "TargetSum",
       "CoinChange",
-      "CoinChangeII"
+      "CoinChangeII",
+      "UnboundedKnapsack"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
