@@ -3046,8 +3046,8 @@
             "space": "Memo O(n²) + O(n) stack · Tab O(n²) or O(n)",
             "timeWhy": "The implemented recursion makes a cut-or-continue decision at each rod position. Memoization caches (position, current piece length); standard tabulation evaluates every piece length against every remaining rod length.",
             "structures": "recursion stack, int[n+1][n+1] memo, revenue DP array",
-            "input": "price=[1,5,8,9], n=4",
-            "output": "10",
+            "input": "price=[5,5,8,9,10,17,17,20], n=8",
+            "output": "40",
             "recognize": "When every possible piece length has a price, the full rod must be consumed, and the same piece length may be sold repeatedly.",
             "visual": [
                   [

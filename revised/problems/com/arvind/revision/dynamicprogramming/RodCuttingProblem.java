@@ -35,9 +35,11 @@ public class RodCuttingProblem {
     public static void main(String[] args) {
         int[] price = {1, 6, 8, 9, 10, 19, 7, 20};
         int[] price2 = {1, 5, 8, 9};
+        int[] price3= {5, 5, 8, 9, 10, 17, 17, 20};
         int N = 8;
         int N2 = 4;
+        int N3 = 8;
         RodCuttingProblem solution = new RodCuttingProblem();
-        System.out.println(solution.rodCutting(price2, N2));
+        System.out.println(solution.rodCutting(price3, N3));
     }
 }
