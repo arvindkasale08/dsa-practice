@@ -3075,6 +3075,48 @@
                   "A piece of length L uses price[L-1].",
                   "In the unbounded-knapsack formulation, taking a piece may reuse the same length again."
             ]
+      },
+      {
+            "name": "LongestCommonSubsequence",
+            "source": "../com/arvind/revision/dynamicprogramming/LongestCommonSubsequence.java",
+            "label": "Match both characters or skip from one string",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/longest-common-subsequence/",
+            "variantLens": "Unlike Longest Common Substring, matching characters need only preserve relative order; they do not have to be contiguous.",
+            "description": "Given two strings, return the length of the longest sequence of characters that appears in both strings in the same relative order, with characters allowed to be skipped.",
+            "time": "Rec O(2^(m+n)) · Memo/Tab O(mn)",
+            "space": "Memo O(mn) + stack O(m+n) · Tab O(mn), optimizable to O(n)",
+            "timeWhy": "On a mismatch, plain recursion branches by skipping from either string. Memoization or tabulation evaluates each pair of indices (i,j) once.",
+            "structures": "two string indices, recursion stack, int[m+1][n+1] memo/DP table",
+            "input": "text1=\"abcde\", text2=\"xyz\"",
+            "output": "0",
+            "recognize": "When two sequences may skip elements but must preserve order, and you need the greatest common ordered length.",
+            "visual": [
+                  [
+                        "same chars",
+                        "1 + lcs(i+1,j+1)"
+                  ],
+                  [
+                        "different",
+                        "max(lcs(i+1,j), lcs(i,j+1))"
+                  ],
+                  [
+                        "end reached",
+                        "0"
+                  ]
+            ],
+            "visualText": "Place one pointer on each string. A match locks both characters into the subsequence; a mismatch asks which one pointer to move past.",
+            "core": "State = (i,j), the best LCS length from both suffixes. Match consumes both characters and adds one; mismatch skips one side at a time and keeps the larger result.",
+            "bruteForce": "Implemented recursion explores both skip choices on every mismatch. It is a direct correctness baseline but repeatedly solves the same suffix pairs.",
+            "alternates": [
+                  "Implemented memoization caches every (i,j) suffix pair, reducing the work to O(mn).",
+                  "Card-supplied tabulation fills dp from the string ends toward (0,0); keeping only the current and next row reduces space to O(n)."
+            ],
+            "gotchas": [
+                  "When characters match, advance both indices and add exactly one.",
+                  "On a mismatch, compare skipping from either string; do not advance both.",
+                  "Subsequence characters need not be adjacent—do not reset the count like a substring solution."
+            ]
       }
 ];
 
@@ -3398,6 +3440,16 @@
                   "Tabulation (card-supplied): for each rod length, try every fitting piece and maximize price[piece-1] + dp[length-piece]."
             ],
             "skeleton": "revenue(i,length)\n  if i == n: return 0\n  cut = price[length-1] + revenue(i+1,1)\n  extend = revenue(i+1,length+1)\n  return cache(i,length,max(cut,extend))\n\ndp[0]=0\nfor len=1..n\n  for piece=1..len\n    dp[len]=max(dp[len],price[piece-1]+dp[len-piece])"
+      },
+      "LongestCommonSubsequence": {
+            "prompt": "Before reading: why does a character match advance both indices, while a mismatch creates two skip choices?",
+            "steps": [
+                  "Recursion (implemented): state (i,j) compares the remaining suffixes; a match adds one and advances both, while a mismatch takes the better single-side skip.",
+                  "Base case (implemented): if either index reaches its string's length, no more common characters can be formed, so return zero.",
+                  "Memoization (implemented): cache each (i,j) answer in a 2D array, giving O(mn) time and space.",
+                  "Tabulation (card-supplied): fill dp[i][j] backward using 1+dp[i+1][j+1] for a match, otherwise max(dp[i+1][j],dp[i][j+1])."
+            ],
+            "skeleton": "lcs(i,j)\n  if i == m or j == n: return 0\n  if a[i] == b[j]: return 1 + lcs(i+1,j+1)\n  return max(lcs(i+1,j), lcs(i,j+1))\n\nfor i=m-1..0\n  for j=n-1..0\n    if a[i] == b[j]: dp[i][j]=1+dp[i+1][j+1]\n    else: dp[i][j]=max(dp[i+1][j],dp[i][j+1])"
       }
 };
 
@@ -3433,7 +3485,8 @@
       "CoinChange": "State = coin index + remaining amount\npick stays at i and subtracts the coin\nskip advances to i+1\ncache min(1+pick, skip)",
       "CoinChangeII": "State = coin index + remaining amount\nuse stays at i; skip advances to i+1\nadd both counts\ncoin-first order avoids permutation duplicates",
       "UnboundedKnapsack": "State = item index + remaining capacity\npick stays at i and adds value\nskip advances to i+1\ncache max(pick, skip)",
-      "RodCuttingProblem": "State = consumed position + current piece length\ncut adds price[length-1] and resets length\ncontinue grows the piece\ncache the larger revenue"
+      "RodCuttingProblem": "State = consumed position + current piece length\ncut adds price[length-1] and resets length\ncontinue grows the piece\ncache the larger revenue",
+      "LongestCommonSubsequence": "State = one index in each string\nmatch → 1 + move both\nmismatch → skip either side\ncache the larger suffix answer"
 };
 
     const solvedOrder = [
@@ -3468,7 +3521,8 @@
       "CoinChange",
       "CoinChangeII",
       "UnboundedKnapsack",
-      "RodCuttingProblem"
+      "RodCuttingProblem",
+      "LongestCommonSubsequence"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
