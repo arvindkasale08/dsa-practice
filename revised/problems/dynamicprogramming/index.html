@@ -3117,6 +3117,48 @@
                   "On a mismatch, compare skipping from either string; do not advance both.",
                   "Subsequence characters need not be adjacent—do not reset the count like a substring solution."
             ]
+      },
+      {
+            "name": "LongestCommonSubstring",
+            "source": "../com/arvind/revision/dynamicprogramming/LongestCommonSubstring.java",
+            "label": "Extend a diagonal match or reset it to zero",
+            "difficulty": "Medium",
+            "leetcode": "",
+            "variantLens": "Unlike Longest Common Subsequence, the matched characters must be contiguous. A mismatch resets the current length to zero instead of skipping a character.",
+            "description": "Given two strings, return the length of their longest contiguous block of equal characters. The block may start and end anywhere in either string.",
+            "time": "Rec O(mn·min(m,n)) · Memo/Tab O(mn)",
+            "space": "Memo/Tab O(mn) + stack O(min(m,n)) · optimized Tab O(n)",
+            "timeWhy": "The implemented recursion starts a diagonal match from every (i,j). Memoization computes each matching suffix pair once; tabulation visits every cell once.",
+            "structures": "two start indices, recursion stack, Integer[m+1][n+1] memo, DP table",
+            "input": "s1=\"abcde\", s2=\"abfce\"",
+            "output": "2",
+            "recognize": "When equal characters must form one uninterrupted block in both strings and you need the longest such block.",
+            "visual": [
+                  [
+                        "characters match",
+                        "1 + diagonal next pair"
+                  ],
+                  [
+                        "characters differ",
+                        "0 — continuity breaks"
+                  ],
+                  [
+                        "global answer",
+                        "maximum over every pair"
+                  ]
+            ],
+            "visualText": "Imagine matching cells along diagonals. Equal characters extend the current diagonal streak; one mismatch cuts that streak immediately.",
+            "core": "Implemented state (i,j) returns the common substring length starting exactly at those indices. Match advances both and adds one; mismatch returns zero. Try all starts and keep the maximum.",
+            "bruteForce": "Implemented recursion tries every starting pair and walks forward diagonally until a mismatch. Without caching, overlapping matching suffixes are recomputed.",
+            "alternates": [
+                  "Implemented memoization caches the matching length starting at each (i,j), avoiding a third count dimension.",
+                  "Card-supplied tabulation stores the common substring length ending at each character pair; mismatch writes zero and a separate maximum tracks the answer."
+            ],
+            "gotchas": [
+                  "A mismatch must return or store zero; skipping would change the problem into subsequence.",
+                  "Take the maximum over all starting pairs or all DP cells—the answer need not end at the final characters.",
+                  "For the forward memo state, dp[i][j] means matching length starting at (i,j), not the global best."
+            ]
       }
 ];
 
@@ -3450,6 +3492,16 @@
                   "Tabulation (card-supplied): fill dp[i][j] backward using 1+dp[i+1][j+1] for a match, otherwise max(dp[i+1][j],dp[i][j+1])."
             ],
             "skeleton": "lcs(i,j)\n  if i == m or j == n: return 0\n  if a[i] == b[j]: return 1 + lcs(i+1,j+1)\n  return max(lcs(i+1,j), lcs(i,j+1))\n\nfor i=m-1..0\n  for j=n-1..0\n    if a[i] == b[j]: dp[i][j]=1+dp[i+1][j+1]\n    else: dp[i][j]=max(dp[i+1][j],dp[i][j+1])"
+      },
+      "LongestCommonSubstring": {
+            "prompt": "Before reading: where exactly does continuity reset, and why must the global maximum be tracked separately?",
+            "steps": [
+                  "Recursion (implemented): from a fixed (i,j), matching characters contribute 1 plus the diagonal suffix; a mismatch returns zero. Try every starting pair.",
+                  "Base case (implemented): when either index reaches its string's end, the current starting pair contributes zero more characters.",
+                  "Memoization (implemented): cache the matching length starting at every (i,j); the outer loops take the maximum of these O(mn) states.",
+                  "Tabulation (card-supplied): dp[i][j] is the matching length ending at s1[i-1],s2[j-1]; match uses 1+dp[i-1][j-1], mismatch stores zero, and max is tracked globally."
+            ],
+            "skeleton": "matchFrom(i,j)\n  if i == m or j == n: return 0\n  if a[i] != b[j]: return 0\n  return cache(i,j,1 + matchFrom(i+1,j+1))\n\nanswer = max(matchFrom(i,j)) over every start\n\nfor i=1..m, j=1..n\n  if a[i-1] == b[j-1]: dp[i][j]=1+dp[i-1][j-1]\n  else: dp[i][j]=0\n  answer=max(answer,dp[i][j])"
       }
 };
 
@@ -3486,7 +3538,8 @@
       "CoinChangeII": "State = coin index + remaining amount\nuse stays at i; skip advances to i+1\nadd both counts\ncoin-first order avoids permutation duplicates",
       "UnboundedKnapsack": "State = item index + remaining capacity\npick stays at i and adds value\nskip advances to i+1\ncache max(pick, skip)",
       "RodCuttingProblem": "State = consumed position + current piece length\ncut adds price[length-1] and resets length\ncontinue grows the piece\ncache the larger revenue",
-      "LongestCommonSubsequence": "State = one index in each string\nmatch → 1 + move both\nmismatch → skip either side\ncache the larger suffix answer"
+      "LongestCommonSubsequence": "State = one index in each string\nmatch → 1 + move both\nmismatch → skip either side\ncache the larger suffix answer",
+      "LongestCommonSubstring": "State = matching length at one index pair\nmatch → 1 + diagonal\nmismatch → reset to 0\ntrack the maximum across all pairs"
 };
 
     const solvedOrder = [
@@ -3522,7 +3575,8 @@
       "CoinChangeII",
       "UnboundedKnapsack",
       "RodCuttingProblem",
-      "LongestCommonSubsequence"
+      "LongestCommonSubsequence",
+      "LongestCommonSubstring"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");

@@ -623,6 +623,14 @@
         "dynamicprogramming/LongestCommonSubsequence"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-10-01",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/LongestCommonSubstring"
+      ],
+      "notes": ""
     }
   ]
 }
