@@ -3199,6 +3199,46 @@
                   "Track a global maximum because the best repeated subarray can end anywhere.",
                   "dp[i][j] is a local run length, not the best answer seen so far."
             ]
+      },
+      {
+            "name": "LongestPalindromicSubsequence",
+            "source": "../com/arvind/revision/dynamicprogramming/LongestPalindromicSubsequence.java",
+            "label": "Find LCS against the reversed string",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/longest-palindromic-subsequence/",
+            "description": "Return the length of the longest sequence of characters that reads the same forward and backward. Characters must keep their original order but do not need to be contiguous.",
+            "time": "Rec O(2^(2n)) · Memo/Tab O(n²)",
+            "space": "Memo/Tab O(n²) · Rec stack O(n)",
+            "timeWhy": "The original string and its reverse each contribute one index, producing n² memo or table states with O(1) work per state.",
+            "structures": "reversed string, two indices, Integer[n+1][n+1] memo, 2D DP table",
+            "input": "s = \"cbbbabc\"",
+            "output": "6",
+            "recognize": "The answer may delete characters but must preserve order, and the retained sequence must read identically in both directions.",
+            "variantLens": "Unlike Longest Palindromic Substring, this problem allows gaps. Substring requires one contiguous block and is usually solved by expanding around centers.",
+            "visual": [
+                  [
+                        "s[i] == rev[j]",
+                        "1 + dp[i+1][j+1]",
+                        "keep match"
+                  ],
+                  [
+                        "mismatch",
+                        "max(skip i, skip j)",
+                        "preserve order"
+                  ]
+            ],
+            "visualText": "Place the original string above its reverse. Matching characters can join the answer; on a mismatch, move past one side and retain the better possibility.",
+            "core": "Longest Palindromic Subsequence equals the Longest Common Subsequence between s and reverse(s). Match advances both indices; mismatch skips from either side and keeps the larger result.",
+            "bruteForce": "Generate every subsequence, check whether each is a palindrome, and keep the longest. There are 2ⁿ subsequences and each check can cost O(n).",
+            "alternates": [
+                  "Direct interval DP uses state (left,right): matching ends add 2; otherwise discard either end. It avoids building the reversed string but has the same O(n²) bounds.",
+                  "The LCS table can be space-optimized to O(n) by retaining only the previous row."
+            ],
+            "gotchas": [
+                  "This is subsequence, so mismatch takes max of two skips; resetting to zero would solve a substring-style problem.",
+                  "Reverse the string once before recursion rather than rebuilding it inside a state.",
+                  "Return a length, not the subsequence itself."
+            ]
       }
 ];
 
@@ -3552,6 +3592,16 @@
                   "Tabulation (card-supplied): fill dp[i][j] from the previous diagonal when values match, store zero on mismatch, and track the maximum cell."
             ],
             "skeleton": "match(i,j)\n  if i == m or j == n: return 0\n  if nums1[i] != nums2[j]: return 0\n  return 1 + match(i+1,j+1)\n\nanswer = max(memoized match(i,j)) over all i,j\n\nfor i=1..m, j=1..n\n  if nums1[i-1] == nums2[j-1]\n    dp[i][j] = 1 + dp[i-1][j-1]\n  else dp[i][j] = 0\n  answer = max(answer, dp[i][j])"
+      },
+      "LongestPalindromicSubsequence": {
+            "prompt": "Before reading: why does comparing s with reverse(s) turn this into Longest Common Subsequence?",
+            "steps": [
+                  "Recursion (implemented): use (i,j) in s and reverse(s). A match adds one and advances both; a mismatch returns max(skip i, skip j). Base case returns zero when either index reaches the end.",
+                  "Memoization (implemented): cache the result for every (i,j), reducing repeated LCS suffix work to O(n²) time and O(n²) space plus O(n) recursion depth.",
+                  "Tabulation (card-supplied): dp[i][j] stores LCS length for the first i characters of s and first j characters of reverse(s). Match uses 1 + diagonal; mismatch uses max(above,left).",
+                  "Space optimization (card-supplied): keep the previous and current rows because each cell only depends on the previous row and the current row's left cell."
+            ],
+            "skeleton": "rev = reverse(s)\n\nlps(i,j)\n  if i == n or j == n: return 0\n  if s[i] == rev[j]: return 1 + lps(i+1,j+1)\n  return max(lps(i+1,j), lps(i,j+1))\n\nfor i=1..n, j=1..n\n  if s[i-1] == rev[j-1]: dp[i][j] = 1 + dp[i-1][j-1]\n  else dp[i][j] = max(dp[i-1][j], dp[i][j-1])\nreturn dp[n][n]"
       }
 };
 
@@ -3590,7 +3640,8 @@
       "RodCuttingProblem": "State = consumed position + current piece length\ncut adds price[length-1] and resets length\ncontinue grows the piece\ncache the larger revenue",
       "LongestCommonSubsequence": "State = one index in each string\nmatch → 1 + move both\nmismatch → skip either side\ncache the larger suffix answer",
       "LongestCommonSubstring": "State = matching length at one index pair\nmatch → 1 + diagonal\nmismatch → reset to 0\ntrack the maximum across all pairs",
-      "MaximumLengthOfRepeatedSubarray": "State = contiguous match from (i,j)\nmatch → 1 + diagonal\nmismatch → reset to 0\nmaximize across all starting pairs"
+      "MaximumLengthOfRepeatedSubarray": "State = contiguous match from (i,j)\nmatch → 1 + diagonal\nmismatch → reset to 0\nmaximize across all starting pairs",
+      "LongestPalindromicSubsequence": "State = indices in s and reverse(s)\nmatch → 1 + move both\nmismatch → max(skip either side)\nanswer is their LCS length"
 };
 
     const solvedOrder = [
@@ -3628,7 +3679,8 @@
       "RodCuttingProblem",
       "LongestCommonSubsequence",
       "LongestCommonSubstring",
-      "MaximumLengthOfRepeatedSubarray"
+      "MaximumLengthOfRepeatedSubarray",
+      "LongestPalindromicSubsequence"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
