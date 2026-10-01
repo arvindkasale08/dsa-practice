@@ -626,9 +626,10 @@
     },
     {
       "date": "2026-10-01",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "dynamicprogramming/LongestCommonSubstring"
+        "dynamicprogramming/LongestCommonSubstring",
+        "dynamicprogramming/MaximumLengthOfRepeatedSubarray"
       ],
       "notes": ""
     }

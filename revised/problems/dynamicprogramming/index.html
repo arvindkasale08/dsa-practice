@@ -3159,6 +3159,46 @@
                   "Take the maximum over all starting pairs or all DP cells—the answer need not end at the final characters.",
                   "For the forward memo state, dp[i][j] means matching length starting at (i,j), not the global best."
             ]
+      },
+      {
+            "name": "MaximumLengthOfRepeatedSubarray",
+            "source": "../com/arvind/revision/dynamicprogramming/MaximumLengthOfRepeatedSubarray.java",
+            "label": "Match contiguous runs on the diagonal",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/maximum-length-of-repeated-subarray/",
+            "description": "Find the longest non-empty subarray that appears in both integer arrays. This is Longest Common Substring with integers: equality extends a contiguous diagonal run, while a mismatch resets that run to zero.",
+            "time": "O(mn)",
+            "space": "O(mn)",
+            "timeWhy": "There are m × n index-pair states, and each memoized state is computed once; the outer loops also visit every pair.",
+            "structures": "2D memo table indexed by one position in each array",
+            "input": "nums1 = [1,2,3,2,1], nums2 = [3,2,1,4,7]",
+            "output": "3",
+            "recognize": "Two sequences ask for the longest shared contiguous block. Contiguous means a match can only continue diagonally to the next index in both arrays.",
+            "visual": [
+                  [
+                        "nums1[i] == nums2[j]",
+                        "1 + match(i+1,j+1)",
+                        "extend run"
+                  ],
+                  [
+                        "nums1[i] != nums2[j]",
+                        "0",
+                        "reset run"
+                  ]
+            ],
+            "visualText": "Imagine aligning every possible starting pair. Equal values walk one step diagonally in both arrays; the first mismatch ends that candidate run.",
+            "core": "Let match(i,j) be the common contiguous length starting at nums1[i] and nums2[j]. If values match, return 1 plus the diagonal state; otherwise return zero. The answer is the maximum over every starting pair.",
+            "bruteForce": "Start from every pair (i,j) and walk forward while values remain equal. In the worst case this repeats the same diagonal work and costs O(mn × min(m,n)).",
+            "alternates": [
+                  "Memoized recursion (implemented): cache match(i,j) and scan all starting pairs, giving O(mn) time and space.",
+                  "Bottom-up tabulation (card-supplied): dp[i][j] stores the matching length ending at nums1[i-1] and nums2[j-1].",
+                  "Space optimization (card-supplied): keep one previous row, or scan diagonals, for O(n) auxiliary space."
+            ],
+            "gotchas": [
+                  "A mismatch must produce zero; taking max of neighboring cells would solve subsequence instead of subarray.",
+                  "Track a global maximum because the best repeated subarray can end anywhere.",
+                  "dp[i][j] is a local run length, not the best answer seen so far."
+            ]
       }
 ];
 
@@ -3502,6 +3542,16 @@
                   "Tabulation (card-supplied): dp[i][j] is the matching length ending at s1[i-1],s2[j-1]; match uses 1+dp[i-1][j-1], mismatch stores zero, and max is tracked globally."
             ],
             "skeleton": "matchFrom(i,j)\n  if i == m or j == n: return 0\n  if a[i] != b[j]: return 0\n  return cache(i,j,1 + matchFrom(i+1,j+1))\n\nanswer = max(matchFrom(i,j)) over every start\n\nfor i=1..m, j=1..n\n  if a[i-1] == b[j-1]: dp[i][j]=1+dp[i-1][j-1]\n  else: dp[i][j]=0\n  answer=max(answer,dp[i][j])"
+      },
+      "MaximumLengthOfRepeatedSubarray": {
+            "prompt": "Before reading: why must a mismatch reset this state to zero instead of skipping one array element?",
+            "steps": [
+                  "Recursion (underlying recurrence): for one starting pair (i,j), equal values contribute 1 plus the diagonal suffix; a mismatch contributes zero.",
+                  "Memoization (implemented): cache each (i,j) matching length and call it from every possible starting pair; take their maximum.",
+                  "Base case (implemented): if either index reaches its array's end, no more values can match, so return zero.",
+                  "Tabulation (card-supplied): fill dp[i][j] from the previous diagonal when values match, store zero on mismatch, and track the maximum cell."
+            ],
+            "skeleton": "match(i,j)\n  if i == m or j == n: return 0\n  if nums1[i] != nums2[j]: return 0\n  return 1 + match(i+1,j+1)\n\nanswer = max(memoized match(i,j)) over all i,j\n\nfor i=1..m, j=1..n\n  if nums1[i-1] == nums2[j-1]\n    dp[i][j] = 1 + dp[i-1][j-1]\n  else dp[i][j] = 0\n  answer = max(answer, dp[i][j])"
       }
 };
 
@@ -3539,7 +3589,8 @@
       "UnboundedKnapsack": "State = item index + remaining capacity\npick stays at i and adds value\nskip advances to i+1\ncache max(pick, skip)",
       "RodCuttingProblem": "State = consumed position + current piece length\ncut adds price[length-1] and resets length\ncontinue grows the piece\ncache the larger revenue",
       "LongestCommonSubsequence": "State = one index in each string\nmatch → 1 + move both\nmismatch → skip either side\ncache the larger suffix answer",
-      "LongestCommonSubstring": "State = matching length at one index pair\nmatch → 1 + diagonal\nmismatch → reset to 0\ntrack the maximum across all pairs"
+      "LongestCommonSubstring": "State = matching length at one index pair\nmatch → 1 + diagonal\nmismatch → reset to 0\ntrack the maximum across all pairs",
+      "MaximumLengthOfRepeatedSubarray": "State = contiguous match from (i,j)\nmatch → 1 + diagonal\nmismatch → reset to 0\nmaximize across all starting pairs"
 };
 
     const solvedOrder = [
@@ -3576,7 +3627,8 @@
       "UnboundedKnapsack",
       "RodCuttingProblem",
       "LongestCommonSubsequence",
-      "LongestCommonSubstring"
+      "LongestCommonSubstring",
+      "MaximumLengthOfRepeatedSubarray"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
