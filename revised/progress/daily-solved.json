@@ -633,6 +633,14 @@
         "dynamicprogramming/LongestPalindromicSubsequence"
       ],
       "notes": ""
+    },
+    {
+      "date": "2026-10-02",
+      "solved": 1,
+      "cardsSynced": [
+        "dynamicprogramming/LongestPalindromicSubstring"
+      ],
+      "notes": ""
     }
   ]
 }

@@ -3239,6 +3239,46 @@
                   "Reverse the string once before recursion rather than rebuilding it inside a state.",
                   "Return a length, not the subsequence itself."
             ]
+      },
+      {
+            "name": "LongestPalindromicSubstring",
+            "source": "../com/arvind/revision/dynamicprogramming/LongestPalindromicSubstring.java",
+            "label": "Fill palindrome ranges from inside out",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/longest-palindromic-substring/",
+            "description": "Return the longest contiguous part of a string that reads the same forward and backward. If several answers have the same maximum length, any one is valid.",
+            "time": "Tab O(n²)",
+            "space": "Tab O(n²)",
+            "timeWhy": "Only the upper triangle is useful: every pair (start,end) is evaluated once using the already-known inner range (start+1,end-1).",
+            "structures": "Boolean[n][n] palindrome table, start/end indices, result substring",
+            "input": "s = \"cddpd\"",
+            "output": "\"dpd\"",
+            "recognize": "The answer must be one contiguous range and its characters must mirror around a center.",
+            "variantLens": "Unlike Longest Palindromic Subsequence, no characters may be skipped. A true DP cell represents one complete contiguous range.",
+            "visual": [
+                  [
+                        "dp[start][end]",
+                        "same ends",
+                        "inner range true"
+                  ],
+                  [
+                        "diagonal first",
+                        "start: right → left",
+                        "read down-left inner cell"
+                  ]
+            ],
+            "visualText": "Mark every one-character diagonal cell true. Then grow outward: a range is palindromic when its ends match and its inside range is already true.",
+            "core": "dp[start][end] is true when s[start..end] is a palindrome. The source fills start from right to left, making row start+1 available before row start; every true cell competes to become the longest answer.",
+            "bruteForce": "Enumerate all O(n²) substrings and scan each from both ends to test whether it is a palindrome, costing O(n³) time and O(1) extra space.",
+            "alternates": [
+                  "Expand around every character and gap: O(n²) time and O(1) space, usually the preferred interview solution.",
+                  "Manacher's algorithm reaches O(n) time, but its transformed-string bookkeeping is much harder to recall and implement."
+            ],
+            "gotchas": [
+                  "Length two is a special base: equal adjacent characters are palindromic without reading an inner cell.",
+                  "Fill dependencies before dependents—right-to-left starts or increasing substring lengths both work.",
+                  "Track the longest true range; dp[start][end] only says whether that one range is a palindrome."
+            ]
       }
 ];
 
@@ -3602,6 +3642,16 @@
                   "Space optimization (card-supplied): keep the previous and current rows because each cell only depends on the previous row and the current row's left cell."
             ],
             "skeleton": "rev = reverse(s)\n\nlps(i,j)\n  if i == n or j == n: return 0\n  if s[i] == rev[j]: return 1 + lps(i+1,j+1)\n  return max(lps(i+1,j), lps(i,j+1))\n\nfor i=1..n, j=1..n\n  if s[i-1] == rev[j-1]: dp[i][j] = 1 + dp[i-1][j-1]\n  else dp[i][j] = max(dp[i-1][j], dp[i][j-1])\nreturn dp[n][n]"
+      },
+      "LongestPalindromicSubstring": {
+            "prompt": "Before reading: which smaller DP cell must be known before deciding whether s[start..end] is a palindrome?",
+            "steps": [
+                  "Recursion (card-supplied): isPal(start,end) is true for start >= end; otherwise both end characters must match and isPal(start+1,end-1) must be true. Try every range and keep the longest true one.",
+                  "Memoization (card-supplied): cache each Boolean isPal(start,end) result so every range is solved once, giving O(n²) states and O(n²) storage.",
+                  "Tabulation (implemented): mark dp[i][i] true, move start from n-1 down to 0, and evaluate end >= start. Equal adjacent characters form the length-two base; longer ranges read dp[start+1][end-1].",
+                  "Answer tracking (implemented): whenever a true cell has greater length, save s.substring(start,end+1). The current table costs O(n²) time and space."
+            ],
+            "skeleton": "for i=0..n-1: dp[i][i] = true\n\nfor start=n-1 down to 0\n  for end=start to n-1\n    if start == end: already true\n    else if end == start+1\n      dp[start][end] = s[start] == s[end]\n    else\n      dp[start][end] = s[start] == s[end]\n                       and dp[start+1][end-1]\n\n    if dp[start][end] and range is longer\n      save start and length\n\nreturn longest range"
       }
 };
 
@@ -3641,7 +3691,8 @@
       "LongestCommonSubsequence": "State = one index in each string\nmatch → 1 + move both\nmismatch → skip either side\ncache the larger suffix answer",
       "LongestCommonSubstring": "State = matching length at one index pair\nmatch → 1 + diagonal\nmismatch → reset to 0\ntrack the maximum across all pairs",
       "MaximumLengthOfRepeatedSubarray": "State = contiguous match from (i,j)\nmatch → 1 + diagonal\nmismatch → reset to 0\nmaximize across all starting pairs",
-      "LongestPalindromicSubsequence": "State = indices in s and reverse(s)\nmatch → 1 + move both\nmismatch → max(skip either side)\nanswer is their LCS length"
+      "LongestPalindromicSubsequence": "State = indices in s and reverse(s)\nmatch → 1 + move both\nmismatch → max(skip either side)\nanswer is their LCS length",
+      "LongestPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nfill diagonal first, then outward\ntrack the longest true cell"
 };
 
     const solvedOrder = [
@@ -3680,7 +3731,8 @@
       "LongestCommonSubsequence",
       "LongestCommonSubstring",
       "MaximumLengthOfRepeatedSubarray",
-      "LongestPalindromicSubsequence"
+      "LongestPalindromicSubsequence",
+      "LongestPalindromicSubstring"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
