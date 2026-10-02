@@ -3319,6 +3319,46 @@
                   "Every single character is a palindrome and must contribute one.",
                   "Handle length two without reading dp[start+1][end-1], which would cross the indices."
             ]
+      },
+      {
+            "name": "MinimumInsertionToMakeStringPalindrome",
+            "source": "../com/arvind/revision/dynamicprogramming/MinimumInsertionToMakeStringPalindrome.java",
+            "label": "Match ends or mirror the cheaper side",
+            "difficulty": "Hard",
+            "leetcode": "https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/",
+            "description": "Return the fewest characters that must be inserted anywhere in a string so the complete result reads the same forward and backward.",
+            "time": "Rec O(2ⁿ) · Memo/Tab O(n²)",
+            "space": "Memo/Tab O(n²) · Rec stack O(n)",
+            "timeWhy": "Each interval (start,end) is one state. Memoization or tabulation solves every one of the O(n²) intervals once.",
+            "structures": "two interval indices, recursion stack, int[n+1][n+1] memo or DP table",
+            "input": "s = \"mbadm\"",
+            "output": "2",
+            "recognize": "You may insert characters to make a whole string palindromic, and matching outer characters can be kept without paying an insertion.",
+            "variantLens": "This minimizes insertions. It is also n − longestPalindromicSubsequence(s), because every character outside the longest palindromic subsequence must be mirrored by an insertion.",
+            "visual": [
+                  [
+                        "equal ends",
+                        "move both inward",
+                        "+0"
+                  ],
+                  [
+                        "different ends",
+                        "mirror left or right",
+                        "1 + cheaper suffix"
+                  ]
+            ],
+            "visualText": "Stand at both ends. Equal characters already mirror each other. On a mismatch, insert a copy of one end beside the other and pay one, then solve the remaining interval.",
+            "core": "minInsertions(start,end) returns the cost for exactly that interval. Equal ends use the inner interval; unequal ends add one to the cheaper choice of discarding the left or right end from the remaining state.",
+            "bruteForce": "At every mismatch, try mirroring either endpoint and recurse through both possibilities. The branching creates exponential O(2ⁿ) work.",
+            "alternates": [
+                  "Compute Longest Palindromic Subsequence and return n − LPS length; this is also O(n²) time and space and reuses the LCS pattern.",
+                  "The interval tabulation can be compressed by traversal-aware bookkeeping, but the 2D table is clearer for revision."
+            ],
+            "gotchas": [
+                  "When ends differ, add exactly one outside Math.min—not one to both branches.",
+                  "A range of zero or one character needs zero insertions.",
+                  "Equal ends move both pointers; do not compare skip branches in that case."
+            ]
       }
 ];
 
@@ -3702,6 +3742,16 @@
                   "Counting (implemented): increment once for every true table cell. The source returns 0 for an empty string and correctly counts repeated occurrences separately."
             ],
             "skeleton": "for i=0..n-1: dp[i][i] = true\ncount = 0\n\nfor start=n-1 down to 0\n  for end=n-1 down to start\n    if dp[start][end] is unset\n      dp[start][end] = s[start] == s[end]\n                       and (end == start+1\n                            or dp[start+1][end-1])\n\n    if dp[start][end]: count++\n\nreturn count"
+      },
+      "MinimumInsertionToMakeStringPalindrome": {
+            "prompt": "Before reading: when the two ends differ, what do the two recursive branches mean physically?",
+            "steps": [
+                  "Recursion (implemented): state is (start,end). Base start >= end returns zero. Equal ends recurse inward with no cost; unequal ends return 1 + min(start+1,end, start,end-1). Worst-case time is O(2ⁿ), with O(n) stack depth.",
+                  "Memoization (implemented): cache every interval result in dp[start][end]. This reduces the work to O(n²) time and O(n²) memo space plus O(n) recursion stack.",
+                  "Tabulation (card-supplied): set dp[i][i] = 0, fill start from n-1 down to 0 and end from start+1 upward. Equal ends copy dp[start+1][end-1]; mismatch stores 1 + min(dp[start+1][end], dp[start][end-1]).",
+                  "Final answer (card-supplied): dp[0][n-1] is the minimum for the complete string. An empty or one-character string returns zero."
+            ],
+            "skeleton": "solve(start,end)\n  if start >= end: return 0\n  if s[start] == s[end]\n    return solve(start+1,end-1)\n  return 1 + min(solve(start+1,end),\n                 solve(start,end-1))\n\nfor start=n-1 down to 0\n  dp[start][start] = 0\n  for end=start+1 to n-1\n    if s[start] == s[end]\n      dp[start][end] = dp[start+1][end-1]\n    else\n      dp[start][end] = 1 + min(dp[start+1][end],\n                               dp[start][end-1])\nreturn dp[0][n-1]"
       }
 };
 
@@ -3743,7 +3793,8 @@
       "MaximumLengthOfRepeatedSubarray": "State = contiguous match from (i,j)\nmatch → 1 + diagonal\nmismatch → reset to 0\nmaximize across all starting pairs",
       "LongestPalindromicSubsequence": "State = indices in s and reverse(s)\nmatch → 1 + move both\nmismatch → max(skip either side)\nanswer is their LCS length",
       "LongestPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nfill diagonal first, then outward\ntrack the longest true cell",
-      "CountPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nevery true cell contributes count++"
+      "CountPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nevery true cell contributes count++",
+      "MinimumInsertionToMakeStringPalindrome": "State = minimum insertions for [start,end]\nequal ends → move both, +0\nmismatch → 1 + min(drop left, drop right)"
 };
 
     const solvedOrder = [
@@ -3784,7 +3835,8 @@
       "MaximumLengthOfRepeatedSubarray",
       "LongestPalindromicSubsequence",
       "LongestPalindromicSubstring",
-      "CountPalindromicSubstring"
+      "CountPalindromicSubstring",
+      "MinimumInsertionToMakeStringPalindrome"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");
