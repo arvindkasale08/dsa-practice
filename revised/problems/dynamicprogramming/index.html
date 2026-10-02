@@ -3279,6 +3279,46 @@
                   "Fill dependencies before dependents—right-to-left starts or increasing substring lengths both work.",
                   "Track the longest true range; dp[start][end] only says whether that one range is a palindrome."
             ]
+      },
+      {
+            "name": "CountPalindromicSubstring",
+            "source": "../com/arvind/revision/dynamicprogramming/CountPalindromicSubstring.java",
+            "label": "Count every true palindrome range",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/palindromic-substrings/",
+            "description": "Count all contiguous substrings that read the same forward and backward. Equal text at different start/end positions counts separately.",
+            "time": "Tab O(n²)",
+            "space": "Tab O(n²)",
+            "timeWhy": "The upper triangle contains O(n²) valid start/end ranges, and each cell is decided once from its two ends and one inner cell.",
+            "structures": "Boolean[n][n] palindrome table, start/end indices, integer counter",
+            "input": "s = \"abdbca\"",
+            "output": "7",
+            "recognize": "The problem asks for the number of palindromic contiguous ranges, not merely the longest range or the distinct palindrome values.",
+            "variantLens": "This uses the same table as Longest Palindromic Substring, but every true cell increments the answer instead of competing by length.",
+            "visual": [
+                  [
+                        "dp[start][end] = true",
+                        "one palindrome occurrence",
+                        "count++"
+                  ],
+                  [
+                        "same ends",
+                        "inner range true",
+                        "current range true"
+                  ]
+            ],
+            "visualText": "Treat each upper-triangle cell as one substring occurrence. Mark the cell true when the two ends match and the inside is palindromic, then add one immediately.",
+            "core": "dp[start][end] tells whether that exact substring is a palindrome. Initialize all single-character ranges, fill larger dependent ranges inside out, and count every true cell.",
+            "bruteForce": "Enumerate every O(n²) substring and test it with two pointers in O(n), for O(n³) time and O(1) extra space.",
+            "alternates": [
+                  "Expand around all n character centers and n-1 gaps, adding one for every successful expansion: O(n²) time and O(1) space.",
+                  "A top-down Boolean palindrome test can memoize (start,end), but the outer scan must still visit every range to count all occurrences."
+            ],
+            "gotchas": [
+                  "Count occurrences by indices: repeated equal palindrome text in different positions counts again.",
+                  "Every single character is a palindrome and must contribute one.",
+                  "Handle length two without reading dp[start+1][end-1], which would cross the indices."
+            ]
       }
 ];
 
@@ -3652,6 +3692,16 @@
                   "Answer tracking (implemented): whenever a true cell has greater length, save s.substring(start,end+1). The current table costs O(n²) time and space."
             ],
             "skeleton": "for i=0..n-1: dp[i][i] = true\n\nfor start=n-1 down to 0\n  for end=start to n-1\n    if start == end: already true\n    else if end == start+1\n      dp[start][end] = s[start] == s[end]\n    else\n      dp[start][end] = s[start] == s[end]\n                       and dp[start+1][end-1]\n\n    if dp[start][end] and range is longer\n      save start and length\n\nreturn longest range"
+      },
+      "CountPalindromicSubstring": {
+            "prompt": "Before reading: how is this table identical to Longest Palindromic Substring while the answer update is different?",
+            "steps": [
+                  "Recursion (card-supplied): isPal(start,end) returns true for start >= end; otherwise it requires matching ends and isPal(start+1,end-1). Invoke it for every valid range and count the true results.",
+                  "Memoization (card-supplied): cache each Boolean (start,end) result. There are O(n²) states; scanning all ranges then costs O(n²) time and O(n²) space.",
+                  "Tabulation (implemented): mark dp[i][i] true, fill start from right to left and end from the last index down to start. Equal adjacent characters are the length-two base; longer ranges read dp[start+1][end-1].",
+                  "Counting (implemented): increment once for every true table cell. The source returns 0 for an empty string and correctly counts repeated occurrences separately."
+            ],
+            "skeleton": "for i=0..n-1: dp[i][i] = true\ncount = 0\n\nfor start=n-1 down to 0\n  for end=n-1 down to start\n    if dp[start][end] is unset\n      dp[start][end] = s[start] == s[end]\n                       and (end == start+1\n                            or dp[start+1][end-1])\n\n    if dp[start][end]: count++\n\nreturn count"
       }
 };
 
@@ -3692,7 +3742,8 @@
       "LongestCommonSubstring": "State = matching length at one index pair\nmatch → 1 + diagonal\nmismatch → reset to 0\ntrack the maximum across all pairs",
       "MaximumLengthOfRepeatedSubarray": "State = contiguous match from (i,j)\nmatch → 1 + diagonal\nmismatch → reset to 0\nmaximize across all starting pairs",
       "LongestPalindromicSubsequence": "State = indices in s and reverse(s)\nmatch → 1 + move both\nmismatch → max(skip either side)\nanswer is their LCS length",
-      "LongestPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nfill diagonal first, then outward\ntrack the longest true cell"
+      "LongestPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nfill diagonal first, then outward\ntrack the longest true cell",
+      "CountPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nevery true cell contributes count++"
 };
 
     const solvedOrder = [
@@ -3732,7 +3783,8 @@
       "LongestCommonSubstring",
       "MaximumLengthOfRepeatedSubarray",
       "LongestPalindromicSubsequence",
-      "LongestPalindromicSubstring"
+      "LongestPalindromicSubstring",
+      "CountPalindromicSubstring"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");

@@ -636,9 +636,10 @@
     },
     {
       "date": "2026-10-02",
-      "solved": 1,
+      "solved": 2,
       "cardsSynced": [
-        "dynamicprogramming/LongestPalindromicSubstring"
+        "dynamicprogramming/LongestPalindromicSubstring",
+        "dynamicprogramming/CountPalindromicSubstring"
       ],
       "notes": ""
     }
