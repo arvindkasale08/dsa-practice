@@ -3359,6 +3359,46 @@
                   "A range of zero or one character needs zero insertions.",
                   "Equal ends move both pointers; do not compare skip branches in that case."
             ]
+      },
+      {
+            "name": "DeleteOperationForTwoStrings",
+            "source": "../com/arvind/revision/dynamicprogramming/DeleteOperationForTwoStrings.java",
+            "label": "Match both or delete from one side",
+            "difficulty": "Medium",
+            "leetcode": "https://leetcode.com/problems/delete-operation-for-two-strings/",
+            "description": "Return the minimum number of single-character deletions needed to make two strings exactly equal. A deletion may be made from either string.",
+            "time": "Rec O(2^(m+n)) · Memo/Tab O(mn)",
+            "space": "Memo/Tab O(mn) · Rec stack O(m+n)",
+            "timeWhy": "The changing state is one index in each string, giving m × n distinct suffix pairs. Memoization or tabulation solves each pair once.",
+            "structures": "two string indices, recursion stack, int[m][n] memo or DP table",
+            "input": "word1 = \"leetcode\", word2 = \"etco\"",
+            "output": "4",
+            "recognize": "When only deletions are allowed and both strings must be reduced to the same preserved subsequence.",
+            "variant": "Unlike Edit Distance, replacement and insertion are not direct operations. This is also m + n − 2 × LCS(word1, word2).",
+            "visual": [
+                  [
+                        "same chars",
+                        "move both",
+                        "+0"
+                  ],
+                  [
+                        "different chars",
+                        "delete left or right",
+                        "1 + cheaper suffix"
+                  ]
+            ],
+            "visualText": "Compare the current characters. A match is kept by both strings; a mismatch forces one deletion, after which either index advances.",
+            "core": "minDelete(i,j) is the minimum deletions needed to equalize suffixes word1[i..] and word2[j..]. Match and advance both, or delete one mismatched character and take the cheaper branch.",
+            "bruteForce": "At every mismatch, recursively try deleting from the first string and deleting from the second. This is correct but branches exponentially.",
+            "alternates": [
+                  "Compute the Longest Common Subsequence length L, then return m + n − 2L.",
+                  "A bottom-up suffix table directly mirrors the recursive state and avoids recursion-stack space."
+            ],
+            "gotchas": [
+                  "When one string ends, every remaining character in the other string must be deleted.",
+                  "Equal characters advance both indices without adding a deletion.",
+                  "The extra i > length && j > length base check in the source is redundant; the two >= boundary cases already handle every ending."
+            ]
       }
 ];
 
@@ -3752,6 +3792,16 @@
                   "Final answer (card-supplied): dp[0][n-1] is the minimum for the complete string. An empty or one-character string returns zero."
             ],
             "skeleton": "solve(start,end)\n  if start >= end: return 0\n  if s[start] == s[end]\n    return solve(start+1,end-1)\n  return 1 + min(solve(start+1,end),\n                 solve(start,end-1))\n\nfor start=n-1 down to 0\n  dp[start][start] = 0\n  for end=start+1 to n-1\n    if s[start] == s[end]\n      dp[start][end] = dp[start+1][end-1]\n    else\n      dp[start][end] = 1 + min(dp[start+1][end],\n                               dp[start][end-1])\nreturn dp[0][n-1]"
+      },
+      "DeleteOperationForTwoStrings": {
+            "prompt": "Before reading: when the current characters differ, what are the only two useful deletions?",
+            "steps": [
+                  "Recursion (implemented): state is (i,j). If one suffix is exhausted, delete the entire remaining other suffix. Equal characters move both indices; a mismatch costs one plus the cheaper of deleting either current character. Worst-case time is O(2^(m+n)) with O(m+n) stack depth.",
+                  "Memoization (implemented): cache each suffix pair in dp[i][j]. This reduces the work to O(mn) time and O(mn) memo space plus O(m+n) recursion stack.",
+                  "Tabulation (card-supplied): use dp[i][j] for suffixes beginning at i and j. Initialize dp[i][n] = m-i and dp[m][j] = n-j, then fill i and j backward. Match copies dp[i+1][j+1]; mismatch stores 1 + min(dp[i+1][j], dp[i][j+1]).",
+                  "Final answer (card-supplied): dp[0][0] is the minimum deletions for the complete strings."
+            ],
+            "skeleton": "solve(i,j)\n  if i == m: return n-j\n  if j == n: return m-i\n  if s1[i] == s2[j]\n    return solve(i+1,j+1)\n  return 1 + min(solve(i+1,j), solve(i,j+1))\n\ninitialize dp[i][n] = m-i and dp[m][j] = n-j\nfor i=m-1 down to 0\n  for j=n-1 down to 0\n    if chars match: dp[i][j] = dp[i+1][j+1]\n    else: dp[i][j] = 1 + min(dp[i+1][j], dp[i][j+1])\nreturn dp[0][0]"
       }
 };
 
@@ -3794,7 +3844,8 @@
       "LongestPalindromicSubsequence": "State = indices in s and reverse(s)\nmatch → 1 + move both\nmismatch → max(skip either side)\nanswer is their LCS length",
       "LongestPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nfill diagonal first, then outward\ntrack the longest true cell",
       "CountPalindromicSubstring": "State = whether range [start,end] is palindrome\nsame ends + true inner range → true\nevery true cell contributes count++",
-      "MinimumInsertionToMakeStringPalindrome": "State = minimum insertions for [start,end]\nequal ends → move both, +0\nmismatch → 1 + min(drop left, drop right)"
+      "MinimumInsertionToMakeStringPalindrome": "State = minimum insertions for [start,end]\nequal ends → move both, +0\nmismatch → 1 + min(drop left, drop right)",
+      "DeleteOperationForTwoStrings": "State = one index in each string\nmatch → move both with no cost\nmismatch → 1 + min(delete left, delete right)\ncache the cheaper suffix answer"
 };
 
     const solvedOrder = [
@@ -3836,7 +3887,8 @@
       "LongestPalindromicSubsequence",
       "LongestPalindromicSubstring",
       "CountPalindromicSubstring",
-      "MinimumInsertionToMakeStringPalindrome"
+      "MinimumInsertionToMakeStringPalindrome",
+      "DeleteOperationForTwoStrings"
 ];
 
     const isTheoryCard = card => card.referenceOnly || card.difficulty === "Theory" || card.name.endsWith("Theory");

@@ -636,11 +636,12 @@
     },
     {
       "date": "2026-10-02",
-      "solved": 3,
+      "solved": 4,
       "cardsSynced": [
         "dynamicprogramming/LongestPalindromicSubstring",
         "dynamicprogramming/CountPalindromicSubstring",
-        "dynamicprogramming/MinimumInsertionToMakeStringPalindrome"
+        "dynamicprogramming/MinimumInsertionToMakeStringPalindrome",
+        "dynamicprogramming/DeleteOperationForTwoStrings"
       ],
       "notes": ""
     }
